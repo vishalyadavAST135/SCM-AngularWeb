@@ -1,0 +1,21 @@
+
+
+<style>
+.ApprovalColor{
+    color:green
+} 
+.RejectColor{
+    color:red
+} 
+
+.PendingColor{
+    color:#babfc7
+}  
+</style>
+<a>
+    <i  *ngFor="let item of ApprovalList" [ngClass]="{'fa':1===1,'fa-check': item.ApprovalStatus === 'Approved', 'ApprovalColor':item.ApprovalStatus === 'Approved','fa-times': item.ApprovalStatus === ''? true:item.ApprovalStatus === 'Reject', 'RejectColor':item.ApprovalStatus === 'Reject','PendingColor':item.ApprovalStatus === ''}"></i>
+</a>
+
+
+
+

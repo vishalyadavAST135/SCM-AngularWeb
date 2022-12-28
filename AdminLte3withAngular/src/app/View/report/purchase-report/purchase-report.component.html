@@ -1,0 +1,208 @@
+<style>
+    .table th, .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }.btn-sm1, .btn-group-sm > .btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+      line-height: 0.5;
+      border-radius: 0.2rem;
+       }
+    .Mandatoryfield
+    {
+      font-size:15px
+      
+    }
+    .hide
+    {
+      display:none;
+    }
+    
+.mask {
+  position: absolute;
+  width: 90%;
+  height: calc(100% - 3.25rem);
+  top: 3rem;
+  background-color: rgba(255,255,255,0.5);
+  text-align: center;
+}
+.mask > .pei-spinner::before {
+ font-size: 4rem;
+  margin-top: 100px;
+}
+
+
+
+.pei {
+  display: inline-block;
+  position: relative;
+  font-style: normal;
+  font-family: Arial;
+}
+
+.pei-spinner::before {
+  content: "";
+  vertical-align: text-bottom;
+  display: inline-block;
+  box-sizing: border-box;
+  width: 1em;
+  height: 1em;
+  border: 0.1em solid #28a745;
+  border-right-color: transparent;
+  border-radius: 0.625em;
+  animation: pei-infinite-spinning .75s linear infinite;
+}
+
+@keyframes pei-infinite-spinning {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+    </style>
+  <div class="wrapper">
+      <app-main-header></app-main-header>   
+      <!-- Main Sidebar Container -->
+      <app-main-sidebar></app-main-sidebar>
+      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+        <p style="color: white">Please Wait. </p>  
+        </ngx-spinner> 
+      <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+          <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-12">
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                  <li class="breadcrumb-item active">Purchase Report </li>
+                </ol>
+                </nav>
+              </div>
+              </div>
+            </div>
+        </div>
+             <!-- /.content-header -->
+        
+        <section class="content" style="padding-top:2px;" >
+          <div class="container-fluid">  
+            
+            <div class="row" id="DivGRNList">
+                <div class="col-sm-12">  
+                                  
+                  <app-search-panel></app-search-panel>    
+                  <div class="row mb-1" style="margin-left:3px">  
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs"> PO No</label>
+                      </div>                                         
+                      <div class="col-sm-2">                       
+                        <div class="ng-autocomplete">
+                          <ng-autocomplete 
+                          [data]="AutoCompletePOList" [searchKeyword]="keyword" 
+                          (inputCleared)="searchCleared()" 
+                          (selected)='SearchPanelPo($event)' 
+                          (inputChanged)='onChangeSearch($event,0)' 
+                          (inputFocused)='onFocused($event)'
+                           [itemTemplate]="itemTemplate"
+                          [notFoundTemplate]="notFoundTemplate"
+                          [debounceTime]="600" 
+                          [minQueryLength]="2" 
+                          placeHolder="Search Po No..">
+                          </ng-autocomplete>
+                          <ng-template #itemTemplate let-item>
+                              <a [innerHTML]="item.PoName"></a>
+                          </ng-template>
+                          <ng-template #notFoundTemplate let-notFound>
+                              <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div>
+                      </div> 
+                   
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs"> GRN No</label>
+                      </div>                                         
+                      <div class="col-sm-2">     
+                        <input type="text" id="txtGRNNo" [(ngModel)]="model.GRNNo"   class="form-control form-control-sm" placeholder="">                                     
+                      </div>                  
+                      <div class="col-sm-1">                        
+                        <label class="col-form-label-xs">Inv/Challan No</label>
+                    </div>                                 
+                    <div class="col-sm-2">      
+                      <input type="text" id="txtInvoiceNo" [(ngModel)]="model.InvoiceNo"  class="form-control form-control-sm" placeholder="">                   
+                    
+                    </div>
+
+
+                  <div class="col-sm-1">                        
+                      <label class="col-form-label-xs">Inv/Challan No</label>
+                  </div>                                 
+                  <div class="col-sm-2">      
+                 <select class="form-control form-control-sm" [(ngModel)]="model.status" >
+                 <option value="Approved" >Approved</option>
+                 <option value="ApprovalPending" >Approval Pending</option>
+                 <option value="GRNNotDone" >GRN not done</option>
+                 <option value="Reject" >Reject </option>
+                 </select>                  
+                  </div>
+                    <!-- <div class="col-sm-1">  
+                      <label class="col-form-label-xs">GRN/STN</label>
+                    </div>  
+                     <div class="col-sm-2">                             
+                      <select class="form-control form-control-sm"id="txtVoucher"  [(ngModel)]="model.GRNSTNId" >
+                        <option class="dropdown-item" [value]="0">Select</option>
+                        <option  class="dropdown-item" [value]="1" >GRN</option>
+                        <option  class="dropdown-item" [value]="4" >STN</option>
+                    </select>
+                     </div>    -->
+                    <!-- <div class="col-sm-2">                             
+                      <select class="form-control form-control-sm"id="txtVoucher"  [(ngModel)]="model.VoucherTypeId" >
+                        <option class="dropdown-item" [value]="0">Select</option>
+                        <option *ngFor="let item of VoucherTypeDetail" [value]="item.id" >{{item.itemName}}</option>
+                    </select>
+                     </div> -->
+                  </div>
+                    <span></span>
+                  <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="SearchGRNList($event)"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                  </div>
+                            </div>
+                          </div>
+                      </div>
+                      
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                  <div class="mask" *ngIf="showLoading">
+                    <i class="pei pei-spinner"></i>
+                  </div>
+                  
+                  <iframe id="SSRS" (load)="onLoad()"  [src]="Pdfurl"  style="width:100%; height:600px;"  zindex="100"></iframe>                  
+                </div>
+              </div>
+          </div>
+        </section>
+      </div>
+  </div>
+
+  <script>
+    function test(grn) {
+        if (grn != '') {
+            window.location.href = "https://scmuat.astnoc.com/GRNDetail?grn=" + grn + "";
+        }
+        return;
+    }
+</script>
+  
+ 

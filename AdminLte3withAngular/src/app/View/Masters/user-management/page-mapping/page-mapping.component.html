@@ -1,0 +1,88 @@
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border">Page Mapping</legend>
+    
+        <!--Dropdown-->
+        <div class="row">
+        <div class="col-sm-6">
+            <div class="row" style="padding-top:10px;">
+                <label for="" class="col-sm-3">Menu<span style="color: red;"
+                    class="Mandatoryfield"><b>*</b></span></label>
+                    <select name="Menu" class="form-control col-sm-8" [(ngModel)]="menuName" #Menu="ngModel" (change)="onChangeSubMenu($event)" required>
+                        <option value="0">Select</option>
+                        <option *ngFor="let menu of MenuData" [value]="menu.MenuId">{{menu.MenuName}}</option>
+                    </select>
+                    <!-- <div *ngIf="f.submitted && Menu.invalid" class="invalid-feedback">
+                        <div *ngIf="Menu.errors.required">Menu is required</div>
+                    </div> -->
+            </div>
+        </div>
+    </div>
+    <!--Table Page Mapping-->
+    <form name="form" #f="ngForm" (ngSubmit)="SavePageMapping(f)" novalidate>
+            <div class="col-sm-12" style="overflow-x:scroll; margin-top: 20px;">
+                <!--This table Used For Same State-->
+                <table id="tblOne" class="table table-striped table-bordered" >
+                    <thead>
+                        <tr >
+                            <!-- <th *ngFor="let check of checkboxList; let i = index">{{check.name}}</th> -->
+                            <th>IsView</th>
+                            <th>IsSearch</th>
+                            <th>IsCreate</th>
+                            <th>IsEdit</th>
+                            <th>IsDelete</th>
+                            <th>IsApprove</th>
+                            <th>IsGenPdf</th>
+                            <th>IsPdfView</th>
+                            <th>IsExport</th>
+                            <th>IsImportExcel</th>
+                            <th>IsUploadDoc</th>
+                            <th>IsBulkPdfDwnload</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <td *ngFor="let check of checkboxList; let i = index"><input type="checkbox" [value]="{{check.selected}}" name="check"required [(ngModel)]="check[i].selected" #check="ngModel"></td> -->
+                        <td style="text-align: center;" >
+                            <input type="checkbox" name="IsView" [(ngModel)]="model.IsView" #IsView="ngModel" >
+                        </td>
+                        <td style="text-align: center;" >
+                            <input type="checkbox" name="IsSearch" [(ngModel)]="model.IsSearch" #IsSearch="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsCreate" [(ngModel)]="model.IsCreate" #IsCreate="ngModel" >
+                        </td>
+                        <td style="text-align: center;" >
+                            <input type="checkbox" name="IsEdit" [(ngModel)]="model.IsEdit" #IsEdit="ngModel" >
+                        </td>
+                        <td style="text-align: center;" >
+                            <input type="checkbox" name="IsDelete" [(ngModel)]="model.IsDelete" #IsDelete="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsApprove" [(ngModel)]="model.IsApprove" #IsApprove="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsGenPdf" [(ngModel)]="model.IsGenPdf" #IsGenPdf="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsPdfView" [(ngModel)]="model.IsPdfView" #IsPdfView="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsExport" [(ngModel)]="model.IsExport" #IsExport="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsImportExcel" [(ngModel)]="model.IsImportExcel" #IsImportExcel="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsUploadDoc" [(ngModel)]="model.IsUploadDoc" #IsUploadDoc="ngModel" >
+                        </td>
+                        <td style="text-align: center;">
+                            <input type="checkbox" name="IsBulkPdfDwnload" [(ngModel)]="model.IsBulkPdfDwnload" #IsBulkPdfDwnload="ngModel" >
+                        </td>
+                    </tbody>
+                </table>
+            </div>
+    <!--Save Button-->
+    <div class="form-group">
+        <button class="btn btn-success" [disabled]="!disabledSaveButton">Save</button>
+    </div>
+    </form>
+</fieldset>

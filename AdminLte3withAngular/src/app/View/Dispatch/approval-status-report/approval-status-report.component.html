@@ -1,0 +1,261 @@
+<style>
+    .table th, .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+    }
+    .msg{
+      color: red;
+    }.my-class{
+       /* border:1px solid red;
+       color:red; */
+       border-color:red;
+    }
+    .Mandatoryfield
+    {
+        font-size:15px
+    }
+    .btn-sm1, .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 0.5;
+        border-radius: 0.2rem;
+    }.divwidth
+    {
+    width: 13%;
+    }  
+    .ChildCSS
+   {
+    width: 100%;
+    display: flex;
+    /* justify-content: flex-end; */
+    /* margin-top: -30px; */
+   }
+.ChildSiteCSS{
+  width: 100%;
+    display: flex;
+    /* justify-content: flex-start;
+    margin-top: -30px; */
+}
+    </style>
+    
+    
+    <div class="wrapper">   
+        <app-main-header></app-main-header>   
+        <!-- Main Sidebar Container -->
+        <app-main-sidebar></app-main-sidebar>
+        
+        <div class="content-wrapper " style="min-height: 54.0312px; background-color: white;">
+            <!-- Content Header (Page header) -->
+            <div class="content-header bg-light">
+                <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                        <li class="breadcrumb-item active">Material Tracker  / Material Requisition  </li>
+                      </ol>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- /.content-header -->
+             <section class="content" style="padding-top:2px;" >
+               <div class="container-fluid">            
+                  <div class="row"  id="DivPOList">
+                  <div class="col-sm-12">
+                    <div class="row" style="margin-left:0px">  
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs">State</label>
+                       </div>
+                       <div class="col-sm-2">                             
+                          <angular2-multiselect [data]="SearchStateList" 
+                          [(ngModel)]="SelectedSearchStateList" 
+                          [settings]="MultidropdownSettings" 
+                          (onSelect)="BindSearchWHList('')" 
+                          (onSelectAll)="BindSearchWHList('')"
+                          (onDeSelect)="BindSearchWHList('')"
+                          (onDeSelectAll)="BindSearchWHList('DelAll')"
+                          >
+                          </angular2-multiselect>                   
+                       </div> 
+                      
+                       <!-- <div class="col-sm-1">  
+                        <label class="col-form-label-xs" >Class</label>
+                      </div>                                   
+                      <div class="col-sm-2">  
+                        <angular2-multiselect [data]="SearchItemClassList" 
+                           [(ngModel)]="SelectedItemClassList" 
+                           [settings]="MultidropdownSettings" 
+                           (onSelect)="BindSearchItemName('')" 
+                           (onDeSelect)="BindSearchItemName('')"
+                           (onSelectAll)="BindSearchItemName('')"
+                           (onDeSelectAll)="BindSearchItemName('DelAll')">
+                          </angular2-multiselect>
+                     </div> -->
+                     <div class="col-sm-1">  
+                      <label class="col-form-label-xs" >Item Name</label>
+                    </div>                    
+                    <div class="col-sm-2">                             
+                      <angular2-multiselect [data]="SearchItemNameList" 
+                        [(ngModel)]="SelectedSearchItemNameList" 
+                        [settings]="MultidropdownSettings" 
+                        (onSelect)="BindSearchItemMake('')" 
+                        (onDeSelect)="BindSearchItemMake('')"
+                        (onSelectAll)="BindSearchItemMake('')"
+                        (onDeSelectAll)="BindSearchItemMake('DelAll')">
+                      </angular2-multiselect>  
+                    </div> 
+                   <div class="col-sm-1">  
+                        <label class="col-form-label-xs" >Capacity</label>
+                      </div>                                   
+                      <div class="col-sm-2">  
+                    <angular2-multiselect [data]="SearchItemCapacityList" 
+              [(ngModel)]="SelectedSearchItemCapacityList" 
+              [settings]="MultidropdownSettings" 
+              (onDeSelectAll)="onClickCapacity('DelAll')"
+              (ngModelChange)="onClickCapacity('')"
+              >
+              </angular2-multiselect>
+                     </div>
+                     <div class="col-sm-1">  
+                      <label class="col-form-label-xs" >MR NO</label>
+                    </div>                                   
+                    <div class="col-sm-2">  
+                      <div class="ng-autocomplete" >
+                        <ng-autocomplete 
+                        [data]="AutoCompleteMRNOList" [searchKeyword]="keyword" 
+                        (inputCleared)="ClearedMRNO()" 
+                        [(ngModel)]="model.CuUniqueSiteId"
+                        (selected)='SelectMRNO($event)' (inputChanged)='onChangeMRNOId($event)' 
+                        (inputFocused)='onFocused($event)' [itemTemplate]="MRNoTemplate"
+                        [notFoundTemplate]="MRNoTemplate"
+                        [debounceTime]="600" 
+                        [minQueryLength]="2" 
+                        placeHolder="Search Unique Site Id">
+                        </ng-autocomplete>
+                        <ng-template #MRNoTemplate let-item>
+                            <a [innerHTML]="item.Text"></a>
+                        </ng-template>
+                        <ng-template #MRNoTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                        </ng-template>
+                      </div> 
+                   </div>
+                  </div> 
+                  <hr/>
+                    <app-time-period class="ChildCSS"></app-time-period>
+                    <hr/>   
+                    <app-site-panel class="ChildCSS"></app-site-panel>  
+                    
+    <span></span>
+                      <div class="row">
+                        <div class="col-sm-12" style="background-color:#28a745;">
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" class="btn btn-success"(click)="SearchApprovalMRStatus('LIST')" ><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                            <button type="button" class="btn btn-success" (click)="SearchApprovalMRStatus('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
+                            <!-- <button type="button" class="btn btn-success" (click)="conformPopup()"><i class="fa fa-download" aria-hidden="true"></i> Excel Export</button> -->
+                          
+                      </div>
+                            
+                        </div>
+                        <div class="row"  class="col-sm-12">
+
+                          <div class="card-header p-0 border-bottom-0" *ngIf="IsApprovalTab">
+                            <ul class="nav nav-tabs" id="" role="tablist">
+                             <li class="nav-item col-sm-4" style=" cursor:pointer;" >
+                                <a class="nav-link active" id="" (click)="SearchTabTypeData(null)"  data-toggle="pill" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true"><b>Pending for Approval - {{SCMPendingCount}}</b><span style="float:right;"></span></a>
+                           
+                             </li>
+                             
+                              <li class="nav-item col-sm-4" style="margin-left: -11px; cursor:pointer;" >
+                                <a class="nav-link" id="custom-tabs-three-messages-tab"  (click)="SearchTabTypeData(1458)"data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false"><b>SCM Lead Approved - {{SCMApprovedCount}}</b><span style="float:right;"></span></a>
+                              </li> 
+                              <li class="nav-item col-sm-4" style="margin-left: -11px;cursor:pointer;" >
+                                <a class="nav-link" id="custom-tabs-three-messages-tab"  (click)="SearchTabTypeData(1459)"data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false"><b> SCM Lead Rejected - {{SCMRejectCount}}</b><span style="float:right;"></span></a>
+                              </li> 
+                            </ul>
+                          </div>
+                 
+                  </div>
+                      </div>
+                      <div class="row">
+                        <ag-grid-angular
+                            style="width: 100%; height: 500px;"
+                            class="ag-theme-alpine"
+                            [enableSorting]="true"
+                            [enableFilter]="true"
+                            [pagination]="true"
+                            paginationPageSize ="20"  
+                            [columnDefs]="columnDefs"                         
+                            [multiSortKey]="multiSortKey"
+                            [tooltipShowDelay]="tooltipShowDelay"
+                            [rowData]="rowData"
+                            (gridReady)="onGridReady($event)"
+                            [frameworkComponents]="frameworkComponents"
+                            [overlayLoadingTemplate]="loadingTemplate"
+                           >
+    
+                          </ag-grid-angular>
+                      </div>
+                  </div>
+                  </div>
+                            
+                </div>             
+            </section>  
+            
+        </div>
+        <div class="modal fade" id="confirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">MR Rejection Remarks !</h4>
+              </div>
+              <div class="modal-body">
+                  <label class="col-form-label-xs col-sm-6">Reason<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-12">
+                    <select class="form-control form-control-sm" id="txtReason" [(ngModel)]="model.ApprovalReason" (change)="Reasonchange()">
+                      <option class="dropdown-item"  value="0">Select</option>
+                      <option *ngFor="let item of ReasonDataList" [value]="item.id" >{{item.itemName}}</option>
+                    </select>
+                  </div>
+                  <label class="col-form-label-xs col-sm-6" >Remarks</label>
+                  <div class="col-sm-12">
+                    <textarea type="text" id="txtRemarks" class="form-control form-control-sm"  [(ngModel)]="model.Remarks" placeholder="" (keypress)="KeypressRemarks()"></textarea>
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="loading" (click)="SaveApprovalStatus(1459)" >Reject
+                  <i class="fa fa-spinner fa-spin"*ngIf="loading" ></i>
+                </button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->  
+        <div class="modal fade" id="Approveconfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h4 class="modal-title">Confirmation !</h4>
+              </div>
+              <div class="modal-body">
+                Are you sure want to approve MR?
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="loading" (click)="SaveApprovalStatus(1458)" >Approval
+                  <i class="fa fa-spinner fa-spin" *ngIf="loading" ></i>
+                </button>
+              </div>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->  
+       
+    </div>

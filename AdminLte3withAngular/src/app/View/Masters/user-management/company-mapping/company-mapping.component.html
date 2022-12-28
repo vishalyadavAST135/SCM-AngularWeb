@@ -1,0 +1,24 @@
+<div class="container-fluid">
+    <fieldset class="scheduler-border" >
+        <legend class="scheduler-border">Company Mapping</legend>
+        <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && SaveUpdateCompanyMapping()" novalidate>
+            <div class="row">
+            <div class="col-sm-6">
+                        <div class="row" style="padding-top:10px;">
+                            <label for="" class="col-sm-3">Company<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                                <angular2-multiselect class="col-sm-8"[data]="CompanyData" name="CompanyId" #CompanyId="ngModel" [(ngModel)]="SelectedCompanyList"
+                                [settings]="MultidropdownSettings" (onSelect)="BindSearchCompany('')"
+                                (onDeSelect)="BindSearchCompany('')" (onSelectAll)="BindSearchCompany('')"
+                                (onDeSelectAll)="BindSearchCompany('DelAll')">
+                                </angular2-multiselect>
+                        </div>
+            </div>
+            </div>
+
+            <div class="form-group">
+                <button class="btn btn-success" [disabled]="!disabledSaveButton">Save</button>
+            </div>
+        </form>
+    </fieldset>
+</div>    

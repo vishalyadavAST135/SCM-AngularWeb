@@ -1,0 +1,56 @@
+<fieldset class="scheduler-border">
+    <legend class="scheduler-border">WHMapping Details</legend>
+    <!-- <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && SaveUpdateCompanyWhMapping()" novalidate> -->
+        <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+            <!--This table Used For Same State-->
+            <table id="tblOne" class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>Company<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                        <th>WareHouse<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                        <td (click)="deleteRow(i)" style="width:20px;">
+                            <i class="fa fa-trash" title="Delete"></i>
+                        </td>
+                        <td>
+                            <select class="form-control form-control-sm"
+                                id="txtSelectCompanyId" [(ngModel)]="dynamicArray[i].CompanyId"
+                                (change)="onChangeCompanyId(dynamicArray[i].CompanyId,i)">
+                                <option class="dropdown-item" value="0">Select </option>
+                                <option *ngFor="let item of CompanyData" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                            <!-- <div *ngIf="f.submitted && Company.invalid" class="invalid-feedback">
+                                <div *ngIf="Company.errors.required">Company is required</div>
+                            </div> -->
+                        </td>
+                        <td>
+                             <angular2-multiselect [data]="dynamicArray[i].WHList" name="WareHouse" #WareHouse="ngModel"
+                                [(ngModel)]="dynamicArray[i].SelectWHId"                              
+                                [settings]="MultidropdownSettings"
+                                (onSelect)="onChangehWHId('',i)"
+                                (onDeSelect)="onChangehWHId('',i)"
+                                (onSelectAll)="onChangehWHId('',i)"
+                                (onDeSelectAll)="onChangehWHId('DelAll',i)" required>
+                            </angular2-multiselect>
+                           <!-- <div *ngIf="f.submitted && WareHouse.invalid" class="invalid-feedback">
+                                <div *ngIf="WareHouse.errors.required">WareHouse is required</div>
+                            </div> -->
+                        </td>
+                    </tr>
+                    <tr>
+                        <td (click)="addRow()">
+                            <i class="fa fa-plus"></i>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-success" [disabled]="!disabledSaveButton" (click)="SaveUpdateCompanyWhMapping()">Save</button>
+        </div>
+    <!-- </form> -->
+</fieldset>

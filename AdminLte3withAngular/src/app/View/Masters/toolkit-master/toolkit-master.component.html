@@ -1,0 +1,326 @@
+<style>
+    .table th,
+    .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+
+    .Mandatoryfield {
+        font-size: 15px
+    }
+
+    .ng-star-inserted {
+        /* position: fixed !important; */
+        z-index: 999 !important;
+        /* top: 0px;
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
+    }
+
+    .ChildCSS {
+        width: 100%;
+        display: flex;
+        /* justify-content: flex-end;
+      margin-top: -50px; */
+    }
+
+    #table-wrapper {
+        height: 300px;
+        overflow: auto;
+    }
+
+    .ApprovalColor {
+        color: green
+    }
+
+    .RejectColor {
+        color: red
+    }
+
+    .PendingColor {
+        color: #babfc7
+    }
+</style>
+
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+        <p style="color: white">Please Wait. </p>
+    </ngx-spinner>
+
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Master / Toolkit Master</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+
+        <section class="content" style="padding-top:2px;">
+            <div class="container-fluid">
+                <!--Start Dispatch Front Page-->
+                <div class="row" [hidden]="isShownList">
+                    <div class="col-sm-12">
+                        <div class="row" style="margin-left:3px">
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">ToolKit Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="ng-autocomplete">
+                                    <input type="text" placeholder="Enter toolkit name" [(ngModel)]="model.ToolkitName"
+                                        class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <app-time-period class="ChildCSS"></app-time-period>
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchGetToolkitList('Search')">
+                                        <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchGetToolkitList('Export')"><i class="fa fa-download"
+                                            aria-hidden="true"></i> Excel Export</button>
+                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
+                                            class="fa fa-plus"></i> New
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                                [enableSorting]="true" [enableFilter]="true" [pagination]="true" paginationPageSize="20"
+                                [columnDefs]="columnDefs" [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay" rowSelection="multiple" [rowData]="rowData"
+                                [frameworkComponents]="frameworkComponents" [overlayLoadingTemplate]="loadingTemplate"
+                                [gridOptions]="gridOptions" enableCellTextSelection="true">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+                </div>
+                <!-- --row-End--front-page -->
+                <!--Start toolkit Back End Page-->
+                <div class="row" [hidden]="isShownEdit">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="card card-success">
+                            <div class="card-body">
+                                <!-- <div class="alert alert-danger" *ngIf="IsError" role="alert">
+                                    <strong>Error!</strong> {{errorMessage}}
+                                </div>
+                                <div class="alert alert-success" *ngIf="IsSuccess" role="alert">
+                                    {{succesMessage}}
+                                </div> -->
+                                <div class="row mb-1">
+                                    <div class="col-sm-12 content-header bg-light">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn-sm btn-success" (click)="backPage()"><i
+                                                    class="fa fa-arrow-circle-left"></i> Back</button>
+                                            &nbsp; <button type="submit" class="btn btn-sm btn-success"
+                                                (click)="createNew()"><i class="fa fa-plus"></i>
+                                                New </button>
+                                            &nbsp;<button type="button" class="btn btn-sm btn-success" 
+                                                (click)="conformPopup()"><i class="fa fa-save"></i> Save</button>
+                                                
+                                                
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--start-toolkit-details-->
+                                <div class="row">
+                                    <div class="col-12 col-sm-12 col-md-12 ">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border">Toolkit Details</legend>
+                                            <span></span>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-12">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-2">Toolkit Name<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-4">
+                                                            <div class="input-group">
+                                                                <input type="text" id="toolKitName_"
+                                                                    [(ngModel)]="objEmpToolkitModel.ToolkitName"
+                                                                    placeholder="Enter toolkit name" [readonly]="this.isEditable" 
+                                                                    class="form-control form-control-sm" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="row" style="margin-left: -50px;">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                                <!--start item-details-row-->
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">Item Details</legend>
+                                    <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+                                        <!--This table Used For Same State-->
+                                        <table id="tblOne" class="table table-striped table-bordered">
+
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Item Name<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Item Make<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Item Code<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                                                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span
+                                                            style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+
+                                                </tr>
+
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                                                    <td (click)="deleteRow(i)" style="width:20px;">
+                                                        <i class="fa fa-trash" title="Delete"></i>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemName"
+                                                            id="ddlItemNameId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].ItemNameId"
+                                                            [ngStyle]="{'border-color': submitted ? 'red':'none'}"
+                                                            (change)="changeEditItemName(dynamicArray[i].ItemNameId,i)">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of SearchItemNameList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemMake"
+                                                            id="ddlItemMake_{{i}}" 
+                                                            [ngStyle]="{'border-color': submitted ? 'red':'none'}"
+                                                            (change)="changeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"
+                                                            [(ngModel)]="dynamicArray[i].ItemMakeId">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemMake"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemCode"
+                                                            id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
+                                                            (change)="changeEditItemCode(dynamicArray[i].ItemId,i)"
+                                                            [ngStyle]="{'border-color': submitted ? 'red':'none'}">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemCode"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+
+                                                        </select>
+                                                    </td>
+
+                                                    <td style="width:280px;">
+                                                        <textarea [(ngModel)]="dynamicArray[i].ItemDescription"
+                                                            class="form-control form-control-sm" type="text" 
+                                                            style="text-align:center;"> </textarea>
+                                                    </td>
+                                                    <td style="width:50px;">
+                                                        <select class="form-control form-control-sm UnitName"
+                                                            id="ddlUnitName_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].UnitName"
+                                                            (change)="changeUnit(dynamicArray[i].UnitName,i)"
+                                                            [ngStyle]="{'border-color': submitted ? 'red':'none'}">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].UnitList"
+                                                                [value]="item.Id">{{item.UnitName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <input class="form-control form-control-sm Qty"
+                                                            id="txtQty_{{i}}" autocomplete="off"
+                                                            [(ngModel)]="dynamicArray[i].Qty" appCopyPastNumFloatValue
+                                                            type="text" style="text-align:center;"
+                                                             />
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="ItemAddrowhideshow">
+                                                    <td (click)="addRow()">
+                                                        <i class="fa fa-plus"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                                <!--end item details-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<div class="modal fade" id="confirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm !</h4>
+            </div>
+            <div class="modal-body">
+                Please Confirm the Data.
+                After submitting data will make it permanent change.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="loading" 
+                    (click)="addUpdateToolkitDetial()" >Save
+                    <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,38 @@
+<div class="col-sm-1">
+  <label class="col-form-label-xs">Time Period</label>
+</div>
+<div class="col-sm-2">
+  <select class="form-control form-control-sm" [(ngModel)]="model.TimePeriod"
+    (change)="changeTimePeriod(model.TimePeriod)">
+    <option value="Tod">Today</option>
+    <option value="Yst">Yesterday</option>
+    <option value="24Last">Last 24 hours</option>
+    <option value="1W">1-Week</option>
+    <option value="1M">1-Month</option>
+    <option value="Dsd">Date Specified</option>
+  </select>
+</div>
+<div class="col-sm-1">
+  <label class="col-form-label-xs">Start Date</label>
+</div>
+<div class="col-sm-2">
+  <div class="input-group" (click)="StatDateInput($event)">
+    <input class="form-control form-control-sm" placeholder="" [maxDate]="minDate" name="dpfrom"
+      [(ngModel)]="model.StartDateModel" ngbDatepicker #dfromDate="ngbDatepicker">
+    <div class="input-group-append">
+      <span class="input-group-text" (click)="dfromDate.toggle()"><i class="far fa-calendar-alt"></i></span>
+    </div>
+  </div>
+</div>
+<div class="col-sm-1">
+  <label class="col-form-label-xs">End Date</label>
+</div>
+<div class="col-sm-2">
+  <div class="input-group" (click)="EndDateInput($event)">
+    <input class="form-control form-control-sm" placeholder="" [maxDate]="minDate" name="dpToDate"
+      [(ngModel)]="model.EndDateModel" ngbDatepicker #dToDate="ngbDatepicker">
+    <div class="input-group-append">
+      <span class="input-group-text" (click)="dToDate.toggle()"><i class="far fa-calendar-alt"></i></span>
+    </div>
+  </div>
+</div>

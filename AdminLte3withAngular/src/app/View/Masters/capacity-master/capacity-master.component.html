@@ -1,0 +1,186 @@
+<ng-template  #content let-modal let-d="dismiss">
+  <form novalidate>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modal-basic-title"> Capacity Master Detail </h5>
+  
+        <div>
+        </div>
+      </div>
+      <div class="modal-body">
+        <div class="col-md-12">
+          <div class="">
+            <div class="card-body">
+              <div>
+                <label class="col-form-label-xs col-sm-4"><b>Capacity Name</b><span style="color: red;"
+                    class="Mandatoryfield"><b>*</b></span></label>
+                <div class="col-sm-8">
+                  <input class="form-control form-control-sm" #CapacityName="ngModel" type="text" id="txtitemCode" autocomplete="off" placeholder="" [(ngModel)]="model.CapacityName" [ngModelOptions]="{standalone: true}" (change)="model.CapacityName=model.CapacityName.trim()"
+                  required />
+                  <div *ngIf="CapacityName.touched">
+                    <p *ngIf="CapacityName.errors?.required" style="color: red;">
+                      Capacity Name is a required field!
+                    </p>
+                  </div>
+                </div>
+  
+              </div>
+  
+              <div>
+                <label class="col-form-label-xs col-sm-4"><b>Item Name</b><span style="color: red;"
+                    class="Mandatoryfield"><b>*</b></span></label>
+                <div class="col-sm-8">
+                  <angular2-multiselect 
+                  [data]="SaveItemNameList" 
+                  [(ngModel)]="model.ItemIds"
+                  #ItemIds="ngModel"
+                  [settings]="MultidropdownSettings1"
+                  (onDeSelectAll)="onSearchCommonDeSelectAll()"  
+                  id="txtUnit" 
+                  [ngModelOptions]="{standalone: true}"
+                  required>
+                  </angular2-multiselect>
+                  <div *ngIf="ItemIds.touched">
+                    <p *ngIf="ItemIds.errors?.required" style="color: red;">
+                      Item Name is a required field!
+                    </p>
+                  </div>
+                </div>
+              </div>
+  
+              <div>
+                <label class="col-form-label-xs col-sm-4"><b>Size</b><span style="color: red;"
+                    class="Mandatoryfield"><b>*</b></span></label>
+                <div class="col-sm-8">
+                  <input type="number" id="txtitemCode" autocomplete="off" placeholder="" [(ngModel)]="model.Size" #Size="ngModel"[ngModelOptions]="{standalone: true}"
+                    class="form-control form-control-sm" required/>
+                    <div *ngIf="Size.touched">
+                      <p *ngIf="Size.errors?.required" style="color: red;">
+                        Size is a required field!
+                      </p>
+                    </div>
+                </div>
+  
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+      <div class="modal-footer center ">
+        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')">Cancel</button>
+        <button type="submit" *ngIf="Save" class="btn btn-success" data-dismiss="modal" [disabled]="!(CapacityName && ItemIds && Size).valid"(click)="AddUpdateCapacityMasterDetail()">Save
+        </button>
+      </div>
+    </div>
+  </form>
+</ng-template>
+
+<div class="wrapper">
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
+  <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+    <p style="color: white">Please Wait. </p>
+  </ngx-spinner>
+
+  <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header bg-light">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                <li class="breadcrumb-item active">Masters / Capacity Master</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- /.content-header -->
+    <section class="content" style="padding-top:2px;">
+      <div class="row mb-1" style="margin-left:3px">
+        <div class="container-fluid">
+          <div class="row" *ngIf="isShownList">
+            <div class="col-sm-12">
+              <div class="row">
+                <div class="col-sm-1">  
+                  <label class="col-form-label-xs" >Class</label>
+                </div>                                   
+                <div class="col-sm-2">  
+                  <angular2-multiselect [data]="SearchItemClassList" 
+                     [(ngModel)]="SelectedItemClassList" 
+                     [settings]="MultidropdownSettings1" 
+                     (onSelect)="BindSearchItemName('')" 
+                     (onDeSelect)="BindSearchItemName('')"
+                     (onSelectAll)="BindSearchItemName('')"
+                     (onDeSelectAll)="BindSearchItemName('DelAll')">
+                    </angular2-multiselect>
+               </div>
+
+               <div class="col-sm-1">  
+                <label class="col-form-label-xs" >Item Name</label>
+              </div>                    
+              <div class="col-sm-2">                             
+                <angular2-multiselect [data]="SearchItemNameList" 
+                  [(ngModel)]="SelectedSearchItemNameList" 
+                  [settings]="MultidropdownSettings1" 
+                  (onSelect)="BindSearchCapacity('')" 
+                  (onDeSelect)="BindSearchCapacity('')"
+                  (onSelectAll)="BindSearchCapacity('')"
+                  (onDeSelectAll)="BindSearchCapacity('DelAll')">
+                </angular2-multiselect>  
+              </div>  
+              
+                <div class="col-sm-1">
+                  <label class="col-form-label-xs">Capacity</label>
+                </div>
+  
+                <div class="col-sm-2">
+                  <input class="form-control form-control-sm" type="text" id="txtitemCode" autocomplete="off" placeholder="" [(ngModel)]="model.capacity" />
+                </div>
+
+                
+              </div>
+
+              <div class="row">
+                <div class="col-sm-12" style="background-color:#28a745;">
+                  <div class="btn-group btn-group-sm">
+                    <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="GetAllCapacityMasterList('List')"> <i
+                        class="fa fa-search" aria-hidden="true"></i> Search</button>
+                    <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="GetAllCapacityMasterList('Export')"><i
+                        class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
+                    <button type="button"  *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> New
+                      Capacity</button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <div class="col-sm-12">
+              <div class="row">
+                <ag-grid-angular style="width: 100%; height: 500px;" 
+                class="ag-theme-alpine" 
+                [enableSorting]="true"
+                  [enableFilter]="true" 
+                  [pagination]="true" 
+                  paginationPageSize="20" 
+                  [columnDefs]="columnDefs"
+                  [multiSortKey]="multiSortKey" 
+                  [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                  [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)">
+                </ag-grid-angular>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>

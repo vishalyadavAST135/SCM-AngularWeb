@@ -1,0 +1,415 @@
+<style>
+    .table th, .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }   
+    .Mandatoryfield
+    {
+    font-size:15px
+     }
+     .ng-star-inserted
+     {
+      /* position: fixed !important; */
+      z-index:999 !important;
+    /* top: 0px;
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
+     }
+     .box {
+     border :1px solid red;
+ 
+}
+    </style>
+     <ng-template  #content  let-modal let-d="dismiss" >
+      <div class="modal-content" >
+        <div class="modal-header"  >
+          <h5 class="modal-title" id="modal-basic-title"> Item Equipment Detail </h5>
+          
+          <div>
+         </div>
+        </div>
+        <div class="modal-body">
+            <div class="col-sm-12 col-md-12">
+                <div class="">
+              <div class="card-body">
+                <div class="row" >
+                    <div  class="col-12 col-sm-12">
+                        <div class="row mb-2">
+                            <div class="col-sm-6">
+                              <div class="row">
+                                <label class="col-form-label-xs col-sm-4"><b>Name</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span> <a (click)="ItemClick()"><i class="fa fa-plus"></i></a></label>                           
+                                <div class="col-sm-8">
+                                  <!--Brahamjot kaur 08/06/2022-->
+                                  <select class="form-control form-control-sm" id="txtddlItem" appAutofocus [(ngModel)]="model.ddlItem" (change)="ChangeItemName($event)">
+                                    <option class="dropdown-item"  value="0">Select</option>
+                                    <option *ngFor="let itemState of  SaveItemNameList" [value]="itemState.id" >{{itemState.itemName}}</option>
+                                  </select>
+                                 </div>
+                                </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4"><b>Capacity</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtCapacityId" [(ngModel)]="model.ddlCapacityId" (change)="ChangeCapacity(model.ddlCapacityId)">
+                                  <option class="dropdown-item"  value="0">Select</option>
+                                  <option *ngFor="let itemState of  CapacityList" [value]="itemState.id" >{{itemState.itemName}}</option>
+                                </select>
+                               </div>
+                          </div>
+                      </div>
+                    </div>
+                    </div>
+                </div>
+
+                <div class="row" >
+                    <div  class="col-12 col-sm-12">
+                        <div class="row mb-2">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4"><b>Make</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span> <a (click)="MakeClick()"><i class="fa fa-plus"></i></a></label>                           
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtddlMake" [(ngModel)]="model.ddlMake" (change)="ChangeItemMake()">
+                                  <option class="dropdown-item"  value="0">Select</option>
+                                  <option *ngFor="let itemState of  SaveMakeNameList" [value]="itemState.id" >{{itemState.itemName}}</option>
+                                </select>
+                               </div>
+                          </div>
+                      </div>
+
+                            <div class="col-sm-6">
+                              <div class="row">
+                                <label class="col-form-label-xs col-sm-4"><b>Unit Name</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span> <a (click)="UnitClick()"><i class="fa fa-plus"></i></a></label>                           
+                                <div class="col-sm-8">
+                                  <angular2-multiselect [data]="SaveUnitNameList" 
+                                [(ngModel)]="SaveddlUnit" 
+                                [settings]="MultidropdownSettings1" 
+                                (onDeSelectAll)="onSearchCommonDeSelectAll(4)"
+                                (ngModelChange)="SearchChangeUnit($event)"
+                                id="txtUnit" >
+                               </angular2-multiselect>
+                                  <!-- <select class="form-control form-control-sm" id="txtddlUnit" [(ngModel)]="model.ddlUnit" (change)="ChangeItemUnit()">
+                                    <option class="dropdown-item"  value="0">Select</option>
+                                    <option *ngFor="let itemState of SaveUnitNameList " [value]="itemState.id" >{{itemState.itemName}}</option>
+                                  </select> -->
+                                 </div>
+
+                            </div>
+                        </div>
+                       
+                    </div>
+                    </div>
+                </div>
+
+                <div class="row" >
+                    <div  class="col-12 col-sm-12">
+                        <div class="row mb-2">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4"><b>Item Code</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                              <div class="col-sm-8">
+                                <input type="text" id="txtitemCode" autocomplete="off" [disabled]="IsEditItemCode"    placeholder="" [(ngModel)]="model.itemCode" (keypress)="keyPressItemcode()"  class="form-control form-control-sm" />
+                               </div>
+                               
+                          </div>
+                          <input type="hidden" id="" autocomplete="off"   placeholder="" [(ngModel)]="model.hiddenEquipmentId"   class="form-control form-control-sm" />
+                      </div>
+
+
+                            <div class="col-sm-6">
+                              <div class="row">
+                                <label class="col-form-label-xs col-sm-4"><b>Specs</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                                <div class="col-sm-8">
+                                    <input type="text" id="txtitemSpecs" autocomplete="off"   placeholder="" [(ngModel)]="model.itemSpecs" (change)="onSpecs()"(keypress)="keyPressSpecs()"    class="form-control form-control-sm" />
+                                 </div>
+
+                            </div>
+                        </div>
+                   
+                    </div>
+                    </div>
+                </div>
+                <div class="row" >
+                  <div  class="col-12 col-sm-12">
+                      <div class="row mb-2">
+                        <div class="col-sm-6">
+                          <!--Brahamjot kaur 07/06/2022-->
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"><b>Description</b>
+                              <!-- <span style="color: red;"class="Mandatoryfield"><b>*</b></span> -->
+                            </label>                           
+                            <div class="col-sm-8">
+                              <textarea type="text" id="txtitemDescription" rows="2" autocomplete="off"  (keypress)="keyPressDescription()"  placeholder="" [(ngModel)]="model.itemDescription"   class="form-control form-control-sm" readonly></textarea>
+                             </div>
+
+                        </div>
+                    </div>
+
+
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4"><b>Is Conversion</b><span style="color: red;"class="Mandatoryfield"><b></b></span></label>                           
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtIsConversion" [(ngModel)]="model.IsConversion" (change)="ChangeConversion()">
+                                  <option class="dropdown-item"  value="">Select</option>
+                                  <option class="dropdown-item"  value="1">Yes</option>
+                                  <option class="dropdown-item"  value="0">No</option>
+                                  
+                                </select>
+                               </div>
+
+                          </div>
+                      </div>
+                
+                  </div>
+                  </div>
+              </div>
+
+              <div class="row" >
+                <div  class="col-12 col-sm-12">
+                    <div class="row mb-2">
+
+                      <div class="col-sm-6">
+                        <div class="row">
+                          <label class="col-form-label-xs col-sm-4"><b>Conversion Unit </b><span style="color: red;"class="Mandatoryfield"><b></b></span> </label>                           
+                          <div class="col-sm-8">
+                            <select class="form-control form-control-sm" id="txtConversionUnit" [(ngModel)]="model.ddlConversionUnit" (change)="ChangeItemUnit()">
+                              <option class="dropdown-item"  value="0">Select</option>
+                              <option *ngFor="let itemState of SaveUnitNameList " [value]="itemState.id" >{{itemState.itemName}}</option>
+                            </select>
+                           </div>
+
+                      </div>
+                  </div>
+
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"><b> Conversion Value</b><span style="color: red;"class="Mandatoryfield"><b></b></span></label>                           
+                            <div class="col-sm-8">
+                              <input type="text" id="txtConversionValue" autocomplete="off" appNumFloat  placeholder="" [(ngModel)]="model.ConversionValue" (keypress)="keyPressConversionValue()"    class="form-control form-control-sm" />
+                             </div>
+
+                        </div>
+                    </div>
+                   
+                </div>
+                </div>
+            </div>
+                <div class="row" >
+                    <div  class="col-12 col-sm-12">
+                        <div class="row mb-2">
+
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4"><b>Cell Volt </b><span style="color: red;"class="Mandatoryfield"><b></b></span> </label>                           
+                              <div class="col-sm-8">
+                                <input type="text" id="txtCellVolt" autocomplete="off" appNumFloat  placeholder="" [(ngModel)]="model.CellVolt" (keypress)="keyPressCellVolt()"    class="form-control form-control-sm" />
+                               </div>
+      
+                          </div>
+                      </div>
+                            <div class="col-sm-6">
+                              <div class="row">
+                                <label class="col-form-label-xs col-sm-4"><b>Status</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                                <div class="col-sm-8">
+                                  <select class="form-control form-control-sm" id="txtddlIsActive" [(ngModel)]="model.IsActive" (change)="Changestatus()">
+                                    <option class="dropdown-item"  value="">Select</option>
+                                    <option class="dropdown-item"  value="1">Active</option>
+                                    <option class="dropdown-item"  value="0">Deactive</option>
+                                    
+                                  </select>
+                                 </div>
+
+                            </div>
+                        </div>
+                        
+                    </div>
+                    </div>
+                </div>
+
+
+                <div class="row" >
+                  <div  class="col-12 col-sm-12">
+                      <div class="row mb-2">
+                        
+                      <div class="col-sm-6">
+                        <div class="row">
+                          <label class="col-form-label-xs col-sm-4"><b>Company</b><span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                          <div class="col-sm-8">
+                            <select class="form-control form-control-sm" id="txtddlCompany" [(ngModel)]="model.ddlCompany" (change)="ChangeCompany()">
+                              <option class="dropdown-item"  value="0">Select</option>
+                              <option *ngFor="let item of CompanyData " [value]="item.CompanyId" >{{item.CompanyName}}</option>
+                              
+                            </select>
+                           </div>
+
+                      </div>
+                  </div>
+                  </div>
+                  </div>
+              </div>
+            </div>
+            </div>
+            <!-- /.card -->
+            </div>
+        </div>
+        <div class="modal-footer center ">
+          <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')" >Cancel</button>
+          <button type="submit" *ngIf="Save" class="btn btn-success" data-dismiss="modal" (click)="AddUpdateItemEquipmentDetial()" >Save </button>
+        </div>
+      </div>
+    </ng-template>
+   
+  <div class="wrapper">
+      <app-main-header></app-main-header>   
+      <!-- Main Sidebar Container -->
+      <app-main-sidebar></app-main-sidebar>
+      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+        <p style="color: white">Please Wait. </p>  
+        </ngx-spinner> 
+      <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+          <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-12">
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                  <li class="breadcrumb-item active">Masters / Item Masters</li>
+                </ol>
+                </nav>
+              </div>
+              </div>
+            </div>
+        </div>
+             <!-- /.content-header -->
+             <section class="content" style="padding-top:2px;" >
+                <div class="container-fluid">  
+                  <div class="row" *ngIf="isShownList">
+                      <div class="col-sm-12">                   
+                     
+                        <div class="row mb-1" style="margin-left:3px">  
+                             <div class="col-sm-1">  
+                              <label class="col-form-label-xs">Item Name</label>
+                            </div>     
+                            <div class="col-sm-2"> 
+                              <angular2-multiselect [data]="SearchItemNameList" 
+                              [(ngModel)]="SearchddlItem" 
+                              [settings]="MultidropdownSettings1"
+                              (onDeSelectAll)="onSearchCommonDeSelectAll('1')"
+                              (ngModelChange)="SearchChangeItem($event)"
+                              >
+                             </angular2-multiselect>
+                              <!-- <select class="form-control form-control-sm" [(ngModel)]="model.SearchddlItem">
+                                <option class="dropdown-item" [value]="0">Select</option>
+                                <option *ngFor="let item of SearchItemNameList" [value]="item.id" >{{item.itemName}}</option>
+                               </select> -->
+                             </div> 
+
+                             <div class="col-sm-1">  
+                                <label class="col-form-label-xs">Item Make</label>
+                              </div>     
+                              <div class="col-sm-2">  
+                               <angular2-multiselect [data]="SearchMakeNameList" 
+                                [(ngModel)]="SearchddlMake" 
+                                [settings]="MultidropdownSettings1" 
+                                (onDeSelectAll)="onSearchCommonDeSelectAll(2)"
+                                (ngModelChange)="SearchChangeMakeName($event)"
+                                >
+                               </angular2-multiselect>
+                                <!-- <select class="form-control form-control-sm" [(ngModel)]="model. SearchddlMake"  >
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of SearchMakeNameList" [value]="item.id" >{{item.itemName}}</option>
+                                 </select> -->
+                               </div>
+                               <div class="col-sm-1">  
+                                <label class="col-form-label-xs">Item Unit</label>
+                              </div>     
+                              <div class="col-sm-2"> 
+                                <angular2-multiselect [data]="SearchUnitNameList" 
+                                [(ngModel)]="SearchddlUnit" 
+                                [settings]="MultidropdownSettings1" 
+                                (onDeSelectAll)="onSearchCommonDeSelectAll(3)"
+                                (ngModelChange)="SearchChangeUnit($event)"
+                                >
+                               </angular2-multiselect>
+                                
+                                <!-- <select class="form-control form-control-sm" [(ngModel)]="model.SearchddlUnit">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of SearchUnitNameList" [value]="item.id" >{{item.itemName}}</option>
+                                 </select> -->
+                               </div>
+                             <div class="col-sm-1">  
+                              <label class="col-form-label-xs col-sm-4">Status</label>
+                            </div> 
+                             <div class="col-sm-2"> 
+                                <angular2-multiselect [data]="SearchStatusList" 
+                                [(ngModel)]="SelectedStatusList" 
+                                [settings]="MultidropdownSettings" 
+                                (onDeSelectAll)="onSearchVenDeSelectAll($event)"
+                                (onDeSelect)="onSearchDeSelectSingle($event)"
+                                (ngModelChange)="SearchChangeStatus($event)"
+                                >
+                               </angular2-multiselect>
+                               <!-- <select class="form-control form-control-sm" id="txtSearchStatus"    [(ngModel)]="model.SearchStatus" >
+                                <option class="dropdown-item"  value="2">Select </option>
+                                        <option class="dropdown-item"  value="1">Active</option>
+                                        <option class="dropdown-item"  value="0">Deactive</option>
+                            </select> -->
+                               </div>
+                         </div>                 
+                        <div class="row mb-1" style="margin-left:3px">  
+                          <div class="col-sm-1">  
+                            <label class="col-form-label-xs">Item Code</label>
+                          </div> 
+                           <div class="col-sm-2"> 
+                            <input type="text" id="txtSearchitemCode" autocomplete="off"   placeholder="" [(ngModel)]="model.ItemCode"    class="form-control form-control-sm" />
+                        </div>   
+                      </div>  
+                              <!-- /.Ravider -->
+                       
+                        <div class="row">
+                                  <div class="col-sm-12" style="background-color:#28a745;">
+                                  <div class="btn-group btn-group-sm">
+                                      <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="GetAllEquipmentMasterList('List')"> <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                      <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="GetAllEquipmentMasterList('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
+                                      <button type="button" *ngIf="this.ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> New Item Equipment </button> 
+                                    </div>
+                                      
+                                  </div>
+                                </div>
+                            </div>
+                        <div class="col-sm-12">                     
+                            <div class="row">
+                                  <ag-grid-angular
+                                      style="width: 100%; height: 500px;"
+                                      class="ag-theme-alpine"
+                                      [enableSorting]="true"
+                                      [enableFilter]="true"
+                                      [pagination]="true"
+                                      paginationPageSize ="20"  
+                                      [columnDefs]="columnDefs"                         
+                                      [multiSortKey]="multiSortKey"
+                                      [tooltipShowDelay]="tooltipShowDelay"
+                                      [rowData]="rowData"
+                                      [frameworkComponents]="frameworkComponents"
+                                      (gridReady)="onGridReady($event)">      
+                                    </ag-grid-angular>
+                            </div>
+                      </div>
+                  </div>
+
+                </div>
+             </section>
+                 
+      </div>
+  </div>

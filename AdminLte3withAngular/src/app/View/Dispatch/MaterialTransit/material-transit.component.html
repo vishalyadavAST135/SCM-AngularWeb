@@ -1,0 +1,735 @@
+<style>
+    .table th, .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }   
+    .Mandatoryfield
+    {
+    font-size:15px
+     }
+     .btn-sm1, .btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 0.5;
+    border-radius: 0.2rem;
+     }
+     @media screen {
+       .modal-adaptive .modal-lg {
+           width: 10% !important;
+           max-width: calc(10%);
+       }
+      }
+   .my-class .modal-dialog { 
+     max-width: 10%;
+     width: 10%;
+}
+    </style>
+    <ng-template  #content  let-modal let-d="dismiss" >
+      <div class="modal-content" >
+        <div class="modal-header"  >
+          <h5 class="modal-title" id="modal-basic-title">Please confirm..</h5>
+          
+          <div>
+         </div>
+        </div>
+        <div class="modal-body">
+      <span>PO total qty has been save,please check GRN detail</span>
+        </div>
+        <div class="modal-footer center ">
+          <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')" >No</button>
+          <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="ConfirmmationClick()" >Ok </button>
+        </div>
+      </div>
+      
+    
+    </ng-template>
+  <div class="wrapper">
+      <app-main-header></app-main-header>   
+      <!-- Main Sidebar Container -->
+      <app-main-sidebar></app-main-sidebar>
+      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+        <p style="color: white">Please Wait. </p>  
+        </ngx-spinner> 
+      <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+          <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-12">
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                  <li class="breadcrumb-item active">Material Tracker / Material in Transit</li>
+                </ol>
+                </nav>
+              </div>
+              </div>
+            </div>
+        </div>
+             <!-- /.content-header -->
+        
+        <section class="content" style="padding-top:2px;" >
+          <div class="container-fluid">  
+            <div class="row" *ngIf="isShownList">
+                <div class="col-sm-12">                   
+                  <app-search-panel [IsHiddenSearchCustomer]="IsHiddenSearchCustomer"></app-search-panel>                  
+                  <div class="row mb-1" style="margin-left:3px">  
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs"> PO No</label>
+                      </div>                                         
+                      <div class="col-sm-2">                       
+                        <div class="ng-autocomplete">
+                          <ng-autocomplete 
+                          [data]="AutoCompleteSearchPOList" [searchKeyword]="SearchPokeyword" 
+                          (inputCleared)="SearchPoCleared()" 
+                          (selected)='SearchPoSelectEvent($event)' 
+                          (inputChanged)='BindAutoCompletePOList($event,0)' 
+                          [itemTemplate]="itemTemplate"
+                          [notFoundTemplate]="notFoundTemplate"
+                          [debounceTime]="600" 
+                          [minQueryLength]="2" 
+                          placeHolder="Search Po No..">
+                          </ng-autocomplete>
+                          <ng-template #itemTemplate let-item>
+                              <a [innerHTML]="item.PoName"></a>
+                          </ng-template>
+                          <ng-template #notFoundTemplate let-notFound>
+                              <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div>
+                      </div>
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs"> Invoice No</label>
+                      </div>
+                      <div class="col-sm-2">
+                        <input type="text" id="txtSearchInvoiceNo" placeholder="Enter Invoice No"   class="form-control form-control-sm" [(ngModel)]="model.SearchInvoiceNo"/>
+                      </div>
+
+                      <div class="col-sm-1">  
+                        <label class="col-form-label-xs">Voucher Type</label>
+                      </div>     
+                      <div class="col-sm-2">                             
+                        <select class="form-control form-control-sm"id="txtVoucher"  [(ngModel)]="model.VoucherTypeId" >
+                          <option class="dropdown-item" [value]="0">Select</option>
+                          <option *ngFor="let item of VoucherTypeDetail" [value]="item.id" >{{item.itemName}}</option>
+                      </select>
+                       </div>
+
+                  </div>   
+                  
+                  <div class="row" style="margin-left:3px">
+                    <div class="col-12 col-sm-6 col-md-3">
+                      <div class="info-box1" style="background-color:#1dd847c7" >
+                        <div class="info-box-content">
+                          <!-- <label class="col-sm-12" style="text-align:center;color:white"><b> Annexure (Excel)</b></label> -->
+                          <span class=""style="color:white;margin-left:15px"><b>New Material Movement</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>{{this.NewMaterial}}</b></span>
+                        </div>
+                      </div>
+                  
+                    </div>
+                   
+                   
+                    <div class="col-12 col-sm-6 col-md-3">
+                      <div class="info-box1"style="background-color:#ec7d20fa" >
+                        <div class="info-box-content">
+                          <!-- <span class="info-box-text">Amended PO</span> -->
+                          <span class=""style="color:white;margin-left:15px"><b>Update Material Movement</b>&nbsp;&nbsp;&nbsp;&nbsp; <b>{{this.UpdateMaterial}}</b></span>
+                        </div>
+                       
+                      </div>
+                    </div>
+                   
+
+
+                    <div>
+                      <div>
+                          <button type="button" class="btn btn-sm1 btn-success"  (click)="SearchMaterialMovementHistoryCountList()"><i class="fa fa-search" aria-hidden="true"></i> Summary</button>
+                      </div>
+                  
+                    </div>
+          
+                
+               
+                  </div>  
+<span></span>
+                  <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch"(click)="SearchMaterialTrackerList('List')"> <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="SearchMaterialTrackerList('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin" *ngIf="Exportloading"></i></button>
+                                <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> Material Movement</button>
+                                <!-- <button type="button" class="btn btn-success" (click)="generatePDF()"><i class="fa fa-plus"></i> PDF</button> -->
+                              </div>
+                                
+                            </div>
+                          </div>
+                      </div>
+                  <div class="col-sm-12">                     
+                      <div class="row">
+                            <ag-grid-angular
+                                style="width: 100%; height: 500px;"
+                                class="ag-theme-alpine"
+                                [enableSorting]="true"
+                                [enableFilter]="true"
+                                [pagination]="true"
+                                paginationPageSize ="20"  
+                                [columnDefs]="columnDefs"                         
+                                [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay"
+                                [rowData]="GridrowData"
+                                [frameworkComponents]="frameworkComponents"
+                                (gridReady)="onGridReady($event)"
+                                [overlayLoadingTemplate]="loadingTemplate">      
+                              </ag-grid-angular>
+                      </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="isShownEdit">
+              <div class="col-sm-12 col-md-12">
+                <div class="card card-success">
+                  <div class="card-body">
+                    <div class="row mb-1">
+                      <div class="col-sm-12 content-header bg-light">                                   
+                        <div class="col-sm-12">
+                          <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
+                          &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-sm btn-success" (click)="CreateNew()" ><i class="fa fa-plus"></i> 
+                             New </button>
+                            &nbsp;<button type="button" *ngIf="Save" class="btn btn-sm btn-success" (click)="SaveMaterialTracker()"><i class="fa fa-save"></i> Save</button>
+                            <app-view-approvalpage [ChildApprovalList]="ApprovalList" [ManueId]="ManueId" [TableId]="TableId" [CreateName]="CreateName" [CreatedDate]="CreatedDate" [ModifiedName]="ModifiedName" [ModifiedDate]="ModifiedDate" [ApprovalstatusbtnhideShow]="IsApprovalstatusbtnhideShow" ></app-view-approvalpage>
+                            <!-- <button type="button" class="btn btn-success" (click)="generatePDF()"><i class="fa fa-plus"></i> PDF</button> -->
+                          </div>                                    
+                      </div>
+                    </div>
+
+                    <div class="row mb-1">
+                        <label class="col-form-label-xs col-sm-1">PO No</label>                           
+                        <div class="col-sm-2">
+                          <div class="input-group">                                  
+                            <div class="ng-autocomplete" >
+                              <ng-autocomplete 
+                              [data]="AutoCompleteEditPOList" 
+                              [searchKeyword]="SearchPokeyword" 
+                              (inputCleared)="EditPoCleared()" 
+                              (selected)='EditPoSelectEvent($event)' 
+                              (inputChanged)='BindAutoCompletePOList($event,1)' 
+                              [itemTemplate]="itemEditTemplate"
+                              [notFoundTemplate]="notFoundEditTemplate"
+                              [debounceTime]="1500" 
+                              [minQueryLength]="2" 
+                              [(ngModel)]="model.EditPONo"
+                              placeHolder="Search Po No.."
+                              [disabled]="IsAutoCompleteDesabled"
+                              >
+                              </ng-autocomplete>
+                              <ng-template #itemEditTemplate let-item>
+                                  <a [innerHTML]="item.PoName"></a>
+                              </ng-template>
+                              <ng-template #notFoundEditTemplate let-notFound>
+                                  <div [innerHTML]="notFound"></div>
+                              </ng-template>
+                            </div>                           
+                          </div>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">PO Date</label>                           
+                        <div class="col-sm-2">
+                          <div class="input-group">
+                            <input class="form-control form-control-sm" id="txtPodate"
+                                   name="dpPoDate" [(ngModel)]="model.Podate" disabled ngbDatepicker #dPoDate="ngbDatepicker">
+                            <div class="input-group-append">
+                              <span class="input-group-text" (click)="dPoDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                            </div>
+                          </div>
+                        </div> 
+
+                        <!-- <label class="col-form-label-xs col-sm-1">Company Name<span style="color:red">*</span></label>                        
+                        <div class="col-sm-2">
+                          <select class="form-control form-control-sm" disabled id="ddlEditCompanyId" [(ngModel)]="model.EditCompanyId">
+                            <option class="dropdown-item" disabled selected value="0">Select</option>
+                            <option *ngFor="let item of CompanyData" [value]="item.CompanyId" >{{item.CompanyName}}</option>
+                          </select>
+                        </div> -->
+                        <label class="col-form-label-xs col-sm-1">Vendor Name<span style="color:red"class="Mandatoryfield"><b>*</b></span></label>                           
+                        <div class="col-sm-2">
+                            <angular2-multiselect [data]="SearchVendorList" 
+                              id="ddlEditVendor"
+                              [(ngModel)]="SelectedEditVendorList" 
+                              [settings]="SingledropdownSettings" 
+                              (onSelect)="BindVendorOrWhAddess('vendor','0')" 
+                              (onSelectAll)="BindVendorOrWhAddess('vendor','0')"
+                              (onDeSelect)="BindVendorOrWhAddess('vendor','0')"
+                              (onDeSelectAll)="BindVendorOrWhAddess('vendor','Dell')"> 
+                            </angular2-multiselect>  
+                            
+                            <!-- <select class="form-control form-control-sm" id="ddlEditVendor" [(ngModel)]="model.SelectedEditVendorList" (change)="BindVendorOrWhAddess()">
+                              <option class="dropdown-item" disabled selected value="0">Select</option>
+                              <option *ngFor="let item of SearchVendorList" [value]="item.id" >{{item.itemName}}</option>
+                            </select> -->
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Vendor Address </label>
+                        <div class="col-sm-2">
+                            <textarea rows="1" placeholder="Dispatch From/Vender Address" [(ngModel)]="model.VendorAddress" class="form-control form-control-sm"></textarea>
+                        </div>
+                    </div>                    
+                    <div class="row mb-1">
+                      
+                        <label class="col-form-label-xs col-sm-1">WH State<span style="color:red"class="Mandatoryfield"><b>*</b></span></label>                        
+                        <div class="col-sm-2">                             
+                          <select class="form-control form-control-sm" id="ddlEditStateId" [(ngModel)]="model.EditStateId" (change)="BindEditWHList()">
+                            <option class="dropdown-item" disabled selected value="0">Select</option>
+                            <option *ngFor="let item of SearchStateList" [value]="item.id" >{{item.itemName}}</option>
+                          </select>
+                        </div>                     
+                        <label class="col-form-label-xs col-sm-1">WH Name<span style="color:red"class="Mandatoryfield"><b>*</b></span> </label>
+                        <div class="col-sm-2">                             
+                          <select class="form-control form-control-sm" id="ddlEditWHId" [(ngModel)]="model.EditWHId" (change)="BindVendorOrWhAddess('WHMaster',model.EditWHId)">
+                            <option class="dropdown-item" disabled selected value="0">Select</option>
+                            <option *ngFor="let item of EditWHList" [value]="item.id" >{{item.itemName}}</option>
+                          </select>
+                        </div>                                      
+                        <label class="col-form-label-xs col-sm-1">WH Address </label>                           
+                        <div class="col-sm-2">
+                            <textarea rows="1" placeholder="Destination /WH Address" [(ngModel)]="model.WHAddress" class="form-control form-control-sm"></textarea>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Dispatch Thr</label>                           
+                        <div class="col-sm-2">
+                            <textarea rows="1" class="form-control form-control-sm" [(ngModel)]="model.DispatchThr"></textarea>
+                        </div>                     
+                    </div>
+                   
+                    <div class="row mb-1">
+                      <label class="col-form-label-xs col-sm-1">Inv/Challan No<span style="color:red"class="Mandatoryfield"><b>*</b></span></label>                           
+                        <div class="col-sm-2">
+                            <input type="text" id="txtInvoiceNo"  placeholder="Enter Invoice No" (keypress)="InvoiceNoKeyPress()" class="form-control form-control-sm" [(ngModel)]="model.InvoiceNo"/>
+                            <!-- <input type="text" id="txtInvoiceNo" [disabled]="IsAutoCompleteDesabled" placeholder="Enter Invoice No" (keypress)="InvoiceNoKeyPress()" class="form-control form-control-sm" [(ngModel)]="model.InvoiceNo"/> -->
+                          </div>
+                      <label class="col-form-label-xs col-sm-1">Inv/Challan Date<span style="color:red"class="Mandatoryfield"><b>*</b></span></label>                           
+                        <div class="col-sm-2">
+                            <div class="input-group"(click)="InvDateClick($event)" (mouseenter)="onKeypressChallanDate($event)">
+                                <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate" [disabled]="IsAutoCompleteDesabled"
+                                  [(ngModel)]="model.InvoiceDate" ngbDatepicker #dInvoiceDate="ngbDatepicker">
+                                <div class="input-group-append">
+                                  <span class="input-group-text" (click)="dInvoiceDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                                </div>
+                            </div>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1"> Inv/Challan Amt </label>                          
+                        <div class="col-sm-2">
+                            <input type="text" [(ngModel)]="model.InvoiceAmount" appCopyPastNumFloatValue  placeholder="Invoice Amount" class="form-control form-control-sm" />
+                        </div>
+                        <label class="col-form-label-xs col-sm-1"> Inv/Challan file</label>                          
+                        <div class="col-sm-2">
+                          <input type="file" #filePicker (change)="onInvoiceImageSelect($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                        </div>
+                    </div>
+                    <div class="row mb-1">
+                      
+                      <label class="col-form-label-xs col-sm-1">EwayBill No</label>                           
+                      <div class="col-sm-2">
+                          <input type="text" [(ngModel)]="model.EwayBillNo" placeholder="Enter EwayBill No" class="form-control form-control-sm"/>
+                      </div>
+                    <label class="col-form-label-xs col-sm-1">EwayBill Date</label>                           
+                      <div class="col-sm-2">
+                          <div class="input-group" (click)="EwayBillDateClick($event)">
+                              <input class="form-control form-control-sm" placeholder=""
+                                [(ngModel)]="model.EwayBillDate" ngbDatepicker #dEwayBillDate="ngbDatepicker">
+                              <div class="input-group-append">
+                                <span class="input-group-text" (click)="dEwayBillDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                              </div>
+                          </div>
+                      </div>
+
+                      <label class="col-form-label-xs col-sm-1"> EwayBill Upload</label>                          
+                      <div class="col-sm-2">
+                        <input type="file" #filePicker (change)="onEwayBillImageSelect($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                      </div>
+
+                      <label class="col-form-label-xs col-sm-1">Dispatch Date</label>                           
+                      <div class="col-sm-2">
+                          <div class="input-group">
+                              <input class="form-control form-control-sm" placeholder=""
+                                [(ngModel)]="model.DispatchDate" ngbDatepicker #dDispatchDate="ngbDatepicker">
+                              <div class="input-group-append">
+                                <span class="input-group-text" (click)="dDispatchDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                              </div>
+                          </div>                            
+                      </div>   
+                        
+                      
+                    </div>
+                    <div class="row mb-1">
+                                  
+                      <label class="col-form-label-xs col-sm-1">Expected Delivery Date</label>                           
+                      <div class="col-sm-2">
+                          <div class="input-group">
+                              <input class="form-control form-control-sm" placeholder=""
+                                [(ngModel)]="model.ExpectedDeliveryDate" ngbDatepicker #dExpectedDeliveryDate="ngbDatepicker">
+                              <div class="input-group-append">
+                                <span class="input-group-text" (click)="dExpectedDeliveryDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                              </div>
+                          </div>
+                      </div>
+                      <label class="col-form-label-xs col-sm-1">Actual Received Date</label>                           
+                      <div class="col-sm-2">
+                          <div class="input-group">
+                              <input class="form-control form-control-sm" placeholder=""
+                                [(ngModel)]="model.ActualReceivedDate" ngbDatepicker #dActualReceivedDate="ngbDatepicker">
+                              <div class="input-group-append">
+                                <span class="input-group-text" (click)="dActualReceivedDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                              </div>
+                          </div>
+                      </div>
+                      <label class="col-form-label-xs col-sm-1">Track Ref </label>                          
+                        <div class="col-sm-2">
+                            <textarea rows="2" [(ngModel)]="model.TrackRef" placeholder="Track Ref" class="form-control form-control-sm"></textarea>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Remarks </label>                          
+                        <div class="col-sm-2">
+                            <textarea rows="2" [(ngModel)]="model.Remarks" placeholder="Remarks" class="form-control form-control-sm"></textarea>
+                        </div>                 
+                    </div>
+                    <div class="row mb-1">
+                      <label class="col-form-label-xs col-sm-1">Transporter Name<span style="color:red"class="Mandatoryfield"><b></b></span></label>                           
+                        <div class="col-sm-2">
+                            <input type="text" id="txtInvoiceNo" autocomplete="off"  placeholder="" (keypress)="InvoiceNoKeyPress()" class="form-control form-control-sm" [(ngModel)]="model.TransporterName"/>
+                            <!-- <input type="text" id="txtInvoiceNo" [disabled]="IsAutoCompleteDesabled" placeholder="Enter Invoice No" (keypress)="InvoiceNoKeyPress()" class="form-control form-control-sm" [(ngModel)]="model.InvoiceNo"/> -->
+                          </div>
+                      <label class="col-form-label-xs col-sm-1">Mobile No<span style="color:red"class="Mandatoryfield"><b></b></span></label>                           
+                        <div class="col-sm-2">
+                          <input type="text" id="txtInvoiceNo" autocomplete="off"  placeholder=""appCopyPastNumFloatValue maxlength="12" (keypress)="InvoiceNoKeyPress()" class="form-control form-control-sm" [(ngModel)]="model.MobileNo"/>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1"> Vehicle No </label>                          
+                        <div class="col-sm-2">
+                            <input type="text" [(ngModel)]="model.VehicleNo" autocomplete="off"   placeholder="" class="form-control form-control-sm" />
+                        </div>
+                        <label class="col-form-label-xs col-sm-1"> Docket No</label>                          
+                        <div class="col-sm-2">
+                          <input type="text" [(ngModel)]="model.DocketNo" autocomplete="off"   placeholder="" class="form-control form-control-sm" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-1" style="overflow: auto;" >
+                  
+                      <table class="table table-striped table-bordered">    
+                        <thead>    
+                          <tr>    
+                               <th></th>   
+                               <th>Item Name<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>    
+                               <th>Item Make<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>    
+                               <th>Part No<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>    
+                               <th>Item Description<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>    
+                               <th>Sub Description<span style="color:red"class="Mandatoryfield"><b></b></span></th> 
+                               <!-- <th>Reason Code<span style="color:red"class="Mandatoryfield"><b></b></span></th> 
+                               <th>Site ID<span style="color:red"class="Mandatoryfield"><b></b></span></th>  
+                               <th>Site Name<span style="color:red"class="Mandatoryfield"><b></b></span></th>   
+                               <th>Customer Code<span style="color:red"class="Mandatoryfield"><b></b></span></th>  -->
+                               <th>PO Qty<span style="color:red"class="Mandatoryfield"><b></b></span></th> 
+                               <th> Qty<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>    
+                               <th>Rate<span style="color:red"class="Mandatoryfield"><b>*</b></span></th>                                                    
+                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Unit<span style="color:red"class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>                               
+                               <th>Basic Value<span style="color:red"class="Mandatoryfield"><b></b></span></th> 
+                               <th vlign="center" >Freight Charge <span style="color:red"class="Mandatoryfield"><b></b></span></th>
+                               <th vlign="center" >Total Amount <span style="color:red"class="Mandatoryfield"><b></b></span></th>
+                               <th vlign="center">Taxable Amount <span class="Mandatoryfield"><b></b></span></th>
+                               <th vlign="center" >SGST Rate(%)<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >SGST<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >CGST Rate(%)<span style="color:red"class="Mandatoryfield"><b></b></span></th>                                                 
+                               <th vlign="center" >CGST<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >IGST Rate(%)<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >IGST<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >TCS Rate(%)<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                               <th vlign="center" >TCS<span style="color:red;"class="Mandatoryfield"><b></b></span></th>                                                    
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;Invoice&nbsp;Value<span style="color:red;"class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>                                                    
+                           </tr>    
+                        </thead>    
+                        <tbody>    
+                          <tr *ngFor="let dynamic of dynamicArray; let i = index" >    
+                            <td (click)="deleteRow(i)" style="width:40px;text-align:center;">    
+                               <i class="fa fa-trash"  title="Delete"></i>    
+                            </td>    
+                            <td style="width:100px;">  
+                              <select style="width:100px;"  class="form-control form-control-sm" id="ddlItemNameId_{{i}}" [(ngModel)]="dynamicArray[i].ItemNameId" (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)" >
+                                <option class="dropdown-item"  [value]="0">Select</option>
+                                <option *ngFor="let item of SearchItemNameList" [value]="item.id" >{{item.itemName}}</option>
+                              </select>
+                            </td> 
+                            <td style="width:100px;">
+                              <select style="width:100px;" class="form-control form-control-sm" id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"  (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">    
+                                <option class="dropdown-item" [value]="0">Select</option>
+                                <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id" >{{item.itemName}}</option>
+                              </select>
+                            </td>    
+                            <td style="width:100px;">    
+                              <select style="width:100px;" class="form-control form-control-sm" id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId" (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">  
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id" >{{item.itemName}}</option>    
+                                </select>
+                              </td>    
+                              <td style="width:150px;">    
+                                <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly  class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea>   
+                              </td>    
+                              <td style="width:150px;">    
+                                <textarea [(ngModel)]="dynamicArray[i].SubDescription"   class="form-control form-control-sm SubDescription" type="text" style="text-align:center;"> </textarea>   
+                              </td>  
+<!-- 
+                              <td style="width:40px;">    
+                                <input  [(ngModel)]="dynamicArray[i].ReasonCode" class="form-control form-control-sm ReasonCode"  type="text" style="text-align:center;width:40px;"/>    
+                              </td> 
+                              <td style="width:110px;">    
+                                <div class="ng-autocomplete" style="width:110px;">
+                                  <ng-autocomplete 
+                                  [data]="AutoCompleteCustomerSiteIdList" [searchKeyword]="CustomerSiteIdkeyword" 
+                                  (inputCleared)="ClearedCustomerSiteId(i)" 
+                                  [(ngModel)]="dynamicArray[i].ValueCustomerSite"
+                                  (selected)='SelectCustomerSiteId($event,i)' (inputChanged)='onChangeSearchCustomerSiteId($event,i)' 
+                                  (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+                                  [notFoundTemplate]="CuSiteIdnotFoundTemplate"
+                                  [debounceTime]="600" 
+                                  [minQueryLength]="2" 
+                                  placeHolder="Search CustomerSiteId">
+                                  </ng-autocomplete>
+                                  <ng-template #CuSiteIditemTemplate let-item>
+                                      <a [innerHTML]="item.CustomerSiteId"></a>
+                                  </ng-template>
+                                  <ng-template #CuSiteIdnotFoundTemplate let-notFound>
+                                      <div [innerHTML]="notFound"></div>
+                                  </ng-template>
+                                </div> 
+                              </td>
+                             
+                              <input [(ngModel)]="dynamicArray[i].SiteId" class="form-control form-control-sm "  type="hidden" style="text-align:center;"/> 
+                              <input [(ngModel)]="dynamicArray[i].SiteName" class="form-control form-control-sm "  type="hidden" style="text-align:center;"/> 
+                              <input [(ngModel)]="dynamicArray[i].CustomerSiteId" class="form-control form-control-sm "  type="hidden" style="text-align:center;"/> 
+                              <input [(ngModel)]="dynamicArray[i].CustomerId" class="form-control form-control-sm "  type="hidden" style="text-align:center;"/> 
+                              <td style="width:110px;">    
+                                <div class="ng-autocomplete" style="width:110px;">
+                                  <ng-autocomplete 
+                                  [data]="AutoCompleteSiteCustomerList" [searchKeyword]="keyword" 
+                                  (inputCleared)="searchCleared(i)" 
+                                  [(ngModel)]="dynamicArray[i].ValueSiteName"
+                                  (selected)='SelectSiteName($event,i)' (inputChanged)='onChangeSiteNameSearch($event,i)' 
+                                  (inputFocused)='onFocused($event)' [itemTemplate]="itemTemplate"
+                                  [notFoundTemplate]="notFoundTemplate"
+                                  [debounceTime]="600" 
+                                  [minQueryLength]="2" 
+                                  placeHolder="Search SiteName">
+                                  </ng-autocomplete>
+                                  <ng-template #itemTemplate let-item>
+                                      <a [innerHTML]="item.SiteName"></a>
+                                  </ng-template>
+                                  <ng-template #notFoundTemplate let-notFound>
+                                      <div [innerHTML]="notFound"></div>
+                                  </ng-template>
+                                </div> 
+                              </td>
+                              <td style="width:80px;">    
+                                <input [(ngModel)]="dynamicArray[i].CustomerCode" class="form-control form-control-sm CustomerCode"  type="text" style="text-align:center;"/>    
+                              </td>  -->
+
+
+
+                              <input class="form-control form-control-sm" id="txtValueQty" [(ngModel)]="dynamicArray[i].ValueQty" type="hidden" style="text-align:center;"/>    
+                              <input class="form-control form-control-sm" id="txtMTQty" [(ngModel)]="dynamicArray[i].MTQty" type="hidden" style="text-align:center;"/>    
+                              <td style="width:50px;">    
+                                <input class="form-control form-control-sm" id="txtQty" [(ngModel)]="dynamicArray[i].Qty" disabled  type="text" style="text-align:center;width:50px;"/>    
+                              </td>   
+                              <td style="width:80px;">    
+                                <input class="form-control form-control-sm" id="txtQty_{{i}}" [(ngModel)]="dynamicArray[i].MTQty"  autocomplete="off" (blur)="OnblurMTQty(i)" (keyup)="fnBindItemGrossToatl()" appCopyPastNumFloatValue type="text" style="text-align:center;width:50px;"/>    
+                              </td>                            
+                                                             
+                            <td style="width:80px;">    
+                                 <input  class="form-control form-control-sm" id="txtRate_{{i}}" [(ngModel)]="dynamicArray[i].Rate"  autocomplete="off"  (keyup)="fnBindItemGrossToatl()" appCopyPastNumFloatValue type="text" style="text-align:center;width:50px;"/>    
+                               </td>                                
+                               <td style="width:50px;">
+                                <select class="form-control form-control-sm UnitName" id="ddlUnitName_{{i}}" [(ngModel)]="dynamicArray[i].UnitName" (change)="ChangeUnit()">  
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id" >{{item.UnitName}}</option>    
+                                </select>    
+                                <!-- <input  class="form-control form-control-sm" [(ngModel)]="dynamicArray[i].UnitName" type="text" readonly />    
+                               -->
+                              
+                              </td>
+                                 <td style="width:100px;">    
+                                 <input  class="form-control form-control-sm" [(ngModel)]="dynamicArray[i].TotalAmount" appCopyPastNumFloatValue  type="text" style="text-align:center;width:100px;" readonly />    
+                               </td>  
+                             
+                              <td style="width:100px;">    
+                              <input  class="form-control form-control-sm" [(ngModel)]="dynamicArray[i].FreightCharge" (blur)="ItemRateOnblur()" appCopyPastNumFloatValue  type="text" style="text-align:center;width:100px;"  />    
+                            </td>  
+
+                          
+                          <td style="width:100px;">    
+                          <input  class="form-control form-control-sm" [(ngModel)]="dynamicArray[i].TotalAmountWithFreightCharge" appCopyPastNumFloatValue  type="text" style="text-align:center;width:100px;" readonly />    
+                        </td>  
+                        <td style="width:120px;">
+                          <select style="width:120px;" (change)="ItemRateOnblur()"
+                            class="form-control form-control-sm TaxWith" id="TaxWith_{{i}}"
+                            [(ngModel)]="dynamicArray[i].TaxWith">
+                            <option class="dropdown-item" [value]="1">Total Amount</option>
+                            <option class="dropdown-item" [value]="2">Basic Value</option>
+                          </select>
+                          <!-- <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].SGSTRate"  (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()" appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>     -->
+                        </td>
+                        <td style="width:120px;">    
+                          <input   class="form-control form-control-sm itmsRate" id="txtSGSTRate_{{i}}" [(ngModel)]="dynamicArray[i].SGSTRate"  (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                        </td> 
+                        <td style="width:120px;">    
+                          <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].SGST" disabled="disabled" (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                        </td> 
+                               <td style="width:120px;">    
+                                <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].CGSTRate" disabled="disabled"  (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+                              <td style="width:120px;">    
+                                <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].CGST" disabled="disabled" (blur)="ItemRateOnblur()" appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+
+                              <td style="width:120px;">    
+                                <input  id="txtIGSTRate_{{i}}"  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].IGSTRate"  (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+                              <td style="width:120px;">    
+                                <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].IGST" disabled="disabled" (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+                              
+                              <td style="width:120px;">    
+                                <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].TCSRate"  (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+                              <td style="width:120px;">    
+                                <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].TCS" disabled="disabled" (blur)="ItemRateOnblur()"  appCopyPastNumFloatValue  type="text" style="text-align:center;width: 85px;"/>    
+                              </td> 
+                              
+                              <td >    
+                                <input  style="width:120px;" class="form-control form-control-sm itmsTotalAmount" readonly [(ngModel)]="dynamicArray[i].TotalInvoiceValue"  type="text" style="text-align:center;"/>    
+                              </td> 
+                           </tr>
+                           <tr>
+                            <td colspan="6">Gross Total</td>  
+                             
+                            <td style="text-align:center;">{{totalSumPOQuantity}}</td>                                       
+                            <td style="text-align:center;">{{totalSumQuantity}}</td>
+                            <td></td>
+                            <td></td>
+                            <td style="text-align:center;">{{totalSumAmount }}</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                           
+                          </tr>  
+                                                  
+                           <tr *ngIf="ItemAddrowhideshow" >    
+                             <td (click)="addRow()" >    
+                               <i class="fa fa-plus"></i>    
+                             </td>    
+                           </tr>    
+                        </tbody>    
+                      </table>  
+                    
+                      
+                    </div>
+                    <div class="col-sm-12" *ngIf="IsHistoryGridDesabled">                     
+                      <div class="row">
+                        <div class="col-sm-12" style="background-color:#28a745;">
+                          <div class="btn-group btn-group-sm">
+                              <button type="button" class="btn btn-success" >Transit History</button>
+                            
+                          </div>
+                        </div>
+                           
+                              <div class="col-sm-12" style="height:150px; overflow:auto;">
+                              <table class="table table-striped table-bordered">    
+                                <thead>    
+                                  <tr> 
+                                       <th>S.No</th>   
+                                       <th>Item Name</th>    
+                                       <th>Item Make</th>    
+                                       <th>Part No</th>    
+                                      <th>Item Description</th>
+                                      <th>Sub Description</th>
+                                      <th>Unit</th>   
+                                      <th> Qty</th>       
+                                       <th>Invoice No</th>  
+                                       <th>Invoice Date</th> 
+                                       <th>Transit Date</th>                                                    
+                                   </tr>    
+                                </thead>    
+                                <tbody>    
+                                  <tr *ngFor="let Items of GridItemDataWithPoIdsearch; let ndx = index">    
+                                    <td style="width:10px; text-align:center">  
+                                      {{ ndx + 1 | number }}
+                                     </td> 
+                                    <td style="width:60px; text-align:center">  
+                                     {{Items.ItemName}}
+                                    </td> 
+                                    <td style="width:60px; text-align:center">
+                                          {{Items.MakeName}}
+                                    </td>    
+                                    <td style="width:60px; text-align:center">    
+                                      {{Items.MakeName}}
+                                      </td>    
+                                      <td style="width:120px;">    
+                                        {{Items.ItemDescription}}
+                                        </td>  
+                                        <td style="width:120px;">    
+                                          {{Items.SubDescription}}
+                                          </td>
+                                        <td style="width:30px; text-align:center">    
+                                          {{Items.UnitName}}
+                                          </td> 
+                                          <td style="width:10px; text-align:center">    
+                                            {{Items.Qty}}
+                                            </td> 
+                                            <td style="width:60px; text-align:center">    
+                                              {{Items.InvoiceNo}}
+                                              </td> 
+                                              <td style="width:60px; text-align:center">    
+                                                {{Items.InvoiceDate}}
+                                                </td> 
+                                                <td style="width:60px; text-align:center">    
+                                                  {{Items.TransitDate}}
+                                                  </td>
+                                   </tr>
+                                </tbody>    
+                              </table>  
+                              </div>
+
+                      </div>
+                </div>
+                   
+                  </div>                     
+               </div> 
+              </div>
+            </div>
+          </div>
+        </section>            
+      </div>
+  </div>
+  <div class="modal fade" id="Validationerror" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Error !</h4>
+      </div>
+      <div class="modal-body">
+        {{ValidationerrorMessage}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

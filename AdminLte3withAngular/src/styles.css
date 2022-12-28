@@ -1,0 +1,104 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+/* @import '~bootstrap/scss/bootstrap' */
+
+.text-sm .content-header {
+    padding: 2px 0.5rem;
+}
+.ng-autocomplete {
+    width: auto !important;
+}
+
+.autocomplete-container .input-container input {
+    font-size: smaller !important;
+    box-sizing: border-box !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+    background-color: #fff !important;
+    color: rgba(0,0,0,.87) !important;
+    width: 100% !important;
+    padding: 0 12px !important;
+    line-height: 30px !important;
+    height: 30px !important;
+}
+.autocomplete-container {
+    box-shadow: 0 1px 3px 0rgba(0,0,0,.2),0 1px 1px 0 rgba(0,0,0,.14),0 2px 1px -1px rgba(0,0,0,.12) !important;
+    position: relative !important;
+    overflow: visible !important;
+    height: 30px !important;
+}
+
+.list-area {
+    min-width: 200px !important;
+}
+.text-sm {
+    font-size: 0.875rem !important;
+}
+
+.autocomplete-container .suggestions-container ul li a {
+    padding: 5px 5px !important;
+    display: block !important;
+    font-size: smaller !important;
+}
+
+.dropdown-list ul li {
+    padding: 2px !important;
+    cursor: pointer;
+    text-align: left !important;
+    font-size: smaller !important;
+}
+.ag-theme-alpine {
+    font-size: 12px !important;
+}
+.content-wrapper > .content {
+    padding: 0 0rem !important;
+}
+
+.c-btn {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: rgb(0, 0, 0);
+    display: inline-block !important;
+    border-width: 1px !important;
+    line-height: 1.25 !important;
+    border-radius: 3px !important;
+    font-size: .85rem !important;
+    padding: 5px 10px !important;
+    cursor: pointer !important;
+    align-items: center !important;
+    font-size: smaller !important;
+    font-weight: 400 !important;
+    min-height: 30px !important;
+}
+/*this is for grid on Dispatch-Tracker and SRN Page, By:Vishal 13/10/2022*/ 
+.ag-cell-label-container {
+    width: auto !important;
+}
+.ag-header-cell-text {
+    white-space: normal !important;
+}
+.ag-theme-alpine .ag-row {
+    font-size: 12px !important;
+}
+
+.selected-list span {
+    font-size: 12px;
+}
+
+/* .ag-cell-wrapper {
+    display: inline-flex !important;   
+} */
+
+/***********End*****/
+fieldset {
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+}
+
+.modal-backdrop {
+    z-index: -1 !important;
+  }

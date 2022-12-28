@@ -1,0 +1,59 @@
+<style>
+    .table th, .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+    </style>
+<div class="wrapper">
+    <app-main-header></app-main-header>   
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+              <div class="row">
+                <div class="col-xs-12">
+                  <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                    <li class="breadcrumb-item active">MIS / Stock Register</li>
+                  </ol>
+                  </nav>
+                </div>
+                </div>
+              </div>
+          </div>
+          <section class="content"  >
+            <div class="container-fluid"> 
+            <div class="row">
+                <div class="col-sm-12"> 
+                    <app-stocksearchpanel></app-stocksearchpanel>     
+            </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12" style="background-color:#28a745;">
+                <div class="btn-group btn-group-sm">
+                    <button type="button"  *ngIf="ObjUserPageRight.IsSearch"class="btn btn-success" (click)="SearchReport()"><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                  
+                </div>
+                    
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-sm-12">
+                  <iframe id="SSRS"  [src]="Pdfurl"  style="width:100%; height:400px;"  zindex="100"></iframe>                  
+                </div>
+              </div>
+            </div>
+
+          </section>
+
+    </div>
+
+</div>

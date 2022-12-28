@@ -1,0 +1,153 @@
+<style>
+    .table th,
+    .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+    .ChildCSS
+{
+  width: 100%;
+    display: flex;
+    justify-content: flex-end;
+     margin-top: -30px; 
+}
+</style>
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">MIS / Material Reconciliation</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <section class="content">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <app-report-panel></app-report-panel>
+                    </div>
+                </div>
+                 <div class="row" style="margin-left:5px">
+                         <div class="col-sm-1">
+                            <label class="col-form-label-xs">Date by</label>
+                        </div>
+                        <div class="col-sm-2">
+                            <select class="form-control form-control-sm" [(ngModel)]="model.DatebySelection">
+                                <option value="0">Select</option>
+                                <option value="1">Dispatch Date</option>
+                                <option value="2">Receiving Date</option>
+                                <option value="3">Installation Date</option>
+                            </select>
+                        </div>
+                        <app-time-period class="ChildCSS"></app-time-period>
+                     
+                </div>
+                <div class="row mb-1" style="margin-left:3px">  
+                    <div class="col-sm-1">  
+                      <label class="col-form-label-xs"> Dispatch No</label>
+                    </div>                                         
+                    <div class="col-sm-2">     
+                      <input type="text" id="txtGRNNo" [(ngModel)]="model.DispatchNo"   class="form-control form-control-sm" placeholder="">                                     
+                    </div>                  
+                    
+                  <div class="col-sm-1">  
+                    <label class="col-form-label-xs">Final Status</label>
+                  </div>  
+                   <div class="col-sm-2">                             
+                    <select class="form-control form-control-sm" id="txtVoucher"  [(ngModel)]="model.FinalStatusId">
+                      <option class="dropdown-item" value="">Select</option>
+                      <option *ngFor="let item of ReconcileStatusData" value={{item.Id}}>{{item.StatusName}}</option>
+                      
+                  </select>
+                   </div>   
+                </div>
+                <div class="row">
+                    <div class="col-sm-12" style="background-color:#28a745;">
+                        <div class="row">
+                        <div class="col-sm-4">                        
+                        <div class="btn-group btn-group-sm">
+                            <button type="button" *ngIf="ObjUserPageRight.IsSearch"class="btn btn-success" (click)="SearchReport()"><i
+                                    class="fa fa-search" aria-hidden="true"></i> Search</button>
+
+                                    <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="FinancialExport()"><i
+                                        class="fa fa-search" aria-hidden="true"></i> Financial Export</button>
+                                    
+                        </div>
+                        </div>
+                        <div class="col-sm-8">
+                        <div class="row" style="font-size:12px;">
+
+                            <span style="width:30px;height:30px;background-color:#a5e8ae"></span>
+                            <span style="height:30px;text-align: center;padding-top: 6px;">
+                                <label>Material Reconcile</label>
+                            </span>
+
+                            <span  style="width:30px;height:30px;background-color:#FF7F7F"></span>
+                            <span  style="height:30px;text-align: center;padding-top: 6px;">
+                                <label>Material not Reconcile</label>
+                            </span> 
+     
+                            <span style="width:30px;height:30px;background-color:#ADD8E6"></span>
+                            <span style="height:30px;text-align: center;padding-top: 6px;">
+                                <label>Material Receiving Pending</label>
+                            </span>
+    
+                            <span style="width:30px;height:30px;background-color:#FFFF99"></span>
+                            <span style="height:30px;text-align: center;padding-top: 6px;">
+                                <label>Material Installation Pending</label>
+                            </span> 
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <iframe id="SSRS" [src]="Pdfurl" style="width:100%; height:400px;" zindex="100"></iframe>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div class="modal fade" id="Fincialyear" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Select Financial Year</h4>
+      </div>
+      <div class="modal-body">
+        <div class="form-group" style="margin-top: 10px;">
+            <select class="form-control form-control-sm" id="txtFinancialYear"  [(ngModel)]="model.ddlFinancialYears" (change)="ChangeFinancialyear()" >
+              <option class="dropdown-item" value="0">Select</option>
+              <option *ngFor="let item of FinancialYearData" [value]="item.Defination">{{item.Name}}</option>
+            </select>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+        <button type="button" class="btn btn-success" (click)="DownloadAllFinancialExcelZip()">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,1478 @@
+<style>
+  .table th,
+  .table td {
+    padding: 10px 4px 10px 4px;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+  }
+
+  .msg {
+    color: red;
+  }
+
+  .my-class {
+    /* border:1px solid red;
+     color:red; */
+    border-color: red;
+  }
+
+  .Mandatoryfield {
+    font-size: 15px
+  }
+
+  .btn-sm1,
+  .btn-group-sm>.btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 0.5;
+    border-radius: 0.2rem;
+  }
+
+  .divwidth {
+    width: 13%;
+  }
+</style>
+
+
+<div class="wrapper">
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
+  <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+    <p style="color: white">Please Wait. </p>
+  </ngx-spinner>
+  <!-- /.modal-content -->
+  <ng-template #mymodal let-d="dismiss">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="modal-basic-title">Send Mail</h4>
+        <div>
+          <button class="btn btn-success" [disabled]="loading" (click)="SendMail()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Send </button>&nbsp;
+          <button type="button" class="btn btn-default" data-dismiss="modal"
+            (click)="d('Cross click')">Cancel</button>&nbsp;
+        </div>
+      </div>
+      <div class="modal-body">
+
+        <div class="col-md-12">
+          <div class="card card-primary card-outline">
+            <div class="card-body">
+              <div class="form-group">
+                <input class="form-control" type="email" placeholder="To:" id="txtToMail"
+                  (keypress)="KeypressMailTo($event)" [(ngModel)]="model.MailTo"
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" email="true">
+              </div>
+              <div class="form-group">
+                <input class="form-control" type="email" placeholder="Cc:" [(ngModel)]="model.MailCc"
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" email="true">
+              </div>
+              <div class="form-group">
+                <input class="form-control" type="email" placeholder="Bcc:" [(ngModel)]="model.MailBcc"
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" email="true">
+              </div>
+              <div class="form-group">
+                <input class="form-control" placeholder="Subject:" [(ngModel)]="model.MailSubject" id="txtSubject"
+                  (keypress)="KeypressSubject($event)">
+              </div>
+              <div class="form-group">
+                <textarea id="" class="form-control" style="height: 180px" [(ngModel)]="model.MailMessage"
+                  id="txtMessage" (keypress)="KeypressMessage($event)">
+
+              </textarea>
+              </div>
+              <div class="form-group">
+
+                <div style="float:left;">
+                  <i class="fas fa-paperclip"></i> Attachment
+                  <input type="file" name="attachment" id="fileImage" multiple #filePicker
+                    (change)="AttchmentFileChange($event)">
+                  <div class="row" *ngFor="let selected of urls;let index = index" style="margin-bottom: 2px;">
+                    <span class="col-sm-6">{{selected.name}}</span>
+
+                    <button style="margin-left: 50px;" (click)="removeSelectedFile(index)"><i class="fa fa-trash"
+                        aria-hidden="true"></i></button>
+
+                  </div>
+                  <div class="row">
+                    <span class="col-sm-6">Attched Po file </span>&nbsp;
+                    <a [(ngModel)]="PoId" style="margin-left: 50px;" (click)="onPdfClick(PoId)" title="File View"
+                      style="color:green"><i class="fa  fa-file"></i></a>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group">
+
+              </div>
+            </div>
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+
+    </div>
+  </ng-template>
+  <div class="content-wrapper " style="min-height: 54.0312px; background-color: white;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header bg-light">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                <li class="breadcrumb-item active">PO Management / Purchase Order </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.content-header -->
+    <section class="content" style="padding-top:2px;">
+      <div class="container-fluid">
+        <!-- PO Front Page -->
+        <div class="row" *ngIf="isShownPOList" id="DivPOList">
+          <div class="col-sm-12">
+            <!-- Comman Search Panel -->
+            <app-search-panel></app-search-panel>
+            <div class="row mb-1" style="margin-left:3px">
+              <div class="col-sm-1">
+                <label class="col-form-label-xs"> PO No.</label>
+              </div>
+              <div class="col-sm-2">
+                <div class="ng-autocomplete">
+                  <ng-autocomplete [data]="AutoCompleteSearchPOList" [searchKeyword]="SearchPokeyword"
+                    (inputCleared)="SearchPoCleared()" (selected)='SearchPoSelectEvent($event)'
+                    (inputChanged)='onSearchPoChange($event,0)' [itemTemplate]="SearchPoitemTemplate"
+                    [notFoundTemplate]="SearchPoNotFoundTemplate" [debounceTime]="600" [minQueryLength]="2"
+                    placeHolder="Search Po No..">
+                  </ng-autocomplete>
+                  <ng-template #SearchPoitemTemplate let-item>
+                    <a [innerHTML]="item.PoName"></a>
+                  </ng-template>
+                  <ng-template #SearchPoNotFoundTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">PO Status</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" [(ngModel)]="model.PoStatus">
+                  <option class="dropdown-item" [value]="0">Select</option>
+                  <option *ngFor="let item9 of PODropDownClass.SearchPOStatusList" [value]="item9.Id">{{item9.Name}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs col-sm-4">IsAmended</label>
+              </div>
+
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtIsAmended" [(ngModel)]="model.SearchIsAmended">
+                  <option class="dropdown-item" [value]="0">No</option>
+                  <option class="dropdown-item" [value]="1">Yes</option>
+                </select>
+              </div>
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">PO Category</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="POSearchCategoryList" [(ngModel)]="model.PoCategoryId"
+                  [settings]="MultidropdownSettings1" (onSelect)="BindSearchPOCategory('')"
+                  (onDeSelect)="BindSearchPOCategory('')" (onSelectAll)="BindSearchPOCategory('')"
+                  (onDeSelectAll)="BindSearchPOCategory('DelAll')">
+                </angular2-multiselect>
+                <!-- <select class="form-control form-control-sm" [(ngModel)]="model.PoCategoryId" >
+                                <option class="dropdown-item" [value]="0">Select</option>
+                                <option *ngFor="let item10 of POSearchCategoryList" [value]="item10.Id">{{item10.Name}}</option> 
+                               </select> -->
+              </div>
+            </div>
+            <div class="row mb-1" style="margin-left:3px">
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Customer</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" [(ngModel)]="model.CustomerId">
+                  <option class="dropdown-item" [value]="0">Select</option>
+                  <option *ngFor="let item10 of PODropDownClass.SearchClientList" [value]="item10.Id">{{item10.Name}}
+                  </option>
+                </select>
+              </div>
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs col-sm-4">WithAnnexure</label>
+              </div>
+
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtIsAnnexure" [(ngModel)]="model.IsAnnexure">
+                  <option class="dropdown-item" [value]="0">No</option>
+                  <option class="dropdown-item" [value]="1">Yes</option>
+                </select>
+              </div>
+            </div>
+            <!-- PO Search History -->
+            <div class="row" style="margin-left:3px">
+              <div class="divwidth">
+                <div class="info-box1" style="background-color:#1dd847c7">
+                  <div class="info-box-content">
+                    <!-- <label class="col-sm-12" style="text-align:center;color:white"><b> Annexure (Excel)</b></label> -->
+                    <span class="" style="color:white;margin-left:15px"><b>Open
+                        PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.OpenPO}}</b></span>
+                  </div>
+                </div>
+
+              </div>
+              &nbsp; &nbsp;
+              <div class="divwidth">
+                <div class="info-box1" style="background-color:#5f5f4b">
+                  <div class="info-box-content">
+                    <span class="" style="color:white;margin-left:15px"><b>Close
+                        PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.ClosePO}}</b></span>
+                  </div>
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <div class="divwidth">
+                <div class="info-box1" style="background-color:#929291">
+                  <div class="info-box-content">
+                    <span class="" style="color:white;margin-left:15px"><b>Cancel
+                        PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.CancelPO}}</b></span>
+                  </div>
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <div class="divwidth">
+                <div class="info-box1" style="background-color:#ec7d20fa">
+                  <div class="info-box-content">
+                    <span class="" style="color:white;margin-left:15px"><b>Amended
+                        PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.AmendedPO}}</b></span>
+                  </div>
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <!-- <div class="divwidth">
+                        <div class="info-box1"style="background-color:#ff0000d4" >
+                          <div class="info-box-content">
+                            <span class=""style="color:white;margin-left:15px"><b>Missed PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.MissedPO}}</b></span>
+                          </div>
+                        </div>
+                      </div> -->
+              &nbsp; &nbsp;
+              <div class="divwidth">
+                <div class="info-box1" style="background-color:#005fffb8">
+                  <div class="info-box-content">
+                    <span class="" style="color:white;margin-left:15px"><b>Signed
+                        PO</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>{{this.SignedPO}}</b></span>
+                  </div>
+                </div>
+              </div>
+              &nbsp; &nbsp;
+              <div>
+                <!-- <div class="info-box-content"> -->
+                <!-- <a href="" (click)="SearchPOCancelOpenCloseHistoryCountList()"> <i class="fa fa-search" aria-hidden="true"></i> Summary</a> -->
+                <button type="button" class="btn btn-sm1 btn-success"
+                  (click)="SearchPOCancelOpenCloseHistoryCountList()"><i class="fa fa-search" aria-hidden="true"></i>
+                  Summary</button>
+                <!-- <button type="button" class="btn btn-sm1 btn-success"  (click)="CreatePurchaseOrderPdf()"><i class="fa fa-search" aria-hidden="true"></i> Summary</button> -->
+                <!-- </div> -->
+              </div>
+            </div>
+            <span></span>
+            <!-- PO Search Button -->
+            <div class="row">
+              <div class="col-sm-12" style="background-color:#28a745;">
+                <div class="btn-group btn-group-sm">
+                  <button type="button"  *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="SearchPOList()"><i class="fa fa-search"
+                      aria-hidden="true"></i> Search</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="ExcelExport()"><i class="fa fa-download"
+                      aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin"
+                      *ngIf="Exportloading"></i></button>
+                  <button type="button" class="btn btn-success" (click)="MissedPoExcelExport()"><i
+                      class="fa fa-download" aria-hidden="true"></i> Missed Po</button>
+                  <!-- <span style="color:red; margin-top: 5px"><b>{{MissedPO}}</b></span> -->
+                  <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNewPO()"><i class="fa fa-plus"
+                      aria-hidden="true"></i> New PO</button>
+                  <button type="button" class="btn btn-success" (click)="GetSCMJObStart()"><i class="fa fa-cog"
+                      aria-hidden="true"></i> Receive PO</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsBulkPdfDwnload" class="btn btn-success" (click)="DownloadAllPdfZip()"><i class="fa fa-download"
+                      aria-hidden="true"></i> File</button>
+                </div>
+
+              </div>
+            </div>
+            <!-- PO Search Grid List -->
+            <div class="row">
+              <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [enableSorting]="true"
+                [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="columnDefs"
+                [multiSortKey]="multiSortKey" [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)"
+                [overlayLoadingTemplate]="loadingTemplate">
+
+              </ag-grid-angular>
+            </div>
+          </div>
+        </div>
+        <!-- PO Back End Page -->
+        <div class="row" *ngIf="isShownPOEdit" id="DivPOEdit">
+          <div id="pdf" class="col-12 col-sm-6 col-md-6 ">
+
+            <iframe id="pdfViewer" [src]="Pdfurl" style="width:100%; height:600px;" zindex="100"></iframe>
+
+          </div>
+          <div id="Basic" class="col-12 col-sm-6 col-md-6">
+
+            <div class="row">
+              <div class="col-12 col-sm-6 col-lg-12">
+                <div class="card card-success card-outline card-outline-tabs">
+                  <div class="card-header p-0 border-bottom-0">
+                    <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                      <li>
+                        <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false">
+                          <button title="page slide back" style="margin-left:5px" (click)="PageSlideBack()"><i
+                              class="fa fa-align-left" style="height: 05px;width: 10px;" aria-hidden="true"></i>
+                          </button>
+                          &nbsp;<button title="page slide next" (click)="PageSlideNext()"><i class="fa fa-align-right"
+                              style="height: 05px;width: 10px;" aria-hidden="true"></i> </button>
+                          <!-- <button   Id="HideShow"><i class="fas fa-bars" aria-hidden="true"></i> </button> -->
+                        </a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
+                          href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
+                          aria-selected="true">Basic</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-three-profile-tab" data-toggle="pill"
+                          href="#custom-tabs-three-profile" role="tab" aria-controls="custom-tabs-three-profile"
+                          aria-selected="false">Items</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-three-messages-tab" data-toggle="pill"
+                          href="#custom-tabs-three-messages" role="tab" aria-controls="custom-tabs-three-messages"
+                          aria-selected="false">Others</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-three-file-tab" data-toggle="pill"
+                          href="#custom-tabs-three-file" role="tab" aria-controls="custom-tabs-three-file"
+                          aria-selected="false">Document</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="custom-tabs-three-outbox-tab" data-toggle="pill"
+                          (click)="GetSendMailDetail()" href="#custom-tabs-three-outbox" role="tab"
+                          aria-controls="custom-tabs-three-messages" aria-selected="false">OutBox</a>
+                      </li>
+
+                      <li>
+                        <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false">
+                          <button class="badge bg-primary" type="button" title="back page"
+                            (click)="onBtnBackPOList()"><i class="fa fa-fast-backward" aria-hidden="true"></i> </button>
+                          <button class="badge bg-primary" type="button" title="previous" style="margin-left:5px;"
+                            [disabled]="IsDisablePrevious" (click)="fnPreviousPOList()"><i class="fa fa-backward"
+                              aria-hidden="true"></i> </button>
+                          <button class="badge bg-primary" type="button" title="next" style="margin-left:3px;"
+                            [disabled]="IsDisableNext" (click)="fnNextPOList()"><i class="fa fa-forward"
+                              aria-hidden="true"></i> </button>
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" data-toggle="pill" title="Send Mail" role="tab" (click)="open(mymodal)"
+                          aria-selected="false">
+                          <i class="fa fa-envelope"></i>
+                        </a>
+                      </li>
+                      <li>
+                        <app-view-approvalpage [ChildApprovalList]="ApprovalList" [ManueId]="ManueId"
+                          [TableId]="TableId" [CreateName]="CreateName" [CreatedDate]="CreatedDate"
+                          [ModifiedName]="ModifiedName" [ModifiedDate]="ModifiedDate"
+                          [ApprovalstatusbtnhideShow]="IsApprovalstatusbtnhideShow"></app-view-approvalpage>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card-body" style="height:580px;">
+                    <div class="tab-content" id="custom-tabs-three-tabContent">
+                      <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
+                        tabpanel="first" aria-labelledby="custom-tabs-three-home-tab">
+
+                        <!-- Change by Hemant Tyagi -->
+
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Customer<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="ddlPOClient" [disabled]="isBasicEdit"
+                                  [(ngModel)]="model.POClientId" (change)="valChange(model.POClientId)"
+                                  (change)="CreatePoSeries()">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item1 of PODropDownClass.ClientList" [value]="item1.Id">
+                                    {{item1.Name}}</option>
+                                </select>
+
+
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">EMI Type<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="ddlEMIType" [disabled]="isBasicEdit"
+                                  (change)="valChange(model.EMITypeId)" [(ngModel)]="model.EMITypeId"
+                                  (change)="CreatePoSeries()">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item2 of PODropDownClass.EMIList" [value]="item2.Id">
+                                    {{item2.Name}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Category<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="ddlPoCategory" [disabled]="isBasicEdit"
+                                  [(ngModel)]="model.PoCategoryId" (change)="CreatePoSeries()">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of PODropDownClass.POCategoryList" [value]="item.Id">
+                                    {{item.Name}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- <div class="col-sm-6">
+                                      <div class="row">
+                                        <label class="col-form-label-xs col-sm-4">Purchase Type<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
+                                        <div class="col-sm-8">
+                                          <div class="msg"></div>
+                                          <select class="form-control form-control-sm" id="txtPurchaseType" (change)="valChange('txtPurchaseType')"  [(ngModel)]="model.PurchaseTypeId" >
+                                            <option class="dropdown-item" [value]="0">Select</option>
+                                           <option *ngFor="let item of PODropDownClass.PurchaseTypeList" [value]="item.Id" >{{item.Name}}</option>
+                                        </select>
+                                          </div>
+                                      </div>
+                                    </div>   -->
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Expense Type<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="txtExpenseType"
+                                  (change)="valChange('txtExpenseType')" [(ngModel)]="model.ExpenseTypeId">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of PODropDownClass.ExpenseTypeList" [value]="item.Id">
+                                    {{item.Name}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Project Type<span style="color:red;"
+                                  class="Mandatoryfield"><b></b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="txtBOQ Request"
+                                  (change)="ChangeProjectType(model.ProjectTypeId)" [(ngModel)]="model.ProjectTypeId">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of ProjectTypeList" [value]="item.Id">{{item.ProjectName}}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Material Indent<span style="color:red;"
+                                  class="Mandatoryfield"><b></b></span>
+                                <!-- <a  (click)="PreviewMaterialIndent(model.BOQRequestId)" *ngIf="PreviewIndent" title="File View" style="color:green"><i class="fa fa-eye"></i></a> -->
+                              </label>
+                              <div class="col-sm-7">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="txtBOQ Request"
+                                  [(ngModel)]="model.BOQRequestId" (change)="ChangeBOQRequest(model.BOQRequestId)"
+                                  style="float: left;">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of BOQIdentList" [value]="item.Id">{{item.BOQReqNo}}</option>
+                                </select>
+                              </div>
+                              <div class="col-form-label-xs col-sm-1">
+                                <label style="float:right;" *ngIf="PreviewIndent">
+                                  <a (click)="PreviewMaterialIndent(model.BOQRequestId)" title="File View"
+                                    style="color:green; float:right;"><i class="fa fa-eye"></i></a>
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+
+                              <label class="col-form-label-xs col-sm-4">PO No<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <input type="text" id="txtPoNo" [(ngModel)]="PoNo" readonly
+                                  (keypress)="onKeypressPONo($event)" class="form-control form-control-sm"
+                                  placeholder="">
+                              </div>
+                              <input type="hidden" [(ngModel)]="model.hiddenPoId" class="form-control form-control-sm"
+                                placeholder="">
+                              <!--Brahamjot kaur 07-06-2022-->
+                              <button *ngIf="IsCopyPoID" type="button" class="btn btn-sm btn-success"
+                                (click)="copyPoID(model.hiddenPoId)"> Create Duplicate PO</button>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">PO Date<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <div class="input-group" (mouseenter)="onKeypressPoDate($event)">
+                                  <input class="form-control form-control-sm" id="txtPodate" disabled name="dpPoDate"
+                                    [(ngModel)]="model.Podate" ngbDatepicker #dPoDate="ngbDatepicker">
+                                  <div class="input-group-append">
+                                    <span class="input-group-text" (click)="dPoDate.toggle()"><i
+                                        class="far fa-calendar-alt"></i></span>
+                                  </div>
+                                </div>
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Vendor Name<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" [(ngModel)]="model.selectedEditVendorItems"
+                                  id="txtVendorName" (change)="ngModelChangeVendor()">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of VendorEditList" [value]="item.id">{{item.itemName}}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Vendor Code</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtVendor" [(ngModel)]="VendorName" readonly
+                                  class="form-control form-control-sm" placeholder="Vendor Code">
+
+
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Vendor GST<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <!-- <input type="text" id="txtVendorGst"[(ngModel)]="VendorGST" readonly class="form-control form-control-sm" placeholder="Vendor Gst" />   -->
+                                <select class="form-control form-control-sm" [(ngModel)]="model.VendorGST"
+                                  id="txtVendorGST" (change)="ChangeVendorGST(model.VendorGST)">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of VendorGSTList" [value]="item.GSTINNo">{{item.GSTINNo}}
+                                  </option>
+                                </select>
+
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-3">Address</label>
+                              <label class="col-form-label-xs col-sm-1"><input type="radio"
+                                  *ngFor="let item of VenderFilterAddress" [(ngModel)]="model.RadioId" [value]="item.Id"
+                                  name="optionsRadios" (change)="ChangeVendorAddress(item.Id)"></label>
+                              <div class="col-sm-8">
+                                <textarea type="text" name="txtVendorAddress" id="txtVendorAddress"
+                                  [(ngModel)]="VendorAddress" readonly class="form-control form-control-sm"
+                                  placeholder="VendorAddress">
+                                             </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+
+                        <div class="row mb-1">
+
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">WH State<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+
+                                <select class="form-control form-control-sm" [(ngModel)]="model.selectedEditStateItem"
+                                  id="txtStateEdit" (change)="onChangeEditState(model.selectedEditStateItem)">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item2 of StateEditList" [value]="item2.id">{{item2.itemName}}
+                                  </option>
+                                </select>
+                                <!-- <angular2-multiselect [data]="StateEditList" 
+                                      [(ngModel)]="selectedEditStateItem" 
+                                       [settings]="SingledropdownSettings" 
+                                      (onSelect)="onItemSelect($event)" 
+                                        (onDeSelect)="OnEditStateDeSelect($event)"
+                                         (onSelectAll)="onSelectAll($event)"
+                                         (onDeSelectAll)="onEditStateDeSelectAll($event)" 
+                                         (ngModelChange)="onChangeEditState($event)"
+                                         id="txtStateEdit"
+                                         >
+                                          </angular2-multiselect> -->
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">WH Name<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" [(ngModel)]="model.selectedEditWHItems"
+                                  id="txtWH" (change)="ngModelChangeWH(model.selectedEditWHItems)">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of WHEditList" [value]="item.id">{{item.itemName}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">WH GST</label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <input type="text" id="txtWHGst" [(ngModel)]="WHGSTIN" readonly
+                                  class="form-control form-control-sm" placeholder="" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">WH Address</label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <textarea type="text" id="txtWHAddress" [(ngModel)]="WHAddress" readonly
+                                  class="form-control form-control-sm" placeholder="">
+                                           </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+
+
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Terms of Payment<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <textarea type="text" id="txtPayment" [(ngModel)]="TermsofPayment"
+                                  (keypress)="onKeypressPayment($event)" class="form-control form-control-sm"
+                                  placeholder="">
+                                                        </textarea>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Other References<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <textarea type="text" id="txtReferences" [(ngModel)]="OtherReferences"
+                                  (keypress)="onKeypressReferences($event)" class="form-control form-control-sm"
+                                  placeholder="">
+                                              </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Terms of Delivery<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <textarea type="text" id="txtDelivery" [(ngModel)]="TermsofDelivery"
+                                  (keypress)="onKeypressDelivery($event)" class="form-control form-control-sm"
+                                  placeholder="">
+                                                        </textarea>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Dispatch Through<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <textarea type="text" id="txtDespatchThrough" [(ngModel)]="DespatchThrough"
+                                  (keypress)="onKeypressDispatch($event)" class="form-control form-control-sm"
+                                  placeholder="">
+                                              </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Signed PO</label>
+                              <div class="col-sm-6">
+                                <input type="file" id="fileimage" #filePicker (change)="onFileChange($event)"
+                                  accept="application/pdf, image/jpeg" placeholder="Choose file">
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <!-- <label class="col-form-label-xs col-sm-4">Signed PO File</label> -->
+                              <label class="col-form-label-xs col-sm-4"></label>
+                              <div class="col-sm-6" *ngIf="IsSignedPoTrueFile">
+                                <a style="margin-left: 50px;" (click)="SignedPOClick()" title="File View"
+                                  style="color:green"><span>Signed PO </span><i class="fa fa-eye"></i></a>
+                              </div>
+                              <div class="col-sm-6" *ngIf="IsSignedPoFalseFile">
+                                <label class="col-form-label-xs"><span>No Signed PO Uploaded</span> </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Is Amended</label>
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtIsAmended"
+                                  [disabled]="IsAmendedDisabled" (change)="ChangeIsAmended()"
+                                  [(ngModel)]="model.IsAmended">
+                                  <option class="dropdown-item" [value]="0">No</option>
+                                  <option class="dropdown-item" [value]="1">Yes</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Amended Date</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtAmendedDate" [(ngModel)]="AmendedDate" readonly
+                                  class="form-control form-control-sm" placeholder="No Amended Date" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">PO Status<span style="color:red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <div class="msg"></div>
+                                <select class="form-control form-control-sm" id="txtPOStatusId"
+                                  (change)="valChange('txtPOStatusId')" (change)="ChangePOStatus($event)"
+                                  [(ngModel)]="model.POStatusId">
+                                  <option class="dropdown-item" [value]="0">Select</option>
+                                  <option *ngFor="let item of PODropDownClass.POStatusList" [value]="item.Id">
+                                    {{item.Name}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <div class="col-sm-8">
+                                <button type="submit" *ngIf="Save" class="btn btn-sm btn-success" (click)="PoBasicdetailSave()"> <i class="fa fa-save"></i> Save &
+                                  Continue</button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+
+                      </div>
+                      <div class="tab-pane fade" id="custom-tabs-three-profile" role="tabpanel"
+                        aria-labelledby="custom-tabs-three-profile-tab">
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row" style="margin-left: 10px;">
+                              <label class="col-form-label-xs">Currency<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-2">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.CurrencyType">
+                                  <option value="1">₹ INR</option>
+                                  <option value="2">$ USD</option>
+                                  <option value="3">€ Euro</option>
+                                </select>
+                              </div>
+                              <label class="col-form-label-xs">Value</label>
+                              <div class="col-sm-2">
+                                <input class="form-control form-control-sm" type="text"
+                                  [(ngModel)]="model.CurrencyValue" style="text-align:center;" />
+                              </div>
+                              <label class="col-form-label-xs">Annexure (Excel)</label>
+                              <div class="col-sm-2">
+                                <input type="file" #inputFile (change)="ExeclFileChange($event)" multiple="false" />
+                              </div>
+                              <div class="col-sm-12">
+                                <button type="submit" *ngIf="Save" class="btn btn-sm btn-success"
+                                  (click)="SavePoItemDetialByExcel()">Upload Excel</button>
+                                &nbsp;<button type="submit" class="btn btn-sm btn-success"
+                                  (click)="UploadSampleExcel()"><i class="fa fa-download"></i> Sample Excel</button>
+                                &nbsp;<button type="submit" *ngIf="IsExcelMsgHideShow" class="btn btn-sm btn-success"
+                                  (click)="DownloadMessageData()"> <i class="fa fa-download"></i>Error</button>
+
+                              </div>
+                              <!-- <div class="col-sm-1"*ngIf="IsExcelMsgHideShow">
+                                       <button type="submit"  class="btn btn-sm btn-success" (click)="DownloadMessageData()"> <i class="fa fa-download"></i>Error</button> 
+                                      </div> -->
+
+                            </div>
+                          </div>
+                        </div>
+                        <div style="overflow-x:scroll; height:auto;">
+                          <table id="tblOne" class="table table-striped table-bordered col-sm-12">
+                            <thead>
+                              <tr>
+                                <th></th>
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Name<span
+                                    style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Make<span
+                                    style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                                <th>Item/Service Code<span style="color:red;" class="Mandatoryfield"><b>*</b></span>
+                                </th>
+                                <th>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item/Service&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                                    style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                <th>
+                                  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                </th>
+                                <th>Reason Code</th>
+                                <th>Site ID</th>
+                                <th>Site Name</th>
+                                <th>Customer Code</th>
+                                <th>&nbsp;&nbsp;&nbsp;Qty<span style="color:red;"
+                                    class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;Rate<span style="color:red;"
+                                    class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit&nbsp;&nbsp;&nbsp;&nbsp;</th> -->
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;Amount<span style="color:red;"
+                                    class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                                <th>&nbsp;&nbsp;IsWarranty&nbsp;&nbsp;</th>
+                                <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Month<span style="color:red;"
+                                    class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let dynamic of dynamicArray; let i = index;">
+                                <td (click)="deleteRow(i)" style="width:20px;">
+                                  <i class="fa fa-trash" title="Delete"></i>
+                                </td>
+
+                                <td style="width:100px;">
+                                  <select class="form-control form-control-sm ItemName"
+                                    [(ngModel)]="dynamicArray[i].ItemNameId"
+                                    (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of FilterItemNameDetailData" [value]="item.id">
+                                      {{item.itemName}}</option>
+                                  </select>
+                                </td>
+                                <td style="width:100px;">
+                                  <select class="form-control form-control-sm ItemMake"
+                                    [(ngModel)]="dynamicArray[i].ItemMakeId"
+                                    (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id">
+                                      {{item.itemName}}</option>
+                                    <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
+                                  </select>
+                                </td>
+                                <td style="width:100px;">
+                                  <select class="form-control form-control-sm ItemCode"
+                                    [(ngModel)]="dynamicArray[i].ItemId"
+                                    (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id">
+                                      {{item.itemName}}</option>
+                                  </select>
+                                </td>
+                                <td style="width:120px;">
+                                  <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly
+                                    class="form-control form-control-sm" type="text"
+                                    style="text-align:center;"> </textarea>
+                                </td>
+
+                                <td style="width:100px;">
+                                  <textarea [(ngModel)]="dynamicArray[i].SubDescription"
+                                    class="form-control form-control-sm SubDescription" type="text"> </textarea>
+                                </td>
+                                <td style="width:40px;">
+                                  <input [(ngModel)]="dynamicArray[i].ReasonCode"
+                                    class="form-control form-control-sm ReasonCode" type="text"
+                                    style="text-align:center;" />
+                                </td>
+                                <td style="width:110px !important;">
+                                  <div class="ng-autocomplete" style="width:100px !important;">
+                                    <ng-autocomplete [data]="AutoCompleteCustomerSiteIdList"
+                                      [searchKeyword]="CustomerSitekeyword" (inputCleared)="ClearedCustomerSiteId(i)"
+                                      [(ngModel)]="dynamicArray[i].ValueCustomerSite"
+                                      (selected)='SelectCustomerSiteId($event,i)'
+                                      (inputChanged)='onChangeSearchCustomerSiteId($event,i)'
+                                      (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+                                      [notFoundTemplate]="CuSiteIdnotFoundTemplate" [debounceTime]="600"
+                                      [minQueryLength]="2" placeHolder="Search CustomerSiteId">
+                                    </ng-autocomplete>
+                                    <ng-template #CuSiteIditemTemplate let-item>
+                                      <a [innerHTML]="item.CustomerSiteId"></a>
+                                    </ng-template>
+                                    <ng-template #CuSiteIdnotFoundTemplate let-notFound>
+                                      <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                  </div>
+                                </td>
+                                <!-- <td style="width:80px;">    
+                                                <input [(ngModel)]="dynamicArray[i].CustomerSiteId" class="form-control form-control-sm CustomerSiteId"  type="text" style="text-align:center;"/>    
+                                              </td>  -->
+                                <input [(ngModel)]="dynamicArray[i].SiteId" class="form-control form-control-sm "
+                                  type="hidden" style="text-align:center;" />
+                                <input [(ngModel)]="dynamicArray[i].SiteName" class="form-control form-control-sm "
+                                  type="hidden" style="text-align:center;" />
+                                <input [(ngModel)]="dynamicArray[i].CustomerSiteId"
+                                  class="form-control form-control-sm " type="hidden" style="text-align:center;" />
+                                <input [(ngModel)]="dynamicArray[i].CustomerId" class="form-control form-control-sm "
+                                  type="hidden" style="text-align:center;" />
+                                <td style="width:110px;">
+                                  <div class="ng-autocomplete" style="width:130px !important;">
+                                    <ng-autocomplete [data]="AutoCompleteSiteCustomerList" [searchKeyword]="keyword"
+                                      (inputCleared)="searchCleared(i)" [(ngModel)]="dynamicArray[i].ValueSiteName"
+                                      (selected)='SelectSiteName($event,i)'
+                                      (inputChanged)='onChangeSiteNameSearch($event,i)'
+                                      (inputFocused)='onFocused($event)' [itemTemplate]="itemTemplate"
+                                      [notFoundTemplate]="notFoundTemplate" [debounceTime]="600" [minQueryLength]="2"
+                                      placeHolder="Search SiteName">
+                                    </ng-autocomplete>
+                                    <ng-template #itemTemplate let-item>
+                                      <a [innerHTML]="item.SiteName"></a>
+                                    </ng-template>
+                                    <ng-template #notFoundTemplate let-notFound>
+                                      <div [innerHTML]="notFound"></div>
+                                    </ng-template>
+                                  </div>
+                                </td>
+                                <td style="width:80px;">
+                                  <input [(ngModel)]="dynamicArray[i].CustomerCode"
+                                    class="form-control form-control-sm CustomerCode" type="text"
+                                    style="text-align:center;" />
+                                </td>
+                                <td style="width:50px;">
+                                  <input [(ngModel)]="dynamicArray[i].Qty" class="form-control form-control-sm itmsQty"
+                                    (blur)="QtyOnblur()" (keypress)="QtyKeyPress()" appCopyPastNumFloatValue type="text"
+                                    style="text-align:center;" />
+                                </td>
+
+                                <td style="width:100px;">
+                                  <input [(ngModel)]="dynamicArray[i].Rate" id="txtRate"
+                                    class="form-control form-control-sm itmsRate" (blur)="RateOnblur()"
+                                    appCopyPastNumFloatValue (keypress)="RateKeyPress()" type="text"
+                                    style="text-align:center;" />
+                                </td>
+
+                                <td style="width:60px;">
+                                  <select class="form-control form-control-sm Unit" id="ddlUnitName_{{i}}"
+                                    [(ngModel)]="dynamicArray[i].UnitName" (change)="ChangeUnit()">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id">
+                                      {{item.UnitName}}</option>
+                                  </select>
+                                  <!-- <input [(ngModel)]="dynamicArray[i].UnitName" readonly class="form-control form-control-sm" type="text" style="text-align:center;"/>    
+                                               -->
+                                </td>
+                                <td style="width:60px;">
+                                  <input [(ngModel)]="dynamicArray[i].TotalAmount" readonly
+                                    class="form-control form-control-sm " type="text" style="text-align:center;" />
+                                </td>
+
+                                <td style="width:60px;">
+                                  <select class="form-control form-control-sm IsWarranty" id="ddlIsWarranty_{{i}}"
+                                    [(ngModel)]="dynamicArray[i].IsWarranty" (change)="onChangeWaranty(i)">
+                                    <option class="dropdown-item" [value]="2">Select</option>
+                                    <option class="dropdown-item" [value]="1">Yes</option>
+                                    <option class="dropdown-item" [value]="0">No</option>
+                                  </select>
+
+                                </td>
+                                <td style="width:90px;">
+                                  <input [(ngModel)]="dynamicArray[i].Month" class="form-control form-control-sm Month"
+                                    (keypress)="onKeypressMonth()" appNumFloat type="text" style="text-align:center;" />
+                                </td>
+                              </tr>
+                              <tr>
+                                <td colspan="10">Gross Total</td>
+                                <td style="text-align:center;">{{totalQuantity}}</td>
+
+                                <td></td>
+                                <td></td>
+                                <td style="text-align:center;">{{totalSumAmount}}</td>
+                                <td></td>
+                                <td></td>
+                              </tr>
+                              <tr>
+                                <td colspan="4">Amount Chargeable (in words)<span style="color:red;">*</span></td>
+                                <td colspan="12">
+                                  <textarea class="form-control form-control-sm" id="AmountChargeable" type="text"
+                                    (keypress)="AmountChargeableKeyPress()"
+                                    [(ngModel)]="model.AmountChargeable"> </textarea>
+                                </td>
+
+                              </tr>
+                              <tr>
+                                <td (click)="addRow()">
+                                  <i class="fa fa-plus"></i>
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <br>
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row" style="margin-left: 10px;">
+
+                              <button type="submit" *ngIf="Save" class="btn btn-sm btn-success col-sm-3"
+                             (click)="PoItemDetialSave()"> <i
+                                  class="fa fa-save"></i> Save & Continue</button>
+
+
+                            </div>
+                          </div>
+
+                        </div>
+
+
+                        <br>
+
+
+
+                        <div class="row">
+                          <div class="col-sm-12" style="background-color:#28a745;">
+                            <!-- <div class="btn-group btn-group-sm"> -->
+                            <!-- <button type="button" class="btn btn-success" style="text-align:center" >
+        </button> -->
+                            <label class="col-sm-12" style="text-align:center;color:white"><b> Annexure
+                                (Excel)</b></label>
+                          </div>
+                          <!-- </div> -->
+                        </div>
+                        <div class="col-sm-12" style="height:150px; overflow:auto;" *ngIf="IsExcelSaveDataTaleHideShow">
+                          <table class="table table-striped table-bordered">
+                            <thead>
+                              <tr>
+                                <th>S.No</th>
+                                <th>Item Name</th>
+                                <th>Item Make</th>
+                                <th>Item Code</th>
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <th>Total Amount</th>
+                                <th>Sub Description</th>
+                                <th> Reason Code</th>
+                                <th>Site Id</th>
+                                <th>Site Name</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr *ngFor="let Items of ItemSaveExcelData; let ndx = index">
+                                <td style="width:10px; text-align:center">
+                                  {{ ndx + 1 | number }}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.ItemName}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.MakeName}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.ItemCode}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.Qty}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.Rate}}
+                                </td>
+                                <td style="width:120px; text-align:center">
+                                  {{Items.TotalAmount}}
+                                </td>
+                                <td style="width:30px; text-align:center">
+                                  {{Items.SubDescription}}
+                                </td>
+                                <td style="width:10px; text-align:center">
+                                  {{Items.ReasonCode}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.CustomerSiteId}}
+                                </td>
+                                <td style="width:60px; text-align:center">
+                                  {{Items.SiteName}}
+                                </td>
+
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+
+                      </div>
+
+
+
+                      <div class="tab-pane fade" id="custom-tabs-three-messages" role="tabpanel"
+                        aria-labelledby="custom-tabs-three-messages-tab">
+
+                        <div class="row mb-0">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Place of Receipt by Shipper</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtReceiptbyShipper" [(ngModel)]="PlaceofReceiptbyShipper"
+                                  class="form-control form-control-sm" placeholder="Place of Receipt by Shipper" />
+
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Vessel/Flight No</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtFlight" [(ngModel)]="VesselFlightNo"
+                                  class="form-control form-control-sm" placeholder="Vessel/Flight No" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row mb-1">
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Port of Loading</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtLoading" [(ngModel)]="PortofLoading"
+                                  class="form-control form-control-sm" placeholder="Port of Loading" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Port of Discharge</label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtDischarge" [(ngModel)]="PortofDischarge"
+                                  class="form-control form-control-sm" placeholder="" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Narration Type<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtNarration"
+                                  [(ngModel)]="model.NarrationTypeId"
+                                  (change)="ChangeNarrationType(model.NarrationTypeId)">
+                                  <option [value]="0">Select</option>
+                                  <option *ngFor="let item of NarrationDataDetail" [value]="item.Id">{{item.ItemName}}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-6">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Activity Day<span style="color: red;"
+                                  class="Mandatoryfield"><b></b></span></label>
+                              <div class="col-sm-8">
+                                <input type="text" id="txtActivityDay" [(ngModel)]="model.ActivityDay"
+                                  class="form-control form-control-sm" placeholder="mm/yyyy"
+                                  (keypress)="onKeypressActivityDay()" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-2">Narration</label>
+                              <div class="col-sm-10">
+                                <textarea type="text" id="txtNarration" [(ngModel)]="Narration" readonly rows="5"
+                                  class="form-control form-control-sm" placeholder="">
+                                                      </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-2">Additional Remarks</label>
+                              <div class="col-sm-10">
+                                <textarea type="text" id="txtAddRemarks" [(ngModel)]="AdditionalRemarks" rows="5"
+                                  class="form-control form-control-sm" placeholder="">
+                                                      </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <br>
+
+
+
+
+
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row">
+
+                              <button type="submit" class="btn btn-sm btn-success col-sm-2" *ngIf="Save"
+                                (click)="PoOtherDetialSave()" > <i
+                                  class="fa fa-save"></i> Save</button>
+                              &nbsp;<label class="col-form-label-xs col-sm-2">Invoice To<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-2" style="margin-left:-6%;">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.ddlInvoiceTo">
+                                  <option value="1">WH Address</option>
+                                  <option value="2">Office Address</option>
+                                </select>
+                              </div>
+                              <label class="col-form-label-xs col-sm-2">Consignee<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-2" style="margin-left:-6%;">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.ddlConsignee">
+                                  <option value="1">WH Address</option>
+                                  <option value="2">Office Address</option>
+                                  <option value="3">None</option>
+                                </select>
+                              </div>
+                              <!-- <button type="submit" style="margin-left:0%;" class="btn btn-sm btn-success col-sm-3" [disabled]="IsCreatePOPdf" (click)="CreatePurchaseOrderPdf()"> <i class="fa fa-save"></i> Generate PO Pdf</button> -->
+                              <button class="btn btn-success pull-right" style="margin-right: 5px; "
+                                *ngIf="ObjUserPageRight.IsGenPdf " (click)="CreatePurchaseOrderPdf()"><i class="fa fa-download"
+                                  [ngClass]="{'fa-spin fa-spinner': IsCreatePOPdf, 'fa-check': !IsCreatePOPdf}"></i>
+                                {{button}}</button>
+
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="tab-pane fade" id="custom-tabs-three-file" role="tabpanel"
+                        aria-labelledby="custom-tabs-three-file-tab">
+                        <div class="row mb-1">
+                          <div class="col-sm-3">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Document Type<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txtDocumentType"
+                                  [(ngModel)]="model.DocumentTypeId" (change)="ChangeDocumentType()">
+                                  <option [value]="0">Select</option>
+                                  <option *ngFor="let item of DispatchTypeList" [value]="item.id">{{item.itemName}}
+                                  </option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-3">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Type<span style="color: red;"
+                                  class="Mandatoryfield"><b>*</b></span></label>
+                              <div class="col-sm-8">
+                                <select class="form-control form-control-sm" id="txttype" [(ngModel)]="model.TypeId"
+                                  (change)="ChangeType()">
+                                  <option [value]="0">Select</option>
+                                  <option *ngFor="let item of TypeList" [value]="item.id">{{item.itemName}}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-3">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-2"><span style="color: red;"
+                                  class="Mandatoryfield"><b></b></span></label>
+                              <div class="col-sm-10">
+                                <input type="file" id="fileimage" #inputDocumentFile (change)="onFiletype($event)"
+                                  accept="" placeholder="">
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-sm-3">
+                            <div class="row">
+                              <label class="col-form-label-xs col-sm-4">Remarks<span style="color: red;"
+                                  class="Mandatoryfield"><b></b></span></label>
+                              <div class="col-sm-8">
+                                <textarea type="text" rows="1" [(ngModel)]="model.Remarks"
+                                  class="form-control form-control-sm"> </textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <br>
+
+                        <div class="row mb-1">
+                          <div class="col-sm-12">
+                            <div class="row">
+                              <button type="submit" *ngIf="ObjUserPageRight.IsUploadDoc"
+                                class="btn btn-sm btn-success col-sm-1.5" style="float: Right;"
+                                (click)="AddUpdateDocumentFileType()"> <i class="fa fa-save"></i> Upload </button>
+                            </div>
+                          </div>
+                        </div>
+                        <br>
+                        <div class="row mb-1">
+                          <div class="col-sm-12 table-responsive text-nowrap">
+                            <table id="tbltwo" class="table table-striped table-bordered">
+                              <thead>
+                                <tr>
+                                  <th scope="row">No.</th>
+                                  <th scope="row">Document</th>
+                                  <th scope="row">Document Type</th>
+                                  <th scope="row">Remarks</th>
+                                  <th scope="row">Action</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let items of DocumentTypeDatalist; let ndx = index">
+                                  <td>{{ ndx + 1 | number }}</td>
+                                  <td>
+                                    {{items.DocumentType}}
+                                  </td>
+                                  <td>
+                                    <!-- <textarea   class="form-control form-control-sm " type="text" > </textarea>   -->
+                                    {{items.Type}}
+                                  </td>
+                                  <td>
+                                    {{items.Remarks}}
+                                    <!-- <input  class="form-control form-control-sm itmsQty" (blur)="QtyOnblur()" (keypress)="QtyKeyPress()" onkeypress="return (event.charCode  != 46 || event.charCode  > 31 )&& (event.charCode >= 48 || event.charCode <= 57)" type="text" style="text-align:center;"/>     -->
+                                  </td>
+                                  <td style="text-align:center;">
+                                    <a (click)="ClickViewDocument(DocumentTypeDatalist[ndx].Id, ndx)">
+                                      <i title="view" style="color:green" class="fa  fa-eye"></i></a>
+
+                                    <a (click)="ClickDownloadDocument(DocumentTypeDatalist[ndx].Id, ndx)">
+                                      <i title="view" style="color:green" class="fa  fa-download"></i></a>
+
+                                    <a (click)="ClickDeleteDocument(DocumentTypeDatalist[ndx].Id, ndx)">
+                                      <i title="view" style="color:green" class="fa  fa-trash"></i></a>
+
+                                    <!-- <input  class="form-control form-control-sm itmsQty" (blur)="QtyOnblur()" (keypress)="QtyKeyPress()" onkeypress="return (event.charCode  != 46 || event.charCode  > 31 )&& (event.charCode >= 48 || event.charCode <= 57)" type="text" style="text-align:center;"/>     -->
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+
+                      </div>
+
+
+                      <div class="tab-pane fade" id="custom-tabs-three-outbox" role="tabpanel"
+                        aria-labelledby="custom-tabs-three-outbox-tab">
+
+                        <div class="row mb-1">
+                          <div class="col-sm-12 table-responsive text-nowrap">
+                            <table id="tbltwo" class="table table-striped table-bordered">
+                              <thead>
+                                <tr>
+                                  <th scope="row">No.</th>
+                                  <th scope="row">Mail Date</th>
+                                  <th scope="row">Mail Subject</th>
+                                  <th scope="row">Mail To</th>
+
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let items of EmailData; let ndx = index">
+                                  <td>{{ ndx + 1 | number }}</td>
+                                  <td>
+                                    {{items.EmailDate}}
+                                  </td>
+                                  <td>
+                                    <!-- <textarea   class="form-control form-control-sm " type="text" > </textarea>   -->
+                                    {{items.MailSubject}}
+                                  </td>
+                                  <td>
+                                    {{items.EmailTo}}
+                                    <!-- <input  class="form-control form-control-sm itmsQty" (blur)="QtyOnblur()" (keypress)="QtyKeyPress()" onkeypress="return (event.charCode  != 46 || event.charCode  > 31 )&& (event.charCode >= 48 || event.charCode <= 57)" type="text" style="text-align:center;"/>     -->
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </div>
+
+                        </div>
+
+
+
+                      </div>
+
+                    </div>
+                  </div>
+                  <!-- /.card -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

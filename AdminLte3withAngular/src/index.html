@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>SCM Portal</title>
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="assets/logo4.png">
+</head>
+ <body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed text-sm">
+  <app-root></app-root> 
+</body>
+<script>
+  function test(grn) {
+      if (grn != '') {
+          window.location.href = "https://scmuat.astnoc.com/GRNDetail?grn=" + grn + "";
+      }
+      return;
+  }
+</script>
+</html>

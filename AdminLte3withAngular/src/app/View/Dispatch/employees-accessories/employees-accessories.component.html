@@ -1,0 +1,868 @@
+<style>
+    .table th,
+    .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+
+    .Mandatoryfield {
+        font-size: 15px
+    }
+
+    .ng-star-inserted {
+        /* position: fixed !important; */
+        z-index: 999 !important;
+        /* top: 0px;
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
+    }
+
+    .ChildCSS {
+        width: 100%;
+        display: flex;
+        /* justify-content: flex-end;
+      margin-top: -50px; */
+    }
+
+    #table-wrapper {
+        height: 300px;
+        overflow: auto;
+    }
+
+    .ApprovalColor {
+        color: green
+    }
+
+    .RejectColor {
+        color: red
+    }
+
+    .PendingColor {
+        color: #babfc7
+    }
+</style>
+
+
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+        <p style="color: white">Please Wait. </p>
+    </ngx-spinner>
+
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">WH Management / Employees Accessories</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+        <section class="content" style="padding-top:2px;">
+            <div class="container-fluid">
+                <!--Start Dispatch Front Page-->
+                <div class="row" [hidden]="isShownList">
+                    <div class="col-sm-12">
+                        <div class="row" style="margin-left:3px">
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">State</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect [data]="SearchStateList" [(ngModel)]="SelectedSearchStateList"
+                                    [settings]="MultidropdownSettings" (onSelect)="BindSearchWHList('')"
+                                    (onSelectAll)="BindSearchWHList('')" (onDeSelect)="BindSearchWHList('')"
+                                    (onDeSelectAll)="BindSearchWHList('DelAll')">
+                                </angular2-multiselect>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">WH</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect [data]="SearchWHList" [(ngModel)]="SelectedSearchWHList"
+                                    [settings]="MultidropdownSettings" (onDeSelectAll)="onClickWH('DelAll')"
+                                    (ngModelChange)="onClickWH('')">
+                                </angular2-multiselect>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Emp Circle</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" placeholder="Enter emp circle"
+                                    class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Emp Code</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" placeholder="Enter emp code" [(ngModel)]="model.EmpCode"
+                                    class="form-control form-control-sm" />
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Emp Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" placeholder="Enter emp name" [(ngModel)]="model.EmpName"
+                                    class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <hr>
+                        <app-time-period class="ChildCSS"></app-time-period>
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchEmpAccessoriesList('List')">
+                                        <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchEmpAccessoriesList('Export')"><i class="fa fa-download"
+                                            aria-hidden="true"></i> Excel Export</button>
+                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
+                                            class="fa fa-plus"></i> New
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                                [enableSorting]="true" [enableFilter]="true" [pagination]="true" paginationPageSize="20"
+                                [columnDefs]="columnDefs" [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay" rowSelection="multiple" [rowData]="rowData"
+                                [frameworkComponents]="frameworkComponents" [gridOptions]="gridOptions"
+                                enableCellTextSelection="true">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+                </div>
+                <!-- --row-End--front-page -->
+
+                <!--Start Dispatch Back End Page-->
+                <div class="row" [hidden]="isShownEdit">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="card card-success">
+                            <div class="card-body">
+                                <!-- <div class="alert alert-danger" *ngIf="IsError" role="alert">
+                                    <strong>Error!</strong> {{errorMessage}}
+                                </div>
+                                <div class="alert alert-success" *ngIf="IsSuccess" role="alert">
+                                    {{succesMessage}}
+                                </div> -->
+                                <div class="row mb-1">
+                                    <div class="col-sm-12 content-header bg-light">
+                                        <div class="col-sm-12">
+                                            <button type="button" class="btn btn-sm btn-success" (click)="backPage()">
+                                                <i class="fa fa-arrow-circle-left"></i> Back</button>
+                                            &nbsp; <button type="submit" class="btn btn-sm btn-success"
+                                                (click)="createNew()"><i class="fa fa-plus"></i>
+                                                New </button>
+                                            &nbsp;<button type="button" class="btn btn-sm btn-success"
+                                                (click)="conformPopup()">
+                                                <i class="fa fa-save"></i> Save</button>
+                                            &nbsp;<button type="button" class="btn btn-sm btn-success"
+                                                (click)="generateEmpAccessoriesPdf()">
+                                                <i class="fa fa-save"></i>
+                                                Generate Challan</button>
+                                            &nbsp;<button type="button" class="btn btn-sm btn-danger"
+                                                *ngIf="IsHideShowCancelBtn">
+                                                Cancel Toolkit</button>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <!--start-company-details & ship from row-->
+                                <div class="row">
+                                    <div class="col-12 col-sm-6 col-md-6 ">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border">Company WH Details</legend>
+                                            <span></span>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">State<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-6" tabindex="0">
+                                                            <select class="form-control form-control-sm"
+                                                                id="txtddlStateId" [disabled]="IsEditDisabled"
+                                                                (change)="bindStateCodeWHAdd(model.ddlStateId)"
+                                                                [(ngModel)]="model.ddlStateId" autofocus>
+                                                                <option class="dropdown-item" value="0">Select</option>
+                                                                <option *ngFor="let itemState of SearchStateList"
+                                                                    [value]="itemState.id">
+                                                                    {{itemState.itemName}}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3">
+                                                    <div class="row" style="margin-left: -50px;">
+                                                        <label class="col-form-label-xs ">State Code<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b></b></span></label>
+                                                        <div class="col-sm-3">
+                                                            <input type="text" id="txtInvoiceNo" tabindex="4"
+                                                                placeholder="" [(ngModel)]="model.StateCode" readonly
+                                                                class="form-control form-control-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-12">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-2">Regd.Office</label>
+                                                        <div class="col-sm-10">
+                                                            <textarea rows="2" placeholder="" tabindex="4"
+                                                                [(ngModel)]="model.RegdOffice" readonly
+                                                                class="form-control form-control-sm"></textarea>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1" *ngFor="let WhAd of StateCodeWhAd; let i=index">
+                                                <div class="col-sm-12">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-2">WH Address {{i+1}}
+                                                        </label>
+                                                        <div class="col-sm-10">
+                                                            <textarea rows="2" placeholder="" tabindex="4"
+                                                                [(ngModel)]="WhAd.WHAddress" readonly
+                                                                class="form-control form-control-sm"></textarea>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">GSTIN No</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="text" id="txtGSTINNo" tabindex="4"
+                                                                    [(ngModel)]="model.GSTINNo" readonly placeholder=""
+                                                                    class="form-control form-control-sm" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">CIN</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="text" id="txtCIN" tabindex="4"
+                                                                    [(ngModel)]="model.CIN" readonly placeholder=""
+                                                                    class="form-control form-control-sm" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </div>
+                                    <div class="col-12 col-sm-6 col-md-6 ">
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border"> Ship From</legend>
+                                            <span></span>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">WH State</label>
+                                                        <div class="col-sm-8">
+                                                            <input type="text" id="txtFromWHState" tabindex="4"
+                                                                [(ngModel)]="model.WHState" readonly placeholder=""
+                                                                class="form-control form-control-sm" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">WH Name<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <select class="form-control form-control-sm"
+                                                                    id="txtShippedfromWHId"
+                                                                    [(ngModel)]="model.ShippedfromWHId"
+                                                                    (change)="bindShippedWhAddess(model.ShippedfromWHId)"
+                                                                    [disabled]="IsEditDisabled">
+                                                                    <option class="dropdown-item" value="0">Select
+                                                                    </option>
+                                                                    <option *ngFor="let item of EditWHList"
+                                                                        [value]="item.Id">{{item.WHName}}</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-sm-12">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-2">WH Address</label>
+                                                        <div class="col-sm-10">
+                                                            <div class="input-group">
+                                                                <textarea rows="2" placeholder="Destination /WH Address"
+                                                                    tabindex="4" readonly
+                                                                    [(ngModel)]="model.ShippedWHAddress"
+                                                                    class="form-control form-control-sm"></textarea>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </fieldset>
+                                        <!--start ship to-->
+                                        <fieldset class="scheduler-border">
+                                            <legend class="scheduler-border"> Assign To</legend>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Emp Name<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-8">
+                                                            <div class="ng-autocomplete">
+                                                                <ng-autocomplete [data]="TechDataList"
+                                                                    [searchKeyword]="UniqueItemkeyword"
+                                                                    (inputCleared)="clearedAutoEmpName('all')"
+                                                                    [(ngModel)]="model.AutoEmpName"
+                                                                    (selected)='onSelectEmpName($event)'
+                                                                    (inputChanged)='onChangeEmpName($event)'
+                                                                    [itemTemplate]="UniqueiteIditemTemplate"
+                                                                    [notFoundTemplate]="UniqueiteIditemTemplate"
+                                                                    [debounceTime]="600" [minQueryLength]="2"
+                                                                    placeHolder="Search Emp Name"
+                                                                    [disabled]="IsEditDisabled">
+                                                                </ng-autocomplete>
+                                                                <ng-template #UniqueiteIditemTemplate let-emp>
+                                                                    <a [innerHTML]="emp.UserName"></a>
+                                                                </ng-template>
+                                                                <ng-template #UniqueiteIditemTemplate let-notFound>
+                                                                    <div [innerHTML]="notFound"></div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Emp Code<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-8">
+                                                            <!-- <div class="input-group">
+                                                                <input type="text" id="" tabindex="4"
+                                                                    [(ngModel)]="model.EmpCode" placeholder=""
+                                                                    class="form-control form-control-sm" />
+                                                            </div>    
+                                                                                                                -->
+                                                            <div class="ng-autocomplete">
+                                                                <ng-autocomplete [data]="EmpCodeList"
+                                                                    [searchKeyword]="UniqueItemkeywordID"
+                                                                    (inputCleared)="clearedAutoEmpName('all')"
+                                                                    [(ngModel)]="model.EmpCode"
+                                                                    (selected)='onSelectEmpID($event)'
+                                                                    [itemTemplate]="UniqueiteIditemTemplate1"
+                                                                    [notFoundTemplate]="UniqueiteIditemTemplate1"
+                                                                    [debounceTime]="600" [minQueryLength]="2"
+                                                                    placeHolder="Search Emp Code"
+                                                                    [disabled]="IsEditDisabled">
+                                                                </ng-autocomplete>
+                                                                <ng-template #UniqueiteIditemTemplate1 let-emp>
+                                                                    <a [innerHTML]="emp.EmployeeID"></a>
+                                                                </ng-template>
+                                                                <ng-template #UniqueiteIditemTemplate1 let-notFound>
+                                                                    <div [innerHTML]="notFound"></div>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Designation</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="text" id="" tabindex="4"
+                                                                    [(ngModel)]="model.Designation" placeholder=""
+                                                                    class="form-control form-control-sm"
+                                                                    [disabled]="IsEditDisabled" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Mobile No.</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="text" id="txtCIN" tabindex="4"
+                                                                    [(ngModel)]="model.MobileNo" placeholder=""
+                                                                    class="form-control form-control-sm"
+                                                                    [disabled]="IsEditDisabled" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Assign Date<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input class="form-control form-control-sm"
+                                                                    placeholder="" id="txtDocDate" autocomplete="off"
+                                                                    ngbDatepicker #DocDate="ngbDatepicker"
+                                                                    [(ngModel)]="model.DocumentDate" [maxDate]="MaxDate"
+                                                                    readonly>
+                                                                <div class="input-group-append">
+                                                                    <span class="input-group-text"
+                                                                        (click)="DocDate.toggle()"><i
+                                                                            class="far fa-calendar-alt"></i></span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Toolkit<span
+                                                                style="color: red;"
+                                                                class="Mandatoryfield"><b>*</b></span></label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <select class="form-control form-control-sm"
+                                                                    id="txtToolkitId" [(ngModel)]="model.ToolkitId"
+                                                                    (change)="bindToolkitDetailById(model.ToolkitId)">
+                                                                    <option value="0">Select</option>
+                                                                    <option *ngFor="let data of Toolkitdata"
+                                                                        class="dropdown-item" [value]="data.Id">
+                                                                        {{data.ToolKitName}}
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-1">
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">DocumentNo</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <input type="text" id="txtDocNo" tabindex="4"
+                                                                    [(ngModel)]="model.DocNo" readonly placeholder=""
+                                                                    class="form-control form-control-sm" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        <label class="col-form-label-xs col-sm-4">Address</label>
+                                                        <div class="col-sm-8">
+                                                            <div class="input-group">
+                                                                <textarea rows="2" placeholder="Emp Address"
+                                                                    tabindex="4" id="txtEmpAddress"
+                                                                    [(ngModel)]="model.EmpAddress"
+                                                                    class="form-control form-control-sm"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                        <!--end ship to-->
+
+                                    </div>
+
+                                </div>
+                                <!--end-company-details-row-->
+
+                                <!--start item-details-row-->
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">Accessories Item</legend>
+                                    <div class="col-sm-12" style="overflow-x:scroll; min-height:250px;">
+                                        <!--This table Used For Same State-->
+                                        <table id="tblOne" class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Item Name<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Item Make<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Part No<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                                                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span
+                                                            style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <!-- <th style="text-align: center;">Serial&nbsp;No.<span
+                                                            style="color:red" class="Mandatoryfield"><b>*</b></span>
+                                                    </th> -->
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                                                    <td (click)="deleteRow(i)" style="width:20px;">
+                                                        <i class="fa fa-trash" title="Delete"></i>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemName"
+                                                            id="ddlItemNameId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].ItemNameId"
+                                                            [disabled]="IsItemListDisabled"
+                                                            (change)="changeEditItemName(dynamicArray[i].ItemNameId,i)">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of SearchItemNameList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemMake"
+                                                            id="ddlItemMake_{{i}}" [disabled]="IsItemListDisabled"
+                                                            (change)="changeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"
+                                                            [(ngModel)]="dynamicArray[i].ItemMakeId">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemMake"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemCode"
+                                                            id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
+                                                            (change)="changeEditItemCode(dynamicArray[i].ItemId,i)"
+                                                            [disabled]="IsItemListDisabled">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemCode"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:100px;">
+                                                        <select class="form-control form-control-sm EqType"
+                                                            id="ddlEqTypeId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].EqTypeId"
+                                                            (change)="changeEqupmnet(dynamicArray[i].EqTypeId,i)"
+                                                            [disabled]="IsItemListDisabled">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of EquipmentTypeList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:280px;">
+                                                        <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly
+                                                            class="form-control form-control-sm" type="text"
+                                                            style="text-align:center;"> </textarea>
+                                                    </td>
+                                                    <td style="width:50px;">
+                                                        <select class="form-control form-control-sm UnitName"
+                                                            id="ddlUnitName_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].UnitName"
+                                                            (change)="changeUnit(dynamicArray[i].UnitName,i)">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].UnitList"
+                                                                [value]="item.Id">{{item.UnitName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <input class="form-control form-control-sm Qty"
+                                                            id="txtQty_{{i}}" autocomplete="off"
+                                                            [(ngModel)]="dynamicArray[i].Qty" appCopyPastNumFloatValue
+                                                            type="text" style="text-align:center;" />
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="ItemAddrowhideshow">
+                                                    <td (click)="addRow()">
+                                                        <i class="fa fa-plus"></i>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                                <!--end item details-->
+                                <br>
+                                <fieldset class="scheduler-border" *ngIf="IsReceivedHideShow">
+                                    <legend class="scheduler-border">Receiving Details</legend>
+                                    <div class="row mb-1">
+                                        <label class="col-form-label-xs col-sm-1">
+                                            Receiver Name<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-2">
+                                            <input type="text" class="form-control form-control-sm" id=""
+                                                placeholder="Name">
+                                        </div>
+                                        <label class="col-form-label-xs col-sm-1">
+                                            Receiving Date<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-2">
+                                            <div class="input-group">
+                                                <input class="form-control form-control-sm" placeholder=""
+                                                    id="txtDocDate" autocomplete="off" ngbDatepicker
+                                                    #DocDate="ngbDatepicker" [maxDate]="MaxDate">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text" (click)="DocDate.toggle()"><i
+                                                            class="far fa-calendar-alt"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <label class="col-form-label-xs col-sm-1">
+                                            Receiving Doc<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-2">
+                                            <input type="file" id="" #inputFile accept="application/pdf, image/jpeg"
+                                                placeholder="Choose file">
+                                        </div>
+                                        <div class="col-sm-1"></div>
+                                        <div class="col-sm-2"> <button type="button" style="float: left;"
+                                                class="btn btn-sm btn-success"><i class="fa fa-save"></i>
+                                                Partial Update </button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                                <!--end-receiver-details-->
+                                <br>
+                                <!--start return-sent-item-details-row-->
+                                <fieldset class="scheduler-border" *ngIf="IsReceivedHideShow">
+                                    <legend class="scheduler-border">Employee Item</legend>
+                                    <div class="col-sm-12" style="overflow-x:scroll; min-height:250px;">
+                                        <!--This table Used For Same State-->
+                                        <table id="tblOne" class="table table-striped table-bordered">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Item Name<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Item Make<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>Part No<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span></th>
+                                                    <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                                                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>Qty<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>Return Qty<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>Return Eqp Type<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th>Emp.Name<span style="color:red"
+                                                            class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                    </th>
+                                                    <th style="text-align: center;">Return Item
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                                                    <td (click)="deleteRow(i)" style="width:20px;">
+                                                        <i class="fa fa-trash" title="Delete"></i>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <!-- <input class="form-control form-control-sm" id=""
+                                                            autocomplete="off" type="text" style="text-align:center;"
+                                                            [(ngModel)]="dynamicArray[i].ItemNameId" readonly/> -->
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemName"
+                                                            id="ddlItemNameId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].ItemNameId"
+                                                            [disabled]="IsItemListDisabled"
+                                                            (change)="changeEditItemName(dynamicArray[i].ItemNameId,i)">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of SearchItemNameList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemMake"
+                                                            id="ddlItemMake_{{i}}" [disabled]="IsItemListDisabled"
+                                                            (change)="changeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"
+                                                            [(ngModel)]="dynamicArray[i].ItemMakeId">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemMake"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:80px;">
+                                                        <select style="width:80px;"
+                                                            class="form-control form-control-sm ItemCode"
+                                                            id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
+                                                            (change)="changeEditItemCode(dynamicArray[i].ItemId,i)"
+                                                            [disabled]="IsItemListDisabled">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].EditItemCode"
+                                                                [value]="item.id">
+                                                                {{item.itemName}}</option>
+
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:100px;">
+                                                        <select class="form-control form-control-sm EqType"
+                                                            id="ddlEqTypeId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].EqTypeId"
+                                                            (change)="changeEqupmnet(dynamicArray[i].EqTypeId,i)"
+                                                            [disabled]="IsItemListDisabled">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of EquipmentTypeList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:180px;">
+                                                        <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly
+                                                            class="form-control form-control-sm" type="text"
+                                                            style="text-align:center;"> </textarea>
+                                                    </td>
+                                                    <td style="width:50px;">
+                                                        <select class="form-control form-control-sm UnitName"
+                                                            id="ddlUnitName_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].UnitName"
+                                                            (change)="changeUnit(dynamicArray[i].UnitName,i)">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of dynamicArray[i].UnitList"
+                                                                [value]="item.Id">{{item.UnitName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:40px;">
+                                                        <input class="form-control form-control-sm Qty"
+                                                            id="txtQty_{{i}}" autocomplete="off"
+                                                            [(ngModel)]="dynamicArray[i].Qty" appCopyPastNumFloatValue
+                                                            type="text" style="text-align:center;" />
+                                                    </td>
+                                                    <td style="width:40px;">
+                                                        <input class="form-control form-control-sm Qty"
+                                                            id="txtQty_{{i}}" autocomplete="off"
+                                                            [(ngModel)]="dynamicArray[i].Qty" appCopyPastNumFloatValue
+                                                            type="text" style="text-align:center;" />
+                                                    </td>
+                                                    <td style="width:100px;">
+                                                        <select class="form-control form-control-sm EqType"
+                                                            id="ddlEqTypeId_{{i}}"
+                                                            [(ngModel)]="dynamicArray[i].EqTypeId"
+                                                            (change)="changeEqupmnet(dynamicArray[i].EqTypeId,i)"
+                                                            [disabled]="IsItemListDisabled">
+                                                            <option class="dropdown-item" [value]="0">Select</option>
+                                                            <option *ngFor="let item of EquipmentTypeList"
+                                                                [value]="item.id">{{item.itemName}}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td style="width:60px;">
+                                                        <input class="form-control form-control-sm" id=""
+                                                            autocomplete="off" type="text" style="text-align:center;" />
+                                                    </td>
+                                                    <td style="width:30px;">
+                                                        <button class="btn btn-sm btn-success"
+                                                            title="Return Item"><i class="fa fa-undo"></i>
+                                                        </button>
+                                                        
+                                                    </td>
+                                                </tr>
+                                                <tr *ngIf="ItemAddrowhideshow">
+                                                    <td (click)="addRow()">
+                                                        <i class="fa fa-plus"></i>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </fieldset>
+                                <!--end return-sent-item details-->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--row-end-Dispatch backend Page-->
+
+        </section>
+    </div>
+</div>
+
+<!--Confirm Popup-->
+<div class="modal fade" id="confirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm !</h4>
+            </div>
+            <div class="modal-body">
+                After submitting data will make it permanent change.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" (click)="SaveUpDateEmployeeAccessories()">Save
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>

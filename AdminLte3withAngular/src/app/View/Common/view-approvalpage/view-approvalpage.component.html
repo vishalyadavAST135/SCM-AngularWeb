@@ -1,0 +1,139 @@
+<style>
+.ApprovalColor{
+    color:green
+} 
+.RejectColor{
+    color:red
+} 
+
+.PendingColor{
+    color:#babfc7
+}  
+</style>
+ 
+<a style="float:right" title="click view see all detail" (click)="open(OpenApprovalStatus)" >
+<i  *ngFor="let item of ChildApprovalList" [ngClass]="{'fa':1===1,'fa-check': item.ApprovalStatus === 'Approved', 'ApprovalColor':item.ApprovalStatus === 'Approved','fa-times': item.ApprovalStatus === ''? true:item.ApprovalStatus === 'Reject', 'RejectColor':item.ApprovalStatus === 'Reject','PendingColor':item.ApprovalStatus === ''}"></i>
+         
+          <!-- <button type="submit" class="btn btn-success" >Approval Status </button> -->
+  </a>
+
+  <ng-template #OpenApprovalStatus let-d="dismiss" [minWidth]="300" >
+  
+    <div class="modal-content" >
+      <div class="modal-header" style="background-color: #28a745;">
+        <h5 class="modal-title" id="modal-basic-title" style="color:#f1f3f7;">Approval Status</h5>
+       
+      </div>
+     <div class="modal-body">
+        <div class="row mb-1">
+        <div class="col-sm-12  text-nowrap" >
+          <table id="tbltwo" class="table  table-bordered">    
+            <thead style="background-color: #e2e6ec;">    
+                <tr>   
+                    <th scope="row" style="text-align:center;">Created By</th>     
+                    <th scope="row" style="text-align:center;">Creation Date</th>   
+                    <th scope="row" style="text-align:center;"> Modified By</th>  
+                    <th scope="row" style="text-align:center;">Modified Date</th>    
+                </tr>    
+            </thead>    
+            <tbody>    
+                 <tr>
+                   <td style="text-align:center;">{{this.CreateName}}</td>
+                  <td style="text-align:center;">    
+                    {{this.CreatedDate}}
+                  </td>
+                    <td style="text-align:center;">    
+                      {{this.ModifiedName}}
+                    </td>
+                    <td style="text-align:center;">  
+                      {{this.ModifiedDate}}  
+                    </td> 
+                </tr> 
+            </tbody>    
+        </table> 
+        </div>
+        </div> 
+       
+       
+
+        <div class="row mb-1">
+          <div class="col-sm-12  text-nowrap" >
+            <table id="tbltwo" class="table  table-bordered">    
+              <thead  style="background-color: #e2e6ec;">    
+                  <tr>   
+                    <th scope="row"></th>    
+                    <th scope="row">Role</th>   
+                      <th scope="row">Name</th>  
+                      <th scope="row">Status</th>     
+                      <th scope="row">Date</th>   
+                      <th scope="row">Reason</th>  
+                      <th scope="row">Remarks</th>    
+                  </tr>    
+              </thead>    
+              <tbody>    
+                   <tr  *ngFor="let items of ChildApprovalList; let ndx = index">
+                    <td>L{{ ndx + 1 | number }}</td> 
+                     <td>{{items.RoleName}}</td>
+                    <td>    
+                      {{items.Name}}
+                    </td>
+                      <td >    
+                        <label *ngIf="items.ApprovalStatus === 'Approved'"  class="ng-scope">
+                          <span  style="color: green; text-align:center">{{items.ApprovalStatus}} </span>
+                      </label>
+                      <label *ngIf="items.ApprovalStatus === 'Reject'"  class="ng-scope">
+                        <span  style="color: red; text-align:center">{{items.ApprovalStatus}} </span>
+                    </label>
+                    <label *ngIf="items.ApprovalStatus === ''"  class="ng-scope">
+                      <span  style="color: #b19420; text-align:center">Pending</span>
+                  </label>
+                      </td>
+                      <td >    
+                        {{items.StatusDate}} 
+                      </td>
+                      <td >  
+                        {{items.ReasonName}}   
+                      </td> 
+                      <td >  
+                        {{items.Remarks}}   
+                      </td> 
+                  </tr> 
+              </tbody>    
+          </table> 
+          </div>
+                                 
+        </div> 
+
+      <div class="row mb-1">
+         
+          <div class="col-sm-6">
+            <div class="row">
+              <label class="col-form-label-xs col-sm-4">Reason<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+              <div class="col-sm-8">
+                <select class="form-control form-control-sm" id="txtReason"  [(ngModel)]="ApprovalReason" (change)="Approvalchange()">
+                  <option  [value]="0" >Select</option>
+                  <option *ngFor="let item of ReasonDataList" [value]="item.id" >{{item.itemName}}</option>
+              </select>
+                </div>
+            </div>
+          </div>   
+          <div class="col-sm-6">
+            <div class="row">
+              <label class="col-form-label-xs col-sm-4">Remarks<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>                           
+              <div class="col-sm-8">
+                 <textarea type="text" id="txtRemarks"  [(ngModel)]="Remarks"  class="form-control form-control-sm" rows="2" placeholder="Remarks"(keypress)="KeypressRemarks()" ></textarea>
+                </div>
+            </div>
+          </div>               
+        </div> 
+      
+    </div> 
+      <div class="modal-footer" style="background-color: #f1f3f7;">
+        <button type="submit" class="btn btn-success" *ngIf="ApprovalstatusbtnhideShow" (click)="SaveApprovalStatus(ApprovalId)">Approved </button>
+        <button type="submit" class="btn btn-danger" *ngIf="ApprovalstatusbtnhideShow" (click)="SaveApprovalStatus(RejectedId)">Reject </button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')" >Cancel</button>
+ 
+      </div>
+    </div>
+   
+</ng-template>

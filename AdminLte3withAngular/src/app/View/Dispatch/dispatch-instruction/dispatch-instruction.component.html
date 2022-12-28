@@ -1,0 +1,415 @@
+<style>
+  .table th,
+  .table td {
+    padding: 10px 4px 10px 4px;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+  }
+
+  .msg {
+    color: red;
+  }
+
+  .my-class {
+    /* border:1px solid red;
+       color:red; */
+    border-color: red;
+  }
+
+  .Mandatoryfield {
+    font-size: 15px
+  }
+
+  .btn-sm1,
+  .btn-group-sm>.btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 0.5;
+    border-radius: 0.2rem;
+  }
+
+  .divwidth {
+    width: 13%;
+  }
+
+  .ChildCSS {
+    width: 100%;
+    display: flex;
+    /* justify-content: flex-end; */
+    /* margin-top: -30px; */
+  }
+
+  .ChildSiteCSS {
+    width: 100%;
+    display: flex;
+    /* justify-content: flex-start;
+    margin-top: -30px; */
+  }
+</style>
+
+
+<div class="wrapper">
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
+
+  <div class="content-wrapper " style="min-height: 54.0312px; background-color: white;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header bg-light">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                <li class="breadcrumb-item active">Material Tracker / Dispatch Instruction </li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.content-header -->
+    <section class="content" style="padding-top:2px;">
+      <div class="container-fluid">
+        <div class="row" id="DivPOList">
+          <div class="col-sm-12">
+            <div class="row" style="margin-left:0px">
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">State</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="searchStateList" [(ngModel)]="selectedSearchStateList"
+                  [settings]="multiDropdownSettings" (onSelect)="bindSearchWHList('')"
+                  (onSelectAll)="bindSearchWHList('')" (onDeSelect)="bindSearchWHList('')"
+                  (onDeSelectAll)="bindSearchWHList('DelAll')">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Class</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="searchItemClassList" [(ngModel)]="selectedItemClassList"
+                  [settings]="multiDropdownSettings" (onSelect)="BindSearchItemName('')"
+                  (onDeSelect)="BindSearchItemName('')" (onSelectAll)="BindSearchItemName('')"
+                  (onDeSelectAll)="BindSearchItemName('DelAll')">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Item Name</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="searchItemNameList" [(ngModel)]="selectedSearchItemNameList"
+                  [settings]="multiDropdownSettings" (onSelect)="bindSearchItemMake('')"
+                  (onDeSelect)="bindSearchItemMake('')" (onSelectAll)="bindSearchItemMake('')"
+                  (onDeSelectAll)="bindSearchItemMake('DelAll')">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Capacity</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="searchItemCapacityList" [(ngModel)]="selectedSearchItemCapacityList"
+                  [settings]="multiDropdownSettings" (onDeSelectAll)="onClickCapacity('DelAll')"
+                  (ngModelChange)="onClickCapacity('')">
+                </angular2-multiselect>
+              </div>
+            </div>
+            <hr />
+            <app-time-period class="ChildCSS"></app-time-period>
+            <hr />
+            <div class="row">
+              <div class="col-sm-6">
+                <app-site-panel class="ChildCSS col-sm-12"></app-site-panel>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">DI NO</label>
+              </div>
+              <div class="col-sm-2">
+                <div class="ng-autocomplete">
+                  <ng-autocomplete [data]="autoCompleteMRNOList" [searchKeyword]="keyword"
+                    (inputCleared)="clearedMRNO()" [(ngModel)]="model.CuUniqueSiteId" (selected)='selectMRNO($event)'
+                    (inputChanged)='onChangeMRNOId($event)' (inputFocused)='onFocused($event)'
+                    [itemTemplate]="MRNoTemplate" [notFoundTemplate]="MRNoTemplate" [debounceTime]="600"
+                    [minQueryLength]="2" placeHolder="Search Unique Site Id">
+                  </ng-autocomplete>
+                  <ng-template #MRNoTemplate let-item>
+                    <a [innerHTML]="item.Text"></a>
+                  </ng-template>
+                  <ng-template #MRNoTemplate let-notFound>
+                    <div [innerHTML]="notFound"></div>
+                  </ng-template>
+                </div>
+              </div>
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Indent Type</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" [(ngModel)]="model.indentType">
+                  <option value="0" selected>DI</option>
+                  <option value="1">SRN</option>
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">DI Type</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtDIType" [(ngModel)]="model.dIType">
+                  <option class="dropdown-item" value="0">Select</option>
+                  <option *ngFor="let xx of projectTypeList" [value]="xx.id">{{xx.itemName}}</option>
+                </select>
+              </div>
+              <div class="col-sm-1"> <!--by vishal 14-09-2022-->
+                <label class="col-form-label-xs">Dispatched Status</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtDispatchedStatus" [(ngModel)]="model.dispatchedStatus">
+                  <option class="dropdown-item" value="0">Select</option>
+                  <option *ngFor="let xx of DispatchedStatusList" [value]="xx.id">{{xx.itemName}}</option>
+                </select>
+              </div>
+
+
+            </div>
+            <div class="row">
+              <div class="col-sm-12" style="background-color:#28a745;">
+                <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch" (click)="searchApprovalMRStatus('LIST')"><i
+                      class="fa fa-search" aria-hidden="true"></i> Search</button>
+                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsExport" (click)="searchApprovalMRStatus('Export')"><i
+                      class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
+                  <button [disabled]="isApprovalEnable" *ngIf="ObjUserPageRight.IsApprove" type="button" class="btn btn-success"
+                    (click)="approvedAllClick(requestedId)"><i class="fa fa-check-circle" aria-hidden="true"></i>
+                    Approval</button>
+                  <button (click)="rejectedAllClick(requestedId)" *ngIf="ObjUserPageRight.IsApprove" [disabled]="isRejectEnable" type="button"
+                    class="btn btn-success"><i class="fa fa-times-circle" aria-hidden="true"></i>Rejected</button>
+                </div>
+              </div>
+              <div class="row" class="col-sm-12">
+
+                <div class="card-header p-0 border-bottom-0" *ngIf="isApprovalTab">
+                  <ul class="nav nav-tabs" id="" role="tablist">
+                    <li class="nav-item col-sm-4" style=" cursor:pointer;">
+                      <a class="nav-link active" id="" (click)="searchTabTypeData(null)" data-toggle="pill" role="tab"
+                        aria-controls="custom-tabs-three-home" aria-selected="true"><b>Pending for Approval -
+                          {{scmPendingCount}}</b><span style="float:right;"></span></a>
+
+                    </li>
+
+                    <li class="nav-item col-sm-4" style="margin-left: -11px; cursor:pointer;">
+                      <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="searchTabTypeData(1472)"
+                        data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
+                        aria-selected="false"><b>SCM Lead Approved - {{scmApprovedCount}}</b><span
+                          style="float:right;"></span></a>
+                    </li>
+                    <li class="nav-item col-sm-4" style="margin-left: -11px;cursor:pointer;">
+                      <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="searchTabTypeData(1471)"
+                        data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
+                        aria-selected="false"><b> SCM Lead Rejected - {{scmRejectCount}}</b><span
+                          style="float:right;"></span></a>
+                    </li>
+                  </ul>
+                </div>
+
+              </div>
+            </div>
+            <div class="row">
+              <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [enableSorting]="true"
+                [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="columnDefs"
+                [multiSortKey]="multiSortKey" [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                [suppressRowClickSelection]="true" [rowSelection]="rowSelection" (gridReady)="onGridReady($event)"
+                (selectionChanged)="onSelectionChanged($event)" [frameworkComponents]="frameworkComponents"
+                [overlayLoadingTemplate]="loadingTemplate">
+              </ag-grid-angular>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+  <div class="modal fade" id="confirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">DI Rejection Remarks !</h4>
+        </div>
+        <div class="modal-body">
+          <label class="col-form-label-xs col-sm-6">Reason<span style="color: red;"
+              class="Mandatoryfield"><b></b></span></label>
+          <div class="col-sm-12">
+            <select class="form-control form-control-sm" id="txtReason" [(ngModel)]="model.ApprovalReason"
+              (change)="reasonChange()">
+              <option class="dropdown-item" value="0">Select</option>
+              <option *ngFor="let item of reasonDataList" [value]="item.id">{{item.itemName}}</option>
+            </select>
+          </div>
+          <label class="col-form-label-xs col-sm-6">Remarks</label>
+          <div class="col-sm-12">
+            <textarea type="text" id="txtRemarks" class="form-control form-control-sm" [(ngModel)]="model.Remarks"
+              placeholder="" (keypress)="keypressRemarks()"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="loading" (click)="SaveApprovalStatus(1471)" >Reject
+                  <i class="fa fa-spinner fa-spin"*ngIf="loading" ></i>
+                </button> -->
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading" (click)="saveApprovalStatus(1471)">Submit
+            <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+          </button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+  <div class="modal fade" id="Approveconfirm" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">Confirmation !</h4>
+        </div>
+        <div class="modal-body">
+          Are you sure want to approve DI?
+        </div>
+        <div class="modal-footer">
+          <!-- <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-success" [disabled]="loading" (click)="SaveApprovalStatus(1472)" >Approval
+                  <i class="fa fa-spinner fa-spin" *ngIf="loading" ></i>
+                </button> -->
+          <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading" (click)="saveApprovalStatus(1472)">Yes
+            <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+          </button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+
+
+  <div class="modal fade" id="SRNModel" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">SRN Detail Status</h4>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-1">
+            <label class="col-form-label-xs col-sm-2" *ngIf="isReqASTSRNDoc"><b>AST SRN Doc</b><span style="color: red;"
+                class="Mandatoryfield"><b>*</b></span>
+              <a *ngIf="isASTfileView" (click)="viewfileClick(astFilePath)" title="File View" style="color:green"><i
+                  class="fa fa-eye"></i></a>
+            </label>
+            <div class="col-sm-3" *ngIf="isReqASTSRNDoc">
+              <input type="file" id="SRNDoc" #ASTSRNDoc (change)="onASTSRNDocSelect($event)"
+                accept="application/pdf, image/jpeg, image/png" placeholder="Choose file">
+            </div>
+
+            <label class="col-form-label-xs col-sm-2" *ngIf="isReqCustomerSRNDoc"><b>Customer SRN Doc</b><span
+                style="color: red;" class="Mandatoryfield"><b>*</b></span>
+              <a *ngIf="IsCustomerfileView" (click)="viewfileClick(customerFilePath)" title="File View"
+                style="color:green"><i class="fa fa-eye"></i></a>
+            </label>
+            <div class="col-sm-3" *ngIf="isReqCustomerSRNDoc">
+              <input type="file" id="SRNDoc" #CustomerSRNDoc (change)="onCustomerSRNDocSelect($event)"
+                accept="application/pdf, image/jpeg, image/png" placeholder="Choose file">
+            </div>
+
+            <div class="col-sm-2">
+              <button type="button" *ngIf="isUploadFileBtn" class="btn btn-success" (click)="uploadSRNDoc()">Upload
+                File</button>
+            </div>
+          </div>
+
+          <div class="row mb-1">
+            <table class="table table-bordered table-striped text-center" style="font-size:11px;">
+              <thead style="background-color:#dbf4c6;font-size:12px;color:black" class='text-center'>
+                <tr>
+                  <th>ItemName</th>
+                  <th>Capacity</th>
+                  <th>Make</th>
+                  <th>ItemCode</th>
+                  <th>Unit</th>
+                  <th>Owner</th>
+                  <th>MaterialStatus</th>
+                  <th>SiteName</th>
+                  <th>Doc</th>
+                  <th>Qty</th>
+                  <th>Recv Qty</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let xx of srnList; let i = index">
+                  <td style="width:80px;">
+                    <label>{{xx.ItemName}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.CapacityName}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.MakeName}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.ItemCode}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.UnitName}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.MaterialOwnerName}}</label>
+                  </td>
+                  <td style="width:80px;">
+                    <label>{{xx.MaterialStatusName}}</label>
+                  </td>
+                  <td style="width:80px;">
+                    <label>{{xx.CustomerSiteId}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <a *ngIf="xx.IsSRNFile" href="{{xx.CertificateImg}}" title="File View" style="color:green"
+                      target="_blank"><i class="fa fa-eye"></i></a>
+                  </td>
+                  <td style="width:50px;">
+                    <label>{{xx.ItemQuantity}}</label>
+                  </td>
+                  <td style="width:50px;">
+                    <input class="form-control form-control-sm" [(ngModel)]="srnList[i].RecvQty"
+                      appCopyPastNumFloatValue type="text" style="text-align:center;width: 85px;" />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="row mb-1">
+            <label class="col-form-label-xs col-sm-1">SRN Date<span style="color: red;"
+                class="Mandatoryfield"><b>*</b></span></label>
+            <div class="col-sm-2">
+              <div class="input-group">
+                <input class="form-control form-control-sm" placeholder="" readonly autocomplete="off"
+                  [(ngModel)]="model.RecSRNDate" ngbDatepicker #SRNDate="ngbDatepicker">
+                <div class="input-group-append">
+                  <span class="input-group-text" (click)="SRNDate.toggle()"><i class="far fa-calendar-alt"></i></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-success" [disabled]="isRecvSRNButton" (click)="updateSRNStatus()">Approve
+          </button>
+        </div>
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
+</div>

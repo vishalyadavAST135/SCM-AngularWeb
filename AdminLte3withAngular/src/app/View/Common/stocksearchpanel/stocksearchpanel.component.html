@@ -1,0 +1,172 @@
+<div class="row mb-1" style="margin-left:6px"> 
+    <div class="col-sm-1">  
+     <label class="col-form-label-xs">State</label>
+    </div>
+    <div class="col-sm-2">                             
+       <angular2-multiselect [data]="SearchStateList" 
+       [(ngModel)]="SelectedSearchStateList" 
+       [settings]="MultidropdownSettings" 
+       (onSelect)="BindSearchWHList('')" 
+       (onSelectAll)="BindSearchWHList('')"
+       (onDeSelect)="BindSearchWHList('')"
+       (onDeSelectAll)="BindSearchWHList('DelAll')"
+       >
+       </angular2-multiselect>                   
+    </div>                     
+    <div class="col-sm-1">  
+     <label class="col-form-label-xs">WH</label>
+   </div>   
+   <div class="col-sm-2">                             
+      <angular2-multiselect [data]="SearchWHList" 
+       [(ngModel)]="SelectedSearchWHList" 
+       [settings]="MultidropdownSettings" 
+       (onDeSelectAll)="onClickWH('DelAll')"
+       (ngModelChange)="onClickWH('')" >
+       </angular2-multiselect>  
+    </div>
+    <div class="col-sm-1">  
+      <label class="col-form-label-xs" >Client</label>
+    </div>                                   
+    <div class="col-sm-2">  
+      <select class="form-control form-control-sm" [(ngModel)]="model.ClientId" (change)=ChangeClient(model.ClientId) >
+        <option  [value]="0" >Select</option>
+       <option *ngFor="let item of ClientList" [value]="item.Id" >{{item.Name}}</option>
+    </select>
+   </div>  
+   <div class="col-sm-1">  
+    <label class="col-form-label-xs" >Class</label>
+  </div>                                   
+  <div class="col-sm-2">  
+    <angular2-multiselect [data]="SearchItemClassList" 
+       [(ngModel)]="SelectedItemClassList" 
+       [settings]="MultidropdownSettings" 
+       (onSelect)="BindSearchItemName('')" 
+       (onDeSelect)="BindSearchItemName('')"
+       (onSelectAll)="BindSearchItemName('')"
+       (onDeSelectAll)="BindSearchItemName('DelAll')">
+      </angular2-multiselect>
+ </div>  
+   </div>
+
+
+     <div class="row mb-1" style="margin-left:6px">                                          
+      <div class="col-sm-1">  
+        <label class="col-form-label-xs" >Item Name</label>
+      </div>                    
+      <div class="col-sm-2">                             
+        <angular2-multiselect [data]="SearchItemNameList" 
+          [(ngModel)]="SelectedSearchItemNameList" 
+          [settings]="MultidropdownSettings" 
+          (onSelect)="BindSearchCapacity('')" 
+          (onDeSelect)="BindSearchCapacity('')"
+          (onSelectAll)="BindSearchCapacity('')"
+          (onDeSelectAll)="BindSearchCapacity('DelAll')">
+        </angular2-multiselect>  
+      </div> 
+      <div class="col-sm-1">  
+        <label class="col-form-label-xs">Capacity</label>
+      </div>                                   
+      <div class="col-sm-2">  
+        <angular2-multiselect [data]="SearchItemCapacityList" 
+          [(ngModel)]="SelectedSearchItemCapacityList" 
+          [settings]="MultidropdownSettings" 
+          (onSelect)="BindSearchItemMake('')" 
+          (onDeSelect)="BindSearchItemMake('')"
+          (onSelectAll)="BindSearchItemMake('')"
+          (onDeSelectAll)="BindSearchItemMake('DelAll')">          
+          </angular2-multiselect>
+       </div>  
+      <div class="col-sm-1">  
+       <label class="col-form-label-xs">Item Make</label>
+      </div>
+      <div class="col-sm-2" >                             
+        <angular2-multiselect [data]="SearchItemMakeList" 
+         [(ngModel)]="SelectedSearchItemMakeList" 
+         [settings]="MultidropdownSettings"
+         (onSelect)="BindSearchItemCodeAndDescription('')" 
+         (onDeSelect)="BindSearchItemCodeAndDescription('')"
+         (onSelectAll)="BindSearchItemCodeAndDescription('')"
+         (onDeSelectAll)="BindSearchItemCodeAndDescription('DelAll')">
+        </angular2-multiselect>                   
+      </div>                   
+      <div class="col-sm-1">  
+         <label class="col-form-label-xs">Item Code</label>
+       </div>   
+       <div class="col-sm-2">                             
+         
+           <div class="ng-autocomplete" >
+            <ng-autocomplete 
+            [data]="SearchItemCodeList" [searchKeyword]="UniqueSitekeyword" 
+            [(ngModel)]="SelectedSearchItemCodeList"
+            (selected)='onSelectAutoItemCodeId($event)' (inputChanged)='SearchChangeItemCode($event)' 
+             [itemTemplate]="UniqueiteIditemTemplate"
+            [notFoundTemplate]="UniqueiteIditemTemplate"
+            [debounceTime]="600" 
+            [minQueryLength]="2" 
+            placeHolder="Search Item Code">
+            </ng-autocomplete>
+            <ng-template #UniqueiteIditemTemplate let-item>
+                <a [innerHTML]="item.itemName"></a>
+            </ng-template>
+            <ng-template #UniqueiteIditemTemplate let-notFound>
+                <div [innerHTML]="notFound"></div>
+            </ng-template>
+          </div>
+        </div>
+  </div>
+
+
+
+
+  <div class="row mb-1" style="margin-left:3px">                  
+   <div class="col-sm-1">  
+     <label class="col-form-label-xs">Time Period</label>
+   </div>                                        
+    <div class="col-sm-2">                             
+    <select class="form-control form-control-sm" [(ngModel)]="model.TimePeriod" (change)="changeTimePeriod(model.TimePeriod)"  >
+        <option value="Tod">Today</option>
+        <option value="Yst">Yesterday</option>
+        <option value="24Last">Last 24 hours</option>
+        <option value="1W">1-Week</option>
+        <option value="1M">1-Month</option>
+        <option value="Dsd">Date Specified</option>
+    </select>
+   </div>
+   <div class="col-sm-1">  
+     <label class="col-form-label-xs">Start Date</label>
+   </div>  
+   <div class="col-sm-2">         
+         <div class="input-group" (click)="StatDateInput($event)">
+           <input class="form-control form-control-sm" placeholder=""
+           name="dpfrom" [(ngModel)]="model.StartDateModel" ngbDatepicker #dfromDate="ngbDatepicker" >
+           <div class="input-group-append">
+             <span class="input-group-text" (click)="dfromDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+           </div>
+         </div>                      
+  </div>   
+  <div class="col-sm-1">  
+   <label class="col-form-label-xs">End Date</label>
+ </div> 
+  <div class="col-sm-2">         
+       <div class="input-group" (click)="EndDateInput($event)">
+         <input class="form-control form-control-sm" placeholder=""
+                name="dpToDate" [(ngModel)]="model.EndDateModel" ngbDatepicker #dToDate="ngbDatepicker">
+         <div class="input-group-append">
+           <span class="input-group-text" (click)="dToDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+         </div>
+       </div>
+  </div>
+  <div class="col-sm-1">  
+    <label class="col-form-label-xs">Stock Type</label>
+  </div> 
+  <div class="col-sm-2">                             
+    <select class="form-control form-control-sm" [(ngModel)]="model.ReportTypeId" (change)=onChangeReportType()>
+        <option value="1">New Item(CircleWise)</option>
+        <option value="2">Other Item(CircleWise)</option>
+        <option value="3">Closing Item(CircleWise)</option>
+        <option value="4">New Item(PanIndia)</option>
+        <option value="5">Other Item(PanIndia)</option>
+        <option value="6">Closing Item(PanIndia)</option>
+    </select>
+   </div>                   
+ </div>      

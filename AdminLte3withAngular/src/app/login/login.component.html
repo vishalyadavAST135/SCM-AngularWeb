@@ -1,0 +1,125 @@
+<ng-template #content let-modal let-d="dismiss">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modal-basic-title">Select Company Name</h5>
+      <div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="col-md-12">
+        <div class="card card-primary card-outline">
+          <div class="card-body">
+            <div class="form-group" style="margin-top: 10px;">
+              <select class="form-control form-control-sm" id="txtSelectCompanyId" [(ngModel)]="CompanyId"
+                (change)="ChangeCompany()">
+                <option class="dropdown-item" value="0">Select</option>
+                <option *ngFor="let item of CompanyData" [value]="item.Id">{{item.Name}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer ">
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')">Cancel</button>
+      <button type="submit" class="btn btn-success" (click)="CompanyPopupClick(CompanyId)">Submit </button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #ChangePass let-modal let-d="dismiss">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title static" id="modal-basic-title">Forget Password</h5>
+      <div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="col-md-12">
+        <div class="card card-primary card-outline">
+          <div class="card-body">
+            <div class="form-group" style="margin-top: 10px;">
+              <label class="col-form-label-xs"><b>Enter Email</b><span style="color: red;"><b>*</b></span></label>
+              <input class="form-control form-control-sm" type="email" id="txtEmailId"  [(ngModel)]="EmailId" autocomplete="off"  placeholder="enter email" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer ">
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')">Cancel</button>
+      <button type="submit" class="btn btn-success" (click)="SaveForget(EmailId)">Submit </button>
+    </div>
+  </div>
+</ng-template>
+
+<nav class="navbar navbar-expand navbar-dark bg-success">
+  <div class="navbar-nav">
+    <img src="assets/logo4.png"  height="50"  />
+    <a class="nav-item" style="color:white;" href="#" style="color:white;padding-top: 10px;padding-left: 5px;">
+      <b>Applied Solar Technologies India Pvt. Ltd.</b>
+    </a>
+  </div>
+</nav>
+
+<div class="jumbotron" style="padding-bottom:100px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-1"></div>
+      <div class="col-sm-4">
+        <img src="assets/scm1.jpg" style="border-radius:150px;">
+      </div>
+      <div class="col-sm-1"></div>
+      <div class="col-sm-4">
+        <h2>Login</h2>
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="username"><i class="fa fa-user" aria-hidden="true"></i> User Name</label>
+            <input type="text" formControlName="username" class="form-control input-sm" [(ngModel)]="username"
+              [ngClass]="{ 'is-invalid': submitted && loginFormControl.username.errors }" />
+            <div *ngIf="submitted && loginFormControl.username.errors" class="invalid-feedback">
+              <div *ngIf="loginFormControl.username.errors.required">Username is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="password"><i class="fa fa-key" aria-hidden="true"></i> Password</label>
+            <input type="password" formControlName="password" class="form-control input-sm" [(ngModel)]="password"
+              [ngClass]="{ 'is-invalid': submitted && loginFormControl.password.errors }" />
+            <div *ngIf="submitted && loginFormControl.password.errors" class="invalid-feedback">
+              <div *ngIf="loginFormControl.password.errors.required">Password is required</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-4">
+              <div class="icheck-primary">
+                <input type="checkbox" id="IsRemember" formControlName="IsRemember">
+                &nbsp;<label for="remember">
+                  Remember Me
+                </label>
+              </div>
+            </div>
+            <div class="col-2">
+              <button [disabled]="loading" class="btn btn-success col-sm-12 btn-sm">
+                <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                Login
+              </button>
+            </div>
+            <div class="col-sm-2">
+              <button type="reset" class="btn btn-success col-sm-12 btn-sm">Reset</button>
+            </div>
+            <div class="col-sm-4">
+              <button type="button" class="btn btn-success col-sm-12 btn-sm"(click)="OpenPopupForgetPass(ChangePass)"><i
+                class="fa fa-key"></i>    Password</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="container text-center">
+    <p>Copyright © 2020 Applied Solar Technologies India Pvt.Ltd. All rights reserved.</p>
+  </div>
+</footer>

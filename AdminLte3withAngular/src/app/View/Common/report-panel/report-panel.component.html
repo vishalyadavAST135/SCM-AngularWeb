@@ -1,0 +1,77 @@
+<div class="row mb-1" style="margin-left:6px">
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">State</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchStateList" [(ngModel)]="SelectedSearchStateList"
+            [settings]="MultidropdownSettings" (onSelect)="BindSearchWHList('')" (onSelectAll)="BindSearchWHList('')"
+            (onDeSelect)="BindSearchWHList('')" (onDeSelectAll)="BindSearchWHList('DelAll')">
+        </angular2-multiselect>
+    </div>
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">WH</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchWHList" [(ngModel)]="SelectedSearchWHList"
+            [settings]="MultidropdownSettings" (onDeSelectAll)="onClickWH('DelAll')" (ngModelChange)="onClickWH('')">
+        </angular2-multiselect>
+    </div>
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">Class</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchItemClassList" [(ngModel)]="SelectedItemClassList"
+            [settings]="MultidropdownSettings" (onSelect)="BindSearchItemName('')" (onDeSelect)="BindSearchItemName('')"
+            (onSelectAll)="BindSearchItemName('')" (onDeSelectAll)="BindSearchItemName('DelAll')">
+        </angular2-multiselect>
+    </div>
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">Item Name</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchItemNameList" [(ngModel)]="SelectedSearchItemNameList"
+            [settings]="MultidropdownSettings" (onSelect)="BindSearchItemMake('')" (onDeSelect)="BindSearchItemMake('')"
+            (onSelectAll)="BindSearchItemMake('')" (onDeSelectAll)="BindSearchItemMake('DelAll')">
+        </angular2-multiselect>
+    </div>
+</div>
+<div class="row mb-1" style="margin-left:6px">
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">Item Make</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchItemMakeList" [(ngModel)]="SelectedSearchItemMakeList"
+            [settings]="MultidropdownSettings" (onSelect)="BindSearchItemCodeAndDescription('')"
+            (onDeSelect)="BindSearchItemCodeAndDescription('')" (onSelectAll)="BindSearchItemCodeAndDescription('')"
+            (onDeSelectAll)="BindSearchItemCodeAndDescription('DelAll')">
+        </angular2-multiselect>
+    </div>
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">Item Code</label>
+    </div>
+    <div class="col-sm-2">
+        <div class="ng-autocomplete">
+            <ng-autocomplete [data]="SearchItemCodeList" [searchKeyword]="UniqueItemkeyword"
+                [(ngModel)]="SelectedSearchItemCodeList" (selected)='onSelectAutoItemCodeId($event)'
+                (inputChanged)='SearchChangeItemCode($event)' [itemTemplate]="UniqueiteIditemTemplate"
+                [notFoundTemplate]="UniqueiteIditemTemplate" [debounceTime]="600" [minQueryLength]="2"
+                placeHolder="Search Item Code">
+            </ng-autocomplete>
+            <ng-template #UniqueiteIditemTemplate let-item>
+                <a [innerHTML]="item.itemName"></a>
+            </ng-template>
+            <ng-template #UniqueiteIditemTemplate let-notFound>
+                <div [innerHTML]="notFound"></div>
+            </ng-template>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <label class="col-form-label-xs">Capacity</label>
+    </div>
+    <div class="col-sm-2">
+        <angular2-multiselect [data]="SearchItemCapacityList" [(ngModel)]="SelectedSearchItemCapacityList"
+            [settings]="MultidropdownSettings" (onDeSelectAll)="onClickCapacity('DelAll')"
+            (ngModelChange)="onClickCapacity($event)">
+        </angular2-multiselect>
+    </div>
+</div>

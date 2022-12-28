@@ -1,0 +1,217 @@
+<style>
+    .table th, .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+    }
+    .msg{
+      color: red;
+    }.my-class{
+       /* border:1px solid red;
+       color:red; */
+       border-color:red;
+    }
+    .Mandatoryfield
+    {
+        font-size:15px
+    }
+    .btn-sm1, .btn-group-sm > .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 0.5;
+        border-radius: 0.2rem;
+    }.divwidth
+    {
+    width: 13%;
+    }  
+    .ChildCSS
+   {
+    width: 100%;
+    display: flex;
+    /* justify-content: flex-end; */
+    /* margin-top: -30px; */
+   }
+.ChildSiteCSS{
+  width: 100%;
+    display: flex;
+    /* justify-content: flex-start;
+    margin-top: -30px; */
+}
+    </style>
+    
+    <div class="wrapper">   
+        <app-main-header></app-main-header>   
+        <!-- Main Sidebar Container -->
+        <app-main-sidebar></app-main-sidebar>
+        <div class="content-wrapper " style="min-height: 54.0312px; background-color: white;">
+            <!-- Content Header (Page header) -->
+            <div class="content-header bg-light">
+                <div class="container-fluid">
+                  <div class="row">
+                     <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                        <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                        <li class="breadcrumb-item active">Material Tracker  / Material Indent </li>
+                      </ol>
+                      </nav>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <section class="content" style="padding-top:2px;" >
+                <div class="container-fluid">            
+                   <div class="row"  id="DivPOList">
+                   <div class="col-sm-12">
+                    <div class="row" style="margin-left:0px">  
+                        <div class="col-sm-1">  
+                          <label class="col-form-label-xs">Customer</label>
+                         </div>
+                         <div class="col-sm-2">                             
+                            <angular2-multiselect [data]="searchCustomerList" 
+                            [(ngModel)]="selectedSearchCustomerList" 
+                            [settings]="multiDropdownSettings" 
+                            (onSelect)="bindProjectList('')" 
+                            (onSelectAll)="bindProjectList('')"
+                            (onDeSelect)="bindProjectList('')"
+                            (onDeSelectAll)="bindProjectList('DelAll')">
+                            </angular2-multiselect>                   
+                         </div>                        
+                       <div class="col-sm-1">  
+                        <label class="col-form-label-xs" >ProjectType</label>
+                        </div>                    
+                        <div class="col-sm-2">                             
+                         <angular2-multiselect [data]="searchProjectTypeList" 
+                          [(ngModel)]="selectedSearchProjectTypeList" 
+                          [settings]="multiDropdownSettings" 
+                          (onDeSelectAll)="delProjectTypeList('DelAll')">
+                         </angular2-multiselect>
+                         </div> 
+                         <div class="col-sm-1">  
+                         <label class="col-form-label-xs" >Material IndentNO</label>
+                         </div>                                   
+                        <div class="col-sm-2">  
+                        <div class="ng-autocomplete" >
+                          <ng-autocomplete 
+                          [data]="autoCompleteBOQNOList" [searchKeyword]="keyword" 
+                          (inputCleared)="clearedBOQNO()" 
+                          [(ngModel)]="model.CuUniqueSiteId"
+                          (selected)='selectBOQNO($event)' 
+                          (inputChanged)='onChangeBOQNOId($event)' 
+                          (inputFocused)='onFocused($event)' 
+                          [itemTemplate]="BOQNoTemplate"
+                          [notFoundTemplate]="BOQNoTemplate"
+                          [debounceTime]="600" 
+                          [minQueryLength]="2" 
+                          placeHolder="Search Unique Site Id">
+                          </ng-autocomplete>
+                          <ng-template #BOQNoTemplate let-item>
+                              <a [innerHTML]="item.Text"></a>
+                          </ng-template>
+                          <ng-template #BOQNoTemplate let-notFound>
+                              <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div> 
+                     </div>
+                    </div>
+                    <hr/>
+                     <app-time-period class="ChildCSS"></app-time-period>                     
+                       <div class="row">
+                         <div class="col-sm-12" style="background-color:#28a745;">
+                         <div class="btn-group btn-group-sm">
+                             <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"(click)="searchBOQRequest('LIST')" ><i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                             <!-- <button type="button" class="btn btn-success" (click)="SearchApprovalMRStatus('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel Export</button> -->
+                         </div>                             
+                         </div>                       
+                       </div>
+                         <div class="row"  class="col-sm-12">
+                            <div class="card-header p-0 border-bottom-0" *ngIf="isApprovalTab">
+                             <ul class="nav nav-tabs" id="" role="tablist">
+                              <li class="nav-item col-sm-4" style=" cursor:pointer;" >
+                                 <a class="nav-link active" id="" (click)="searchTabTypeData(0)"  data-toggle="pill" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true"><b>Pending for Approval - {{scmPendingCount}}</b><span style="float:right;"></span></a>
+                              </li>                              
+                               <li class="nav-item col-sm-4" style="margin-left: -11px; cursor:pointer;" >
+                                 <a class="nav-link" id="custom-tabs-three-messages-tab"  (click)="searchTabTypeData(1472)"data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false"><b>SCM Approved - {{scmApprovedCount}}</b><span style="float:right;"></span></a>
+                               </li> 
+                               <li class="nav-item col-sm-4" style="margin-left: -11px;cursor:pointer;" >
+                                 <a class="nav-link" id="custom-tabs-three-messages-tab"  (click)="searchTabTypeData(1471)"data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false"><b> SCM Rejected - {{scmRejectCount}}</b><span style="float:right;"></span></a>
+                               </li> 
+                             </ul>
+                           </div> 
+                         </div>
+                       <div class="row">
+                         <ag-grid-angular
+                             style="width: 100%; height: 500px;"
+                             class="ag-theme-alpine"
+                             [enableSorting]="true"
+                             [enableFilter]="true"
+                             [pagination]="true"
+                             paginationPageSize ="20"  
+                             [columnDefs]="columnDefs"                         
+                             [multiSortKey]="multiSortKey"
+                             [tooltipShowDelay]="tooltipShowDelay"
+                             [rowData]="rowData"
+                             (gridReady)="onGridReady($event)"
+                             [frameworkComponents]="frameworkComponents"
+                             [overlayLoadingTemplate]="loadingTemplate">
+                           </ag-grid-angular>
+                       </div>
+                   </div>
+                   </div>
+                 </div>             
+             </section>  
+            
+        </div>
+
+        <div class="modal fade" id="RejectModalPopup" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Material Indent Rejection Remarks !</h4>
+                </div>
+                <div class="modal-body">
+                    <label class="col-form-label-xs col-sm-6">Reason<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                    <div class="col-sm-12">
+                      <select class="form-control form-control-sm" id="txtReason" [(ngModel)]="model.ApprovalReason" (change)="reasonChange()">
+                        <option class="dropdown-item"  value="0">Select</option>
+                        <option *ngFor="let item of reasonDataList" [value]="item.id" >{{item.itemName}}</option>
+                      </select>
+                    </div>
+                    <label class="col-form-label-xs col-sm-6" >Remarks</label>
+                    <div class="col-sm-12">
+                      <textarea type="text" id="txtRemarks" class="form-control form-control-sm"  [(ngModel)]="model.Remarks" placeholder="" (keypress)="keypressRemarks()"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsApprove" class="btn btn-success" [disabled]="loading" (click)="saveApprovalStatus(1471)" >Reject
+                    <i class="fa fa-spinner fa-spin"*ngIf="loading" ></i>
+                  </button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->  
+          <div class="modal fade" id="ApproveModalPopup" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h4 class="modal-title">Confirmation !</h4>
+                </div>
+                <div class="modal-body">
+                  Are you sure want to approve Material Indent?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsApprove" class="btn btn-success" [disabled]="loading" (click)="saveApprovalStatus(1472)" >Approval
+                    <i class="fa fa-spinner fa-spin" *ngIf="loading" ></i>
+                  </button>
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->  
+    </div>    
+

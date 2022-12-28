@@ -1,0 +1,337 @@
+<style>
+    .table th, .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }   
+    .Mandatoryfield
+    {
+    font-size:15px
+     }
+     .ng-star-inserted
+     {
+      /* position: fixed !important; */
+      z-index:999 !important;
+    /* top: 0px;
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
+     }
+     .box {
+     border :1px solid red;
+ 
+}
+.disable{
+  cursor: not-allowed;
+  }
+    </style>
+     <ng-template  #content  let-modal let-d="dismiss" >
+      <div class="modal-content" >
+        <div class="modal-header"  >
+          <h5 class="modal-title" id="modal-basic-title">Please confirm..</h5>
+          
+          <div>
+         </div>
+        </div>
+        <div class="modal-body">
+      <span>PO total qty has been save,please check GRN detail</span>
+        </div>
+        <div class="modal-footer center ">
+          <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')" >No</button>
+          <button type="submit" class="btn btn-success" data-dismiss="modal" (click)="ConfirmmationClick()" >Ok </button>
+        </div>
+      </div>
+    </ng-template>
+   
+  <div class="wrapper">
+      <app-main-header></app-main-header>   
+      <!-- Main Sidebar Container -->
+      <app-main-sidebar></app-main-sidebar>
+      <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
+        <p style="color: white">Please Wait. </p>  
+        </ngx-spinner> 
+      <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+          <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+          <div class="container-fluid">
+            <div class="row">
+              <div class="col-xs-12">
+                <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                  <li class="breadcrumb-item active">Masters / Vendor Master</li>
+                </ol>
+                </nav>
+              </div>
+              </div>
+            </div>
+        </div>
+             <!-- /.content-header -->
+             <section class="content" style="padding-top:2px;" >
+                <div class="container-fluid">  
+                  <div class="row" *ngIf="isShownList">
+                      <div class="col-sm-12">                   
+                     
+                        <div class="row mb-1" style="margin-left:3px">  
+                             <div class="col-sm-1">  
+                              <label class="col-form-label-xs">Vendor Name</label>
+                            </div>     
+                                     
+                            <div class="col-sm-2">                             
+                              <select class="form-control form-control-sm" [(ngModel)]="model.SearchVendorName" (change)="ChangevendorName(model.SearchVendorName)" >
+                                <option class="dropdown-item" [value]="0">Select</option>
+                                <option *ngFor="let item of SearchVendorList" [value]="item.id" >{{item.itemName}}</option>
+                               </select>
+                           
+                             </div>
+
+      
+      
+                            <div class="col-sm-1">   
+                              <label class="col-form-label-xs">Vendor Code</label>
+                            </div>     
+                            <div class="col-sm-2">                             
+                              <select class="form-control form-control-sm" [(ngModel)]="model.SearchVendorCode" (change)="ChangevendorCode(model.SearchVendorCode)">
+                                <option class="dropdown-item" [value]="0">Select</option>
+                                <option *ngFor="let item of VendorCodeList" [value]="item.id" >{{item.VendorCode}}</option>
+                               </select>
+                            </div>
+                             
+                             <div class="col-sm-1">  
+                              <label class="col-form-label-xs col-sm-4">Status</label>
+                            </div> 
+                             <div class="col-sm-2">
+                                <angular2-multiselect [data]="SearchStatusList" 
+                                [(ngModel)]="SelectedStatusList" 
+                                [settings]="MultidropdownSettings" 
+                                (onDeSelectAll)="onSearchVenDeSelectAll($event)"
+                                (onDeSelect)="onSearchDeSelectSingle($event)"
+                                (ngModelChange)="SearchChangeStatus($event)"
+                                >
+                               </angular2-multiselect>
+                               </div>
+                         </div>                 
+                        <div class="row mb-1" style="margin-left:3px">  
+                        </div>   
+                              <!-- /.Ravider -->
+                       
+                        <div class="row">
+                                  <div class="col-sm-12" style="background-color:#28a745;">
+                                  <div class="btn-group btn-group-sm">
+                                      <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="SearchVendorMasterGridList('List')"> <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                                      <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="SearchVendorMasterGridList('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
+                                      <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> New Vendor</button> 
+                                    </div>
+                                      
+                                  </div>
+                                </div>
+                            </div>
+                        <div class="col-sm-12">                     
+                            <div class="row">
+                                  <ag-grid-angular
+                                      style="width: 100%; height: 500px;"
+                                      class="ag-theme-alpine"
+                                      [enableSorting]="true"
+                                      [enableFilter]="true"
+                                      [pagination]="true"
+                                      paginationPageSize ="20"  
+                                      [columnDefs]="columnDefs"                         
+                                      [multiSortKey]="multiSortKey"
+                                      [tooltipShowDelay]="tooltipShowDelay"
+                                      [rowData]="rowData"
+                                      [frameworkComponents]="frameworkComponents"
+                                      (gridReady)="onGridReady($event)">      
+                                    </ag-grid-angular>
+                            </div>
+                      </div>
+                  </div>
+
+                  <div class="row" *ngIf="isShownEdit">
+                    <div class="col-sm-12 col-md-12">
+                      <div class="card card-success">
+                        <div class="card-body">
+                          <div class="row mb-1">
+                            <div class="col-sm-12 content-header bg-light">                                   
+                              <div class="col-sm-6">
+                                <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
+                                &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-sm btn-success" (click)="CreateNew()"   ><i class="fa fa-plus"></i> 
+                                   New </button>
+                                  <!-- &nbsp;<button type="button" class="btn btn-sm btn-success" ><i class="fa fa-save"></i> Save</button> -->
+                             
+                                  <!-- <button type="button" class="btn btn-success" (click)="generatePDF()"><i class="fa fa-plus"></i> PDF</button> -->
+                                </div>                                    
+                            </div>
+                          </div>
+      
+                           <!-- <hr> -->
+                           <fieldset class="scheduler-border">
+                            <legend class="scheduler-border">Vendor Basic Details</legend> 
+                          <div class="row mb-1">
+                            <label class="col-form-label-xs col-sm-1">Vendor Name<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-2">
+                                <input type="text" id="txtVendorName" appAutofocus autocomplete="off" [(ngModel)]="model.VendorName" placeholder="" (keypress)="onKeypressVendorName()"   class="form-control form-control-sm" />
+                            </div>
+                            <label class="col-form-label-xs col-sm-1">Vendor Code<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                            <div class="col-sm-2">
+                              <input type="text" id="txtVendorCode" autocomplete="off" readonly [(ngModel)]="model.VendorCode" placeholder=""  class="form-control form-control-sm" />
+                            </div>
+                            <label class="col-form-label-xs col-sm-1">Pan No <span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-2">
+                              <input type="text" id="txtPanNo"autocomplete="off" [(ngModel)]="model.PanNo" placeholder=""(keypress)="onKeypressPanNo()"   class="form-control form-control-sm" />
+                            </div>
+                            <label class="col-form-label-xs col-sm-1">Pin Code <span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                            <div class="col-sm-2">
+                              <input type="text" id="txtPinCodeNo"autocomplete="off" [(ngModel)]="model.PinCodeNo" appCopyPastNumFloatValue placeholder=""  class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <input type="hidden"  id="txtContact" autocomplete="off" [(ngModel)]="model.hiddenVendorId"  placeholder=""  class="form-control form-control-sm" />
+                        <div class="row mb-1">
+                          <label class="col-form-label-xs col-sm-1">Mobile No<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                          <div class="col-sm-2">
+                            <input type="text" id="txtMobileNo"[(ngModel)]="model.MobileNo" autocomplete="off" placeholder="" appCopyPastNumFloatValue (keypress)="onKeypressMobileNo()" class="form-control form-control-sm" />
+                          </div>
+                          <label class="col-form-label-xs col-sm-1">Email Id<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                          <div class="col-sm-2">
+                            <input type="text" id="txtEmailId"[(ngModel)]="model.EmailId" autocomplete="off" placeholder=""   class="form-control form-control-sm" />
+                          </div>
+                          <label class="col-form-label-xs col-sm-1">Contact Person<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                          <div class="col-sm-2">
+                            <input type="text"  id="txtContact" autocomplete="off" [(ngModel)]="model.Contact"  placeholder=""  class="form-control form-control-sm" />
+                          </div>
+                          <label class="col-form-label-xs col-sm-1">Status<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                          <div class="col-sm-2">
+                                <label class="col-form-label-xs "> <input type="radio" class="box" id="txtStatus" [(ngModel)]="model.StatusId"   value="1" name="optionsRadios"> Active</label>
+                                &nbsp;<label class="col-form-label-xs"><input type="radio" id="txtStatus"  [(ngModel)]="model.StatusId"  value="0"  name="optionsRadios"> Deactive</label>
+                        </div>
+                      </div>
+                      <div class="row mb-1">
+                       
+                        <label class="col-form-label-xs col-sm-1">Vendor Type<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                        <div class="col-sm-2">
+                          <select  class="form-control form-control-sm SourceId"   [(ngModel)]="model.VendorTypeId">
+                            <option class="dropdown-item" [value]="1">Other Vendor</option>
+                            <option class="dropdown-item" [value]="2">In House Vendor</option>
+                        </select>
+                          </div>
+                               
+                        <!-- <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
+                        &nbsp; <button type="submit"  class="btn btn-sm btn-success" (click)="CreateNew()"   ><i class="fa fa-plus"></i> 
+                           New </button> -->
+                           <div class="col-sm-1">
+                           &nbsp;<button type="button" *ngIf="Save" class="btn btn-sm btn-success" (click)="AddUpdateVendorBasicDetial()" ><i class="fa fa-save"></i> Save</button>
+                          </div>
+                        
+                     
+                        </div>
+                     
+                           </fieldset>
+                    <!-- <span></span>-->
+                    <span></span> 
+
+                    <fieldset class="scheduler-border">
+                        <legend class="scheduler-border">Vendor Address Details</legend> 
+                        <div class="col-sm-12" >
+                          <table id="tblOne" class="table table-striped table-bordered">   
+                            <thead>    
+                              <tr>    
+                                   <th></th> 
+                                   <th>Country Name<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th> 
+                                   <th>State Name<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>   
+                                   <th>GST No<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>    
+                                   <th>Address<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>    
+                                   <th>Pin Code<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>
+                                   <th>Contact Person<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>
+                                   <th>Mobile No<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>
+                                   <th>Email<span style="color:red;"class="Mandatoryfield"><b></b></span></th>
+                                   <th>Status<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>
+                               </tr>    
+                            </thead>    
+                            <tbody>    
+                              <tr *ngFor="let dynamic of dynamicArrayVendorAddres; let i = index" >    
+                                <td (click)="deleteRow(i)"  style="width:5px;" >    
+                                   <i class="fa fa-trash"  title="Delete"></i>    
+                                </td>  
+                                <td style="width:80px;">    
+                                  <select  class="form-control form-control-sm CountryId"  appAutofocus id="ddlCountryId_{{i}}"  [(ngModel)]="dynamicArrayVendorAddres[i].CountryId" (change)="ChangeCountryName(dynamicArrayVendorAddres[i].CountryId,i)">
+                                    <option class="dropdown-item"   [value]="0">Select</option>
+                                    <option *ngFor="let item of CountryDataList" [value]="item.id" >{{item.itemName}}</option>
+                                </select>
+                                </td>   
+                                <td style="width:80px;">    
+                                  <select  class="form-control form-control-sm StateId"  appAutofocus id="ddlStateId_{{i}}"  [(ngModel)]="dynamicArrayVendorAddres[i].StateId" (change)="ChangeStateName(dynamicArrayVendorAddres[i].StateId,i)">
+                                    <option class="dropdown-item"   [value]="0">Select</option>
+                                    <option *ngFor="let item of dynamicArrayVendorAddres[i].StateList" [value]="item.id" >{{item.itemName}}</option>
+                                </select>
+                                </td> 
+                                <td style="width:80px;">  
+                                    <input class="form-control form-control-sm GSTINNo"  [(ngModel)]="dynamicArrayVendorAddres[i].GSTINNo" id="txtGSTINNo" (blur)="GSTINNoKeyPress()" autocomplete="off"    type="text" style="text-align:center;"/>   
+                                </td> 
+                                <td style="width:120px;">    
+                                    <textarea rows="2" class="form-control form-control-sm Address" [(ngModel)]="dynamicArrayVendorAddres[i].Address" (blur)="AddressKeyPress()"  id="txtAddress" autocomplete="off"    type="text" > </textarea>  
+                                </td> 
+                                <td style="width:30px;">    
+                                    <input class="form-control form-control-sm Pincode " [(ngModel)]="dynamicArrayVendorAddres[i].Pincode" appCopyPastNumFloatValue id="txtPincode"(blur)="PincodeKeyPress()"  autocomplete="off"    type="text" style="text-align:center;"/>   
+                                </td>  
+                                <td style="width:80px;">    
+                                    <input class="form-control form-control-sm ContactPerson" [(ngModel)]="dynamicArrayVendorAddres[i].ContactPerson"(blur)="ContactPersonKeyPress()"   id="txtContactPerson" autocomplete="off"    type="text" style="text-align:center;"/>   
+                                </td>  
+                                <td style="width:50px;">    
+                                    <input class="form-control form-control-sm MobileNo"  id="txtMobileNo"[(ngModel)]="dynamicArrayVendorAddres[i].MobileNo"(blur)="MobileNoKeyPress()"  appCopyPastNumFloatValue autocomplete="off"    type="text" style="text-align:center;"/>   
+                                </td>  
+                                <td style="width:80px;">    
+                                    <input class="form-control form-control-sm Email"  id="txtEmail" [(ngModel)]="dynamicArrayVendorAddres[i].Email"  autocomplete="off"    type="text" style="text-align:center;"/>   
+                                </td>  
+                                <td style="width:20px;">    
+                                    <select class="form-control form-control-sm Isactive" id="txtTrasporationMode" [(ngModel)]="dynamicArrayVendorAddres[i].Isactive" (change)="ChangeStatus()">
+                                        <option class="dropdown-item"  value="">Select</option>
+                                        <option class="dropdown-item"  value="1">Active</option>
+                                        <option class="dropdown-item"  value="0">Deactive</option>
+                                      </select>
+                                </td>  
+                               </tr> 
+                          
+                               <tr >    
+                                 <td (click)="addRow()">    
+                                   <i class="fa fa-plus"></i>    
+                                 </td>    
+                               </tr>    
+                            </tbody>    
+                          </table> 
+                          <div class="row mb-1">
+                            <!-- <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
+                            &nbsp; <button type="submit"  class="btn btn-sm btn-success" (click)="CreateNew()"   ><i class="fa fa-plus"></i> 
+                               New </button> -->
+                               &nbsp;<button type="button"  *ngIf="Save" class="btn btn-sm btn-success"(click)="AddUpdateVendorAddressDetial()" ><i class="fa fa-save"></i> Save</button>
+                        </div>
+                           
+                        </div>
+                      </fieldset>
+
+                         
+                     
+                       
+
+                        
+                       
+                      
+                        </div> 
+                        
+                                          
+                     </div> 
+                    </div>
+                  </div>
+
+
+
+
+
+                </div>
+             </section>
+                 
+      </div>
+  </div>

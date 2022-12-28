@@ -1,0 +1,930 @@
+<style>
+  .table th, .table td {
+      padding: 10px 4px 10px 4px;
+      vertical-align: top;
+      border-top: 1px solid #dee2e6;
+  }
+  .table thead th {
+      border-bottom: 2px solid #dee2e6;
+      text-align: center;
+      font-size: smaller;
+  }
+  </style>
+<div class="wrapper">
+    <app-main-header></app-main-header>   
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="line-scale">  
+      <p style="color: white">Please Wait. </p>  
+      </ngx-spinner> 
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+      <div class="content-header bg-light">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-xs-12">
+              <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                <li class="breadcrumb-item active">WH Management/CRN Detail</li>
+              </ol>
+              </nav>
+            </div>
+            </div>
+          </div>
+      </div>
+           <!-- /.content-header -->
+      
+      <section class="content" style="padding-top:2px;" >
+        <div class="container-fluid"> 
+          <!-- CRN Front Page --> 
+          <div class="row" [hidden]="isShownPOList" id="DivGRNList">
+              <div class="col-sm-12">                   
+               
+                <app-search-panel [IsHiddenvendor]="IsHiddenvendor" [IsHiddenSearchCustomer]="IsHiddenSearchCustomer"></app-search-panel> 
+                <div class="row mb-1" style="margin-left:3px">  
+                    
+                    <div class="col-sm-1">  
+                      <label class="col-form-label-xs">CRN No</label>
+                    </div>                                         
+                    <div class="col-sm-2">                       
+                      <input type="text" id="txtCRNNo" [(ngModel)]="model.CRNNo"  class="form-control form-control-sm" placeholder="">                   
+                    </div> 
+                    
+                    <div class="col-sm-1">                        
+                      <label class="col-form-label-xs">Inv/Challan No</label>
+                  </div>                                 
+                  <div class="col-sm-2">      
+                    <input type="text" id="txtInvoiceNo" [(ngModel)]="model.InvoiceNo" autocomplete="off" class="form-control form-control-sm" placeholder="">                   
+                  </div>
+                </div>
+                
+                <div class="row">
+                          <div class="col-sm-12" style="background-color:#28a745;">
+                          <div class="btn-group btn-group-sm">
+                              <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success" (click)="SearchCRNList('List')">
+                                <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                              <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success"(click)="SearchCRNList('Export')">
+                                <i class="fa fa-download" aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin" *ngIf="Exportloading"></i>
+                              </button>
+                              <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNewGRNCRN()"><i class="fa fa-plus"></i> CRN</button>
+                          </div>
+                              
+                          </div>
+                        </div>
+                    </div>
+                <div class="col-sm-12">                     
+                    <div class="row">
+                          <ag-grid-angular
+                              style="width: 100%; height: 500px;"
+                              class="ag-theme-alpine"
+                              [enableSorting]="true"
+                              [enableFilter]="true"
+                              [pagination]="true"
+                              paginationPageSize ="20"  
+                              [columnDefs]="columnDefs"                         
+                              [multiSortKey]="multiSortKey"
+                              [tooltipShowDelay]="tooltipShowDelay"
+                              [rowData]="rowData"
+                              [frameworkComponents]="frameworkComponents"
+                              (gridReady)="onGridReady($event)">      
+                            </ag-grid-angular>
+                    </div>
+              </div>
+          </div>
+          <!-- CRN Back end Page --> 
+          <div class="row" [hidden]="isShownPOEdit" id="DivPOEdit">
+            <div class="col-sm-12 col-md-12">
+              <div class="card card-success">
+                <div class="card-body">
+                  <div class="alert alert-danger" *ngIf="IsError" role="alert">
+                    <strong>Error!</strong> {{errorMessage}}
+                  </div> 
+                  <div class="alert alert-success" *ngIf="IsSuccess"  role="alert">
+                   {{succesMessage}}
+                  </div>
+                  <div class="row mb-1">
+                    <div class="col-sm-12 content-header bg-light">                                   
+                      <div class="col-sm-6">
+                      <button type="submit" class="btn btn-sm btn-success" (click)="GRNCRNDetailBack()" ><i class="fa fa-arrow-circle-left"></i> Back </button>
+                      &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate"  class="btn btn-sm btn-success" (click)="CreateNewGRNCRN()" ><i class="fa fa-plus"></i> 
+                       New </button>
+                      &nbsp; <button type="submit" *ngIf="Save" [disabled]="IsSaveButtonDisable"  class="btn btn-sm btn-success" (click)="conformPopup()" ><i class="fa fa-save"></i>
+                        Save </button>
+                        &nbsp; <button type="submit" *ngIf="IsPreviewDisable"  class="btn btn-sm btn-success" (click)="PreviewCRN()" ><i class="fa fa-save"></i>
+                          Preview </button>
+                        
+                        &nbsp; <button type="submit" *ngIf="IsDownloadPrintHideShow"  class="btn btn-sm btn-success" (click)="CreateCRNPdf(1)" ><i class="fa fa-download"></i>
+                          Download </button>
+                          &nbsp; <button type="submit" *ngIf="IsDownloadPrintHideShow" class="btn btn-sm btn-success" (click)="CreateCRNPdf(2)" ><i class="fa fa-print"></i>
+                           Print </button>
+                        &nbsp;<button type="button" class="btn btn-sm btn-success" *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn" (click)="conformCancelPopup()" >Cancel CRN</button>
+                        &nbsp;
+                        <app-view-approvalpage [ChildApprovalList]="ApprovalList" [ManueId]="ManueId" [TableId]="TableId" [CreateName]="CreateName" [CreatedDate]="CreatedDate" [ModifiedName]="ModifiedName" [CompanyId]="CompanyId"  [ModifiedDate]="ModifiedDate"[ApprovalstatusbtnhideShow]="IsApprovalstatusbtnhideShow" ></app-view-approvalpage>
+                      </div>                                    
+                    </div>
+                  </div>
+                  <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Customer Details</legend> 
+                  <div class="row mb-1">
+                   
+                    <label class="col-form-label-xs col-sm-1">WH State<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <select class="form-control form-control-sm" id="txtStateEdit" [(ngModel)]="model.EditStateId" [disabled]="POBasedisabled" (change)="BindEditWHList()">
+                        <option class="dropdown-item"  value="0">Select</option>
+                        <option *ngFor="let item of SearchStateList" [value]="item.id" >{{item.itemName}}</option>
+                      </select>
+                     
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">WH Name<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <select class="form-control form-control-sm"  [(ngModel)]="model.SelectedGRNCRNWH" id="txtWH"  (change)="BindVendorOrWhAddess('WHMaster',model.SelectedGRNCRNWH)"  >
+                        <option class="dropdown-item" value="0">Select</option>
+                        <option *ngFor="let item of GRNCRNWHList" [value]="item.id" >{{item.itemName}}</option>
+                    </select>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">WH Address</label>                           
+                    <div class="col-sm-2">
+                    <textarea type="text" id="WHAddress" rows="2" readonly [(ngModel)]="model.WHAddress" rows="1" class="form-control form-control-sm" placeholder=""></textarea> 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Customer Name<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <select class="form-control form-control-sm" id="txtCustomerName"  [(ngModel)]="model.CustomerId" (change)="ChangeCustomerName(model.CustomerId)">
+                        <option class="dropdown-item" value="0">Select</option>
+                        <option *ngFor="let item of AutoCompleteSiteCustomerList" [value]="item.ClientId" >{{item.ClientName}}</option>
+                    </select>   
+                  </div>
+                    
+                    
+                  </div>
+
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">Customer Address<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <textarea type="text" id="txtCustomerAddress" maxlength="1000" autocomplete="off" rows="2" [(ngModel)]="model.CustomerAddress" autocomplete="off"  (keypress)="AddressKeyPress()" class="form-control form-control-sm" placeholder=""></textarea> 
+                    </div>
+
+                  <label class="col-form-label-xs col-sm-1">CRN No<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <input type="text" id="txtGRNCRNNo" readonly [(ngModel)]="model.GRNCRNNo"   class="form-control form-control-sm" placeholder=""> 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">CRN Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <div class="input-group"  (mouseenter)="onKeypressGRNdate($event)">
+                        <input class="form-control form-control-sm" id="txtGRNdate"  [disabled]="isdisabledGrnDate"
+                               name="dpGRNDate" [(ngModel)]="model.GRNdate" ngbDatepicker #dGRNDate="ngbDatepicker" autocomplete="off">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="dGRNDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                 
+
+                  <div class="row mb-1">
+                    
+                    <label class="col-form-label-xs col-sm-1">Inv/Challan No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="text" id="txtChallanNo" [(ngModel)]="model.ChallanNo" autocomplete="off" (keypress)="ChallanNoKeyPress()"  class="form-control form-control-sm" placeholder=""> 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Inv/Challan Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <div class="input-group" (mouseenter)="onKeypressChallanDate($event)" >
+                        <input class="form-control form-control-sm" id="txtChallanDate"
+                          name="dpChallanDate" [(ngModel)]="model.ChallanDate" ngbDatepicker #dChallanDate="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="dChallanDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                        </div>
+                      </div>                   
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Challan Upload<a  *ngIf="IsReceivingFile" (click)="ReceivingViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="file" id="fileimage"  #inputChallanPDF (change)="onChallanFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div>
+                  </div> 
+
+                  
+                  <div class="row mb-1">     
+                    
+                    <label class="col-form-label-xs col-sm-1">Gate Entry No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="text" id="txtGateEntryNo"  (keypress)="keyPressGateEntry()" autocomplete="off" [(ngModel)]="model.GateEntryNo" class="form-control form-control-sm" > 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Gate Entry Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <div class="input-group" (mouseenter)="onKeypressGateEntryDate($event)">
+                        <input class="form-control form-control-sm" id="txtGateEntryDate"
+                               name="dpGateEntryDate" [(ngModel)]="model.GateEntryDate" autocomplete="off" ngbDatepicker #dGateEntryDate="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="dGateEntryDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                        </div>
+                      </div>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Gate Pdf/Image<a  *ngIf="IsGatefile" (click)="GatePdfViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="file" id="fileimage" #inputGatePDF (change)="onGatePdfFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" *ngIf="IsHideShowCancelBtn">Cancellation Reason<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2" *ngIf="IsHideShowCancelBtn">
+                      <select class="form-control form-control-sm" id="txtInCaseReason" [(ngModel)]="model.InCaseReason" (change)="changeCaseReason()">
+                        <option class="dropdown-item"  value="0">Select</option>
+                        <option *ngFor="let item of CancelReasonData" [value]="item.id" >{{item.ReasonName}}</option>
+                      </select>
+                    </div>
+                  </div>
+                  <!-- <div class="row mb-1" *ngIf="IsHideShowCancelBtn">
+                   
+                  </div> -->
+                  </fieldset>
+                  <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Item Details</legend> 
+                    <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+                    <table id="tblOne" class="table table-striped table-bordered">    
+                      <thead>    
+                        <tr>    
+                             <th></th>   
+                             <th>Item&nbsp;Name<span style="color:red;">*</span></th>    
+                             <th>Item&nbsp;Make<span style="color:red;">*</span></th>    
+                             <th>&nbsp;&nbsp;Part&nbsp;No<span style="color:red;">*</span>&nbsp;&nbsp;</th>
+                             <th>Equipment Type<span style="color:red;">*</span></th>
+                             <th>Item&nbsp;Description</th>  
+                             <th>Sub&nbsp;Description</th>  
+                             <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b>*</b></span></th> 
+                             <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit<span style="color:red;">*</span>&nbsp;&nbsp;&nbsp;&nbsp;</th>    
+                             <th>Challan Qty<span style="color:red;">*</span></th>    
+                             <th>Received Qty<span style="color:red;">*</span></th>    
+                             <th>Accepted(OK) Qty<span style="color:red;">*</span></th> 
+                             <th>Serial No<span style="color:red;">*</span></th> 
+                            
+                             <th>Damage  Qty</th>
+                             <th>Excess/ Short</th>    
+                             <th>&nbsp;&nbsp;&nbsp;&nbsp;Rate<span style="color:red;">*</span>&nbsp;&nbsp;&nbsp;&nbsp;</th>                                                    
+                             <th>Total&nbsp;Amount<span style="color:red;">*</span></th>    
+                             <th>Photo</th>   
+                         </tr>    
+                      </thead>    
+                      <tbody>    
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index" >    
+                          <td (click)="deleteRow(i)" style="width:20px;">    
+                             <i class="fa fa-trash"  title="Delete"></i>    
+                          </td>    
+                          <td style="width:100px;">  
+                            <select  class="form-control form-control-sm ItemName" [(ngModel)]="dynamicArray[i].ItemNameId" (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)" >
+                              <option class="dropdown-item"  [value]="0">Select</option>
+                              <option *ngFor="let item of ItemNameDetailData" [value]="item.id" >{{item.itemName}}</option>
+                          </select>
+                          </td> 
+                          <td style="width:100px;">    
+                            <select class="form-control form-control-sm ItemMake" [(ngModel)]="dynamicArray[i].ItemMakeId"(change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"  >
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id" >{{item.itemName}}</option>
+                              <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
+                          </select>
+                          </td>
+                          <td style="width:100px;">    
+                            <select class="form-control form-control-sm ItemCode" [(ngModel)]="dynamicArray[i].ItemId"(change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" >
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id" >{{item.itemName}}</option>
+                             
+                          </select>
+                          </td>  
+                          <td style="width:100px;">    
+                            <select class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}" [(ngModel)]="dynamicArray[i].EqTypeId"  (change)="ChangeEqupment(dynamicArray[i].EqTypeId,i)" >  
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of EquipmentTypeList" [value]="item.id" >{{item.itemName}}</option>    
+                            </select>
+                          </td>  
+                          <td style="width:200px;">    
+                            <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly  class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea>   
+                            </td>
+                            <td style="width:200px;">    
+                              <textarea [(ngModel)]="dynamicArray[i].SubDescription"   class="form-control form-control-sm SubDescription" type="text" style="text-align:center;"> </textarea>   
+                              </td>
+                              <td style="width:80px;">
+                                <input class="form-control form-control-sm HSN" maxlength="4" id="txtHSN_{{i}}"
+                                  maxlength="4" autocomplete="off" [(ngModel)]="dynamicArray[i].HSN" (blur)="HSNKeyPress()"
+                                  appCopyPastNumFloatValue type="text" style="text-align:center;"
+                                   />
+                              </td>
+                          <td style="width:80px;">    
+                            <!-- <input  class="form-control form-control-sm" [(ngModel)]="dynamicArray[i].UnitName" readonly type="text"/>     -->
+                            <select class="form-control form-control-sm UnitName" id="ddlUnitName_{{i}}" [(ngModel)]="dynamicArray[i].UnitName"  (change)="ChangeUnit(dynamicArray[i].UnitName,i)"   >  
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id" >{{item.UnitName}}</option>    
+                            </select>
+                          </td>
+                          
+                          <td style="width:50px;">    
+                            <input class="form-control form-control-sm ChallanQty" (blur)="ChallanQtyKeyPress()" (keyup)="ChallanQtyOnblur(i)" [(ngModel)]="dynamicArray[i].ChallanQty" appNumFloat type="text" style="text-align:center;"/>    
+                          </td> 
+                          
+                          <td style="width:60px;">    
+                            <input class="form-control form-control-sm ReceivedQty" (blur)="OnblurReceivedQty(i)" (blur)="ReceivedQtyKeyPress()" [(ngModel)]="dynamicArray[i].ReceivedQty" appNumFloat type="text" style="text-align:center;"/>    
+                          </td>
+                          
+                          <td style="width:60px;">    
+                            <input class="form-control form-control-sm AcceptedQty"  (blur)="OnblurReceivedQty(i)" (keyup)="AcceptedQtyOnblur(i)" [(ngModel)]="dynamicArray[i].AcceptedQty"  (blur)="AcceptedQtyOnblur(i)"   appNumFloat type="text" style="text-align:center;"/>    
+                          </td>
+                          <td style="width:60px;text-align: center;"> 
+                            <a (click)="showModal(dynamicArray[i].AcceptedQty, i)">
+                              <i _ngcontent-dpu-c137="" class="fa fa-plus"></i> 
+                            </a>  
+                          </td>
+                          <td style="width:60px;">    
+                            <input class="form-control form-control-sm RejectedQty"readonly (blur)="RejectedQtyKeyPress()" [(ngModel)]="dynamicArray[i].RejectedQty" appNumFloat type="text" style="text-align:center;"/>    
+                          </td>
+                          
+                          <td style="width:60px;">    
+                            <input class="form-control form-control-sm ExcessShort" readonly [(ngModel)]="dynamicArray[i].ExcessShort" (blur)="ExcessShortKeyPress()" appNumFloat type="text" style="text-align:center;"/>    
+                          </td> 
+                          
+                          <td style="width:180px;">    
+                               <input  class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].Rate" (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()" appNumFloat type="text" style="text-align:center;"/>    
+                             </td>  
+                              <td style="width:120px;">    
+                               <input  class="form-control form-control-sm itmsTotalAmount" readonly [(ngModel)]="dynamicArray[i].TotalAmount" appNumFloat type="text" style="text-align:center;"/>    
+                             </td>  
+                             <td style="width:10px;">    
+                              <input type="file" style="width:50px;" name="FaultyImage" [(ngModel)]="dynamicArray[i].FaultyFile" id="fileImage" multiple #filePicker (change)="FaultyImageFileChange($event,i)" accept="application/pdf, image/jpeg">
+                            </td>  
+                         </tr> 
+                        <tr>
+                          <td></td>
+                          <td>Total Gross</td>
+                          <td colspan="14"></td>
+                          <td  style="text-align:center;">{{totalSumAmount}} </td>
+                          <td></td>
+                        
+                        </tr>
+
+
+
+                         <tr>    
+                           <td (click)="addRow()">    
+                             <i class="fa fa-plus"></i>    
+                           </td>    
+                         </tr>    
+                      </tbody>    
+                    </table>                      
+                  </div>
+               
+              </fieldset>
+              <br>
+                  <div class="row mb-1">
+                    <!-- <label class="col-form-label-xs col-sm-1">Transporter<span style="color:red;">*</span> </label>                           
+                    <div class="col-sm-2">
+                     <input type="text" id="txtTransporter"(keypress)="keyPressTransporter()" [(ngModel)]="model.Transporter" class="form-control form-control-sm" placeholder=""> 
+                    </div> -->
+                    <label class="col-form-label-xs col-sm-1">Select Transporter<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <select class="form-control form-control-sm" id="txtTransporterId" [(ngModel)]="model.TransporterId" (change)="ChangeTransporter(model.TransporterId)">
+                        <option class="dropdown-item"  value="">Select</option>
+                        <option *ngFor="let item of TransporterTypeDetail" [value]="item.id" >{{item.TransporterName}}</option>
+                      </select>
+                      
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" >Transporter Name<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2" >
+                      <textarea type="text" id="txtTransporterName" rows="2"  autocomplete="off" [(ngModel)]="model.TransporterName" placeholder=""(keypress)="TransporterNameKeyPress()"  class="form-control form-control-sm" ></textarea>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" >Transporter GST No<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <input type="text" id="txtTransporterGSTNo"  autocomplete="off" [(ngModel)]="model.TransporterGSTNo" placeholder=""(keypress)="TransporteGSTNoKeyPress()"  class="form-control form-control-sm" />
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Vehicle No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <input type="text" id="txtVehicleNo" (keypress)="keyPressVehicleNo()" autocomplete="off" [(ngModel)]="model.VehicleNo"  class="form-control form-control-sm" placeholder="">                            
+                    </div>
+                  </div>
+                  <div class="row mb-1">  
+                    <label class="col-form-label-xs col-sm-1">Material received by<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <input type="text" id="txtIndentorName" autocomplete="off" (keypress)="keyPressIndentorName()" [(ngModel)]="model.IndentorName"  class="form-control form-control-sm" placeholder=""> 
+                    </div>               
+                    <label class="col-form-label-xs col-sm-1">Bilty No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <input type="text" id="txtLRNo" autocomplete="off" (keypress)="keyPressLRNo()" [(ngModel)]="model.LRNo" class="form-control form-control-sm" placeholder=""> 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Bilty Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+
+                      <div class="input-group" (mouseenter)="onKeypressLRdate($event)">
+                        <input class="form-control form-control-sm" id="txtLRdate"
+                               name="dpLRDate" [(ngModel)]="model.LRdate" ngbDatepicker #dLRDate="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="dLRDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                        </div>
+                      </div>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Bilty Pdf/Image<a  *ngIf="IsLRFile" (click)="LRPdfViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                         <input type="file" id="fileimage" #inputLRPDF  (change)="onLRPdfFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div>
+                                                 
+                  </div>  
+
+                  <div class="row mb-1">                   
+                    <label class="col-form-label-xs col-sm-1">Remarks</label>                           
+                    <div class="col-sm-3">
+                       <textarea type="text" id="txtRemarks" [(ngModel)]="model.Remarks" class="form-control form-control-sm" placeholder="" ></textarea>                            
+                    </div>                                
+                  </div>   
+                </div>                     
+             </div>
+
+
+            </div>
+          </div>
+<!-- CRN PDF Preview Page -->
+          <div class="row" [hidden]="IsCRNPreview">
+            <div class="col-sm-12 col-md-12">
+              <div class="card card-success">
+                <div class="card-body">
+                  <div class="row mb-1">
+                    <div class="col-sm-12 content-header bg-light">                                   
+                      <div class="col-sm-6">
+                        <button type="button" class="btn btn-sm btn-success"
+                      (click)="BackPreviewDispatch()"><i  class="fa fa-save"></i> Back Preview</button>
+                       
+                      </div>                                    
+                    </div>
+                  </div>
+                  <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Customer Details</legend> 
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">WH State<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.WHStateName}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">WH Name<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.WHName}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">WH Address</label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.WHAddress}}</label>
+                  </div>
+                    <label class="col-form-label-xs col-sm-1">Customer Name<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.CustomerName}}</label>  
+                  </div>
+                    
+                    
+                  </div>
+
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">Customer Address<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.CustomerAddress}}</label> 
+                  </div>
+
+                  <label class="col-form-label-xs col-sm-1">CRN No<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.GRNCRNNo}}</label> 
+                  </div>
+                    <label class="col-form-label-xs col-sm-1">CRN Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.PreviewGRNdate}}</label> 
+                    </div>
+                  </div>
+                 
+
+                  <div class="row mb-1">
+                    
+                    <label class="col-form-label-xs col-sm-1">Inv/Challan No<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.ChallanNo}}</label> 
+                   </div>
+                    <label class="col-form-label-xs col-sm-1">Inv/Challan Date<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.PreviewChallanDate}}</label>                  
+                    </div>
+                    <!-- <label class="col-form-label-xs col-sm-1">Challan Upload<a  *ngIf="IsReceivingFile" (click)="ReceivingViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="file" id="fileimage"  #filePicker (change)="onChallanFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div> -->
+                    <label class="col-form-label-xs col-sm-1">Gate Entry No<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                    <label style="text-align:center">{{model.GateEntryNo}}</label> 
+                  </div>
+                    <label class="col-form-label-xs col-sm-1">Gate Entry Date<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.PreviewGateEntryDate}}</label> 
+                    </div>
+                  </div> 
+
+                  
+                  <!-- <div class="row mb-1">     
+                    
+                    <label class="col-form-label-xs col-sm-1">Gate Entry No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="text" id="txtGateEntryNo"  (keypress)="keyPressGateEntry()" autocomplete="off" [(ngModel)]="model.GateEntryNo" class="form-control form-control-sm" > 
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Gate Entry Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <div class="input-group" (mouseenter)="onKeypressGateEntryDate($event)">
+                        <input class="form-control form-control-sm" id="txtGateEntryDate"
+                               name="dpGateEntryDate" [(ngModel)]="model.GateEntryDate" autocomplete="off" ngbDatepicker #dGateEntryDate="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="dGateEntryDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
+                        </div>
+                      </div>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Gate Pdf/Image<a  *ngIf="IsGatefile" (click)="GatePdfViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                    <input type="file" id="fileimage" #filePicker (change)="onGatePdfFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" *ngIf="IsHideShowCancelBtn">Cancellation Reason<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2" *ngIf="IsHideShowCancelBtn">
+                      <select class="form-control form-control-sm" id="txtInCaseReason" [(ngModel)]="model.InCaseReason" (change)="changeCaseReason()">
+                        <option class="dropdown-item"  value="0">Select</option>
+                        <option *ngFor="let item of CancelReasonData" [value]="item.id" >{{item.ReasonName}}</option>
+                      </select>
+                    </div>
+                  </div> -->
+                  <!-- <div class="row mb-1" *ngIf="IsHideShowCancelBtn">
+                   
+                  </div> -->
+                  </fieldset>
+                  <fieldset class="scheduler-border">
+                    <legend class="scheduler-border">Item Details</legend> 
+                    <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+                    <table id="tblOne" class="table table-striped table-bordered">    
+                      <thead>    
+                        <tr>    
+                             <!-- <th></th>    -->
+                             <th>Item&nbsp;Name<span style="color:red;"></span></th>    
+                             <th>Item&nbsp;Make<span style="color:red;"></span></th>    
+                             <th>&nbsp;&nbsp;Part&nbsp;No<span style="color:red;"></span>&nbsp;&nbsp;</th>
+                             <th>Equipment Type<span style="color:red;"></span></th>
+                             <th>Item&nbsp;Description</th>  
+                             <th>Sub&nbsp;Description</th>  
+                             <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b></b></span></th> 
+                             <th>&nbsp;&nbsp;&nbsp;&nbsp;Unit<span style="color:red;"></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>    
+                             <th>Challan Qty<span style="color:red;"></span></th>    
+                             <th>Received Qty<span style="color:red;"></span></th>    
+                             <th>Accepted(OK) Qty<span style="color:red;"></span></th> 
+                             <!-- <th>Serial No<span style="color:red;"></span></th>  -->
+                            
+                             <th>Damage  Qty</th>
+                             <th>Excess/ Short</th>    
+                             <th>&nbsp;&nbsp;&nbsp;&nbsp;Rate<span style="color:red;"></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>                                                    
+                             <th>Total&nbsp;Amount<span style="color:red;"></span></th>    
+                             <th>Photo</th>   
+                         </tr>    
+                      </thead>    
+                      <tbody>    
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index" >    
+                          <!-- <td (click)="deleteRow(i)" style="width:20px;">    
+                             <i class="fa fa-trash"  title="Delete"></i>    
+                          </td>     -->
+                          <td style="width:100px;">  
+                          <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
+                          </td> 
+                          <td style="width:100px;">    
+                          <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
+                          </td>
+                          <td style="width:100px;">    
+                          <label style="text-align:center">{{dynamicArray[i].ItemCode}}</label>
+                          </td>  
+                          <td style="width:100px;">    
+                            <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
+                          </td>  
+                          <td style="width:200px;">    
+                            <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
+                          </td>
+                            <td style="width:200px;">    
+                              <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
+                            </td>
+                              <td style="width:80px;">
+                                   <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
+                              </td>
+                          <td style="width:80px;">    
+                            <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
+                          </td>
+                          
+                          <td style="width:50px;">    
+                            <label style="text-align:center">{{dynamicArray[i].ChallanQty}}</label>
+                          </td> 
+                          
+                          <td style="width:60px;">    
+                            <label style="text-align:center">{{dynamicArray[i].ReceivedQty}}</label>
+                          </td>
+                          
+                          <td style="width:60px;">    
+                            <label style="text-align:center">{{dynamicArray[i].AcceptedQty}}</label>
+                          </td>
+                          <!-- <td style="width:60px;text-align: center;"> 
+                            <a (click)="showModal(dynamicArray[i].AcceptedQty, i)">
+                              <i _ngcontent-dpu-c137="" class="fa fa-plus"></i> 
+                            </a>  
+                          </td> -->
+                          <td style="width:60px;">    
+                            <label style="text-align:center">{{dynamicArray[i].RejectedQty}}</label>
+                          </td>
+                          
+                          <td style="width:60px;">    
+                            <label style="text-align:center">{{dynamicArray[i].ExcessShort}}</label>
+                          </td> 
+                          
+                          <td style="width:180px;">    
+                               <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
+                           </td>  
+                              <td style="width:120px;">    
+                               <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
+                              </td>  
+                             <td style="width:10px;">    
+                              <input type="file" style="width:50px;" name="FaultyImage" [(ngModel)]="dynamicArray[i].FaultyFile" id="fileImage" multiple #filePicker (change)="FaultyImageFileChange($event,i)" accept="application/pdf, image/jpeg">
+                            </td>  
+                         </tr> 
+                        <tr>
+                          <!-- <td></td> -->
+                          <td>Total Gross</td>
+                          <td colspan="12"></td>
+                          <td  style="text-align:center;">{{totalSumAmount}} </td>
+                          <td></td>
+                        
+                        </tr>
+
+
+
+                         <!-- <tr>    
+                           <td (click)="addRow()">    
+                             <i class="fa fa-plus"></i>    
+                           </td>    
+                         </tr>     -->
+                      </tbody>    
+                    </table>                      
+                  </div>
+               
+              </fieldset>
+              <br>
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">Select Transporter<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.PreviewSelectTransporter}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" >Transporter Name<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                    <div class="col-sm-2" >
+                      <label style="text-align:center">{{model.TransporterName}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1" >Transporter GST No<span style="color: red;"class="Mandatoryfield"><b></b></span></label>
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.TransporterGSTNo}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Vehicle No<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.VehicleNo}}</label>
+                    </div>
+                  </div>
+                  <div class="row mb-1">  
+                    <label class="col-form-label-xs col-sm-1">Material received by<span style="color:red;"></span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.IndentorName}}</label>
+                    </div>               
+                    <label class="col-form-label-xs col-sm-1">LR No<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                      <label style="text-align:center">{{model.LRNo}}</label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">LR Date<span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+
+                      <div class="input-group" (mouseenter)="onKeypressLRdate($event)">
+                        <label style="text-align:center">{{model.PreviewLRDate}}</label>
+                      </div>
+                    </div>
+                    <!-- <label class="col-form-label-xs col-sm-1">LR Pdf/Image<a  *ngIf="IsLRFile" (click)="LRPdfViewfileClick()"  title="File View" style="color:green"><i class="fa fa-eye"></i></a><span style="color:red;">*</span></label>                           
+                    <div class="col-sm-2">
+                         <input type="file" id="fileimage" #filePicker (change)="onLRPdfFileChange($event)" class="form-control form-control-sm" accept="application/pdf, image/jpeg" placeholder="Choose file">
+                    </div> -->
+                                                 
+                  </div>  
+
+                  <div class="row mb-1">                   
+                    <label class="col-form-label-xs col-sm-1">Remarks</label>                           
+                    <div class="col-sm-3">
+                       <label style="text-align:center">{{model.Remarks}}</label>
+                      </div>                                
+                  </div>   
+                </div>                     
+             </div>
+
+
+            </div>
+          </div>
+        </div>
+      </section>            
+    </div>
+</div>
+
+<div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h6 class="modal-title">Serial Number({{headerItemName}})
+        </h6>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        <table style="width: 100%;" class="table table-striped table-bordered" >
+         <thead>
+           <th>Qty</th>
+           <th>Initial Range</th>
+           <th>Last Range</th>
+         </thead>
+         <tbody>
+          <tr>
+            <td> 
+             {{strcount}}
+            </td>
+            <td>
+             <input  class="form-control form-control-sm itmsRate" [(ngModel)]="firstValue" (blur)="initialsrn()"      
+             type="text" style="text-align:center;"/>    
+            </td>
+           <td>
+             <input  class="form-control form-control-sm itmsRate" [(ngModel)]="lastValue" (blur)="initialsrn()"
+             type="text" style="text-align:center;"/>    
+           </td>
+          </tr>
+         </tbody>
+        </table>
+        <table class="table table-striped table-bordered"  style="width: 100%;" >
+          <tr>
+            <td><label style="height: 9px;font-size: 13px;" >Excel Upload for SerialNo</label></td>
+            <td>
+              <input type="file" #inputExcelOther class="form-control" (change)="SerialNoExcelUpload($event)" placeholder="Upload file" 
+              accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+              multiple="false" />           
+            </td>  
+            <td>
+              <button type="button" class="btn btn-sm btn-success" (click)="DownloadSerialNoExcelSample()"><i class="fa fa-download">
+              </i> Sample Excel</button>
+            </td>         
+          </tr>   
+        </table>
+        <div id="table-wrapper">
+          <div id="table-scroll">
+        <table class="table table-striped table-bordered"  style="width: 100%;" >
+          <tr *ngFor="let value of srnlst; let i = index" >
+            <td >
+              {{i+1}}
+           </td>
+           <td colspan="2">
+             <input  class="form-control form-control-sm itmsRate"  [(ngModel)]="srnlst[i].InitialSrno"      type="text" style="text-align:center;"/>    
+           </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-danger" (click)="ClearSerialNoList()">
+          <i class="fa fa-trash"></i>
+          Clear</button>
+        <button type="submit" class="btn btn-sm btn-success" (click)="addBtn()">
+          <i class="fa fa-plus"></i> Add </button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="hideModal()">
+          <i class="far fa-window-close"></i>
+          Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="bb" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h6 class="modal-title">Serial Number(BB)</h6>
+        <table style="width: 30%;">
+          <tr>
+            <td align="right">
+              Qty
+            </td>
+            <td align="right" >{{strcount}}</td>         
+          </tr>
+        </table>
+      </div>
+      <!-- Modal body -->
+      <div class="modal-body">
+        
+        <div id="table-wrapper1" style="height:400px; overflow: auto;"  >
+          <div id="table-scroll1">
+            <table class="table table-striped table-bordered"  style="width: 100%;" >
+              <tr>
+                <td><label style="height: 9px;font-size: 13px;" >Excel Upload for SerialNo</label></td>
+                <td>
+                  <input type="file" #inputExcelBB class="form-control" (change)="SerialNoExcelUpload($event)" placeholder="Upload file" 
+                  accept=".csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+                  multiple="false" />           
+                </td>  
+                <td>
+                  <button type="button" class="btn btn-sm btn-success" (click)="DownloadSerialNoExcelSample()"><i class="fa fa-download">
+                  </i> Sample Excel</button>
+                </td>         
+              </tr>   
+            </table>
+          <table class="table table-striped table-bordered"  style="width: 100%;" >          
+          <tr *ngFor="let value of srnlst; let i = index" >
+            <td>
+              <label id="login"  > {{i+1}}</label>
+            </td>
+            <td style="width:150px;" >
+             <span  >
+              <label style="height: 9px;
+              font-size: 13px;" >Initial Value</label>
+              <input  class="form-control form-control-sm itmsRate" [(ngModel)]="srnlst[i].BBInitial"     placeholder="Initial value"  type="text" style="text-align:center;width:143px;"/>    
+            </span>
+            <span  style="margin-top:10px;">
+              <label style="height: 9px;
+              font-size: 13px;
+              margin-top: 6px;">Last Value</label>
+              <input  class="form-control form-control-sm itmsRate"  [(ngModel)]="srnlst[i].BBLast" (blur)="bbChange(i)"    placeholder="last value"  type="text" style="text-align:center;width:143px; margin-top: 10px;"/>    
+            </span>
+            </td>
+            <td>
+              <div  style="width:100%;">
+                <span *ngFor="let value of srnlst[i].CellNos; let j = index" style="display:inline-block; margin-left:5px;margin-bottom:10px;">
+                  <input type="text" [(ngModel)]="srnlst[i].CellNos[j].CellValue"  class="form-control" style="width:115px; height:22px;font-size: 10;"  />
+                </span>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </div></div>
+      </div>
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-danger" (click)="ClearSerialNoList()">
+          <i class="fa fa-trash"></i> Clear</button>
+        <button type="submit" class="btn btn-sm btn-success" (click)="addBb()">
+          <i class="fa fa-plus"></i> Add </button>
+        <button type="button" class="btn btn-danger" (click)="hidebbModal()" >
+          <i class="fa fa-window-close"></i> Close</button>        
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="confirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm !</h4>
+      </div>
+      <div class="modal-body">
+        Please see preview before submit data by clicking on Preview Button.
+        After submitting data will make it permanent change.
+      </div>
+      <div class="modal-footer">
+        <button type="submit" *ngIf="IsPreviewDisable"  class="btn btn-sm btn-success" (click)="PreviewCRN()" ><i class="fa fa-save"></i>
+          Preview </button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading" (click)="SaveGRNCRNDetail()" >Save
+          <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="Cancleconfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm !</h4>
+      </div>
+      <div class="modal-body">
+        Please confirm that you want to Cancel. 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading" (click)="UpadateCancelDispatch()" >Save
+          <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<div class="modal fade" id="Validationerror" data-backdrop="static" tabindex="-1" role="dialog"
+aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog modal-sm">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h4 class="modal-title">Error !</h4>
+    </div>
+    <div class="modal-body">
+      {{ValidationerrorMessage}}
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+    </div>
+  </div><!-- /.modal-content -->
+</div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,601 @@
+<style>
+  .table th,
+  .table td {
+    padding: 4px 4px 4px 4px;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+    font-size: smaller;
+  }
+
+  .Mandatoryfield {
+    font-size: 15px
+  }
+
+  .ng-star-inserted {
+    /* position: fixed !important; */
+    z-index: 999 !important;
+    /* top: 0px;
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
+  }
+
+  .box {
+    border: 1px solid red;
+
+  }
+
+  body {
+    padding: 10px;
+
+  }
+
+  .ChildCSS {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -30px;
+  }
+
+  .ChildSiteCSS {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    /* margin-top: -30px; */
+  }
+
+
+  /* remove border radius for the tab */
+</style>
+
+<ng-template #content let-modal let-d="dismiss">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title" id="modal-basic-title">Please confirm...</h5>
+
+      <div>
+      </div>
+    </div>
+    <div class="modal-body">
+      <span>Are You Sure ?</span>
+    </div>
+    <div class="modal-footer center ">
+      <button type="button" class="btn btn-default" data-dismiss="modal" (click)="d('Cross click')">No</button>
+      <button type="submit" class="btn btn-success" data-dismiss="modal"
+        (click)="ClickApprovalReject(IndexValue,StatusValue)">Ok </button>
+    </div>
+  </div>
+</ng-template>
+<div class="wrapper">
+
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
+  <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+    <p style="color: white">Please Wait. </p>
+  </ngx-spinner>
+  <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header bg-light">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                <li class="breadcrumb-item active">Material Tracker / Material Installation</li>
+              </ol>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.content-header -->
+    <section class="content" style="padding-top:2px;">
+      <div class="container-fluid">
+        <div class="row" *ngIf="isShownList">
+
+          <div class="col-sm-12">
+            <div class="row" style="margin-left:3px">
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">State</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtTOWHStateId" [(ngModel)]="model.WHStateStateId"
+                  (change)="BindEditWHList(model.WHStateStateId)">
+                  <option class="dropdown-item" value="0">Select</option>
+                  <option *ngFor="let item of WHStateList" [value]="item.id">{{item.itemName}}</option>
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">WH Name</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtWHNameId" [(ngModel)]="model.WHNameId">
+                  <option class="dropdown-item" value="0">Select</option>
+                  <option *ngFor="let item of WHNameList" [value]="item.id">{{item.itemName}}</option>
+                </select>
+              </div>
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Item Name</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="SearchItemNameList" [(ngModel)]="SearchddlItem"
+                  [settings]="MultidropdownSettings1" (onDeSelectAll)="onSearchCommonDeSelectAll('1')"
+                  (ngModelChange)="SearchChangeItem($event)">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Dispatch No</label>
+              </div>
+              <div class="col-sm-2">
+                <input type="text" id="txtDispatchNo" [(ngModel)]="model.DispatchNo" placeholder=""
+                  class="form-control form-control-sm" />
+              </div>
+            </div>
+            <div class="row" style="margin-left:3px">
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Time Selection</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" [(ngModel)]="model.TimeSelection">
+                  <option value="1">Dispatch Date</option>
+                  <option value="2">Delivery Date</option>
+                  <option value="3">Installation Date</option>
+                </select>
+              </div>
+              <app-time-period class="ChildCSS"></app-time-period>
+            </div>
+
+            <div class="row" style="margin-left:6px">
+              <div class="col-sm-6">
+                <app-site-panel class="ChildSiteCSS"></app-site-panel>
+              </div>
+            </div>
+
+
+
+            <div class="row  mb-1">
+              <div class="col-sm-12" style="background-color:#28a745;">
+                <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch" (click)="SearchGetAllMaterialInstallationList('List')">
+                    <i class="fa fa-search" aria-hidden="true"></i> Search</button>
+                  <button type="button" class="btn btn-success" 
+                    (click)="SearchGetAllMaterialInstallationList('Export')"><i class="fa fa-download"
+                      aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin"
+                      *ngIf="ObjUserPageRight.IsSearch&&Exportloading"></i></button>
+                  <!-- <button type="button" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> New  </button>  -->
+                </div>
+
+              </div>
+            </div>
+
+            <div class="row" *ngIf="IsApprovalTab" class="col-sm-12">
+
+              <div class="card-header p-0 border-bottom-0">
+                <ul class="nav nav-tabs" id="" role="tablist">
+                  <li class="nav-item col-sm-2">
+                    <a class="nav-link active" id="" (click)="SearchPARNOMatchMatch(1470)" data-toggle="pill" role="tab"
+                      aria-controls="custom-tabs-three-home" aria-selected="true"><b>Pending - {{PendingCount}}</b><span
+                        style="float:right;"><i class="fa fa-download" title="Download"
+                          (click)=DownloadAllTabTypeData(1470)></i></span></a>
+
+
+                  <li class="nav-item col-sm-3" style="margin-left: -11px;">
+                    <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="SearchPARNOMatchMatch(1474)"
+                      data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
+                      aria-selected="false"><b>Installed with Mismatch - {{withMismatchCount}}</b><span
+                        style="float:right;"><i class="fa fa-download pointer" title="Download"
+                          (click)=DownloadAllTabTypeData(1474)></i></span></a>
+                  </li>
+                  <li class="nav-item col-sm-3" style="margin-left: -11px;">
+                    <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="SearchPARNOMatchMatch(1473)"
+                      data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
+                      aria-selected="false"><b>Installed with no Mismatch - {{withnoMismatchCount}}</b><span
+                        style="float:right;"><i class="fa fa-download pointer" title="Download"
+                          (click)=DownloadAllTabTypeData(1473)></i></span></a>
+                  </li>
+                  <li class="nav-item col-sm-2" style="margin-left: -11px;">
+                    <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="SearchPARNOMatchMatch(1472)"
+                      data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
+                      aria-selected="false"><b>Approved - {{ApprovedCount}}</b><span style="float:right;"><i
+                          class="fa fa-download pointer" title="Download "
+                          (click)=DownloadAllTabTypeData(1472)></i></span></a>
+                  </li>
+                  <li class="nav-item col-sm-2" style="margin-left: -11px;">
+                    <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="SearchPARNOMatchMatch(1471)"
+                      data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages" aria-selected="false"><b>
+                        Rejected - {{RejectCount}}</b><span style="float:right;"><i class="fa fa-download pointer"
+                          title="Download " (click)=DownloadAllTabTypeData(1471)></i></span></a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-sm-12">
+            <div class="row">
+              <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [enableSorting]="true"
+                [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="columnDefs"
+                [multiSortKey]="multiSortKey" [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)"
+                [overlayLoadingTemplate]="loadingTemplate">
+              </ag-grid-angular>
+            </div>
+          </div>
+        </div>
+        <div class="row" *ngIf="isShownEdit" id="DivPOEdit">
+          <div id="Basic" class="col-12 col-sm-12 col-md-12">
+            <div class="row">
+              <div class="row mb-1">
+                <div class="col-sm-12 content-header bg-light">
+                  <div class="col-sm-12">
+                    <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i
+                        class="fa fa-arrow-circle-left"></i> Back</button>
+                    <!-- &nbsp; <button type="submit"  class="btn btn-sm btn-success" (click)="CreateNew()"   ><i class="fa fa-plus"></i> 
+                                   New </button> -->
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12 col-sm-6 col-lg-12">
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Site Dispatched Details</legend>
+                  <div style="height:auto;">
+                    <table id="tblOne" class="table table-striped table-bordered col-sm-12">
+                      <thead style="background-color: #f0f1f3;">
+                        <tr>
+                          <th>SiteId</th>
+                          <th>SiteName<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>DispatchNo<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Dispatch Date<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Dispatch By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Dispatch Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Dilevered On<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th>Dilevered By<span style="color:red;"class="Mandatoryfield"><b></b></span></th> -->
+                          <th>Received By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Download Link<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr style="background-color:white;" *ngFor="let item2 of DispatchGridDataList">
+                          <td scope="row" style="text-align:center;">{{item2.Site_Id}} </td>
+                          <td scope="row" style="text-align:center;"> {{item2.SiteName}} </td>
+                          <td scope="row" style="text-align:center;"> {{item2.DocumentNo}}</td>
+                          <td scope="row" style="text-align:center;">{{item2.DispatchDate}}</td>
+                          <td scope="row" style="text-align:center;"> {{item2.DispatchBy}} </td>
+                          <td scope="row" style="text-align:center;"> {{item2.DispatchQty}} </td>
+                          <td scope="row" style="text-align:center;">{{item2.DileveredOn}}</td>
+                          <!-- <td  scope="row" style="text-align:center;">{{item2.DileveredBy}}</td>  -->
+                          <td scope="row" style="text-align:center;">{{item2.ReceivedBy}}</td>
+                          <td scope="row" style="text-align:center;">
+                            <label *ngIf="item2.DocumentFile != ''" class="ng-scope">
+                              <span><i class="fa fa-file" title="DocumentFile"
+                                  (click)="ClickEwayBill(item2.DocumentFile)"></i></span>&nbsp;
+                            </label>
+                            <label *ngIf="item2.EwayBillDocument != ''" class="ng-scope">
+                              <span><i class="fa fa-file" title="EwayBillDocumentFile"
+                                  (click)="ClickEwayBill(item2.EwayBillDocument)"></i></span>&nbsp;
+                            </label>
+                            <label *ngIf="item2.GRFile != ''" class="ng-scope">
+                              <span><i class="fa fa-file" title="GRFile"
+                                  (click)="ClickEwayBill(item2.GRFile)"></i></span>&nbsp;
+                            </label>
+
+                            <label *ngIf="item2.TaxInvoiceFile != ''" class="ng-scope">
+                              <span><i class="fa fa-file" title="TaxInvoiceFile"
+                                  (click)="ClickEwayBill(item2.TaxInvoiceFile)"></i></span>&nbsp;
+                            </label>
+
+                            <span><i class="fa fa-download" title="Download File" *ngIf="IsDownloadAllPdfZip"
+                                (click)="DownloadAllPdfZip()"></i></span>
+                          </td>
+
+                      </tbody>
+                    </table>
+
+                  </div>
+                </fieldset>
+
+              </div>
+            </div>
+
+
+            <div class="row">
+
+              <div class="col-12 col-sm-6 col-lg-12">
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Equipment Wise Installations Details Against Dispatched</legend>
+                  <!-- class="card card-success card-outline card-outline-tabs" -->
+                  <div>
+                    <div class="card-header p-0 border-bottom-0">
+                      <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
+                        <li class="nav-item" *ngFor="let item of TabDataList" [value]="item.ItemId"
+                          (click)="ClickItemName(item.ItemId,item.DispatchId)" style="margin-left: 5px;">
+                          <a class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill"
+                            href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home"
+                            aria-selected="true">{{item.ItemName}}</a>
+                        </li>
+                        <!-- <li class="nav-item"  float="right">
+                                      <a  class="nav-link active" id="custom-tabs-three-home-tab" data-toggle="pill" href="#custom-tabs-three-home" role="tab" aria-controls="custom-tabs-three-home" aria-selected="true">Installation Certificate</a>
+                                    </li> -->
+                        <ul>
+
+                        </ul>
+
+                      </ul>
+
+                    </div>
+
+
+
+                    <div class="card-body">
+                      <div class="tab-content" id="custom-tabs-three-tabContent">
+                        <div class="tab-pane fade show active" id="custom-tabs-three-home" role="tabpanel"
+                          tabpanel="first" aria-labelledby="custom-tabs-three-home-tab">
+                          <div class="row mb-1">
+                            <table id="tblOne" class="table table-striped table-bordered ">
+                              <thead style="background-color: #f0f1f3">
+                                <tr>
+                                  <th colspan="6"> DISPATCH DETAIL</th>
+
+                                </tr>
+                                <tr>
+                                  <th>Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Capacity/Des<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <!-- <th>Capacity<span style="color:red;"class="Mandatoryfield"><b></b></span></th>     -->
+                                  <th>Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Serial No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Bar/QR Code<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr style="background-color: white" *ngFor="let item1 of DispatchDataList">
+                                  <td style="text-align:center;">{{item1.MakeName}}</td>
+                                  <td style="text-align:center;"> {{item1.ItemDescription}} </td>
+                                  <td style="text-align:center;">{{item1.TotalSumQty}} </td>
+
+                                  <td style="text-align:center; height:auto;width: 100px;">
+                                    {{item1.ManufacturerSerialNo}}</td>
+                                  <td style="text-align:center;">{{item1.QRCode}} </td>
+                              </tbody>
+                            </table>
+
+                            <table id="tblINSTALLATION" class="table table-striped table-bordered col-sm-12">
+                              <thead style="background-color: #f0f1f3;">
+                                <tr>
+                                  <th colspan="8">INSTALLATION DETAIL &nbsp;&nbsp;&nbsp;
+                                    <label class="ng-scope" *ngIf="IsInstallCertificate">
+                                      _INSTALLATION CERTIFICATE
+                                      <span><i class="fa fa-download" title="Installation Certificate"
+                                          (click)=DownloadInstallCertificate()></i></span>&nbsp;
+                                    </label>
+
+                                  </th>
+                                  <th colspan="7">EXISTING EQUIPMENT DETAIL</th>
+                                </tr>
+                                <tr>
+                                  <th></th>
+                                  <th>Site Id<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Installation Type<span style="color:red;" class="Mandatoryfield"><b></b></span>
+                                  </th>
+                                  <th>Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Capacity/Desc<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th style="width: 50px;">Qty<span style="color:red;"
+                                      class="Mandatoryfield"><b></b></span></th>
+                                  <th>Equ/Selfie Img<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <!-- <th>Selfie Img<span style="color:red;"class="Mandatoryfield"><b></b></span></th>  -->
+
+                                  <th>Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th>Capacity/Desc<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <th style="width: 50px;">Qty<span style="color:red;"
+                                      class="Mandatoryfield"><b></b></span></th>
+                                  <th>Equ/Selfie Img<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                  <!-- <th>Selfie Img<span style="color:red;"class="Mandatoryfield"><b></b></span></th>  -->
+                                  <th style="width: 100px;">Approval Status L1|L2|L3|<span
+                                      class="badge badge-primary">L4</span><span style="color:red;"
+                                      class="Mandatoryfield"><b></b></span></th>
+                                  <th>Action<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                </tr>
+
+                              </thead>
+                              <tbody>
+                                <ng-template ngFor let-item1 [ngForOf]="InstallationDataList" let-i="index">
+                                  <tr style="background-color: white">
+                                    <td style="text-align:center;"><a data-toggle="collapse"
+                                        [attr.href]="'#collapseOne_' + i" role="button" aria-expanded="false"
+                                        *ngIf="item1.IsSerialReq == 1">+</a></td>
+                                    <input class="form-control form-control-sm " type="hidden" autocomplete="off"
+                                      [(ngModel)]="item1.Id" />
+                                    <input class="form-control form-control-sm " type="hidden" autocomplete="off"
+                                      [(ngModel)]="item1.IsSerialReq" />
+                                    <td style="text-align:center;"> {{item1.SiteId}} </td>
+                                    <td style="text-align:center;"> {{item1.InstalltionType}} </td>
+                                    <td style="text-align:center;"> {{item1.NewMake}} </td>
+                                    <td style="text-align:center;"> {{item1.NewItemDesc}} </td>
+                                    <td style="text-align:center;"><input class="form-control form-control-sm"
+                                        id="txtnewqty_{{i}}" autocomplete="off" [(ngModel)]="item1.NewQuantity"
+                                        type="text" style="text-align:center;" /></td>
+                                    <td style="text-align:center;"><img src={{item1.NewEquipmentImage}} alt=""
+                                        width="30" title="NewEquipmentImage" *ngIf="item1.NewEquipmentImage!=''"
+                                        height="30" target="_blank"
+                                        (click)="ClickNewEquipmentImage(item1.NewEquipmentImage)">
+                                      &nbsp;<img src={{item1.NewSelfieImage}} alt="" width="30"
+                                        *ngIf="item1.NewSelfieImage!=''" title="NewSelfieImage" height="30"
+                                        target="_blank" (click)="ClickNewSelfiImage(item1.NewSelfieImage)">
+                                    </td>
+                                    <!-- <td style="text-align:center;"><img src={{item1.NewSelfieImage}} alt="" width="30" *ngIf="item1.NewEquipmentImage!=''"  height="30" target = "_blank"(click)="ClickNewSelfiImage(item1.NewSelfieImage)"></td>  -->
+
+                                    <td style="text-align:center;"> {{item1.OldMake}} </td>
+                                    <td style="text-align:center;"> {{item1.oldItemDesc}} </td>
+
+                                    <td style="text-align:center;"><input class="form-control form-control-sm Oldqty"
+                                        id="txtOldqty_{{i}}" autocomplete="off" *ngIf="item1.InstalltionTypeId!=1465"
+                                        [(ngModel)]="item1.OldQuantity" type="text" style="text-align:center;" /></td>
+                                    <td style="text-align:center;">
+                                      <img src={{item1.OldEquipmentImage}} alt="" width="30" height="30"
+                                        title="OldEquipmentImage" target="_blank" *ngIf="item1.OldEquipmentImage!=''"
+                                        (click)="ClickOldEquipmentImage(item1.OldEquipmentImage)">
+                                      &nbsp;<span> <img src={{item1.OldSelfieImage}} alt="" width="30"
+                                          title="OldSelfieImage" height="30" *ngIf="item1.OldSelfieImage!=''"
+                                          target="_blank" (click)="ClickOldSelfiImage(item1.OldSelfieImage)">
+                                      </span>
+                                    </td>
+
+                                    <!-- <td style="text-align:center;">
+                                                   <span  > <img src={{item1.OldSelfieImage}} alt="" width="30" height="30" *ngIf="item1.OldSelfieImage!=''" target = "_blank" (click)="ClickOldSelfiImage(item1.OldEquipmentImage)" >
+                                                  </span>
+                                   
+                                                  </td>  -->
+
+
+                                    <td style="text-align:center;">
+                                      <app-view-approvalpage [ChildApprovalList]="ApprovalList"></app-view-approvalpage>
+                                    </td>
+
+
+                                    <td style="text-align:center;">
+                                      <label class="ng-scope">
+                                        <a style="color: #16d35e; text-align:center"
+                                          (click)="ConfirmmationClick(i,1458)">Approve</a>
+                                        <br />
+                                        <a style="color: #d31616; text-align:center"
+                                          (click)="ConfirmmationClick(i,1459)">Reject</a>
+                                      </label>
+                                      <!-- <button type="submit" class="btn btn-success">Approved </button>
+                                                    <button type="submit" class="btn btn-danger">Reject </button> -->
+
+                                    </td>
+                                  </tr>
+
+                                  <tr class="collapse" [attr.id]="'collapseOne_' + i"
+                                    style="background-color: #f0f1f3;;width: 100%;" *ngIf="item1.IsSerialReq == 1">
+                                    <td colspan="7">
+                                      <table id="tblOne3" class="table table-striped table-bordered col-sm-12">
+                                        <thead>
+                                          <tr>
+                                            <th>S.No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th> Type<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th> BarCode/Serial No<span style="color:red;"
+                                                class="Mandatoryfield"><b></b></span></th>
+                                            <th> Img<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th (click)="addRow(i,1)"><i class="fa fa-plus"></i> Add <span
+                                                style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                          </tr>
+
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let jArray of InstallationDataList[i].NewEqupArr; let j = index"
+                                            style="background-color:white;">
+
+                                            <td style="text-align:center;"> {{j+1}} </td>
+                                            <td style="text-align:center;">
+                                              <select class="form-control form-control-sm "
+                                                [(ngModel)]="InstallationDataList[i].NewEqupArr[j].BarCodeStatusId">
+                                                <option class="dropdown-item" [value]="1">BarCode</option>
+                                                <option class="dropdown-item" [value]="2">SerialNo</option>
+                                                <option class="dropdown-item" [value]="3">NA</option>
+                                              </select>
+
+                                            </td>
+                                            <td style="text-align:center;"> <input class="form-control form-control-sm "
+                                                id="txtHSN_{{i}}" autocomplete="off" [(ngModel)]="jArray.BarCode"
+                                                type="text" style="text-align:center;" /> </td>
+                                            <td style="text-align:center;">
+                                              <img src={{jArray.Img}} alt="" width="30" height="30"
+                                                *ngIf="jArray.Img!=''">
+                                            </td>
+
+                                            <td (click)="deleteRow(i,j,1)" style="width:20px;">
+                                              <i class="fa fa-trash" title="Delete"></i>
+                                            </td>
+                                          </tr>
+
+
+                                        </tbody>
+
+                                      </table>
+                                    </td>
+
+                                    <td colspan="7">
+                                      <table id="tblOne3" class="table table-striped table-bordered col-sm-12"
+                                        *ngIf="item1.InstalltionTypeId != 1465">
+                                        <thead>
+                                          <tr>
+                                            <th>S.No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th> Type<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th> BarCode/Serial No<span style="color:red;"
+                                                class="Mandatoryfield"><b></b></span></th>
+                                            <th> Img<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                            <th (click)="addRow(i,2)"><i class="fa fa-plus"></i> Add <span
+                                                style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                                          </tr>
+
+                                        </thead>
+                                        <tbody>
+                                          <tr *ngFor="let kArray of InstallationDataList[i].OldEqupArr; let k = index"
+                                            style="background-color:white;">
+
+                                            <td style="text-align:center;">{{k+1}} </td>
+                                            <select class="form-control form-control-sm "
+                                              [(ngModel)]="InstallationDataList[i].OldEqupArr[k].BarCodeStatusId">
+                                              <option class="dropdown-item" [value]="1">BarCode</option>
+                                              <option class="dropdown-item" [value]="2">SerialNo</option>
+                                              <option class="dropdown-item" [value]="3">NA</option>
+                                            </select>
+                                            <td style="text-align:center;"> <input
+                                                class="form-control form-control-sm HSN" autocomplete="off"
+                                                [(ngModel)]="kArray.BarCode" type="text" style="text-align:center;" />
+                                            </td>
+                                            <td style="text-align:center;"><img src={{kArray.Img}} alt="" width="30"
+                                                height="30" *ngIf="kArray.Img!=''"> </td>
+                                            <td (click)="deleteRow(i,k,2)" style="width:20px;">
+                                              <i class="fa fa-trash" title="Delete"></i>
+                                            </td>
+                                          </tr>
+
+
+                                        </tbody>
+
+                                      </table>
+                                    </td>
+
+
+
+
+                                  </tr>
+                                </ng-template>
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+
+
+                      </div>
+                    </div>
+                    <!-- /.card -->
+                  </div>
+                </fieldset>
+
+
+              </div>
+            </div>
+
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
