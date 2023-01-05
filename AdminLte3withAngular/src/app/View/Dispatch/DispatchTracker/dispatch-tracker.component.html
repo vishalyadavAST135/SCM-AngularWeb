@@ -256,15 +256,15 @@
                         </a>
                       </button>
 
-                      <button class="badge bg-grey" [hidden]="IsMailButtonHide"  type="button"  data-toggle="modal" data-target="#sendMailHistory" style="float: right;
+                      <button class="badge bg-grey" [hidden]="IsMailButtonHide" type="button" data-toggle="modal"
+                        data-target="#sendMailHistory" style="float: right;
                         margin-right: 12px; border-style:none">
-                        <a class="nav-link" data-toggle="pill" title="Send Mail History" role="tab" aria-selected="false">
+                        <a class="nav-link" data-toggle="pill" title="Send Mail History" role="tab"
+                          aria-selected="false">
                           <i class="fa fa-history"></i>
                         </a>
                       </button>
-
                     </div>
-
                   </div>
                 </div>
 
@@ -1191,14 +1191,13 @@
                     <label class="col-form-label-xs col-sm-1">Trasporation Mode<span style="color: red;"
                         class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2">
-                      <!-- ? <input type="text" id="txtTrasporationMode" [(ngModel)]="model.TrasporationMode" (keypress)="TrasporationKeyPress()" placeholder=""  class="form-control form-control-sm" /> -->
                       <select class="form-control form-control-sm" id="txtTrasporationMode"
                         [(ngModel)]="model.TrasporationMode" (change)="ChangeTrasporationMode(model.TrasporationMode)">
                         <option class="dropdown-item" value="0">Select</option>
                         <option *ngFor="let item of TransModeDataList" [value]="item.Id">{{item.Name}}</option>
                       </select>
-
                     </div>
+
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Select Transporter<span
                         style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2" *ngIf="IsTransporter">
@@ -1228,13 +1227,13 @@
                         placeholder="" (keypress)="TransporterNameKeyPress()" class="form-control form-control-sm" />
                     </div>
 
-
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsBus"> Name<span style="color: red;"
                         class="Mandatoryfield"><b></b></span></label>
                     <div class="col-sm-2" *ngIf="IsBus">
                       <input type="text" id="txtConductorName" autocomplete="off" [(ngModel)]="model.ConductorName"
                         placeholder="" (keypress)="TransporterNameKeyPress()" class="form-control form-control-sm" />
                     </div>
+
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsOther"> Name<span style="color: red;"
                         class="Mandatoryfield"><b></b></span></label>
                     <div class="col-sm-2" *ngIf="IsOther">
@@ -1273,10 +1272,9 @@
                       <input type="text" id="txtDriverPhoneNo" autocomplete="off" maxlength="12"
                         appCopyPastNumFloatValue [(ngModel)]="model.DriverPhoneNo" placeholder=""
                         class="form-control form-control-sm" />
-
                     </div>
-
                   </div>
+
                   <div class="row mb-1">
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Courier Company Name<span
                         style="color: red;" class="Mandatoryfield"><b></b></span></label>
@@ -1355,7 +1353,6 @@
                         </div>
                       </div>
                     </div>
-
                   </div>
 
                   <div class="row mb-1">
@@ -1376,6 +1373,7 @@
                       <input type="text" id="txtVehicleNumber" autocomplete="off" [(ngModel)]="model.VehicleNumber"
                         (keypress)="VehicleKeyPress()" placeholder="" class="form-control form-control-sm" />
                     </div>
+
                     <label class="col-form-label-xs col-sm-1">Eway Bill No<span style="color: red;"
                         class="Mandatoryfield"><b></b></span></label>
                     <div class="col-sm-2">
@@ -1385,23 +1383,13 @@
                   </div>
                   <div class="row mb-1">
 
-                    <!-- <label class="col-form-label-xs col-sm-1">Eway Bill Document<span style="color: red;"
-                        class="Mandatoryfield"><b></b></span><a *ngIf="IsEwayBillfile" (click)="EwayBillViewfileClick()"
-                        title="File View" style="color:green"><i class="fa fa-eye"></i></a></label>
-                    <div class="col-sm-2">
-                      <input type="file" id="EwayBillfile" #BillFile [(ngModel)]="model.EwayBillfileimage"
-                        (change)="onEwayBillDocumentChange($event)" accept="application/pdf, image/jpeg"
-                        placeholder="Choose file">
-                    </div> -->
-
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice No<span
+                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice No<span
                         style="color: red;" class="Mandatoryfield"><b></b></span></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceNoSameState">
                       <input type="text" id="IsTaxInvoiceNoSameState" autocomplete="off"
                         [(ngModel)]="model.TaxInvoiceNo" (keypress)="TaxInvoiceKeyPress()" placeholder=""
                         class="form-control form-control-sm" />
                     </div>
-                    <!--vishal--->
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice Date<span
                         style="color: red;" class="Mandatoryfield"><b></b></span></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceDateSameState">
@@ -1414,26 +1402,18 @@
                               class="far fa-calendar-alt"></i></span>
                         </div>
                       </div>
-                    </div>
-                    <!--vishal--->
-                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice File<span
-                        style="color: red;" class="Mandatoryfield"><b></b></span><a *ngIf="IsTaxInvoiceFile"
-                        (click)="TaxInvViewfileClick()" title="File View" style="color:green"><i
-                          class="fa fa-eye"></i></a></label>
-                    <div class="col-sm-2" *ngIf="IsTaxInvoiceNoSameState">
-                      <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
-                        accept="application/pdf, image/jpeg" placeholder="Choose file">
                     </div> -->
+                    <!--vishal--->
 
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice No<span
+                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice No<span
                         style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceNo">
                       <input type="text" id="txtTaxInvoiceNo" autocomplete="off" [(ngModel)]="model.TaxInvoiceNo"
                         (keypress)="TaxInvoiceKeyPress()" placeholder="" class="form-control form-control-sm" />
-                    </div>
-                    
+                    </div> -->
+
                     <!--vishal--->
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice Date<span
+                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice Date<span
                         style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceDate">
                       <div class="input-group" (mouseenter)="onKeypressInvoicedDate($event)">
@@ -1445,8 +1425,31 @@
                               class="far fa-calendar-alt"></i></span>
                         </div>
                       </div>
-                    </div>
+                    </div> -->
                     <!--vishal--->
+
+
+                    <label class="col-form-label-xs col-sm-1">Tax Invoice No<span style="color: red;"
+                        class="Mandatoryfield" *ngIf="IsTaxInvoiceNo"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <input type="text" id="txtTaxInvoiceNo" autocomplete="off" [(ngModel)]="model.TaxInvoiceNo"
+                        (keypress)="TaxInvoiceKeyPress()" placeholder="" class="form-control form-control-sm" />
+                    </div>
+
+                    <!--vishal--->
+                    <label class="col-form-label-xs col-sm-1">Tax Invoice Date<span style="color: red;"
+                        class="Mandatoryfield" *ngIf="IsTaxInvoiceNo"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <div class="input-group" (mouseenter)="onKeypressInvoicedDate($event)">
+                        <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate"
+                          autocomplete="off" [(ngModel)]="model.TaxInvoiceDate" ngbDatepicker
+                          #InvoiceDate="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="InvoiceDate.toggle()"><i
+                              class="far fa-calendar-alt"></i></span>
+                        </div>
+                      </div>
+                    </div>
 
                     <label class="col-form-label-xs col-sm-1" *ngIf="IsDispatchFor">Dispatch For<span
                         style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
@@ -1688,7 +1691,7 @@
                           <td style="width:120px;">
                             <select class="form-control form-control-sm Client" id="ddlClient_{{i}}"
                               [(ngModel)]="dynamicArray[i].ClientId"
-                              (change)="ChangeClient(dynamicArray[i].ClientId,i)">
+                              (change)="ChangeClient(dynamicArray[i].ClientId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
                             </select>
@@ -1696,7 +1699,7 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -2021,7 +2024,7 @@
                           <td style="width:120px;">
                             <select class="form-control form-control-sm Client" id="ddlClient_{{i}}"
                               [(ngModel)]="dynamicArray[i].ClientId"
-                              (change)="ChangeClient(dynamicArray[i].ClientId,i)">
+                              (change)="ChangeClient(dynamicArray[i].ClientId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
                             </select>
@@ -2029,7 +2032,7 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -2538,8 +2541,8 @@
                           </td>
                           <td style="width:120px;">
                             <input class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].CGSTRate"
-                              disabled="disabled" (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()"
-                              appCopyPastNumFloatValue type="text" style="text-align:center;width: 85px;" />
+                              (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()" appCopyPastNumFloatValue type="text" 
+                              style="text-align:center;width: 85px;" />
                           </td>
                           <td style="width:120px;">
                             <input class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].CGST"
@@ -2699,27 +2702,36 @@
                         placeholder="Choose file">
                     </div>
 
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice File<span
+                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice File<span
                         style="color: red;" class="Mandatoryfield"><b></b></span><a *ngIf="IsTaxInvoiceFile"
                         (click)="TaxInvViewfileClick()" title="File View" style="color:green"><i
                           class="fa fa-eye"></i></a></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceNoSameState">
                       <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
                         accept="application/pdf, image/jpeg" placeholder="Choose file">
-                    </div>
+                    </div> -->
 
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice File<span
-                        style="color: red;" class="Mandatoryfield"><b>*</b></span><a *ngIf="IsTaxInvoiceFile"
-                        (click)="TaxInvViewfileClick()" title="File View" style="color:green"><i
-                          class="fa fa-eye"></i></a></label>
-                    <div class="col-sm-2" *ngIf="IsTaxInvoiceNo">
+                    <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice File<span
+                      style="color: red;" class="Mandatoryfield"><b>*</b></span><a *ngIf="IsTaxInvoiceFile"
+                      (click)="TaxInvViewfileClick()" title="File View" style="color:green"><i
+                        class="fa fa-eye"></i></a></label>
+                  <div class="col-sm-2" *ngIf="IsTaxInvoiceNo">
+                    <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
+                      accept="application/pdf, image/jpeg" placeholder="Choose file">
+                  </div> -->
+
+                    <label class="col-form-label-xs col-sm-1">Tax Invoice File<span style="color: red;"
+                        class="Mandatoryfield" *ngIf="IsTaxInvoiceNo"><b>*</b></span>
+                      <a *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View" style="color:green">
+                        <i class="fa fa-eye"></i></a></label>
+                    <div class="col-sm-2">
                       <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
                         accept="application/pdf, image/jpeg" placeholder="Choose file">
                     </div>
                   </div>
                 </fieldset>
-                <div class="row mb-1">
 
+                <div class="row mb-1">
                   <label class="col-form-label-xs col-sm-1">Note<span style="color: red;"
                       class="Mandatoryfield"><b>*</b></span></label>
                   <div class="col-sm-3">
@@ -2756,8 +2768,6 @@
                         </div>
                       </div>
                     </div>
-
-
                     <label class="col-form-label-xs col-sm-1">Receiveing Document<span style="color: red;"
                         class="Mandatoryfield"><b>*</b></span><a *ngIf="IsReceivingFile"
                         (click)="ReceivingViewfileClick()" title="File View" style="color:green"><i
@@ -4380,7 +4390,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading"
+        <button type="button" class="btn btn-success" [disabled]="loading"
           (click)="UpadateCancelDispatch()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>

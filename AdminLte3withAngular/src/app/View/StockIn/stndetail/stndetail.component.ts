@@ -168,34 +168,34 @@ export class StndetailComponent implements OnInit {
       this.IsDownloadPrintHideShow = false;
       this.isPdfButtonHidePreview = true;
     }
-     //brahamjot kaur 31/10/2022
-     this.GetUserPageRight();
-     this. GettAllVechTransModeTransfertypeDispatch()
-    }
-  
     //brahamjot kaur 31/10/2022
-    async GetUserPageRight() {
-      this._Commonservices.GetUserPageRight(this.UserId, MenuName.GRN).subscribe(data => {
-        if (data.Status == 1) {
-          console.log(data);
-          this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
-          this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
-          this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
-          this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
-          this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
-          this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
-          this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-          if(this.ObjUserPageRight.IsCreate == 1){
-            this.Save = 1;
-          }else if(this.ObjUserPageRight.IsEdit == 1){
-            this.Save = 1;
-          }else{
-            this.Save = 0
-          }
+    this.GetUserPageRight();
+    this.GettAllVechTransModeTransfertypeDispatch()
+  }
+
+  //brahamjot kaur 31/10/2022
+  async GetUserPageRight() {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.GRN).subscribe(data => {
+      if (data.Status == 1) {
+        console.log(data);
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
+        this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
+        this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        if (this.ObjUserPageRight.IsCreate == 1) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
         }
-      })
-    }
-  
+      }
+    })
+  }
+
   BindCorrectionentryReason() {
     var objdropdownmodel = new DropdownModel();
     objdropdownmodel.User_Id = 0;
@@ -931,7 +931,7 @@ export class StndetailComponent implements OnInit {
     })
   }
 
-//#region this function  change Item, make, code,
+  //#region this function  change Item, make, code,
   ChangeEditItemName(ItemNameId: any, index: any) {
     try {
       $('#tblOne > tbody  > tr').each(function () {
@@ -1023,9 +1023,9 @@ export class StndetailComponent implements OnInit {
       this.dynamicArray[index].ItemDescription = data.Data[0].ItemDescription;
     });
   }
-//#endregion
+  //#endregion
 
-//#region this function  used Edit STN Detail by STN Id
+  //#region this function  used Edit STN Detail by STN Id
   SearchEditSTNDetailBySTNId(Id: any) {
     try {
       var objModel = new SearchDispatchTrackerModel();
@@ -1095,19 +1095,19 @@ export class StndetailComponent implements OnInit {
             if (data.Data[0].GRNDate != null) {
               var grnDate = data.Data[0].GRNDate.split('/');
               this.model.GRNDate = { year: parseInt(grnDate[2]), month: parseInt(grnDate[1]), day: parseInt(grnDate[0]) };
-              }
+            }
             this.model.GateEntryNo = data.Data[0].GateEntryNo;
             var GateDate = data.Data[0].GateEntryDate.split('/');
             this.model.GateEntryDate = { year: parseInt(GateDate[2]), month: parseInt(GateDate[1]), day: parseInt(GateDate[0]) };
             this.model.GRNo = data.Data[0].GRNo;
             if (data.Data[0].GRDate != null) {
-            var GrDate = data.Data[0].GRDate.split('/');
-            this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
+              var GrDate = data.Data[0].GRDate.split('/');
+              this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
             }
             this.model.LRNo = data.Data[0].LRNo;
             if (data.Data[0].LRdate != null) {
-            var lrDate = data.Data[0].LRDate.split('/');
-            this.model.LRdate = { year: parseInt(lrDate[2]), month: parseInt(lrDate[1]), day: parseInt(lrDate[0]) };
+              var lrDate = data.Data[0].LRDate.split('/');
+              this.model.LRdate = { year: parseInt(lrDate[2]), month: parseInt(lrDate[1]), day: parseInt(lrDate[0]) };
             }
             this.model.ddlDespatchby = data.Data[0].IsDespatch;
             this.ChangeDespatchby(this.model.ddlDespatchby);
@@ -1266,8 +1266,8 @@ export class StndetailComponent implements OnInit {
       // this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
     }
   }
-//#endregion
-//#region this function  used Bind STN Detail by Dispatch Id
+  //#endregion
+  //#region this function  used Bind STN Detail by Dispatch Id
   SearchSTNDataByDispatchId(Id: any) {
     try {
       var objModel = new SearchDispatchTrackerModel();
@@ -1304,28 +1304,28 @@ export class StndetailComponent implements OnInit {
             //   this.ApproveStatusDataList=null;
             // }
             this.model.TransferTypeId = data.Data[0].IstransferTypeId;
-            if (data.Data[0].TrasporationMode != null) {
-              this.model.TrasporationMode = data.Data[0].TrasporationMode;
+
+            if (data.Data[0].TrasporationMode == 1440) {
+              this.model.ddlDespatchby = 2;
+            } else if (data.Data[0].TrasporationMode == 1441) {
+              this.model.ddlDespatchby = 3;
             } else {
-              this.model.TrasporationMode = 0;
+              this.model.ddlDespatchby = 1;
             }
+            this.ChangeDespatchby(this.model.ddlDespatchby);
+
             //vishal, 05/12/2022
-            if (data.Data[0].TrasporationName != null) {
-              this.model.TrasporationName = data.Data[0].TrasporationName;
+            if (this.model.ddlDespatchby == 1) {
+              this.model.TranspoterName = data.Data[0].TrasporationName ?? "";
+              this.model.TransporterGSTNO = data.Data[0].TrasporationGSTNO ?? "";
+              this.model.VehicleNo = data.Data[0].VehicleNumber;
             } else {
-              this.model.TrasporationName = 0;
-            }
-            if (data.Data[0].TrasporationGSTNO != null) {
-              this.model.TrasporationGSTNO = data.Data[0].TrasporationGSTNO;
-            } else {
-              this.model.TrasporationGSTNO = 0;
-            }
-            if (data.Data[0].VehicleNumber != null) {
-              this.model.VehicleNumber = data.Data[0].VehicleNumber;
-            } else {
-              this.model.VehicleNumber = 0;
+              this.model.TranspoterName = "";
+              this.model.TransporterGSTNO = "";
+              this.model.VehicleNo = "";
             }
             //end-vishal
+
             if (data.Data[0].DispatchFromId != null) {
               this.model.DispatchFrom = data.Data[0].DispatchFromId;
             } else {
@@ -1335,10 +1335,10 @@ export class StndetailComponent implements OnInit {
             this.model.DocmentFile = data.Data[0].DocumentFile;
             this.model.EwayBillNo = data.Data[0].EwayBillNo;
             this.model.GRNo = data.Data[0].GRNo;
-            
+
             if (data.Data[0].GRDate != null) {
-            var GrDate = data.Data[0].GRDate.split('/');
-            this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
+              var GrDate = data.Data[0].GRDate.split('/');
+              this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
             }
             this.model.TaxInvoiceNo = data.Data[0].TaxInvoiceNO;
             this.model.DocumentNo = data.Data[0].DocumentNo;
@@ -1349,10 +1349,12 @@ export class StndetailComponent implements OnInit {
               var DelDate = data.Data[0].DeliveredDate.split('/');
               this.model.DeliveredDate = { year: parseInt(DelDate[2]), month: parseInt(DelDate[1]), day: parseInt(DelDate[0]) };
             }
+
             if (data.WHData != null && data.WHData != "" && data.WHData.length > 0) {
               this.FromWHList = data.WHData;
               this.model.ShippedWHAddress = data.WHData[0].WHAddress;
             }
+
             this.model.ShippedfromWHId = data.Data[0].ShippedfromWHId;
             var FilterFROMHdata = this.FromWHList.filter(m => m.Id === parseInt(data.Data[0].ShippedfromWHId));
             this.model.FromWHName = FilterFROMHdata[0].WHName;
@@ -1709,6 +1711,7 @@ export class StndetailComponent implements OnInit {
 
     //this.ClearAllUploadFile();
   }
+
   GateViewfileClick() {
     window.open(this.GateFile);
   }
@@ -1716,6 +1719,7 @@ export class StndetailComponent implements OnInit {
   LRViewfileClick() {
     window.open(this.LRFile);
   }
+
   CreateNewSTN() {
     this.ClearSTNForm();
     this.IsSuccess = false;
@@ -1724,7 +1728,8 @@ export class StndetailComponent implements OnInit {
     this.IsAutoCompleteDesabled = false;
     this.IsSaveButtonDisable = false;
   }
-//#region this function used to Save Proccess
+
+  //#region this function used to Save Proccess
   conformPopup() {
     if (this.ValidationSTN() == 1) {
       return false;
@@ -1748,11 +1753,13 @@ export class StndetailComponent implements OnInit {
       objSTNModel.CompanyId = this.CompanyId;
       objSTNModel.FromWHId = this.model.ShippedfromWHId;
       objSTNModel.TostateId = this.model.ToStateId;
+
       if (this.model.TaxInvoiceNo != null && this.model.TaxInvoiceNo != '') {
         objSTNModel.InvChallanNo = this.model.TaxInvoiceNo;
       } else {
         objSTNModel.InvChallanNo = this.model.DocumentNo;
       }
+
       objSTNModel.ToWHId = this.model.ShippedToOtherWHId;
       objSTNModel.GateEntryNo = this.model.GateEntryNo;
       objSTNModel.Flag = '4';
@@ -1763,22 +1770,24 @@ export class StndetailComponent implements OnInit {
         objSTNModel.GateEntryDate = '';
       }
       objSTNModel.IsDespatch = this.model.ddlDespatchby;
+
       if (this.model.ddlDespatchby == 1) {
-        objSTNModel.TransporterGSTNO = this.model.TransporterGSTNo;
         objSTNModel.TranspoterName = this.model.Transporter;
+        objSTNModel.TransporterGSTNO = this.model.TransporterGSTNo;
       } else if (this.model.ddlDespatchby == 2) {
-        objSTNModel.TransporterGSTNO = this.model.SenderNo;
         objSTNModel.TranspoterName = this.model.SenderName;
+        objSTNModel.TransporterGSTNO = this.model.SenderNo;
         objSTNModel.SenderAddress = this.model.SenderAddress;
       } else {
-        objSTNModel.TransporterGSTNO = this.model.CourierPhoneNo;
         objSTNModel.TranspoterName = this.model.CourierCompanyName;
+        objSTNModel.TransporterGSTNO = this.model.CourierPhoneNo;
         objSTNModel.DocketNo = this.model.DocketNo;
       }
 
       objSTNModel.VehicleNo = this.model.VehicleNo;
       objSTNModel.IndentorName = this.model.IndentorName;
       objSTNModel.LRNo = this.model.LRNo;
+
       var GrnSrnLrDate = this._Commonservices.checkUndefined(this.model.LRdate);
       if (GrnSrnLrDate != "") {
         objSTNModel.LRDate = GrnSrnLrDate.day + '/' + GrnSrnLrDate.month + '/' + GrnSrnLrDate.year;
@@ -1913,7 +1922,7 @@ export class StndetailComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "SaveUpadteSTNDetail", "STNDetail");
     }
   }
-//#endregion
+  //#endregion
 
   ChangeDespatchby(Id: any) {
     this.IsVehicleValidation = false;
@@ -3103,7 +3112,6 @@ export class StndetailComponent implements OnInit {
             this.DispatchFromList = data.DispatchFrom;
             this.DispatchFromSearchList = data.DispatchFrom;
           }
-
         }
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "GettAllVechTransModeTransfertypeDispatch", "WHTOSite");

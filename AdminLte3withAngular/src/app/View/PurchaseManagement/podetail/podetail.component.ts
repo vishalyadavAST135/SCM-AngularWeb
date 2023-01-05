@@ -2338,6 +2338,8 @@ export class PodetailComponent implements OnInit {
     var despatchThrough = this.PurchaseOrderPdfData.Data[0].DespatchThrough;
     var destination = this.PurchaseOrderPdfData.Data[0].Destination;
     var termsofDelivery = this.PurchaseOrderPdfData.Data[0].TermsofDelivery;
+    var Warranty = this.PurchaseOrderPdfData.Data[0].IsWarranty;
+    
     var vendorName = this.PurchaseOrderPdfData.Data[0].VendorName;
     var VendorAddre = this.PurchaseOrderPdfData.Data[0].VendorAddress
     if (this.PurchaseOrderPdfData.Data[0].CurrencyType == 1) {
@@ -2544,7 +2546,7 @@ export class PodetailComponent implements OnInit {
                                               border: [0, 0, 1, 0],
                                               columns: [
                                                 {
-                                                  width: 120,
+                                                  width: 100,
                                                   fontSize: 9,
                                                   text: [
                                                     'Destination',
@@ -2559,12 +2561,26 @@ export class PodetailComponent implements OnInit {
                                               border: [0, 0, 0, 0],
                                               columns: [
                                                 {
-                                                  width: 110,
+                                                  width: 90,
                                                   fontSize: 9,
                                                   text: [
                                                     'Delivery Terms',
                                                     '\n',
                                                     { text: `${termsofDelivery}`, fontSize: 10, bold: true, },
+                                                  ]
+                                                },
+                                              ]
+                                            },
+                                            {
+                                              border: [0, 0, 1, 0],
+                                              columns: [
+                                                {
+                                                  width: 40,
+                                                  fontSize: 9,
+                                                  text: [
+                                                    'Warranty',
+                                                    '\n',
+                                                    { text: `${Warranty}`, fontSize: 10, bold: true },
                                                   ]
                                                 },
                                               ]
