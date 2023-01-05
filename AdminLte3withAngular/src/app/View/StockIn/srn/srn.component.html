@@ -3366,7 +3366,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading"
+        <button type="button" class="btn btn-success" [disabled]="loading"
           (click)="UpadateCancelSRN()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
@@ -3377,7 +3377,6 @@
 <div class="modal fade" id="PreviousHistory" data-backdrop="static">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-
       <fieldset class="scheduler-border">
         <legend class="scheduler-border">SRN of Item History By Site</legend>
         <div class="col-sm-12">
