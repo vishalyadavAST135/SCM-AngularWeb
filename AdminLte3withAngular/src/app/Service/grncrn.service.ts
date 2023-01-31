@@ -39,6 +39,14 @@ export class GrncrnService {
     return this.httpclient.get(objBaseUrl.ApIUrl + "AutoAutoCompleteSiteAndCustomer/List", { params: params });
   }
 
+  //vishal, 20-01/2023
+  GetAutoCompleteOldSiteAndCustomer(objSiteCustomerAutoModel: SiteCustomerAutoModel): Observable<any> {
+    let Para = JSON.stringify(objSiteCustomerAutoModel);
+    let params = new HttpParams().set("para", Para);
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.get(objBaseUrl.ApIUrl + "AutoCompleteOldSiteAndCustomer/List", { params: params });
+  }
+
 
   //#region  change krna h
   GetGrncrnSearchList(objobjSearchGRNCRNPoModel: SearchGRNCRNPoModel): Observable<any> {

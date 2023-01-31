@@ -1,11 +1,11 @@
 import { environment } from "src/environments/environment";
 
 export class WebAPIConfig {
-   public ApIUrl:string =environment.host;
+    public ApIUrl: string = environment.host;
 }
 
 export class CommonImageUrlModel {
-    ImageUrl: string =environment.ImagePath;
+    ImageUrl: string = environment.ImagePath;
 }
 
 export class MenuModel {
@@ -42,7 +42,7 @@ export class PageActivity {
     public static Dis_CustomerReturn = 17;
 }
 
-export class MenuName{
+export class MenuName {
     public static Dashboard = 11;
     public static DispatchTracker = 14;
     public static GRN = 7;
@@ -84,21 +84,20 @@ export class ReasonActivity {
 export class DropdownModel {
     User_Id: number;
     Other_Id: string;
-    Parent_Id: string;    
-    Flag:string;  
-    Company_Id: number; 
-    searchKey: string; 
+    Parent_Id: string;
+    Flag: string;
+    Company_Id: number;
+    searchKey: string;
     Circle_Id: string;
-    
+
 }
-export class SearchItemLineTypeModel
-{
+export class SearchItemLineTypeModel {
     UserId: number;
     ItemId: string;
-    CapacityId: string;    
-    MakeId:string;  
-    CompanyId: number; 
-    searchKey: string; 
+    CapacityId: string;
+    MakeId: string;
+    CompanyId: number;
+    searchKey: string;
 }
 
 
@@ -110,7 +109,7 @@ export class CompanyStateVendorItemModel {
     StateArray: any;
     VendorArray: any;
     ItemArray: any;
-    MenuArray:any;
+    MenuArray: any;
     Parent_Id: string;
     Flag: string;
     Company_Id: number;
@@ -119,9 +118,11 @@ export class CompanyStateVendorItemModel {
     ClientArray: any;
     DispatchTypeArray: any;
     ItemClassArray: any;
-    CircleArray:any;
+    CircleArray: any;
     DispatchedStatus: string;
     DispatchedStatusArray: any;
+    CircleId: any;
+
 }
 
 export class EmailSendTotalDataModel {
@@ -138,10 +139,10 @@ export class EmailModel {
     PdfUrl: string;
     UserId: string;
     PoId: number;
-    
-   //vishal
+
+    //vishal
     DocumentFile: string;
-    
+
 }
 
 export class ChangePasswordModel {
@@ -215,6 +216,7 @@ export class CommonAllReason {
 export class CommonSiteSearchPanelModel {
     SiteId: any;
     PageFlag: string;
+    Site_Id: any;
 }
 export class UserRole {
     public static DifferenceDayTime = 24;
@@ -228,7 +230,7 @@ export class UserRole {
     public static GRNCorrectionEntryRole = "17";
     public static PoEditDocumentTypeRole = "12";
     public static PoEditUploadTypeRole = "21";
-  
+
 }
 
 export class CommonStaticClass {
@@ -283,7 +285,7 @@ export class UserRightModel {
 }
 
 // export class CircleNameModel {
-   
+
 //     VendorArray: any;
 //     Parent_Id: string;
 //     Flag: string;
@@ -292,3 +294,19 @@ export class UserRightModel {
 //     WHId: any;
 //     CircleArray:any;
 // }
+
+// export class CommonSiteSearch {
+//     UserId:number; 
+//     ItemClass:string;
+//     Item_Id: string;
+//     zoneId: any;
+    
+//     CapacityId_Id: string;
+//     State_Id: string;
+//     Flag: string;
+//     SRNStatus: string;
+    
+
+
+// }
+

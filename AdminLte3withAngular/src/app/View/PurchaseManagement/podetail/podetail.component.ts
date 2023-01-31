@@ -1296,7 +1296,7 @@ export class PodetailComponent implements OnInit {
       this.IsCopyPoID = true;
       this.PoEditDetailData = [];
       var PoDataRow = this.rowData.filter(m => m.PoId === e.rowData.PoId);
-     
+
       this.rowdatalength = this.rowData.length;
       this.rowdatacurrentindex = this.rowData.findIndex(function (item, i) {
         return item.PoId === e.rowData.PoId
@@ -2195,7 +2195,13 @@ export class PodetailComponent implements OnInit {
                     }
                   },
 
-
+                  //vishal, 10/01/2023
+                  {
+                    columns: [
+                      { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+                    ]
+                  }
+                  //end-vishal
                 ]
               }],
             ]
@@ -3012,7 +3018,6 @@ export class PodetailComponent implements OnInit {
   }
 
   GetSendMailDetail() {
-    debugger
     try {
       // this.Loader.show();  
       this.EmailData = [];
@@ -3869,7 +3874,7 @@ export class PodetailComponent implements OnInit {
   }
 
   onPdfClick(poId) {
-    
+
     var PoDataRow = this.rowData.filter(
       book => book.PoId === poId);
     window.open(PoDataRow[0].PdfSrc);

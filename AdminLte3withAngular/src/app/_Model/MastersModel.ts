@@ -147,6 +147,16 @@ export class EmpToolkitModel  {
     Flag: any;
     ToolkitItemList: EmpToolkitItemModel[] = [];
 }
+
+export class ReturnToolkitModel  {
+    Id: number;
+    UserId: number;
+    EqpTypeId: number;
+    Qty: number
+ 
+}
+
+//vishal
 export class EmpToolkitItemModel {
     Id: number;
     ItemCodeId: number;

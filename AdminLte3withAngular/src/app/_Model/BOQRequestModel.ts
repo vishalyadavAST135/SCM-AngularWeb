@@ -1,5 +1,6 @@
 import { Interface } from "readline";
 import { Observable } from "rxjs";
+import { CommonSearchPanelModel, CommonSiteSearchPanelModel } from "./commonModel";
 
 
 export class BOQReqModel
@@ -56,5 +57,31 @@ export interface IBOQRequestequestService {
     GetBOQRequestList(objBOQReqModel:BOQReqModel):Observable<any>;
     GetBOQNoORBOQRequestNo(objModel: BOQNOListModel): Observable<any>;
     GetBOQRequestPdfDetail(objBOQReqModel:BOQModel):Observable<any>;
+}
+
+
+//by:vishal, 29/12/2022
+export class SearchMaterialAtSiteModel  {   
+    UserId:any; 
+    siteId:any; 
+    circleId: any;
+    zoneId: any;
+    clusterId: any;
+    customerId: any;
+    vendorId: any;
+    siteStatus: any;
+    SiteKeys: any;
+    fromDate: any;
+    toDate: any;
+    CompanyId: any;
+    ItemClass:any;
+    Item_Id:any; 
+    CapacityId:any; 
+    State_Id:string; 
+    flag:string;  
+    SRNStatus: number;
+    //DispatchStatus: string;
+    
+ 
 }
 

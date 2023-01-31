@@ -5,6 +5,7 @@ export class StockQtyModel
     Client_Id: any;
     ItemCode_Id: any;
     WH_Id: any;
+    WHStateId:any //vishal
     Equp_Id: any;
     Company_Id: any;
     IsEdit:any;
@@ -13,6 +14,7 @@ export class StockQtyModel
 export class SaveUpdateStockQtyModel
 {    
     WHId: any;
+    WHStateId:any; //vishal
     UserId: any;
     CompanyId: any;
     FaultuRep_Id: any;

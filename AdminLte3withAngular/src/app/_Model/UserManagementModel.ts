@@ -15,6 +15,7 @@ export class newUser {
     CompanyWHMappingList: CompanyWHMapping[];
     Menu_Id:number;
     MenuRightList : MenuRightModel[];
+    UserStatus: string; //vishal
 }
 
 export class CompanyWHMapping {

@@ -38,6 +38,7 @@ import { CompanyMappingComponent } from './View/Masters/user-management/company-
 import { UserManagementComponent } from './View/Masters/user-management/user-management.component';
 import { EmployeesAccessoriesComponent } from './View/Dispatch/employees-accessories/employees-accessories.component';
 import { ToolkitMasterComponent } from './View/Masters/toolkit-master/toolkit-master.component';
+import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/material-at-site.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -73,7 +74,8 @@ const routes: Routes = [
   { path:'AgingReport', pathMatch:'full',component:AgingreportComponent},
   { path: 'UserManagement', component:UserManagementComponent},
   { path: 'ToolkitMaster', component:ToolkitMasterComponent},
-  { path: 'EmployeesAccessories', component:EmployeesAccessoriesComponent}
+  { path: 'EmployeesAccessories', component:EmployeesAccessoriesComponent},
+  { path: 'MaterialAtSite', component:MaterialAtSiteComponent}
 ];
 
 @NgModule({

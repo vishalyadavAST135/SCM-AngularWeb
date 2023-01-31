@@ -224,11 +224,11 @@
                           </div>
                         </div> 
                         <div class="row mb-1">
-                          <label class="col-form-label-xs col-sm-1">Repaired/Tested Date<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
+                          <label class="col-form-label-xs col-sm-1">Repaired/Tested Date<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
                           <div class="col-sm-2">
                             <div class="input-group" >
-                              <input class="form-control form-control-sm" placeholder="" id="txtRepairDate" autocomplete="off" readonly
-                               [(ngModel)]="model.RepairDate" ngbDatepicker #RepairDateDate="ngbDatepicker">
+                              <input class="form-control form-control-sm" placeholder="" id="txtRepairDate" autocomplete="off" 
+                               [(ngModel)]="model.RepairDate"  ngbDatepicker #RepairDateDate="ngbDatepicker" readonly>
                               <div class="input-group-append">
                                 <span class="input-group-text" (click)="RepairDateDate.toggle()"><i class="far fa-calendar-alt"></i></span>
                               </div>

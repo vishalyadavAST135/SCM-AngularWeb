@@ -1343,6 +1343,7 @@ export class DispatchTrackerComponent implements OnInit {
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
+          console.log( this.PreviousDataHistoryData)
         }
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "GetAllPreviousDataBySiteId", "WHTOSite");
@@ -2527,8 +2528,6 @@ export class DispatchTrackerComponent implements OnInit {
   //#region This Fuction Used to Add Update Dispatch Request
   SaveUpDateDispatchRequest() {
     try {
-
-      debugger
       // this.IsSaveButtonDisable = true;
       jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
@@ -3135,7 +3134,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
-    debugger
+    
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();

@@ -1,5 +1,5 @@
 // import { DatePipe } from '@angular/common';
-import { DatePipe } from '@angular/common';
+import { DatePipe, registerLocaleData } from '@angular/common';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { first } from 'rxjs/internal/operators/first';
@@ -17,8 +17,8 @@ import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { TimePeriodService } from 'src/app/Service/time-period.service';
 import { CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { SearchDispatchTrackerModel } from 'src/app/_Model/DispatchModel';
-import { SearchEmployeeAccessoriesModel, ToolkitAccessoriesItemDet } from 'src/app/_Model/employeeAccessoriesModel';
-import { EmpToolkitModel, ItemEquipmentDetail } from 'src/app/_Model/MastersModel';
+import { ReturnToolkitItemdt, ReturnToolkitItemModel, SearchEmployeeAccessoriesModel, ToolkitAccessoriesItemDet } from 'src/app/_Model/employeeAccessoriesModel';
+import { EmpToolkitModel, ItemEquipmentDetail, ReturnToolkitModel } from 'src/app/_Model/MastersModel';
 import { CellNo, DynamicItemGrid, GSerialNumber, VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { CompanyModel } from 'src/app/_Model/userModel';
 import * as XLSX from 'xlsx';
@@ -28,6 +28,8 @@ import { async } from 'rxjs/internal/scheduler/async';
 import { Observable, Subscription } from 'rxjs';
 import { promise } from 'protractor';
 import { promises } from 'dns';
+import { animate } from '@angular/animations';
+import { Console } from 'console';
 declare var jQuery: any;
 
 @Component({
@@ -42,6 +44,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   public isShownList: boolean; // Grid List
   public isShownEdit: boolean; // Form Edit
   public columnDefs = [];
+  public columnDefs2 = []; //vishal
   public multiSortKey: string;
   public SingledropdownSettings = {};
   //public loadingTemplate;
@@ -54,6 +57,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
   CompanyId: any;
   WareHouseId: string;
+
   //CompanyData = [];
   //SiteStateList = [];
   //SearchVendorList = [];
@@ -61,6 +65,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   SearchStateList = [];
   SearchItemNameList = [];
   WHStateList = [];
+
 
   //VendorStateList = [];
   //ClientList: any;
@@ -95,17 +100,20 @@ export class EmployeesAccessoriesComponent implements OnInit {
   IsDisabledPreviewGenratebutton: boolean;
   rowData: any[] = [];
   Toolkitdata: any[] = [];
+  ReturnToolkitItem: any[]=[]; //vishal, 23/01/2023
   objEmpToolkitModel: SearchEmployeeAccessoriesModel = {
     Id: 0, CompanyId: 0, UserId: 0, WHStateId: 0, WHId: 0, EmpId: 0,
     ToolkitId: 0, Startdate: "", Enddate: "", EmpCode: "", EmpName: "",
-    Flag: "", ToolkitItemList: [], SWHId: "0", SWHStateId: "0"
+    Flag: "", ToolkitItemList: [], SWHId: "0", SWHStateId: "0",
+    EmpAddress: "", Designation: "", MobileNo: "", CircleId: 0, Circle:"0"
   };
+ 
 
   TechDataList: any[] = [];
   UniqueItemkeyword = 'UserName';
   UniqueItemkeywordID = 'EmployeeID';
   ItemEditDataArr: any[] = [];
-  public MultidropdownSettings = {};
+  multiDropdownSettings = {};
   SelectedSearchStateList = [];
   SelectedSearchWHList = [];
   SearchWHList = [];
@@ -114,6 +122,11 @@ export class EmployeesAccessoriesComponent implements OnInit {
   EmpCodeList: any[] = []; //vishal
   IsReceivedHideShow: boolean = false;
   IsHideShowCancelBtn: boolean = false;
+
+  SearchCircleList: any[] = [];
+  // SelectedCircleList: any[] = [];
+
+
 
   constructor(private _objSearchpanelService: TimePeriodService,
     private _Commonservices: CommonService,
@@ -141,6 +154,12 @@ export class EmployeesAccessoriesComponent implements OnInit {
   ngOnInit(): void {
     this.isShownList = false;
     this.isShownEdit = true;
+    this.model.SearchEmpCode = "";
+    this.model.SearchEmpName = "";
+    //this.model.CircleId = 0;
+    this.model.EqpType = "0";
+    this.model.Qty = "";
+    this.GetReturnToolkitItemList('List')
 
     this.columnDefs = [
       {
@@ -156,12 +175,21 @@ export class EmployeesAccessoriesComponent implements OnInit {
       { headerName: 'Document No', field: 'DocNo', width: 150 },
       { headerName: 'Date', field: 'CreatedOn', width: 110, sortable: true },
       { headerName: 'State Name', field: 'StateName', width: 100, resizable: true },
+      { headerName: 'Circle Name', field: 'Circle', width: 100, resizable: true },
       { headerName: 'WH Name', field: 'WHName', width: 100, resizable: true },
       { headerName: 'Emoloyee Name', field: 'AgnEmpName', width: 100, resizable: true },
       { headerName: 'Employee Code', field: 'EmpCode', width: 150, resizable: true },
-      { headerName: 'Tookit', field: 'ToolkitId', width: 150, resizable: true },
+      { headerName: 'Tookit Name', field: 'ToolKitName', width: 150, resizable: true },
       { headerName: 'Item Name', field: 'ItemName', width: 100, resizable: true },
       { headerName: 'CreatedBy', field: 'CreatedBy', width: 100, resizable: true }
+    ];
+    this.columnDefs2 = [
+     
+      { headerName: 'Return Eqp Type', field: 'EqpTypeId', width: 150 },
+      { headerName: 'Return Qty', field: 'Qty', width: 110, sortable: true },
+      { headerName: 'Return By', field: 'CreatedBy', width: 110, sortable: true },
+      { headerName: 'Return Date', field: 'CreatedOn', width: 110, sortable: true },
+    
     ];
     this.multiSortKey = 'ctrl';
     this.SingledropdownSettings = {
@@ -171,7 +199,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
       enableSearchFilter: true,
       badgeShowLimit: 1,
     };
-    this.MultidropdownSettings = {
+    this.multiDropdownSettings = {
       singleSelection: false,
       text: "Select",
       selectAllText: 'Select All',
@@ -189,13 +217,14 @@ export class EmployeesAccessoriesComponent implements OnInit {
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.UserId = objUserModel.User_Id;
     this.UserName = objUserModel.User_Id;
-     this.objEmpToolkitModel.UserId=this.UserId;
+    this.objEmpToolkitModel.UserId = this.UserId;
 
     var objCompanyModel = new CompanyModel();
     objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
     this.CompanyId = objCompanyModel.Company_Id;
-    this.objEmpToolkitModel.CompanyId=this.CompanyId;
+    this.objEmpToolkitModel.CompanyId = this.CompanyId;
     this.bindCompanyStateVendorItem();
+  
 
 
     const current = new Date();
@@ -229,6 +258,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
     this.IsEditDisabled = false;
     this.IsHideShowCancelBtn = false;
     this.objEmpToolkitModel.Id = 0;
+    this.model.CircleId = '0';
     this.clearEditForm();
     var toDate = "";
     toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
@@ -249,6 +279,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   //by:vishal, 03/11/2022, 
 
   async bindCompanyStateVendorItem() {
+
     var objCSVTdata = new CompanyStateVendorItemModel();
     objCSVTdata.Company_Id = parseInt(this.CompanyId);
     this.apiCSVIData = await this._Commonservices.getCompanyStateVendorItem(objCSVTdata);
@@ -259,9 +290,13 @@ export class EmployeesAccessoriesComponent implements OnInit {
       this.WareHouseId = this.apiCSVIData.WHId;
       this.SearchStateList = objCSVTdata.StateArray;
       this.SearchItemNameList = objCSVTdata.ItemArray;
-      this.EquipmentTypeList = objCSVTdata.EquipmentArray
+      this.EquipmentTypeList = objCSVTdata.EquipmentArray;
+      this.SearchCircleList = this.apiCSVIData.CircleArray;
+ 
     }
   }
+
+
 
   clearEditForm() {
     this.clearedAutoEmpName("all");
@@ -280,11 +315,15 @@ export class EmployeesAccessoriesComponent implements OnInit {
     this.model.ShippedfromWHId = "0";
     this.model.ShippedWHAddress = "";
     this.model.ToolkitId = '0';
+
     //#endregion
 
     //#region Assign To 
+    this.model.CircleId = '0'
     this.model.DocumentNo = "";
     this.model.EmpAddress = "";
+    this.model.Designation = "";
+
     //#endregion
     this.dynamicArray = [];
   }
@@ -292,6 +331,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   //by:vishal, 03/11/2022, desc: for bind satecode
 
   async bindStateCodeWHAdd(StateId: any) {
+    
     $("#txtddlStateId").css('border-color', '');
     try {
       this.EditWHList = [];
@@ -369,6 +409,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
       this.dynamicArray[index].EditItemMake = [];
       this.dynamicArray[index].EditItemCode = [];
+
       var objdropdownmodel = new DropdownModel();
       objdropdownmodel.User_Id = 0;
       objdropdownmodel.Parent_Id = ItemNameId;
@@ -463,7 +504,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   }
 
   //by:vishal, 05/11/2022, desc: for equipment type
-  changeEqupmnet(ItemId: any, index: any) {
+  changeEquipment(ItemId: any, index: any) {
     var FilterData = this.EquipmentTypeList.filter(
       m => m.id === parseInt(ItemId));
     this.dynamicArray[index].EqpType = FilterData[0].itemName;
@@ -480,19 +521,19 @@ export class EmployeesAccessoriesComponent implements OnInit {
     }
   }
 
-  changeEditEquipment(Id: any) {
-    var objItemEquipmentModel = new ItemEquipmentDetail();
-    objItemEquipmentModel.ItemMasterId = Id;
-    objItemEquipmentModel.Flag = "DispatchTo";
-    this.EquipmentTypeList = null;
-    this._MasterService.ChangeItemGetUnitNameList(objItemEquipmentModel).subscribe(data => {
-      if (data.Status == 1) {
-        if (data.Data != null) {
-          this.EquipmentTypeList = data.Data;
-        }
-      };
-    });
-  }
+  // changeEditEquipment(Id: any) {
+  //   var objItemEquipmentModel = new ItemEquipmentDetail();
+  //   objItemEquipmentModel.ItemMasterId = Id;
+  //   objItemEquipmentModel.Flag = "DispatchTo";
+  //   this.EquipmentTypeList = null;
+  //   this._MasterService.ChangeItemGetUnitNameList(objItemEquipmentModel).subscribe(data => {
+  //     if (data.Status == 1) {
+  //       if (data.Data != null) {
+  //         this.EquipmentTypeList = data.Data;
+  //       }
+  //     };
+  //   });
+  // }
 
   //by:vishal, 05/11/2022
   changeUnit(Id: any, index: any) {
@@ -563,15 +604,17 @@ export class EmployeesAccessoriesComponent implements OnInit {
   }
 
   bindToolkitDetailById(Id: any) {
+    
     try {
       let objModel = new EmpToolkitModel();
-      objModel.Id = Id;  
-      this._MasterService.EditToolkitDetail(objModel).pipe(first()).subscribe(data => {
-        if (data.Status == 1) {
+      objModel.Id = Id;
+      this._MasterService.EditToolkitDetail(objModel).pipe(first()).subscribe(data => {   
+        if (data.Status == 1) {   
           this.dynamicArray = [];
           this.ItemEditDataArr = data.ItemData;
           for (var i = 0, len = this.ItemEditDataArr.length; i < len; i++) {
             var objdynamic = new DynamicItemGrid();
+            objdynamic.EqTypeId = "0";
             objdynamic.Id = this.ItemEditDataArr[i].Id;
             objdynamic.ItemNameId = this.ItemEditDataArr[i].ItemNameId;
             objdynamic.EditItemMake = JSON.parse(this.ItemEditDataArr[i].ItemMakeList);
@@ -593,27 +636,25 @@ export class EmployeesAccessoriesComponent implements OnInit {
     }
   }
 
- 
+
   async GetAllTechCOHbySiteId(SiteId: any) {
-    // debugger
     try {
       this.clearedAutoEmpName("");
       var objdropdownmodel = new DropdownModel();
       objdropdownmodel.Other_Id = SiteId;
       objdropdownmodel.Company_Id = this.CompanyId;
       await this._EmployeeAccessoriesService.GetAllEmployeeNameListBySiteId(objdropdownmodel).then(Emp => {
-        // debugger
         if (Emp.AllTechData != '') {
           this.TechDataList = Emp.AllTechData;
           // this.EmpCodeList1 = Emp.AllTechData;
           // console.log('this.TechDataList: ', this.TechDataList);
-         
-          this.EmpCodeList = this.TechDataList.filter((itm)=> {
+
+          this.EmpCodeList = this.TechDataList.filter((itm) => {
             return itm.EmployeeID !== null;
           })
           // console.log('this.EmpCodeList1: ', this.EmpCodeList);
-      }
-        
+        }
+
       })
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAllTechCOHbySiteId", "WHTOSite");
@@ -622,7 +663,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
   clearedAutoEmpName(para: string) {
     if (para == "all") {
-      this.model.AutoEmpName="";
+      this.model.AutoEmpName = "";
       ///this.SelectedSearchEmpNameList = [];
     }
     this.model.EmpId = '0';
@@ -630,12 +671,13 @@ export class EmployeesAccessoriesComponent implements OnInit {
     this.model.Designation = "";
     this.model.MobileNo = "";
     this.model.EmpAddress = "";
+
   }
 
   onSelectEmpName(items: any) {
     // debugger
-    
-    this.model.AutoEmpName=items.UserName;
+
+    this.model.AutoEmpName = items.UserName;
     //this.SelectedSearchEmpNameList = items;
     //console.log(JSON.stringify(this.SelectedSearchEmpNameList));
 
@@ -643,20 +685,21 @@ export class EmployeesAccessoriesComponent implements OnInit {
     this.model.EmpCode = items.EmployeeID;
     this.model.Designation = items.Designation;
     this.model.MobileNo = items.Mobile;
+    this.model.EmpAddress = items.EmpAddress;
   }
 
   //by: vishal, 26/12/2022, 
   onSelectEmpID(items: any) {
     // console.log('onSelectEmpID: ',items);
-    this.model.EmpCode = items.EmployeeID;
-    this.model.AutoEmpName = items.UserName;
     this.model.EmpId = items.Id;
+    this.model.AutoEmpName = items.UserName;
     this.model.EmpCode = items.EmployeeID;
     this.model.Designation = items.Designation;
     this.model.MobileNo = items.Mobile;
-    
+    this.model.EmpAddress = items.EmpAddress;
+
   }
-//end-vishal
+  //end-vishal
 
   onChangeEmpName(para: string) {
     this.clearedAutoEmpName("");
@@ -665,6 +708,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
   conformPopup() {
     jQuery('#confirm').modal('show');
     this.SaveUpDateEmployeeAccessories()
+    
     //this.IsError = false;
     // if (this.Validation() == 1) {
     //   return false;
@@ -680,15 +724,20 @@ export class EmployeesAccessoriesComponent implements OnInit {
   SaveUpDateEmployeeAccessories() {
     jQuery('#confirm').modal('hide');
     try {
-      let objToolkitAccessModel = new SearchEmployeeAccessoriesModel();
+      var objToolkitAccessModel = new SearchEmployeeAccessoriesModel();
       objToolkitAccessModel.Id = this.objEmpToolkitModel.Id;
       objToolkitAccessModel.CompanyId = this.CompanyId;
       objToolkitAccessModel.UserId = this.UserId;
       objToolkitAccessModel.WHStateId = this.model.ddlStateId;
       objToolkitAccessModel.WHId = this.model.ShippedfromWHId;
+       objToolkitAccessModel.CircleId = this.model.CircleId;
       objToolkitAccessModel.EmpId = this.model.EmpId;
       objToolkitAccessModel.ToolkitId = this.model.ToolkitId;
-      let ToolkitItemList = [];
+      objToolkitAccessModel.Designation = this.model.Designation;
+      objToolkitAccessModel.MobileNo = this.model.MobileNo;
+      objToolkitAccessModel.EmpAddress = this.model.EmpAddress;
+
+      let ToolkitItemList: ToolkitAccessoriesItemDet[] = [];
       for (let i = 0, len = this.dynamicArray.length; i < len; i++) {
         let objToolkitItemList = new ToolkitAccessoriesItemDet();
         objToolkitItemList.Id = this.dynamicArray[i].Id;
@@ -698,9 +747,9 @@ export class EmployeesAccessoriesComponent implements OnInit {
         objToolkitItemList.Qty = this.dynamicArray[i].Qty;
         ToolkitItemList.push(objToolkitItemList)
       }
-
       objToolkitAccessModel.ToolkitItemList = ToolkitItemList;
-      // console.log(JSON.stringify(objToolkitAccessModel))
+
+      //console.log(JSON.stringify(objToolkitAccessModel))
 
       this._EmployeeAccessoriesService.SaveToolKitAccessories(objToolkitAccessModel).subscribe(data => {
         alert(data.Remarks);
@@ -713,31 +762,37 @@ export class EmployeesAccessoriesComponent implements OnInit {
       objWebErrorLogModel.ErrorFunction = "SaveUpDateEmployeeAccessories";
       objWebErrorLogModel.ErrorPage = "EmployeesAccessories";
       this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
-      console.log(Error.message)
+      //console.log(Error.message)
     }
   }
 
+  CircleId:any;
+  onChangeCircle(id:number){
+   this.CircleId = id
+    //console.log("searchCircle",this.CircleId)
+    
+  }
   searchEmpAccessoriesList(para: string) {
     try {
-      if (this.model.EmpCode != "") {
-        this.objEmpToolkitModel.EmpCode = this.model.EmpCode
+      if (this.model.SearchEmpCode != "") {
+        this.objEmpToolkitModel.EmpCode = this.model.SearchEmpCode
       } else {
         this.objEmpToolkitModel.EmpCode = "";
       }
-      if (this.model.EmpName != "") {
-        this.objEmpToolkitModel.EmpName = this.model.EmpName
+      if (this.model.SearchEmpName != "") {
+        this.objEmpToolkitModel.EmpName = this.model.SearchEmpName
       } else {
         this.objEmpToolkitModel.EmpName = "";
       }
       if (this.objEmpToolkitModel.SWHId == "0") {
         this.objEmpToolkitModel.SWHId == this.WareHouseId;
       }
+      this.objEmpToolkitModel.CircleId = this.CircleId; //vishal
       this.objEmpToolkitModel.Startdate = this.commonSearchPanelData.Startdate;
       this.objEmpToolkitModel.Enddate = this.commonSearchPanelData.Enddate;
       this.objEmpToolkitModel.Flag = para;
 
       this._EmployeeAccessoriesService.SearchEmployeeAccessoriesList(this.objEmpToolkitModel).subscribe(data => {
-
         if (data.Status == 1) {
           if (para == "List") {
             if (data.Data != null) {
@@ -753,6 +808,8 @@ export class EmployeesAccessoriesComponent implements OnInit {
               alert('Please first Search Data');
             }
           }
+        }if(data.Status == 2){
+          this.rowData = []
         }
       })
     } catch (Error) {
@@ -762,12 +819,13 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
   showToolkitEditDetail(e) {
     this.isShownList = true;
-    this.isShownEdit = false; 
+    this.isShownEdit = false;
     this.IsReceivedHideShow = true;
     this.callToolkitDetailById(e.rowData.Id);
   }
 
   callToolkitDetailById(Id: any) {
+  
     try {
       this.createNew();
       this.IsReceivedHideShow = true;
@@ -777,8 +835,8 @@ export class EmployeesAccessoriesComponent implements OnInit {
       objModel.Id = Id;
       this.objEmpToolkitModel.Id = Id;
       this._EmployeeAccessoriesService.GetEditToolKitAccessories(objModel).pipe(first()).subscribe(data => {
+       
         if (data.Status == 1) {
-
 
           this.model.ddlStateId = data.Data[0].WHStateId;
           var promise = new Promise(async (resolve, reject) => {
@@ -790,13 +848,17 @@ export class EmployeesAccessoriesComponent implements OnInit {
             this.model.ShippedfromWHId = data.Data[0].WHId;
             await this.bindShippedWhAddess(this.model.ShippedfromWHId);
             let EmpId = data.Data[0].EmpId;
-            let resultEmp:any[] = this.TechDataList.filter(xx => {
+            let resultEmp: any[] = this.TechDataList.filter(xx => {
               return xx.Id === parseInt(EmpId)
             });
             this.onSelectEmpName(resultEmp[0]);
-            
+
             this.model.ToolkitId = data.Data[0].ToolkitId;
-            this.model.DocNo=data.Data[0].DocNo;
+            this.model.DocNo = data.Data[0].DocNo;
+            this.model.CircleId = data.Data[0].CircleId;
+            this.model.Designation = data.Data[0].Designation;
+            this.model.MobileNo = data.Data[0].EmpMobile;
+            this.model.EmpAddress = data.Data[0].EmpAddress;
             this.dynamicArray = [];
             this.ItemEditDataArr = data.ItemData;
             for (var i = 0, len = this.ItemEditDataArr.length; i < len; i++) {
@@ -813,6 +875,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
               objdynamic.UnitName = this.ItemEditDataArr[i].Unit_Id;
               objdynamic.Qty = this.ItemEditDataArr[i].Qty;
               this.dynamicArray.push(objdynamic);
+              
             }
           });
         }
@@ -832,7 +895,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
         .pipe(first()).subscribe(
           data => {
             if (data.Status == 1) {
-              this._EmployeeAccessoriesService.generateEmpAccessoriesPdf(data,'open');
+              this._EmployeeAccessoriesService.generateEmpAccessoriesPdf(data, 'open');
             }
           });
     } catch (Error) {
@@ -868,6 +931,82 @@ export class EmployeesAccessoriesComponent implements OnInit {
       this.SelectedSearchWHList = [];
     } else if (this.SelectedSearchWHList.length > 0) {
       this.objEmpToolkitModel.SWHId = this.SelectedSearchWHList.map(xx => xx.id).join(',');
+    }
+  }
+  
+
+  //vishal, 17/03/2023, Desc: For Save Return Item
+
+  returnPopup(Id:any) {
+    console.log(Id)
+    jQuery('#return').modal('show'); 
+    //this.SaveReturnToolkitItem()
+
+  }
+
+   SaveReturnToolkitItem() {
+     jQuery('#return').modal('hide');
+    try {
+      let objReturnToolkitModel = new ReturnToolkitItemModel();
+      objReturnToolkitModel.Id = this.objEmpToolkitModel.Id;
+      objReturnToolkitModel.UserId = this.UserId;
+      //objReturnToolkitModel.Qty = this.model.ReturnQty;
+
+      let ReturnToolkitItemList: ReturnToolkitItemdt[] = [];
+      for (let i = 0, len = this.dynamicArray.length; i < len; i++) {
+        let objReturnToolkitItemList = new ReturnToolkitItemdt();
+        objReturnToolkitItemList.Id = this.dynamicArray[i].Id;
+        objReturnToolkitItemList.Qty = parseInt(this.dynamicArray[i].Qty);
+        objReturnToolkitItemList.EqpTypeId = parseInt(this.dynamicArray[i].EqTypeId);
+        ReturnToolkitItemList.push(objReturnToolkitItemList)
+      }
+
+      objReturnToolkitModel.ReturnToolkitItemList = ReturnToolkitItemList;
+      //console.log(JSON.stringify(objReturnToolkitModel))
+      this._EmployeeAccessoriesService.SaveReturnToolkitItem(objReturnToolkitModel).subscribe(data => {
+        alert(data.Remarks);
+        this.clearReturnForm();
+      });
+    } catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "SaveReturnToolkitItem";
+      objWebErrorLogModel.ErrorPage = "EmployeesAccessories";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+      //console.log(Error.message)
+    }
+  }
+
+  clearReturnForm(){
+    this.model.EqpType = "0";
+    this.model.Qty = "0";
+    
+  }
+
+  //vishal, 23/01/2023 desc:for return toolkit item list
+   GetReturnToolkitItemList(para: string) {
+ 
+    try {
+      var objPara = new ReturnToolkitModel();
+      objPara.Id = this.objEmpToolkitModel.Id;
+      objPara.UserId = this.objEmpToolkitModel.UserId;
+     
+       this._EmployeeAccessoriesService.GetReturnToolkitItemList(objPara).subscribe(data => {
+        if (data.Status == 1) {
+          
+            if (data.Data != null) {
+              this.ReturnToolkitItem = data.Data;
+            } else {
+              this.ReturnToolkitItem = [];
+            
+          }
+        }
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "GetReturnToolkitItemList", "EmployeesAccessories");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetReturnToolkitItemList", "EmployeesAccessories");
     }
   }
 }

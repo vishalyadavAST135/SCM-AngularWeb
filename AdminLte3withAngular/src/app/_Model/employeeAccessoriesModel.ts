@@ -13,8 +13,12 @@ export class SearchEmployeeAccessoriesModel{
     EmpCode: string;
     EmpName: string;
     Flag:string;
-    ToolkitItemList: ToolkitAccessoriesItemDet[] = [];
-    
+    EmpAddress: string; //vishal
+    Designation: string; //vishal
+    MobileNo: string;
+    CircleId: number;
+    Circle: string;
+    ToolkitItemList: ToolkitAccessoriesItemDet[] = [];    
 }
 
 export class ToolkitAccessoriesItemDet {
@@ -24,3 +28,22 @@ export class ToolkitAccessoriesItemDet {
     EqpTypeId: number;
     Qty: number;
 }
+
+
+//vishal,
+export class ReturnToolkitItemModel{
+    Id: number;
+    UserId: number;
+    EqpTypeId: number;
+    Qty: number;
+    ReturnToolkitItemList: ReturnToolkitItemdt[] = [];  
+}
+
+export class ReturnToolkitItemdt{
+    Id: number;
+    Qty: number;
+    EqpTypeId: number;
+   
+}
+
+//end-vishal

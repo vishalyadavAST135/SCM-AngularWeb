@@ -140,6 +140,7 @@ export class DispatchTrackingItemDetialModel
     SaleQty:any;
     SaleUnit:any;
     DIList_Id:number;
+    ItemName: string;
 }
 export class SearchMaterialInstallationModel
 { 
@@ -175,6 +176,7 @@ export class SearchDispatchTrackerModel extends CommonSearchPanelModel
     StatusId:any;
     DINo:string; //Brahamjot kaur 23/6/2022
     CustomerSiteId:string;
+    WHStateId: number; //vishal
 }
 
 // Brahamjot kaur 22/6/2022
