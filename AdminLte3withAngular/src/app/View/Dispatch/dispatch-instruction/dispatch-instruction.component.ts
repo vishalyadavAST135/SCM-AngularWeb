@@ -19,7 +19,6 @@ import { SiteServiceService } from 'src/app/Service/site-service.service';
 import { TimePeriodService } from 'src/app/Service/time-period.service';
 import { BOQModel, BOQNOListModel, SearchDIRequestModel } from 'src/app/_Model/BOQRequestModel';
 import { ApprovelStatusModel, CompanyStateVendorItemModel, DropdownModel, JsonModel, MenuName, MRNOAutoModel, UserRole } from 'src/app/_Model/commonModel';
-import { SearchMaterialRequisitionModel } from 'src/app/_Model/DispatchModel';
 import { VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { CompanyModel } from 'src/app/_Model/userModel';
 import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
@@ -455,6 +454,7 @@ export class DispatchInstructionComponent implements OnInit {
   }
 
   searchApprovalMRStatus(para: string) {
+    debugger
     try {
       
       this.gridApi.showLoadingOverlay();
@@ -500,8 +500,6 @@ export class DispatchInstructionComponent implements OnInit {
       objSearchDIRequestModel.IsSRN = this.model.indentType;
       objSearchDIRequestModel.DIType = this.model.dIType;
       objSearchDIRequestModel.DispatchStatus= this.model.dispatchedStatus;
-      
-
        //vishal 14/09/2022
       objSearchDIRequestModel.flag2 = para;
       this._dispatchInstructionService.GetDIRequestList(objSearchDIRequestModel).subscribe(data => {

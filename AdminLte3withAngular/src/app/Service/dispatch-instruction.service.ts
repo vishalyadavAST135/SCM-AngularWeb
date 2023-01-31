@@ -1,6 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BOQModel, BOQNOListModel, BOQReqModel, SearchDIRequestModel } from '../_Model/BOQRequestModel';
+import { BOQModel, BOQNOListModel, BOQReqModel, SearchDIRequestModel, SearchMaterialAtSiteModel } from '../_Model/BOQRequestModel';
 import { JsonModel, WebAPIConfig } from '../_Model/commonModel';
 import { Observable } from 'rxjs';
 
@@ -51,4 +51,10 @@ export class DispatchInstructionService {
     return this.httpclient.post(objBaseUrl.ApIUrl+"BOQRequestController/UploadDISRNDoc",formdata);  
   }
 
+  //vishal, 29/12/2022
+  GetMaterialAtSiteList(objSearch: SearchMaterialAtSiteModel): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "MaterialAtSite/GetMaterialAtSiteList", objSearch, options);
+  }
+ 
 }

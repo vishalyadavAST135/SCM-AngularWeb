@@ -1,0 +1,177 @@
+<style>
+    .table th,
+    .table td {
+        padding: 10px 4px 10px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+    }
+
+    .msg {
+        color: red;
+    }
+
+    .my-class {
+        /* border:1px solid red;
+         color:red; */
+        border-color: red;
+    }
+
+    .Mandatoryfield {
+        font-size: 15px
+    }
+
+    .btn-sm1,
+    .btn-group-sm>.btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        line-height: 0.5;
+        border-radius: 0.2rem;
+    }
+
+    .divwidth {
+        width: 13%;
+    }
+
+    .ChildCSS {
+        width: 100%;
+        display: flex;
+        /* justify-content: flex-end; */
+        /* margin-top: -30px; */
+    }
+
+    .ChildSiteCSS {
+        width: 100%;
+        display: flex;
+        /* justify-content: flex-start;
+      margin-top: -30px; */
+    }
+</style>
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <div class="content-wrapper " style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Material Tracker / Material At Site </li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+        <!--search section-->
+        <section class="content" style="padding-top:2px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row" style="margin-left:0px">
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Circle</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect id="ddlCircleName" [data]="SearchCircleList"
+                                [(ngModel)]="SelectedCircleList" [settings]="multiDropdownSettings"
+                                (onDeSelectAll)="onClickCircle('DelAll')" (ngModelChange)="onClickCircle('')">
+                            </angular2-multiselect>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Class</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect [data]="searchItemClassList" [(ngModel)]="selectedItemClassList"
+                                    [settings]="multiDropdownSettings" (onSelect)="bindSearchItemName('')"
+                                    (onDeSelect)="bindSearchItemName('')" (onSelectAll)="bindSearchItemName('')"
+                                    (onDeSelectAll)="bindSearchItemName('DelAll')">
+                                </angular2-multiselect>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Item Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect [data]="searchItemNameList"
+                                    [(ngModel)]="selectedSearchItemNameList" [settings]="multiDropdownSettings"
+                                    (onSelect)="bindSearchItemCapacity('')" (onDeSelect)="bindSearchItemCapacity('')"
+                                    (onSelectAll)="bindSearchItemCapacity('')"
+                                    (onDeSelectAll)="bindSearchItemCapacity('DelAll')">
+                                </angular2-multiselect>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Capacity</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <angular2-multiselect [data]="searchItemCapacityList"
+                                    [(ngModel)]="selectedSearchItemCapacityList" [settings]="multiDropdownSettings"
+                                    (onDeSelectAll)="onClickCapacity('DelAll')" (ngModelChange)="onClickCapacity('')">
+                                </angular2-multiselect>
+                            </div>
+
+                        </div>
+                        <hr />
+                        <app-time-period class="ChildCSS"></app-time-period>
+                        <hr />
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <app-site-panel class="ChildCSS col-sm-12"></app-site-panel>
+                            </div>
+                            <div class="col-sm-1"> 
+                                <label class="col-form-label-xs">SRN Status</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" id="txtSRNStatus"
+                                    [(ngModel)]="objSearch.SRNStatus">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option class="dropdown-item" [value]="1">SRN Pending</option>
+                                    <option class="dropdown-item" [value]="2">SRN Requested</option>                                    
+                                    <option class="dropdown-item" [value]="3">SRN Approved</option>                                    
+                                    <option class="dropdown-item" [value]="4">SRN Completed</option>                                    
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchMaterialAtSite('LIST')"><i class="fa fa-search"
+                                            aria-hidden="true"></i> Search</button>
+
+                                </div>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="searchMaterialAtSite('Export')"><i class="fa fa-download"
+                                            aria-hidden="true"></i> Export Excel</button>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                                [enableSorting]="true" [enableFilter]="true" [pagination]="true" paginationPageSize="20"
+                                [columnDefs]="columnDefs" [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                                [suppressRowClickSelection]="true" [rowSelection]="rowSelection"
+                                (gridReady)="onGridReady($event)" 
+                                [frameworkComponents]="frameworkComponents" [overlayLoadingTemplate]="loadingTemplate">
+                            </ag-grid-angular>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>

@@ -155,7 +155,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteTechPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteCIPhone = data.Data[0].SiteCIPhone;
                 this.model.ToSiteZOMPhone = data.Data[0].SiteZOMPhone;
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -221,7 +221,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteTechPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteCIPhone = data.Data[0].SiteCIPhone;
                 this.model.ToSiteZOMPhone = data.Data[0].SiteZOMPhone;
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -270,7 +270,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteCIPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -336,7 +336,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteCIPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -382,7 +382,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteCIPhone = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = '';
                 this.model.PdfToSiteId = "";
                 this.model.PdfToSiteName = "";
@@ -427,7 +427,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteCIPhone = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = '';
                 this.model.PdfToSiteId = "";
                 this.model.PdfToSiteName = "";
@@ -472,7 +472,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteCIPhone = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = '';
                 this.model.PdfToSiteId = "";
                 this.model.PdfToSiteName = "";
@@ -517,7 +517,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteCIPhone = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = '';
                 this.model.PdfToSiteId = "";
                 this.model.PdfToSiteName = "";

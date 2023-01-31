@@ -116,15 +116,7 @@
               <div class="col-sm-2">
                 <input type="text" placeholder="" [(ngModel)]="model.DispatchNo" class="form-control form-control-sm" />
               </div>
-              <div class="col-sm-1">
-                <label class="col-form-label-xs">Dispatch Type</label>
-              </div>
-              <div class="col-sm-2">
-                <angular2-multiselect [data]="DispatcDataList" [(ngModel)]="SearchDispatchTypeList"
-                  [settings]="MultidropdownSettings" (onDeSelectAll)="onClickDispatchType('DelAll')"
-                  (ngModelChange)="onClickDispatchType('')">
-                </angular2-multiselect>
-              </div>
+             
               <div class="col-sm-6">
                 <app-site-panel class="ChildCSS col-sm-12"></app-site-panel>
               </div>
@@ -140,6 +132,15 @@
                   <option value=1>Active </option>
                   <option value=0>Cancel </option>
                 </select>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Dispatch Type</label>
+              </div>
+              <div class="col-sm-2">
+                <angular2-multiselect [data]="DispatcDataList" [(ngModel)]="SearchDispatchTypeList"
+                  [settings]="MultidropdownSettings" (onDeSelectAll)="onClickDispatchType('DelAll')"
+                  (ngModelChange)="onClickDispatchType('')">
+                </angular2-multiselect>
               </div>
 
               <div class="col-sm-1">

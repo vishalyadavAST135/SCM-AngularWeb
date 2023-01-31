@@ -107,6 +107,32 @@
       </div> 
      </div>
 
+     <!--vishal 19/01/2023-->
+     <div class="col-sm-2">
+      <label class="col-form-label-xs">Original Site Id</label>
+     </div>
+     <div class="col-sm-4">
+      <div class="ng-autocomplete">
+        <ng-autocomplete 
+        [data]="AutoCompleteOldSiteIdList" [searchKeyword]="CustomerSitekeyword" 
+        (inputCleared)="ClearedCustomerSiteId(2)" 
+        [(ngModel)]="model.oldCuValueSiteId"
+        (selected)='SelectOldCustomerSiteId($event)' (inputChanged)='onChangeSearchOldCustomerSiteId($event)' 
+        (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+        [notFoundTemplate]="CuSiteIdnotFoundTemplate"
+        [debounceTime]="600" 
+        [minQueryLength]="2" 
+        placeHolder="Search Original Site Id">
+        </ng-autocomplete>
+        <ng-template #oldCuSiteIditemTemplate let-item>
+            <a [innerHTML]="item.CustomerSiteId"></a>
+        </ng-template>
+        <ng-template #oldCuSiteIdnotFoundTemplate let-notFound>
+            <div [innerHTML]="notFound"></div>
+        </ng-template>
+      </div> 
+     </div>
+
 
     <input type="hidden"  [(ngModel)]="model.HideCustomerId" />
     

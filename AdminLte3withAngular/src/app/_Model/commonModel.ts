@@ -121,6 +121,8 @@ export class CompanyStateVendorItemModel {
     CircleArray: any;
     DispatchedStatus: string;
     DispatchedStatusArray: any;
+    CircleId: any;
+
 }
 
 export class EmailSendTotalDataModel {
@@ -214,6 +216,7 @@ export class CommonAllReason {
 export class CommonSiteSearchPanelModel {
     SiteId: any;
     PageFlag: string;
+    Site_Id: any;
 }
 export class UserRole {
     public static DifferenceDayTime = 24;
@@ -280,16 +283,6 @@ export class UserRightModel {
     public Print: number;
     public Export: number;
 }
-
-// export class CircleNameModel {
-//     VendorArray: any;
-//     Parent_Id: string;
-//     Flag: string;
-//     Company_Id: number;
-//     User_Id: number;
-//     WHId: any;
-//     CircleArray:any;
-// }
 
 export class DashBoardStockModel {
     public CompanyId: number;

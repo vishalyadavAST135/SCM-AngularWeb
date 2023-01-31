@@ -125,6 +125,7 @@ export class FaultytorepairComponent implements OnInit {
   ngOnInit(): void {
     this.model.WHStateId = "0";
     this.model.WHId = "0";
+    this.model.RepairDate = "0"
     this.model.RepairedType = "0";
     this.model.InvoiceValue = 0.00;
     this.model.VendorName = "0";
@@ -1170,7 +1171,8 @@ export class FaultytorepairComponent implements OnInit {
 
 
   conformPopup() {
-    //this.IsSaveButtonDisable = true;
+   // this.IsSaveButtonDisable = true;
+   
     if (this.Validation() == 1) {
       return false;
     } else if (this.dynamicArray.length < 1) {
@@ -1180,6 +1182,7 @@ export class FaultytorepairComponent implements OnInit {
       setTimeout(function () { this.IsError = false; }, 3000);
       return false;
     } else {
+     
       jQuery('#confirm').modal('show');
     }
   }
@@ -1193,6 +1196,7 @@ export class FaultytorepairComponent implements OnInit {
       objSaveUpaderStockQtyModel.UserId = this.UserId;
       objSaveUpaderStockQtyModel.CompanyId = this.CompanyId;
       objSaveUpaderStockQtyModel.WHId = this.model.WHId;
+      objSaveUpaderStockQtyModel.WHStateId = this.model.WHStateId;
       objSaveUpaderStockQtyModel.RepairDate = this._Commonservices.ConvertDateFormat(this.model.RepairDate);
       objSaveUpaderStockQtyModel.Remarks = this.model.Remarks;
       objSaveUpaderStockQtyModel.InvoiceDate = this._Commonservices.ConvertDateFormat(this.model.InvoiceDate);
@@ -1206,6 +1210,7 @@ export class FaultytorepairComponent implements OnInit {
         var objDispatchTrackingItemDetialModel = new DispatchTrackingItemDetialModel();
         objDispatchTrackingItemDetialModel.Id = this.dynamicArray[i].Id;
         objDispatchTrackingItemDetialModel.ItemCode_Id = this.dynamicArray[i].ItemId;
+        objDispatchTrackingItemDetialModel.ItemName = this.dynamicArray[i].ItemName;
         objDispatchTrackingItemDetialModel.Qty = this.dynamicArray[i].Qty;
         objDispatchTrackingItemDetialModel.EqpType_Id = this.dynamicArray[i].EqTypeId;
         objDispatchTrackingItemDetialModel.Remarks = this.dynamicArray[i].Remarks;
@@ -1238,9 +1243,10 @@ export class FaultytorepairComponent implements OnInit {
       } else {
         formdata.append('UploadInvoiceFile', this.UploadInvoiceFile, this.UploadInvoiceFile.name);
       }
-      //////
+      //  console.log(JSON.stringify(objSaveUpaderStockQtyModel))
       formdata.append('jsonDetail', JSON.stringify(objSaveUpaderStockQtyModel));
       this._StockserviceService.SaveUpDateStStock(formdata).pipe(first()).subscribe(data => {
+      
         if (data.Status == 1) {
           jQuery('#confirm').modal('hide');
           alert(data.Remarks);
@@ -1274,7 +1280,7 @@ export class FaultytorepairComponent implements OnInit {
     try {
       var objpara = new SearchDispatchTrackerModel();
       objpara.CompanyId = this.CompanyId;
-      objpara.State_Id = this.CommonSearchPanelData.State_Id;
+      objpara.WHStateId = this.CommonSearchPanelData.State_Id;
       if (this.CommonSearchPanelData.WHId != "") {
         objpara.WHId = this.CommonSearchPanelData.WHId;
       } else {
@@ -1299,6 +1305,7 @@ export class FaultytorepairComponent implements OnInit {
         this.loading = true;
       }
       this._StockserviceService.SearchGetFaultyRepaired(objpara).pipe(first()).subscribe(data => {
+        debugger
         this.gridApi.hideOverlay();
         this.loading = false;
         if (data.Status == 1) {
@@ -1885,6 +1892,9 @@ export class FaultytorepairComponent implements OnInit {
     });
   }
 
+ 
+
+
   Validation() {
     var flag = 0;
     if ($('#txtTOWHStateId').val() == "" || $('#txtTOWHStateId').val() == '0') {
@@ -1893,6 +1903,7 @@ export class FaultytorepairComponent implements OnInit {
       flag = 1;
     } else {
       $("#txtTOWHStateId").css('border-color', '');
+      
     }
     if ($('#txtWHId').val() == "" || $('#txtWHId').val() == '0') {
       $('#txtWHId').css('border-color', 'red');
@@ -1908,6 +1919,18 @@ export class FaultytorepairComponent implements OnInit {
     } else {
       $("#txtRepairedType").css('border-color', '');
     }
+
+    //vishal 21-01-2023
+  
+    if ($('#txtRepairDate').val() == "" || $('#txtRepairDate').val() == '0' || $('#txtRepairDate').val() == null) {
+      $('#txtRepairDate').css('border-color', 'red');
+      $('#txtRepairDate').focus();
+      flag = 1;
+    } else {
+      $("#txtRepairDate").css('border-color', '');
+    }  
+    //end-vishal
+
     if (this.model.Repaired == 'In WareHouse-Repaired by Vendor') {
       if ($('#txtVendorType').val() == "" || $('#txtVendorType').val() == '0') {
         $('#txtVendorType').css('border-color', 'red');
@@ -1981,10 +2004,9 @@ export class FaultytorepairComponent implements OnInit {
       }
 
 
-      if (this.dynamicArray[icount].NatureBerId != "" || this.dynamicArray[icount].NatureBerId != "0") {
+      if (this.dynamicArray[icount].NatureBerId != "" && this.dynamicArray[icount].NatureBerId != "0") {
         $("#txtTestingTime_" + icount).css('border-color', '');
-        $("#txtTestingLoad_" + icount).css('border-color', '');
-        flag = 0;
+        $("#txtTestingLoad_" + icount).css('border-color', '');   
       } else {
         if (this.dynamicArray[icount].TestingTime == "" || this.dynamicArray[icount].TestingTime == "null" || this.dynamicArray[icount].TestingTime == "0") {
           $('#txtTestingTime_' + icount).css('border-color', 'red');
@@ -2096,7 +2118,6 @@ export class FaultytorepairComponent implements OnInit {
 
 // brahamjot kaur 28/6/2022
   validateStockQty() {
-    debugger;
     var returnValue = 0;
     var DefaultySetValue = 48
       for (var i = 0; i < this.dynamicArray.length; i++) {

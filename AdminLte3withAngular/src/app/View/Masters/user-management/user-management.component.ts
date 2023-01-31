@@ -1,5 +1,6 @@
 import { DatePipe } from '@angular/common';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { NgForm } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { first } from 'rxjs/operators';
@@ -47,6 +48,7 @@ export class UserManagementComponent implements OnInit {
   UserDataList:any[] = [];
   ObjUserPageRight = new UserPageRight();
   Save: any;
+  @Input('form') public form: NgForm;
   constructor(
     public router: Router,
     public userApi: UserManagementService,
@@ -70,7 +72,7 @@ export class UserManagementComponent implements OnInit {
     ]
 
    }
-
+   
   ngOnInit(): void {
     this.isShownList = false;
     this.isShownEdit = true;
@@ -149,7 +151,6 @@ export class UserManagementComponent implements OnInit {
             this.Loader.hide();
             if (data.Data != null) {
               this.rowData = data.Data;
-              console.log(this.rowData);
             } else {
               this.rowData = null
             }
@@ -175,17 +176,20 @@ export class UserManagementComponent implements OnInit {
 
   CreateNew(){
     // this.router.navigate(['/UserManagement/newUser']);
+    this.newUser = true;
     this.isShownList = true;
     this.isShownEdit = false;
-    this.newUser = true;
     this.roleMapping = false;
     this.companyMapping = false;
     this.whMapping = false;
     this.pageMapping =false;
+    this.form.reset();
+   
   }
 
+  
+ 
   ShowUserManagementDeatil(e){
-    console.log(e.rowData);
     this.userApi.EditData.next(e.rowData);
     this.UserDataList = [{
      rowData:e.rowData,
@@ -196,7 +200,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   onClickTab(event:any,tab:any){
-    console.log(event.target.value,tab);
+    //console.log(event.target.value,tab);
     this.newUser = false;
     this.roleMapping = false;
     this.companyMapping = false;

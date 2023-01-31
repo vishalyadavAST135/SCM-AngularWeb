@@ -117,7 +117,7 @@ export class GRNDetailComponent implements OnInit {
   totalSumAmount: any;
   totalAmount: any;
   public FaultyFile = [];
-  GrnId: any =0;
+  GrnId: any = 0;
   PoeditId: any;
   InvChallanFile: any;
   GatePdfFile: any;
@@ -392,32 +392,32 @@ export class GRNDetailComponent implements OnInit {
     this.PageLoadEquipmentType();
     this.BindTransporterTypeDetail();
     this.model.TransporterId = "";
-     //brahamjot kaur 31/10/2022
-     this.GetUserPageRight(this.GrnId);
-    }
-  
     //brahamjot kaur 31/10/2022
-    async GetUserPageRight(id:number) {
-      this._Commonservices.GetUserPageRight(this.UserId, MenuName.GRN).subscribe(data => {
-        if (data.Status == 1) {
-          console.log(data);
-          this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
-          this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
-          this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
-          this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
-          this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
-          this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
-          this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-          if(this.ObjUserPageRight.IsCreate == 1 && id == 0){
-            this.Save = 1;
-          }else if(this.ObjUserPageRight.IsEdit == 1 && id != 0){
-            this.Save = 1;
-          }else{
-            this.Save = 0
-          }
+    this.GetUserPageRight(this.GrnId);
+  }
+
+  //brahamjot kaur 31/10/2022
+  async GetUserPageRight(id: number) {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.GRN).subscribe(data => {
+      if (data.Status == 1) {
+        console.log(data);
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
+        this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
+        this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
         }
-      })
-    }
+      }
+    })
+  }
 
 
 
@@ -1323,6 +1323,7 @@ export class GRNDetailComponent implements OnInit {
                                 { text: `Authorised by `, fontSize: 10, bold: true, alignment: 'right', },
                               ]
                             },
+
                           ]
                         },
                       ],
@@ -1333,11 +1334,13 @@ export class GRNDetailComponent implements OnInit {
             ]
           }
         },
+        //vishal, 10/01/2023
         {
           columns: [
             { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
           ]
         }
+        //end-vishal
       ],
 
       styles: {
@@ -3880,7 +3883,7 @@ export class GRNDetailComponent implements OnInit {
       this.Loader.hide();
       return false;
     }
-    try {      
+    try {
       this.loading = true;
       this.Loader.show();
       // hemant tyagi POData
@@ -3992,7 +3995,7 @@ export class GRNDetailComponent implements OnInit {
         } else {
           objSaveGRNCRNModelDetail.Flag = "20";
         }
-        
+
         this.GrndynamicItemArray = [];
         for (var i = 0, len = this.dynamicArray.length; i < len; i++) {
           var objGRNDynamicItemGrid = new GRNDynamicItemModel();
@@ -4038,7 +4041,7 @@ export class GRNDetailComponent implements OnInit {
             } else {
               objGRNDynamicItemGrid.GSerialNumbers = this.dynamicArray[i].GSerialNumbers;
             }
-          }          
+          }
 
           var cov = this._Commonservices.checkUndefined(this.dynamicArray[i].ConversionValue);
           if (cov != "") {
@@ -4128,7 +4131,7 @@ export class GRNDetailComponent implements OnInit {
           for (var j = 0; j < this.FaultyFileArray[i].FaultyFile.length; j++) {
             formdata.append("FaultyfileUpload", this.FaultyFileArray[i].FaultyFile[j], 'FaultyImage_' + this.dynamicArray[i].ItemId + '_' + this.FaultyFileArray[i].RowId + CurrentDate);
           }
-        }        
+        }
         formdata.append('jsonDetail', JSON.stringify(objSaveGRNCRNModelDetail));
         this._GrncrnService.PostGRNCRNDetail(formdata).subscribe(data => {
           this.Loader.hide();

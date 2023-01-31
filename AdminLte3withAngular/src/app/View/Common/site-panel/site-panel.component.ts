@@ -22,12 +22,13 @@ export class SitePanelComponent implements OnInit {
   AutoCompleteCustomerSiteIdList = [];
   UniqueSitekeyword = 'SiteId';
   AutoCompleteUniqueSiteIdList = [];
+  AutoCompleteOldSiteIdList = []; //vishal, 20/03/2023
   CompanyId: any;
   UserId: any;
   SearchSiteId: any;
   TransferDataList: any;
   objCommonSiteSearchPanelModel:CommonSiteSearchPanelModel={
-    SiteId:0, PageFlag:'0'
+    SiteId:0, PageFlag:'0', Site_Id:0
 
   }
   constructor(private _GlobalErrorHandlerService: GlobalErrorHandlerServiceService, private _Commonservices: CommonService,
@@ -63,7 +64,7 @@ export class SitePanelComponent implements OnInit {
   onChangeSearchCustomerSiteId(val: string) {
     try {
       this.ClearedCustomerSiteId(2);
-      var objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
       objSiteCustomerAutoModel.SCNo = val;
       objSiteCustomerAutoModel.CompanyId = this.CompanyId;
       objSiteCustomerAutoModel.flag = "CustomerSiteId";
@@ -73,7 +74,7 @@ export class SitePanelComponent implements OnInit {
       })
     }
     catch (Error) {
-      var objWebErrorLogModel = new WebErrorLogModel();
+      let objWebErrorLogModel = new WebErrorLogModel();
       objWebErrorLogModel.ErrorBy = this.UserId;
       objWebErrorLogModel.ErrorMsg = Error.message;
       objWebErrorLogModel.ErrorFunction = "onChangeSearchCustomerSiteId";
@@ -87,7 +88,7 @@ export class SitePanelComponent implements OnInit {
   onChangeSearchUniqueSiteId(val: string) {
     try {
       this.ClearedCustomerSiteId(1);
-      var objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
       objSiteCustomerAutoModel.SCNo = val;
       objSiteCustomerAutoModel.CompanyId = this.CompanyId;
       objSiteCustomerAutoModel.flag = "UniqueSiteId";
@@ -98,7 +99,7 @@ export class SitePanelComponent implements OnInit {
         }
       })
     } catch (Error) {
-      var objWebErrorLogModel = new WebErrorLogModel();
+      let objWebErrorLogModel = new WebErrorLogModel();
       objWebErrorLogModel.ErrorBy = this.UserId;
       objWebErrorLogModel.ErrorMsg = Error.message;
       objWebErrorLogModel.ErrorFunction = "onChangeSearchUniqueSiteId";
@@ -114,19 +115,25 @@ export class SitePanelComponent implements OnInit {
     this.objCommonSiteSearchPanelModel.SiteId = items.Id;
     this._SiteServiceService.SearchSitesChanges(this.objCommonSiteSearchPanelModel);
     this.model.CuUniqueSiteId = items.Id;
+   
   }
 
   ClearedCustomerSiteId(val: any) {
     this.AutoCompleteCustomerSiteIdList = [];
     this.AutoCompleteUniqueSiteIdList = [];
+    this.AutoCompleteOldSiteIdList = [];
     this.model.CustomerSiteName = "";
     if (val == 1) {
       this.model.CuValueSiteId = "";
     } else if (val == 2) {
       this.model.CuUniqueSiteId = "";
-    } else {
+    } else if(val == 3) {
+      this.model.oldCuValueSiteId = "";
+    }
+     else {
       this.model.CuValueSiteId = "";
       this.model.CuUniqueSiteId = "";
+      this.model.oldCuValueSiteId = "";
     }
     this.model.SiteId = 0;
     this.model.SiteName = "";
@@ -145,4 +152,42 @@ export class SitePanelComponent implements OnInit {
     this.objCommonSiteSearchPanelModel.PageFlag=PageFlag;
     this._SiteServiceService.SearchSitesChanges(this.objCommonSiteSearchPanelModel);
   }
+
+
+  //By:vishal, 20-01-2023, Desc: Function used for autosearch original customer site Id
+  onChangeSearchOldCustomerSiteId(val: string) {
+    try {
+  
+      this.ClearedCustomerSiteId(3);
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      objSiteCustomerAutoModel.SCNo = val;
+      objSiteCustomerAutoModel.CompanyId = this.CompanyId;
+      objSiteCustomerAutoModel.flag = "OriginalSiteId";
+      objSiteCustomerAutoModel.StateId = this.model.ddlStateId;
+      this._GrncrnService.GetAutoCompleteOldSiteAndCustomer(objSiteCustomerAutoModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.AutoCompleteOldSiteIdList = data.Data;
+        }
+      })
+    } catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "onChangeSearchOldCustomerSiteId";
+      objWebErrorLogModel.ErrorPage = "SitePanel";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
+
+  }
+
+  SelectOldCustomerSiteId(items) {
+    this.objCommonSiteSearchPanelModel.Site_Id = items.Id;
+    this._SiteServiceService.SearchSitesChanges(this.objCommonSiteSearchPanelModel);
+    this.model.oldCuValueSiteId = items.Id;
+    this.model.CuUniqueSiteId = items.Site_Id;
+    
+    
+    
+  }
+//end-vishal
 }

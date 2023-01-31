@@ -85,6 +85,7 @@ import { NgbDateCustomParserFormatter } from './ngb-date-custom-parser-formatter
 import { EmployeesAccessoriesComponent } from './View/Dispatch/employees-accessories/employees-accessories.component';
 import { ToolkitMasterComponent } from './View/Masters/toolkit-master/toolkit-master.component';
 import { SendMailComponent } from './View/Common/send-mail/send-mail.component';
+import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/material-at-site.component';
 
 
 @NgModule({
@@ -109,7 +110,7 @@ import { SendMailComponent } from './View/Common/send-mail/send-mail.component';
     WhCircleMappingComponent, CustomerToCustomerComponent,
     AgingreportComponent, UserManagementComponent, CompanyMappingComponent,
     NewUserComponent, RoleMappingComponent, WHMappingComponent,MatchPasswordDirective, 
-    PageMappingComponent, EmployeesAccessoriesComponent, ToolkitMasterComponent, SendMailComponent
+    PageMappingComponent, EmployeesAccessoriesComponent, ToolkitMasterComponent, SendMailComponent, MaterialAtSiteComponent
   ],
   imports: [
     BrowserModule,

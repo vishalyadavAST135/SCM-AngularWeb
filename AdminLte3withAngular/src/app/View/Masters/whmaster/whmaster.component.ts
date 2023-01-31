@@ -233,6 +233,7 @@ export class WhmasterComponent implements OnInit {
   }
 
   AddUpdateWHBasicDetial() {
+    debugger
     try {
       if (this.ValidationBasic() == 1) {
         return false;

@@ -135,7 +135,7 @@ export class SrnPdfServiceService {
                 this.model.ToSiteTechPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteCIPhone = data.Data[0].SiteCIPhone;
                 this.model.ToSiteZOMPhone = data.Data[0].SiteZOMPhone;
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -187,7 +187,7 @@ export class SrnPdfServiceService {
                 this.model.ToSiteTechPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteCIPhone = data.Data[0].SiteCIPhone;
                 this.model.ToSiteZOMPhone = data.Data[0].SiteZOMPhone;
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -230,7 +230,7 @@ export class SrnPdfServiceService {
                 this.model.ToSiteCIPhone = data.Data[0].SiteTechPhone;
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -282,7 +282,7 @@ export class SrnPdfServiceService {
                 this.model.ToSiteZOMName = "";
                 this.model.ToSiteCIPhone = data.Data[0].SiteCOHPhone;
                 this.model.ToSiteZOMPhone = "";
-                this.model.PdfToContectDetails = 'Contect Details';
+                this.model.PdfToContectDetails = 'Contact Details';
                 this.model.PdfToSiteDetail = 'Site Detail ';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
@@ -440,7 +440,6 @@ export class SrnPdfServiceService {
 
 
   generatePDF(action = 'open') {
-    debugger
     let docDefinition = {
       pageSize: 'A4',
       content: [
@@ -1269,7 +1268,7 @@ export class SrnPdfServiceService {
               {
                 text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹',
                 bold: true, alignment: 'center'
-              }
+              },
               // { text: '' }
               ]
             ]

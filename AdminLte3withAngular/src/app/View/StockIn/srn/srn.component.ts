@@ -263,7 +263,7 @@ export class SrnComponent implements OnInit {
   ngOnInit(): void {
     this.model.TransporterId = "";
     this.model.SRNFrom = "0";
-    this.model.SRNType = 0;
+    this.model.SRNType = 2;
     this.model.ReasonId = "0"
     this.model.IsActiveCancel = 2;
     this.model.CustomerId = "0";
@@ -2040,6 +2040,7 @@ export class SrnComponent implements OnInit {
   }
 
   SaveUpDateSRNDetail() {
+    debugger
     this.loading = true;
     try {
       jQuery('#confirm').modal('hide');
@@ -2793,6 +2794,7 @@ export class SrnComponent implements OnInit {
         objpara.CustomerId = '0';
       }
       this._MaterialMovementService.GetSRNList(objpara).pipe(first()).subscribe(data => {
+        debugger
         this.gridApi.hideOverlay();
         this.Exportloading = false;
         if (data.Status == 1) {
@@ -2804,6 +2806,7 @@ export class SrnComponent implements OnInit {
               this.rowData = null
             }
           } else if (para == "Export") {
+            debugger
             if (data.Data != null) {
               var CurrentDate = this.datePipe.transform(Date(), "dd/MM/yyyy");
               this._PurchaseOrderService.exportAsExcelFile(data.Data, 'SRN Detail' + CurrentDate);

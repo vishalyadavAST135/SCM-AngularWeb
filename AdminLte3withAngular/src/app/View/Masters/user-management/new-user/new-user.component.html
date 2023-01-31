@@ -1,7 +1,8 @@
 <div class="container-fluid">
     <!-- <div class="col-12 col-sm-6 col-md-6 "> -->
     <fieldset class="scheduler-border">
-        <legend class="scheduler-border">New User</legend>
+        <legend class="scheduler-border" *ngIf="isNewUser">New User</legend>
+        <legend class="scheduler-border" *ngIf="isUserStatus">Edit User</legend>
         <form name="form" #f="ngForm" (ngSubmit)="f.form.valid && SaveUpdateNewUser();f.resetForm()"
             [mustMatch]="['password', 'confirmPassword']" novalidate>
             <div class="row">
@@ -139,11 +140,9 @@
                     <div class="row" *ngIf="isUserStatus">
                         <label class="col-sm-3">User Status<span style="color: red;"
                             class="Mandatoryfield"><b>*</b></span></label>
-                        
-                            <select class="form-control col-sm-8" id="txtUserStatus">
-                                <option class="dropdown-item" value="2">Select </option>
-                                <option class="dropdown-item" value="1">Active</option>
-                                <option class="dropdown-item" value="0">Deactive</option>
+                            <select class="form-control col-sm-8" id="txtUserStatus" name="userStatus" [(ngModel)]="model.UserStatus">
+                                <option class="dropdown-item" [value]="1">Active</option>
+                                <option class="dropdown-item" [value]="0">Deactive</option>
                             </select>
                        
                         <div *ngIf="f.submitted && doj.invalid" class="invalid-feedback">
@@ -156,7 +155,7 @@
             </div>
            
             <div class="form-group">
-                <button class="btn btn-success">Save</button>
+                <button class="btn btn-success" (click)="SaveUpdateNewUser()">Save</button>
             </div>
         </form>
     </fieldset>

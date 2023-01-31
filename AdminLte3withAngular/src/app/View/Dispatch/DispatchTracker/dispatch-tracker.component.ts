@@ -2548,7 +2548,9 @@ export class DispatchTrackerComponent implements OnInit {
   //#region This Fuction Used to Add Update Dispatch Request
   SaveUpDateDispatchRequest() {
     try {
-      //this.IsSaveButtonDisable = true;
+
+      debugger
+      // this.IsSaveButtonDisable = true;
       jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
       objDispatchTrackingModel.DispatchTracker_Id = this.model.DisatchTrackeringId;
@@ -3154,6 +3156,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
+    debugger
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();

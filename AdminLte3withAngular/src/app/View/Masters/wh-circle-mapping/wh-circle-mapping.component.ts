@@ -144,6 +144,7 @@ export class WhCircleMappingComponent implements OnInit {
   /// Create by : Vishal, CreatedDate: 12/09/2022
   /// Descriiption : This function used for  bind Wh Name List.
   BindAllWhList() {
+    debugger
     try {
       var objParameter = new DropdownModel();
       objParameter.User_Id = this.UserId;

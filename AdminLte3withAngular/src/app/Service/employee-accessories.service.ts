@@ -2,8 +2,8 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DropdownModel, WebAPIConfig } from '../_Model/commonModel';
-import { SearchEmployeeAccessoriesModel } from '../_Model/employeeAccessoriesModel';
-import { EmpToolkitModel } from '../_Model/MastersModel';
+import {  ReturnToolkitItemModel, SearchEmployeeAccessoriesModel } from '../_Model/employeeAccessoriesModel';
+import { EmpToolkitModel, ReturnToolkitModel } from '../_Model/MastersModel';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
@@ -35,7 +35,7 @@ export class EmployeeAccessoriesService {
 
   SaveToolKitAccessories(objToolkitModel: SearchEmployeeAccessoriesModel): Observable<any> {
     let objBaseUrl = new WebAPIConfig();
-    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/SaveEmployeeToolKit", objToolkitModel);
+    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/SaveEmployeeToolKitAcr", objToolkitModel);
   }
 
   GetEditToolKitAccessories(objToolkitModel: SearchEmployeeAccessoriesModel): Observable<any> {
@@ -63,14 +63,24 @@ export class EmployeeAccessoriesService {
     return await this.httpclient.get(objBaseUrl.ApIUrl + "Get/GetAllEmployeeNameListBySiteId", { params: params }).toPromise();;
   }
 
+  //vishal, 17/03/2023
+  SaveReturnToolkitItem(objReturnToolkitModel: ReturnToolkitItemModel): Observable<any> {
+    let objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/SaveReturnToolkitItem", objReturnToolkitModel);
+  }
+
+  GetReturnToolkitItemList(objReturnToolkit: ReturnToolkitModel): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/GetToolkitReturnList", objReturnToolkit);
+  }
+
+  //end-vishal
   generateEmpAccessoriesPdf(data: any, action = 'open') {
-    debugger
+   
     let pdfData = data.Data[0];
     let pdfItemList = data.ItemData;
     let pdfRegData = data.RegData[0];
-    debugger
     let dynamicWHAddressList = JSON.parse(data.RegData[0].RegWHAddressList);
-    debugger
 
     let docDefinition = {
       pageSize: 'A4',

@@ -181,7 +181,6 @@ export class SendMailComponent implements OnInit {
   
 
   GetSendMailDetail() {
-  
     try {
       // this.Loader.show();  
       this.EmailData = [];
