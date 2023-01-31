@@ -1317,11 +1317,11 @@ export class StndetailComponent implements OnInit {
             //vishal, 05/12/2022
             if (this.model.ddlDespatchby == 1) {
               this.model.TranspoterName = data.Data[0].TrasporationName ?? "";
-              this.model.TransporterGSTNO = data.Data[0].TrasporationGSTNO ?? "";
+              this.model.TransporterGSTNo = data.Data[0].TrasporationGSTNO ?? "";
               this.model.VehicleNo = data.Data[0].VehicleNumber;
             } else {
               this.model.TranspoterName = "";
-              this.model.TransporterGSTNO = "";
+              this.model.TransporterGSTNo = "";
               this.model.VehicleNo = "";
             }
             //end-vishal
@@ -2521,8 +2521,6 @@ export class StndetailComponent implements OnInit {
             ]
           }
         },
-
-
         {
           margin: [-25, 0, 0, 0],
           border: [0, 0, 0, 0],
@@ -2686,6 +2684,11 @@ export class StndetailComponent implements OnInit {
             ]
           }
         },
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
       ],
 
       styles: {

@@ -283,3 +283,13 @@ export class UserRightModel {
     public Print: number;
     public Export: number;
 }
+
+export class DashBoardStockModel {
+    public CompanyId: number;
+    public ClientId: string
+    public WHId: string
+    public ItemId: string
+    public CapacityId: string
+    public EqpId: string
+    public flag: number
+}
