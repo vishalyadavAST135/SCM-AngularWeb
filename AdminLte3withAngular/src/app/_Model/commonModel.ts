@@ -283,30 +283,3 @@ export class UserRightModel {
     public Print: number;
     public Export: number;
 }
-
-// export class CircleNameModel {
-
-//     VendorArray: any;
-//     Parent_Id: string;
-//     Flag: string;
-//     Company_Id: number;
-//     User_Id: number;
-//     WHId: any;
-//     CircleArray:any;
-// }
-
-// export class CommonSiteSearch {
-//     UserId:number; 
-//     ItemClass:string;
-//     Item_Id: string;
-//     zoneId: any;
-    
-//     CapacityId_Id: string;
-//     State_Id: string;
-//     Flag: string;
-//     SRNStatus: string;
-    
-
-
-// }
-
