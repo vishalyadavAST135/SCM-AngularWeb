@@ -572,29 +572,30 @@
             </tbody>
           </table>
         </div>
-
         <br>
-
         <div class="row mb-1">
           <label class="col-form-label-xs col-sm-1">Dispatch by <span style="color:red;"
               class="Mandatoryfield"><b>*</b></span></label>
           <div class="col-sm-2">
-            <select class="form-control form-control-sm" [(ngModel)]="model.TrasporationMode"
-              (change)="ChangeDespatchby(model.TrasporationMode)">
-              <option class="dropdown-item" value="0">Select</option>
-              <option *ngFor="let item of TransModeDataList" [value]="item.Id">{{item.Name}}</option>
+            <select class="form-control form-control-sm" [(ngModel)]="model.ddlDespatchby"
+              (change)="ChangeDespatchby(model.ddlDespatchby)">
+              <option class="dropdown-item" value="1">By Transport</option>
+              <option class="dropdown-item" value="2">By Hand</option>
+              <option class="dropdown-item" value="3">By Courier</option>
+              <!-- <option class="dropdown-item" value="0">Select</option>
+              <option *ngFor="let item of TransModeDataList" [value]="item.Id">{{item.Name}}</option> -->
             </select>
           </div>
           <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter Name<span style="color:red;"
               class="Mandatoryfield"><b>*</b></span></label>
           <div class="col-sm-2" *ngIf="IsTransporter">
-            <input type="text" id="txtTransporter" autocomplete="off" [(ngModel)]="model.TrasporationName"
+            <input type="text" id="txtTransporter" autocomplete="off" [(ngModel)]="model.TranspoterName"
               (keypress)="keyPressTransporter()" class="form-control form-control-sm" placeholder="">
           </div>
           <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter GST No<span style="color: red;"
               class="Mandatoryfield"><b>*</b></span></label>
           <div class="col-sm-2" *ngIf="IsTransporter">
-            <input type="text" id="txtTransporterGSTNo" autocomplete="off" [(ngModel)]="model.TrasporationGSTNO"
+            <input type="text" id="txtTransporterGSTNo" autocomplete="off" [(ngModel)]="model.TransporterGSTNO"
               placeholder="" (keypress)="TransporteGSTNoKeyPress()" class="form-control form-control-sm" />
           </div>
 
@@ -642,7 +643,7 @@
           <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Vehicle No<span style="color:red;"
               class="Mandatoryfield"><b>*</b></span></label>
           <div class="col-sm-2" *ngIf="IsTransporter">
-            <input type="text" id="txtVehicleNo" autocomplete="off" [(ngModel)]="model.VehicleNumber"
+            <input type="text" id="txtVehicleNo" autocomplete="off" [(ngModel)]="model.VehicleNo"
               (keypress)="keyPressVehicleNo()" class="form-control form-control-sm" placeholder="">
           </div>
           <label class="col-form-label-xs col-sm-1">Material received by<span style="color:red;"

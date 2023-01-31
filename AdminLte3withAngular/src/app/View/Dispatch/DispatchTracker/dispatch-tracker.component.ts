@@ -300,11 +300,11 @@ export class DispatchTrackerComponent implements OnInit {
     modal.show();
 
   }
-    // show2(modalRef: ElementRef) {
-    //   const modal = new Modal(modalRef.nativeElement);
-    //   modal.show();
+  // show2(modalRef: ElementRef) {
+  //   const modal = new Modal(modalRef.nativeElement);
+  //   modal.show();
 
-    // }
+  // }
   //end-vishal
 
 
@@ -334,7 +334,7 @@ export class DispatchTrackerComponent implements OnInit {
     this._SiteServiceService.SearchSitesPanelSubject.subscribe(data => {
       this.SearchSitesPanelData = data;
     });
-    
+
   }
 
   ngOnInit(): void {
@@ -965,7 +965,9 @@ export class DispatchTrackerComponent implements OnInit {
       for (var j = 0; j < value; j++) {
         var oc = new CellNo();
         oc.Sequance = i.toString();
+        debugger
         var celllength = this.dynamicArray[this.indexv].GSerialNumbers.length;
+        debugger
         if (celllength > i) {
           // Error Comming
           oc.CellValue = this.dynamicArray[this.indexv].GSerialNumbers[i].CellNos[j].CellValue;
@@ -1070,44 +1072,44 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   validateItemData() {
+    let returnValue = 0;
     // change by Hemant Tyagi 26/09/2022
-    if (this.model.DisatchTrackeringId > 0
-      && this.model.TransferTypeId != PageActivity.Dis_VendorScrapSale) {
-      var returnValue = 0;
-      for (var i = 0; i < this.dynamicArray.length; i++) {
-        var ItemNameId = this.dynamicArray[i].ItemNameId
-        const result = this.SearchItemNameList.filter(element => {
-          return element.id === parseInt(ItemNameId);
-        });
-        var itmName = result[0].itemName;
-        if (this.IsMandatory(i) == true) {
-          if (this.dynamicArray[i].GSerialNumbers.length != this.dynamicArray[i].Qty) {
-            returnValue = 1;
-            this.IsError = true;
-            this.errorMessage = "Serial-No (" + parseInt(this.dynamicArray[i].Qty) + " -Qty) is required for " + itmName + " ";
-          }
-        }
-      }
-      return returnValue;
-    } else {
-      return 0;
+    if ((this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale)) {
+      returnValue = 0;
+    } else if ((
+      (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && this.model.GSTType == "1")
+      || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+      || this.model.TransferTypeId == PageActivity.Dis_VendorSale) && (this.model.DisatchTrackeringId > 0)) {
+      returnValue = this.serialNoValidation();
+    } else if (
+      (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && this.model.GSTType == "2")
+      || (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState)
+      || (this.model.TransferTypeId == PageActivity.Dis_WHWithinState)
+      || (this.model.TransferTypeId == PageActivity.Dis_Vendor)
+      || (this.model.TransferTypeId == PageActivity.Dis_RepairingCenter)
+      || (this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
+    ) {
+      returnValue = this.serialNoValidation();
     }
+    return returnValue;
   }
 
   //Add Stock validation by Hemant Tyagi  13/06/2022
   validateStockQty() {
-
-    var returnValue = 0;
+    let returnValue = 0;
     var DefaultySetValue = 48
-    if (this.model.TransferTypeId != PageActivity.Dis_CustomerReturn) {
+    if (this.model.TransferTypeId != PageActivity.Dis_CustomerReturn && this.model.DisatchTrackeringId == 0) {
+
       for (var i = 0; i < this.dynamicArray.length; i++) {
-        let FQty = (this.dynamicArray[i].FQty ?? 0);
-        let Qty = (this.dynamicArray[i].Qty ?? 0);
+        let Qty = 0, FQty = 0;
+        FQty = (this.dynamicArray[i].FQty ?? 0);
+        Qty = (this.dynamicArray[i].Qty ?? 0);
 
         var ItemNameId = this.dynamicArray[i].ItemNameId
         const resultItemList = this.SearchItemNameList.filter(element => {
           return element.id === parseInt(ItemNameId);
         });
+
         var itmName = resultItemList[0].itemName;
 
         if (itmName == 'BB' && this.dynamicArray[i].UnitName == '8') {
@@ -1120,7 +1122,7 @@ export class DispatchTrackerComponent implements OnInit {
 
         if (Qty > FQty && itmName != "MISC") {
           this.IsError = true;
-          this.errorMessage = "Dispatch(" + itmName + ") Qty can not be greater then stock Qty(" + this.dynamicArray[i].FQty + ")."
+          this.errorMessage = "Dispatch(" + itmName + ") Qty can not be greater then stock Qty(" + FQty + ")."
           returnValue = 1;
           return returnValue;
         }
@@ -1128,7 +1130,6 @@ export class DispatchTrackerComponent implements OnInit {
     }
     return returnValue;
   }
-
 
   IsMandatory(index: any) {
     var ItemNameId = this.dynamicArray[index].ItemNameId
@@ -1229,6 +1230,7 @@ export class DispatchTrackerComponent implements OnInit {
       }
     }
   }
+
   resetExcel() {
     this.inputExcelOther.nativeElement.value = "";
     this.inputExcelBB.nativeElement.value = "";
@@ -1261,7 +1263,6 @@ export class DispatchTrackerComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "DispatchItemReason", "Dispatch");
     }
   }
-
 
   ItemReason() {
     try {
@@ -1303,6 +1304,7 @@ export class DispatchTrackerComponent implements OnInit {
       console.log(Error.message)
     }
   }
+
   fnNextandPreviousDisable() {
     try {
       if (this.rowdatacurrentindex === 0) {
@@ -1378,6 +1380,7 @@ export class DispatchTrackerComponent implements OnInit {
   ClickHistory(Id: any, index: any) {
     this.OpenPreviousHistoryPopup(Id);
   }
+
   onClickCustomer(para: string) {
     if (para == "DelAll") {
       this.SelectedSearchCustomerList = [];
@@ -1386,6 +1389,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.model.CustomerId = this.SelectedSearchCustomerList.map(xx => xx.id).join(',')
     }
   }
+
   onClickDispatchType(para: string) {
     if (para == "DelAll") {
       this.SearchDispatchTypeList = [];
@@ -1415,7 +1419,6 @@ export class DispatchTrackerComponent implements OnInit {
 
 
   BindTransporterTypeDetail() {
-    ////
     try {
       var objdropdownmodel = new DropdownModel();
       objdropdownmodel.User_Id = this.UserId;
@@ -1500,6 +1503,7 @@ export class DispatchTrackerComponent implements OnInit {
       }
     })
   }
+
   //#region  Gett all tech and Coh Detail by Site Id
   GetAllTechCOHbySiteId(SiteId: any) {
     try {
@@ -1706,7 +1710,6 @@ export class DispatchTrackerComponent implements OnInit {
     }
   }
 
-
   ChangeVehicleType(VId: any) {
     this.model.LoadingCapcity = "";
     $("#txtVehicleType").css('border-color', '');
@@ -1719,7 +1722,6 @@ export class DispatchTrackerComponent implements OnInit {
   //#region  this are all function used for make, code,item etc change by id
 
   ChangeEditItemName(ItemNameId: any, index: any) {
-
     try {
       $('#tblOne > tbody  > tr').each(function () {
         var valueItem = $(this).find('.ItemName').val();
@@ -1911,6 +1913,7 @@ export class DispatchTrackerComponent implements OnInit {
       }
     });
   }
+
   ChangeEqupmnet(ItemId: any, index: any) {
     var FilterData = this.EquipmentTypeList.filter(
       m => m.id === parseInt(ItemId));
@@ -1922,11 +1925,14 @@ export class DispatchTrackerComponent implements OnInit {
           $(this).find('.EqType').css('border-color', '');
         }
       });
-
+      //Hemant Tyagi 29/12/2022
+      this.getClosingStock(index);
     } catch (Error) {
       console.log(Error.message)
     }
   }
+
+
 
   ChangeClient(ClientId: any, index: any) {
     $('#tblOne > tbody  > tr').each(function () {
@@ -1935,9 +1941,6 @@ export class DispatchTrackerComponent implements OnInit {
         $(this).find('.Client').css('border-color', '');
       }
     });
-
-
-
     var FilterDate = this.ClientList.filter(m => m.Id === parseInt(ClientId));
     this.dynamicArray[index].ClientName = FilterDate[0].Name;
     //abhi eska koi use nhi h future m hoga 2/3/2022
@@ -1957,8 +1960,8 @@ export class DispatchTrackerComponent implements OnInit {
             this.dynamicArray[index].FQty = data.Data[0].StockQty;
             this.Stockstrcount = data.Data[0].StockQty;
           } else {
-            this.dynamicArray[index].Qty = "";
-            this.dynamicArray[index].FQty = "";
+            this.dynamicArray[index].Qty = 0;
+            this.dynamicArray[index].FQty = 0;
           }
           this.dynamicArray[index].GSerialNumbers = [];
           // commite by hemant tyagi
@@ -1991,6 +1994,7 @@ export class DispatchTrackerComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAllStockQtyByItemCode", "DispatchTracker");
     }
   }
+
   //#endregion
   BindEditWHList() {
     try {
@@ -2244,7 +2248,6 @@ export class DispatchTrackerComponent implements OnInit {
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "BindStateCodeWHAdd", "WHTOSite");
     }
-
   }
 
   BindShippedWhAddess(whId: any) {
@@ -2414,12 +2417,12 @@ export class DispatchTrackerComponent implements OnInit {
   ChangeGSTType(Id: any) {
     this.model.ToSiteWHGSTIN = "";
     if (Id == 1) {
-      this.IsTaxInvoiceNoSameState = false;
+      //this.IsTaxInvoiceNoSameState = false;
       this.IsTaxInvoiceNo = true;
       this.model.ToSiteWHGSTIN = this.StateGSTNo;
       this.model.previewGStType = "AST GST";
     } else if (Id == 2) {
-      this.IsTaxInvoiceNoSameState = true;
+      //this.IsTaxInvoiceNoSameState = true;
       this.IsTaxInvoiceNo = false;
       this.model.ToSiteWHGSTIN = this.ClientGSTNo;
       this.model.previewGStType = "Customer GST";
@@ -2520,14 +2523,14 @@ export class DispatchTrackerComponent implements OnInit {
     } else {
 
       jQuery('#confirm').modal('show');
-
-
     }
   }
 
   //#region This Fuction Used to Add Update Dispatch Request
   SaveUpDateDispatchRequest() {
     try {
+
+      debugger
       // this.IsSaveButtonDisable = true;
       jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
@@ -2569,6 +2572,15 @@ export class DispatchTrackerComponent implements OnInit {
       }
 
       objDispatchTrackingModel.TaxInvoiceNo = this.model.TaxInvoiceNo;
+      //vishal, 03/12/2022
+      let taxInvoiceDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
+      if (taxInvoiceDate != "") {
+        objDispatchTrackingModel.TaxInvoiceDate = taxInvoiceDate.day + '/' + taxInvoiceDate.month + '/' + taxInvoiceDate.year;
+      } else {
+        objDispatchTrackingModel.TaxInvoiceDate = "";
+      }
+      //end-vishal
+
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
       objDispatchTrackingModel.AmountChargeable = this.model.AmountChargeable;
@@ -2615,22 +2627,13 @@ export class DispatchTrackerComponent implements OnInit {
       // var ExpDeliveryDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
       // objDispatchTrackingModel.ExpDeliveryDate = ExpDeliveryDate.day + '/' + ExpDeliveryDate.month + '/' + ExpDeliveryDate.year;
 
-      //vishal, 03/12/2022
-      let TaxInvoiceDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
-      if (TaxInvoiceDate != "") {
-        objDispatchTrackingModel.TaxInvoiceDate = TaxInvoiceDate.day + '/' + TaxInvoiceDate.month + '/' + TaxInvoiceDate.year;
-      } else {
-        objDispatchTrackingModel.TaxInvoiceDate = "";
-      }
-
-      //end-vishal
-
       let ExpDeliveryDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
-      if (ExpDeliveryDate != "") {
+      if (ExpDeliveryDate != "" && ExpDeliveryDate != null) {
         objDispatchTrackingModel.ExpDeliveryDate = ExpDeliveryDate.day + '/' + ExpDeliveryDate.month + '/' + ExpDeliveryDate.year;
       } else {
         objDispatchTrackingModel.ExpDeliveryDate = "";
       }
+
       // if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
       //   this.IsModelShow = false;} //vishal, 05/12/2022
 
@@ -2653,6 +2656,7 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           objDispatchTrackingModel.DispatchInstructionId = null;
         }
+        objDispatchTrackingModel.GSTTypeId = 0;
       }
       else if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
         // this.IsModelShow = true;//vishal, 05/12/2022
@@ -2686,7 +2690,6 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingModel.ShippedToStateName = this.model.WHState;
         objDispatchTrackingModel.ShippedToStateCode = this.model.StateCode;
         objDispatchTrackingModel.ShippedToGSTNO = this.model.GSTINNo;
-
       }
       else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter) {
         objDispatchTrackingModel.ToState_Id = this.model.EditStateId;
@@ -2839,13 +2842,9 @@ export class DispatchTrackerComponent implements OnInit {
 
           this.clearEditForm();
           alert('your data has been Succesfully with Document No-' + data.Remarks);
-
           this.GenerateDispatchPdfbyDispatchId(1)
-
           this.IsSaveButtonDisable = true;
-
           this.ClearAllUploadFile();
-
         } else if (data.Status == 2) {
           jQuery('#confirm').modal('hide');
           alert('your data update successfully');
@@ -2857,8 +2856,6 @@ export class DispatchTrackerComponent implements OnInit {
           alert(data.Remarks);
           this.IsSaveButtonDisable = false;
         }
-
-
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "SaveUpDateDispatchTrackingWhTosite", "WHTOSite");
       });
@@ -3031,6 +3028,7 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingModel.TransporterName = this.model.Name;
         objDispatchTrackingModel.PhoneNo = parseInt(this.model.PhoneNo);
       }
+
       objDispatchTrackingModel.TaxInvoiceNo = this.model.TaxInvoiceNo;
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
@@ -3042,8 +3040,13 @@ export class DispatchTrackerComponent implements OnInit {
       objDispatchTrackingModel.Pageflag = this.model.TransferTypeId;
 
       //vishal, 03/12/2022
-      var TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
-      objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;
+      let TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
+      if (TxtInvDate != "") {
+        objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;
+      } else {
+        objDispatchTrackingModel.TaxInvoiceDate = "";
+      }
+
       //end-vishal
       var ExpDeliveryDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
       objDispatchTrackingModel.ExpDeliveryDate = ExpDeliveryDate.day + '/' + ExpDeliveryDate.month + '/' + ExpDeliveryDate.year;
@@ -3134,7 +3137,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
-    
+    debugger
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();
@@ -3181,7 +3184,7 @@ export class DispatchTrackerComponent implements OnInit {
         objpara.CustomerId = this.model.CustomerId;
 
       }
-      
+
 
       // brahamjot kaur 23/6/2022
       if (this._Commonservices.checkUndefined(this.model.DINo) == '') {
@@ -3223,7 +3226,6 @@ export class DispatchTrackerComponent implements OnInit {
   //#region this function used edit Dispatch detail by Dispatch Id
 
   ShowDispatcTrackerDetail(e) {
-
     this.rowdatalength = this.rowData.length;
     this.rowdatacurrentindex = this.rowData.findIndex(function (item, i) {
       return item.Id === e.rowData.DisatchTrackeringId;
@@ -3235,11 +3237,9 @@ export class DispatchTrackerComponent implements OnInit {
     this.GetUserPageRight(this.DispatchTracker_Id);
     this.SearchDispatchTrackerEditListByDispatchId(e.rowData.DisatchTrackeringId);
     this.model.InCaseReason = "0";
-
   }
 
   SearchDispatchTrackerEditListByDispatchId(Id: any) {
-
     try {
       this.GetUserPageRight(Id);
       this.DispatchTypeHideShow = false;
@@ -3247,18 +3247,12 @@ export class DispatchTrackerComponent implements OnInit {
       this.ItemAddrowhideshow = true;
       this.IsPreviewhideandShow = false;
       this.IsBiltyValidationShowandhide = true;
-      // this.IsMailButtonShow = true;
       // call api by Dispatch Tracker Id.
-
-
+      this.IsItemListDisabled = true;
       let objModel = new SearchDispatchTrackerModel();
       objModel.DispatchTracker_Id = Id;
-      // this._objSendMailService._SetDispatchId(Id); //vishal, 14/12/2022
       this._MaterialMovementService.GetDispatchTrackerEditListByDispatchId(objModel).pipe(first()).subscribe(data => {
-
         this._objSendMailService._SetSendMailData(data.Data[0].DocumentFile); //vishal
-
-
         if (data.Status == 1) {
           this.IsDisabledPreviewGenratebutton = false;
           // bind 
@@ -3272,6 +3266,7 @@ export class DispatchTrackerComponent implements OnInit {
           }
 
           if (data.Data != null && data.Data != '') {
+            this.model.TransferTypeId = data.Data[0].IstransferTypeId;
             this.model.DisatchTrackeringId = data.Data[0].DisatchTrackeringId;
             this.TableId = data.Data[0].DisatchTrackeringId;
             this.ManueId = this.PageMenuId;
@@ -3280,14 +3275,6 @@ export class DispatchTrackerComponent implements OnInit {
             this.model.DocumentNo = data.Data[0].DocumentNo;
             var DDate = data.Data[0].DocumentDate.split('/');
             this.model.DocumentDate = { year: parseInt(DDate[2]), month: parseInt(DDate[1]), day: parseInt(DDate[0]) };
-            //vishal, 03/12/2022
-            if (data.Data[0].TaxInvoiceDate != null) {
-              var TxtInvDate = data.Data[0].TaxInvoiceDate.split('/');
-              this.model.TaxInvoiceDate = { year: parseInt(TxtInvDate[2]), month: parseInt(TxtInvDate[1]), day: parseInt(TxtInvDate[0]) };
-            } else {
-              this.model.TaxInvoiceDate = "";
-            }
-            //end-vishal
 
             if (data.Data[0].ExpDeliveryDate != null) {
               var ExpDelDate = data.Data[0].ExpDeliveryDate.split('/');
@@ -3311,36 +3298,83 @@ export class DispatchTrackerComponent implements OnInit {
             this.IsApprovalstatusbtnhideShow = false;
 
             // Change by Hemant Tyagi 20/10/2022
-            if (this.CompanyId == 4 || this.CompanyId == 1) {
+            if (this.CompanyId == 4) {
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
-                // this.IsItemListDisabled = true;
                 this.IsSaveButtonDisable = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
-                this.IsReceivedDetail = true;
                 this.IsRecivedButtonDisable = false;
               } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
                 this.IsSaveButtonDisable = true;
                 this.IsHideShowCancelBtn = false;
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
-                this.IsReceivedDetail = true;
                 this.IsRecivedButtonDisable = true;
               } else {
+                this.IsSaveButtonDisable = false;
+                this.IsHideShowCancelBtn = true;
+                this.IsPartialUpDateDispatchRequest = false;
+                this.IsReceivedHideShow = false;
+                this.IsRecivedButtonDisable = true;
+              }
+            } else if (this.CompanyId == 1) {
+              if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
+                  || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+                  || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
+                  || this.model.TransferTypeId == PageActivity.Dis_Vendor
+                  || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
+                  || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
+              ) {
                 this.IsSaveButtonDisable = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = true;
+                this.IsReceivedHideShow = true;
+                this.IsRecivedButtonDisable = false;
+              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
+                  || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+                  || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+                  || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+                ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
+              ) {
+                this.IsSaveButtonDisable = true;
+                this.IsHideShowCancelBtn = true;
+                this.IsPartialUpDateDispatchRequest = true;
+                this.IsReceivedHideShow = true;
+                this.IsRecivedButtonDisable = false;
+              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
+                this.IsSaveButtonDisable = true;
+                this.IsHideShowCancelBtn = false;
+                this.IsPartialUpDateDispatchRequest = true;
+                this.IsReceivedHideShow = true;
+                this.IsRecivedButtonDisable = true;
+              } else {
+                this.IsSaveButtonDisable = false;
+                this.IsHideShowCancelBtn = true;
+                this.IsPartialUpDateDispatchRequest = false;
                 this.IsReceivedHideShow = false;
-                this.IsReceivedDetail = false;
                 this.IsRecivedButtonDisable = true;
               }
-
-              // if (data.Data[0].IsApproved == 0 || data.Data[0].IsApproved == null) {
-              //   this.IsReceivedDetail = false;
-              //   this.IsReceivedHideShow = false;
-              // }
             }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
             // Change by Hemant Tyagi 20/10/2022            
             // else if (this.CompanyId == 1) {
@@ -3390,9 +3424,6 @@ export class DispatchTrackerComponent implements OnInit {
             // Change by Hemant Tyagi
             //this.model.DispatchInstructionId = data.Data[0].DispatchInstructionId;
             // this.model.DIStatusId = data.Data[0].DIStatusId; // brahamjot kaur 19/7/2022
-
-
-
 
             if (this.model.TrasporationMode == TransPortModeType.ByRoad) {
               this.model.TransporterId = data.Data[0].Transporter_Id;
@@ -3448,7 +3479,7 @@ export class DispatchTrackerComponent implements OnInit {
               this.ApproveStatusDataList = null;
             }
 
-            this.model.TransferTypeId = data.Data[0].IstransferTypeId;
+            // this.model.TransferTypeId = data.Data[0].IstransferTypeId;
             if (data.Data[0].DispatchFromId != null) {
               this.model.DispatchFrom = data.Data[0].DispatchFromId;
             } else {
@@ -3499,6 +3530,15 @@ export class DispatchTrackerComponent implements OnInit {
             }
 
             this.model.TaxInvoiceNo = data.Data[0].TaxInvoiceNO;
+            //vishal, 03/12/2022
+            if (data.Data[0].TaxInvoiceDate != null && data.Data[0].TaxInvoiceDate != "") {
+              var TxtInvDate = data.Data[0].TaxInvoiceDate.split('/');
+              this.model.TaxInvoiceDate = { year: parseInt(TxtInvDate[2]), month: parseInt(TxtInvDate[1]), day: parseInt(TxtInvDate[0]) };
+            } else {
+              this.model.TaxInvoiceDate = "";
+            }
+            //end-vishal
+
             if (data.Data[0].TaxInvoiceFile != "" && data.Data[0].TaxInvoiceFile != null) {
               this.IsDisabledTaxInvoiceDownload = true;
               this.IsTaxInvoiceFile = true;
@@ -3508,7 +3548,6 @@ export class DispatchTrackerComponent implements OnInit {
               this.IsTaxInvoiceFile = false;
             }
             this.model.TaxInvoicDocFile = data.Data[0].TaxInvoiceFile;
-
 
 
             this.model.ReceivedBy = data.Data[0].ReceivedBy;
@@ -3633,6 +3672,7 @@ export class DispatchTrackerComponent implements OnInit {
                   }
                 });
                 this.GetAllTechCOHbySiteId(data.Data[0].Site_Id);
+
                 this.model.ToSiteStateId = '' + data.Data[0].ToState_Id + '';
                 this.model.ToSiteStateCode = data.Data[0].ShippedToStateCode;
                 this.model.SiteId = data.Data[0].Site_Id;
@@ -3645,6 +3685,7 @@ export class DispatchTrackerComponent implements OnInit {
                 if (data.Data[0].GSTTypeId == 2) {
                   this.ClientGSTNo = data.Data[0].ShippedToGSTNO;
                 }
+
                 this.model.CompanyName = data.Data[0].CompanyName;
                 //////
                 if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
@@ -3652,16 +3693,20 @@ export class DispatchTrackerComponent implements OnInit {
                 } else {
                   this.model.GSTType = 0;
                 }
+
+
                 if (data.Data[0].FE_Tech != null && data.Data[0].FE_Tech != "") {
                   this.model.TECHFE = '' + data.Data[0].FE_Tech + '';
                 } else {
                   this.model.TECHFE = "0";
                 }
+
                 if (data.Data[0].COH_CI != null && data.Data[0].COH_CI != "") {
                   this.model.COHCI = '' + data.Data[0].COH_CI + '';
                 } else {
                   this.model.COHCI = "0";
                 }
+
                 if (data.Data[0].IsMultipleSite == true && data.Data[0].IsMultipleSite != null) {
                   try {
                     var objdropdownmodel = new DropdownModel();
@@ -3834,8 +3879,7 @@ export class DispatchTrackerComponent implements OnInit {
         }
         //vishal: 13/12/2022, desc: for mail button hide/show
         if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
-          || this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorSale ||
-          this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
+          || this.model.TransferTypeId == PageActivity.Dis_VendorSale || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
 
           this.IsMailButtonHide = false;
         } else if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
@@ -4186,7 +4230,7 @@ export class DispatchTrackerComponent implements OnInit {
         objdynamic.CorrectionEntryRemarks = ItemEditDataArr[i].CorrectionEntryRemarks;
         objdynamic.IsCorrectionEntryReason = ItemEditDataArr[i].IsCorrectionEntryReason;
         objdynamic.IsCorrectionCodeId = ItemEditDataArr[i].IsCorrectionCodeId;
-
+        debugger
         if (ItemEditDataArr[i].SerialNoList != null) {
           objdynamic.GSerialNumbers = JSON.parse(ItemEditDataArr[i].SerialNoList);
         } else {
@@ -4329,8 +4373,8 @@ export class DispatchTrackerComponent implements OnInit {
         // add by Hemant Tyagi 02/08/2022
         objdynamic.CustomerSiteId = ItemEditDataArr[i].CustomerSiteId;
         objdynamic.DIList_Id = ItemEditDataArr[i].DIList_Id;
-
         this.dynamicArray.push(objdynamic);
+        this.dynamicArray[i].FQty = (this.dynamicArray[i].Qty ?? 0)  //this.getClosingStock(i);
         this.fnBindItemGrossToatl();
         this.fnBindIGSTValueItemGrossToatal();
       }
@@ -4627,7 +4671,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsTransferTypeSite = false;
     this.IsTransferTypeWH = false;
     this.IsTransferTypeVender = false;
-    this.IsTaxInvoiceNoSameState = false;
+    //this.IsTaxInvoiceNoSameState = false;
     this.IsTaxInvoiceDateSameState = false; //vishal, 03/12/2022
     this.IsTransferTypeCenterRepaired = false;
   }
@@ -4654,7 +4698,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsTransferTypeVender = false;
       this.IsTaxInvoiceNo = false;
       this.IsTaxInvoiceDate = false; //vishal, 02/12/2022
-      this.IsTaxInvoiceNoSameState = true;
+      //this.IsTaxInvoiceNoSameState = true;
       this.IsTaxInvoiceDateSameState = true; //vishal, 03/12/2022
       this.IsTransferTypeSameState = true;
       this.IsTransferTypeOtherState = false;
@@ -4677,7 +4721,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsTransferTypeWH = false;
       this.IsTaxInvoiceNo = true;
       this.IsTaxInvoiceDate = true; //vishal, 02/12/2022
-      this.IsTaxInvoiceNoSameState = false;
+      //this.IsTaxInvoiceNoSameState = false;
       this.IsTaxInvoiceDateSameState = false; //vishal , 03/12/2022
       //this.IsRecivedbyandNo = true;
       // this.IsDisabledPreviewGenratebutton=true;
@@ -5343,7 +5387,6 @@ export class DispatchTrackerComponent implements OnInit {
       if (data.ItemData != null) {
         this.BindItemListArrayByCrnId(data.ItemData);
       }
-
     });
   }
 
@@ -5651,6 +5694,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.Correctioncolumnhideandshow = false;
     }
     objNewItemGrid.DIList_Id = 0;
+    objNewItemGrid.FQty = 0;
     this.dynamicArray.push(objNewItemGrid);
     return true;
   }
@@ -5659,7 +5703,6 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.dynamicArray.length == 1) {
       //this.toastr.error("Can't delete the row when there is only one row", 'Warning');  
       return false;
-
     } else {
       this.dynamicArray.splice(index, 1);
       //this.toastr.warning('Row deleted successfully', 'Delete row');  
@@ -5911,15 +5954,7 @@ export class DispatchTrackerComponent implements OnInit {
 
   PartialUpdateValidation() {
     var flag = 0;
-    // if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
-    //   if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-    //     $('#txtInvoiceDate').css('border-color', 'red');
-    //     $('#txtInvoiceDate').focus();
-    //     flag = 1;
-    //   } else {
-    //     $("#txtInvoiceDate").css('border-color', '');
-    //   }
-    // }
+
     //#region validation on Dispatch Details 
     if (this.model.Destination == "" || this.model.Destination == null) {
       $('#txtDestination').css('border-color', 'red');
@@ -6058,6 +6093,7 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.model.DisatchTrackeringId > 0 && this.IsTaxInvoiceFile == false) {
       if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
         if (this.model.GSTType == "1") {
+
           if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
             $('#txtTaxInvoiceNo').css('border-color', 'red');
             $('#txtTaxInvoiceNo').focus();
@@ -6065,10 +6101,21 @@ export class DispatchTrackerComponent implements OnInit {
           } else {
             $("#txtTaxInvoiceNo").css('border-color', '');
           }
+
+          if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
+            $('#txtInvoiceDate').css('border-color', 'red');
+            $('#txtInvoiceDate').focus();
+            flag = 1;
+          } else {
+            $("#txtInvoiceDate").css('border-color', '');
+          }
         } else {
           flag = 0;
         }
-      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
+      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+        || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+        || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
+
         if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
           $('#txtTaxInvoiceNo').css('border-color', 'red');
           $('#txtTaxInvoiceNo').focus();
@@ -6076,8 +6123,16 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           $("#txtTaxInvoiceNo").css('border-color', '');
         }
-      }
 
+        if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
+          $('#txtInvoiceDate').css('border-color', 'red');
+          $('#txtInvoiceDate').focus();
+          flag = 1;
+        } else {
+          $("#txtInvoiceDate").css('border-color', '');
+        }
+
+      }
 
       // validation on Taxinvoiceuplodfile
       if (this._Commonservices.checkUndefined(this.model.TaxInvoiceNo) != "") {
@@ -6089,36 +6144,6 @@ export class DispatchTrackerComponent implements OnInit {
       }
     }
     //#endregion Tax Invoice No
-
-
-    //#region  Tax Invoice Date, by: vishal, 3/12/2022
-
-   
-      // if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
-      //   if (this.model.GSTType == "1") {
-      //     if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-      //       $('#txtInvoiceDate').css('border-color', 'red');
-      //       $('#txtInvoiceDate').focus();
-      //       flag = 1;
-      //     } else {
-      //       $("#txtInvoiceDate").css('border-color', '');
-      //     }
-      //   } else {
-      //     flag = 0;
-      //   }
-      // } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
-      //   if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-      //     $('#txtInvoiceDate').css('border-color', 'red');
-      //     $('#txtInvoiceDate').focus();
-      //     flag = 1;
-      //   } else {
-      //     $("#txtInvoiceDate").css('border-color', '');
-      //   }
-      // }
-
-    //#endregion Tax Invoice Date
-
-
 
     // validation on DispatchFor/DispatchInstruction --change by Hemant tyagi 23/09/2022
     if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
@@ -6407,36 +6432,7 @@ export class DispatchTrackerComponent implements OnInit {
           } else {
             $("#txtTaxInvoiceNo").css('border-color', '');
           }
-        } else {
-          flag = 0;
-        }
-      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
-        if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
-          $('#txtTaxInvoiceNo').css('border-color', 'red');
-          $('#txtTaxInvoiceNo').focus();
-          flag = 1;
-        } else {
-          $("#txtTaxInvoiceNo").css('border-color', '');
-        }
-      }
 
-
-      // validation on Taxinvoiceuplodfile
-      if (this._Commonservices.checkUndefined(this.model.TaxInvoiceNo) != "") {
-        var TaxFile = this._Commonservices.checkUndefined(this.Taxinvoiceuplodfile);
-        if (TaxFile == "") {
-          flag = 1;
-          alert('Please Select Tax Invoice File');
-        }
-      }
-    }
-    //#endregion Tax Invoice No
-
-
-    //#region  Tax Invoice Date, by: vishal, 3/12/2022
-
-      if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
-        if (this.model.GSTType == "1") {
           if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
             $('#txtInvoiceDate').css('border-color', 'red');
             $('#txtInvoiceDate').focus();
@@ -6447,7 +6443,17 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           flag = 0;
         }
-      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
+      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+        || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+        || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
+        if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
+          $('#txtTaxInvoiceNo').css('border-color', 'red');
+          $('#txtTaxInvoiceNo').focus();
+          flag = 1;
+        } else {
+          $("#txtTaxInvoiceNo").css('border-color', '');
+        }
+
         if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
           $('#txtInvoiceDate').css('border-color', 'red');
           $('#txtInvoiceDate').focus();
@@ -6456,10 +6462,16 @@ export class DispatchTrackerComponent implements OnInit {
           $("#txtInvoiceDate").css('border-color', '');
         }
       }
-
-    //#endregion Tax Invoice Date
-
-
+      // validation on Taxinvoiceuplodfile
+      if (this._Commonservices.checkUndefined(this.model.TaxInvoiceNo) != "") {
+        var TaxFile = this._Commonservices.checkUndefined(this.Taxinvoiceuplodfile);
+        if (TaxFile == "") {
+          flag = 1;
+          alert('Please Select Tax Invoice File');
+        }
+      }
+    }
+    //#endregion Tax Invoice No
 
     // validation on SHIPPEDTO vendor releated filed for (Repaire,sale,scrap sale).
     if (this.model.TransferTypeId == PageActivity.Dis_Vendor
@@ -6528,8 +6540,6 @@ export class DispatchTrackerComponent implements OnInit {
     } else {
       $("#txtDestination").css('border-color', '');
     }
-
-
 
     //#region Transpotor/Bilty/Vehicle validation
     if (this.model.DisatchTrackeringId > 0 &&
@@ -6614,7 +6624,6 @@ export class DispatchTrackerComponent implements OnInit {
     }
     //#endregion Transpotor/Bilty/Vehicle validation
 
-
     //#region  EwayBill
     if (this.model.IsDispatch == true && this.model.DisatchTrackeringId > 0 && this.IsEwayBillfile == false) {
       if (this.model.ddlStateId == 29 && this.totalamount > AmountActivity.OtherState) {
@@ -6655,38 +6664,38 @@ export class DispatchTrackerComponent implements OnInit {
     //#endregion EwayBill
 
     //#region  Tax Invoice No    
-    if (this.model.DisatchTrackeringId > 0 && this.IsTaxInvoiceFile == false) {
-      if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
-        if (this.model.GSTType == "1") {
-          if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
-            $('#txtTaxInvoiceNo').css('border-color', 'red');
-            $('#txtTaxInvoiceNo').focus();
-            flag = 1;
-          } else {
-            $("#txtTaxInvoiceNo").css('border-color', '');
-          }
-        } else {
-          flag = 0;
-        }
-      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
-        if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
-          $('#txtTaxInvoiceNo').css('border-color', 'red');
-          $('#txtTaxInvoiceNo').focus();
-          flag = 1;
-        } else {
-          $("#txtTaxInvoiceNo").css('border-color', '');
-        }
-      }
+    //if (this.model.DisatchTrackeringId > 0 && this.IsTaxInvoiceFile == false) {
+    // if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
+    //   if (this.model.GSTType == "1") {
+    //     if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
+    //       $('#txtTaxInvoiceNo').css('border-color', 'red');
+    //       $('#txtTaxInvoiceNo').focus();
+    //       flag = 1;
+    //     } else {
+    //       $("#txtTaxInvoiceNo").css('border-color', '');
+    //     }
+    //   } else {
+    //     flag = 0;
+    //   }
+    // } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
+    //   if (this.model.TaxInvoiceNo == "" || this.model.TaxInvoiceNo == null) {
+    //     $('#txtTaxInvoiceNo').css('border-color', 'red');
+    //     $('#txtTaxInvoiceNo').focus();
+    //     flag = 1;
+    //   } else {
+    //     $("#txtTaxInvoiceNo").css('border-color', '');
+    //   }
+    // }
 
-      // validation on Taxinvoiceuplodfile
-      if (this._Commonservices.checkUndefined(this.model.TaxInvoiceNo) != "") {
-        var TaxFile = this._Commonservices.checkUndefined(this.Taxinvoiceuplodfile);
-        if (TaxFile == "") {
-          flag = 1;
-          alert('Please Select Tax Invoice File');
-        }
-      }
-    }
+    // validation on Taxinvoiceuplodfile
+    // if (this._Commonservices.checkUndefined(this.model.TaxInvoiceNo) != "") {
+    //   var TaxFile = this._Commonservices.checkUndefined(this.Taxinvoiceuplodfile);
+    //   if (TaxFile == "") {
+    //     flag = 1;
+    //     alert('Please Select Tax Invoice File');
+    //   }
+    // }
+    //}
     //#endregion Tax Invoice No
 
     // validation on DispatchFor/DispatchInstruction --change by Hemant tyagi 23/09/2022
@@ -6701,8 +6710,6 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         $("#txtDispatchFrom").css('border-color', '');
       }
-
-
 
       // validation on Dispatch Instruction --change by Hemant tyagi 23/09/2022
       if (this.selectedDIArr.length == 0 || this.selectedDIArr == undefined) {
@@ -7020,42 +7027,53 @@ export class DispatchTrackerComponent implements OnInit {
       }
     }
   }
-  //end-region vishal
-  // EmailData: any;
-  // EditPoId: any;
-  // GetSendMailDetail() {
-  //   debugger
-  
-  //   try {
-  //     // this.Loader.show();  
-  //     this.EmailData = [];
-  //     var objVendormodel = new VendorOrWhModel();
-  //     objVendormodel.Id = this.EditPoId;
-  //     objVendormodel.flag = 'EmailMaster';
-  //     this._Commonservices.getVendorOrWh(objVendormodel).subscribe(Email => {
-  //       debugger
-  //       if (Email.Status == 1) {
-  //         if (Email.Data != null || Email.Data != "") {
-  //           this.Loader.hide();
-  //           this.EmailData = Email.Data;
-  //           $('#custom-tabs-three-outbox-tab').css('background-color', '#2196f3');
-  //         }
-  //       } else {
-  //         this.Loader.hide();
-  //         $('#custom-tabs-three-outbox-tab').css('background-color', '#F9F9F9');
-  //       }
-
-  //     });
-  //   } catch (Error) {
-  //     var objWebErrorLogModel = new WebErrorLogModel();
-  //     objWebErrorLogModel.ErrorBy = this.UserId;
-  //     objWebErrorLogModel.ErrorMsg = Error.message;
-  //     objWebErrorLogModel.ErrorFunction = "GetSendMailDetail";
-  //     objWebErrorLogModel.ErrorPage = "Podetail";
-  //     this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
-  //   }
-  // }
 
 
+  getClosingStock(index: any) {
+    try {
+      var objStockQtyModel = new StockQtyModel();
+      objStockQtyModel.Client_Id = this.dynamicArray[index].ClientId;
+      objStockQtyModel.ItemCode_Id = this.dynamicArray[index].ItemId;
+      objStockQtyModel.WH_Id = this.model.ShippedfromWHId;
+      objStockQtyModel.Equp_Id = this.dynamicArray[index].EqTypeId;
+      objStockQtyModel.Company_Id = this.CompanyId;
+      objStockQtyModel.IsEdit = this.isEdit;
+      this._StockserviceService.GetAllStockQtyByItemCode(objStockQtyModel).pipe(first()).subscribe(data => {
+        if (data.Status = 1) {
+          if (data.Data != null) {
+            this.dynamicArray[index].FQty = data.Data[0].StockQty;
+          } else {
+            this.dynamicArray[index].FQty = 0;
+          }
+          this.dynamicArray[index].GSerialNumbers = [];
+        }
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "getClosingStock", "DispatchTracker");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "getClosingStock", "DispatchTracker");
+    }
+  }
+
+  serialNoValidation() {
+    let returnValue = 0;
+    for (var i = 0; i < this.dynamicArray.length; i++) {
+      var ItemNameId = this.dynamicArray[i].ItemNameId
+
+      const result = this.SearchItemNameList.filter(element => {
+        return element.id === parseInt(ItemNameId);
+      });
+
+      var itmName = result[0].itemName;
+      if (this.IsMandatory(i) == true) {
+        if (this.dynamicArray[i].GSerialNumbers.length != this.dynamicArray[i].Qty) {
+          returnValue = 1;
+          this.IsError = true;
+          this.errorMessage = "Serial-No (" + parseInt(this.dynamicArray[i].Qty) + " -Qty) is required for " + itmName + " ";
+          return returnValue;
+        }
+      }
+    }
+  }
 }
 

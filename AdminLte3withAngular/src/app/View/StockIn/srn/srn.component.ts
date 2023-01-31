@@ -530,7 +530,7 @@ export class SrnComponent implements OnInit {
       }
     });
   }
-  
+
   //#region Dispatch
   PreviewSRN() {
     this.IsSRNPreview = false;
@@ -542,7 +542,7 @@ export class SrnComponent implements OnInit {
     this.model.PreviewExpectedDate = this._Commonservices.ConvertDateFormat(this.model.ExpectedDate);
     //this.model.PreviewDispatchDate = this._Commonservices.ConvertDateFormat(this.model.DispatchDate);
     this.model.PreviewLRDate = this._Commonservices.ConvertDateFormat(this.model.LRdate);
-    
+
   }
 
   BackPreviewSRN() {
@@ -2084,8 +2084,12 @@ export class SrnComponent implements OnInit {
 
       objDispatchTrackingModel.TaxInvoiceNo = this.model.TaxInvoiceNo;
 
-      var TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
-      objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;//vishal, 03/12/2022
+      let TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
+      if (TxtInvDate != "") {
+        objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;//vishal, 03/12/2022
+      } else {
+        objDispatchTrackingModel.TaxInvoiceDate = "";
+      }
 
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
@@ -2436,9 +2440,15 @@ export class SrnComponent implements OnInit {
       }
 
       objDispatchTrackingModel.TaxInvoiceNo = this.model.TaxInvoiceNo;
-      
-      var TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
-      objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;//vishal, 03/12/2022
+
+      let TxtInvDate = this._Commonservices.checkUndefined(this.model.TaxInvoiceDate);
+      if (TxtInvDate != "") {
+        objDispatchTrackingModel.TaxInvoiceDate = TxtInvDate.day + '/' + TxtInvDate.month + '/' + TxtInvDate.year;//vishal, 03/12/2022
+      } else {
+        objDispatchTrackingModel.TaxInvoiceDate = "";
+      }
+
+
 
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
@@ -3125,7 +3135,7 @@ export class SrnComponent implements OnInit {
               this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
             }
             //vishal, 03/12/2022
-            if (data.Data[0].TaxInvoiceDate != null) {
+            if (data.Data[0].TaxInvoiceDate != null && data.Data[0].TaxInvoiceDate != "") {
               var TxtInvDate = data.Data[0].TaxInvoiceDate.split('/');
               this.model.TaxInvoiceDate = { year: parseInt(TxtInvDate[2]), month: parseInt(TxtInvDate[1]), day: parseInt(TxtInvDate[0]) };
             } else {
@@ -4543,7 +4553,7 @@ export class SrnComponent implements OnInit {
   ReceivedByKeyPress() {
     $("#txtReceivedBy").css('border-color', '');
   }
-  onKeypressInvoicedDate(event: any){
+  onKeypressInvoicedDate(event: any) {
     $("#txtReceivedBy").css('border-color', '');
   }
   // ReceiverNoKeyPress()
@@ -4752,6 +4762,10 @@ export class SrnComponent implements OnInit {
           alert('Please Select Bilty Document');
         }
       }
+
+
+
+
     }
     if (this.model.Destination == "" || this.model.Destination == null) {
       $('#txtDestination').css('border-color', 'red');
@@ -4861,7 +4875,6 @@ export class SrnComponent implements OnInit {
 
   Validation() {
     var flag = 0;
-
     if (this.model.ddlStateId == "null" || this.model.ddlStateId == "0") {
       $('#txtddlStateId').css('border-color', 'red');
       $('#txtddlStateId').focus();
@@ -4977,8 +4990,6 @@ export class SrnComponent implements OnInit {
       $("#txtShippedfromWHId").css('border-color', '');
     }
 
-
-
     if (this.model.ReqAndRecvedClickId == 1) {
       if (this.model.DisatchTrackeringId > 0) {
         if (this.model.EwayBillNo != "" && this.IsEwayBillfile == false) {
@@ -5001,6 +5012,14 @@ export class SrnComponent implements OnInit {
           } else {
             $("#txtTaxInvoiceNo").css('border-color', '');
           }
+
+          if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
+            $('#txtInvoiceDate').css('border-color', 'red');
+            $('#txtInvoiceDate').focus();
+            flag = 1;
+          } else {
+            $("#txtInvoiceDate").css('border-color', '');
+          }
         } else {
           flag = 0;
         }
@@ -5016,32 +5035,6 @@ export class SrnComponent implements OnInit {
     }
 
     //#region  Tax Invoice Date, by: vishal, 3/12/2022
-
-    if (this.model.DisatchTrackeringId > 0 && this.IsTaxInvoiceFile == false) {
-      if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
-        if (this.model.GSTType == "1") {
-          if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-            $('#txtInvoiceDate').css('border-color', 'red');
-            $('#txtInvoiceDate').focus();
-            flag = 1;
-          } else {
-            $("#txtInvoiceDate").css('border-color', '');
-          }
-        } else {
-          flag = 0;
-        }
-      } else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState) {
-        if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-          $('#txtInvoiceDate').css('border-color', 'red');
-          $('#txtInvoiceDate').focus();
-          flag = 1;
-        } else {
-          $("#txtInvoiceDate").css('border-color', '');
-        }
-      }
-
-    }
-
     if (this.model.Note == "" || this.model.Note == null) {
       $('#txtNote').css('border-color', 'red');
       // $('#txtNote').focus();

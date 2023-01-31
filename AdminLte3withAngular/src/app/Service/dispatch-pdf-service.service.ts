@@ -678,12 +678,13 @@ export class DispatchPdfServiceService {
         objdynamic.TotalAmount = ItemEditDataArr[i].TotalAmount.toFixed(2);
         objdynamic.Discount = ItemEditDataArr[i].Discount.toFixed(2);
         objdynamic.GetTotalAmount = ItemEditDataArr[i].GrandTotalAmt.toFixed(2);
-        objdynamic.SerialNo = ItemEditDataArr[i].ManufacturerSerialNo;
+        objdynamic.SerialNo = ItemEditDataArr[i].ManufacturerSerialNo;        
         objdynamic.IGST = ItemEditDataArr[i].IGST;
         objdynamic.IGSTValue = ItemEditDataArr[i].IGSTValue;
-        objdynamic.CGST = ItemEditDataArr[i].SGST;
-        objdynamic.CGST = ItemEditDataArr[i].CGST;
+        objdynamic.SGST = ItemEditDataArr[i].SGST;
         objdynamic.RateSGST = ItemEditDataArr[i].RateSGST;
+        objdynamic.CGST = ItemEditDataArr[i].CGST;
+        objdynamic.CGSTRate = ItemEditDataArr[i].CGSTRate;        
         this.dynamicArrayDispatchPdf.push(objdynamic);
         this.fnBindItemGrossTotal();
       }
@@ -2470,13 +2471,11 @@ export class DispatchPdfServiceService {
             ]
           }
         },
-
-
         {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['4%', '31.1%', '4%', '6%', '5.9%', '6%', '8%', '5%', '5%', '5%', '4%', '7%', '9%'],
+            widths: ['4%', '30.1%', '4%', '6%', '5.9%', '6%', '8%','4%','5%', '4%', '5%', '4%', '5%', '9%'],
             body: [
               [
                 { text: 'S.No', bold: true, },
@@ -2484,12 +2483,12 @@ export class DispatchPdfServiceService {
                 { text: 'HSN', bold: true, alignment: 'center' },
                 { text: 'Qty', bold: true, alignment: 'center' },
                 { text: 'Unit', bold: true, alignment: 'center' },
-                // { text: 'EquType', bold: true, alignment: 'center' }, 
                 { text: 'Rate', bold: true, alignment: 'center' },
                 { text: 'Amount', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
                 { text: 'CGST', bold: true, alignment: 'center' },
-                { text: 'Rate', bold: true, alignment: 'center' },
-                { text: 'SGST', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
+                { text: 'SGST', bold: true, alignment: 'center' },                
                 { text: 'IGST(%)', bold: true, alignment: 'center' },
                 { text: 'IGST', bold: true, alignment: 'center' },
                 { text: 'Grand Total', bold: true, alignment: 'center' }],
@@ -2499,17 +2498,25 @@ export class DispatchPdfServiceService {
                 { text: p.HSN, alignment: 'center' },
                 { text: p.Qty, alignment: 'center' },
                 { text: p.UnitName, alignment: 'center' },
-                // { text: p.EqpType, alignment: 'center' }, 
-                { text: p.Rate, alignment: 'center' }, { text: p.TotalAmount, alignment: 'center' }, { text: p.CGST, alignment: 'center' }, { text: p.RateSGST, alignment: 'center' }, { text: p.SGST, alignment: 'center' }, { text: p.IGSTValue, alignment: 'center' }, { text: p.IGST, alignment: 'center' }, { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
+                { text: p.Rate, alignment: 'center' }, 
+                { text: p.TotalAmount, alignment: 'center' },                 
+                { text: p.CGSTRate, alignment: 'center' }, 
+                { text: p.CGST, alignment: 'center' }, 
+                { text: p.RateSGST, alignment: 'center' }, 
+                { text: p.SGST, alignment: 'center' },                 
+                { text: p.IGSTValue, alignment: 'center' }, 
+                { text: p.IGST, alignment: 'center' }, 
+                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
               // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
               [{},
               { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true },
               { text: '' },
               { text: `${this.model.totalSumPOQuantity}`, alignment: 'center', bold: true },
               { text: '' },
-              // { text: '' }, 
-              { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
-
+              { text: '' }, 
+              { text: '' }, { text: '' }, { text: '' }, { text: '' }, 
+              { text: '' }, { text: '' }, { text: '' }, 
+              { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
             ]
           }
         },
