@@ -2135,6 +2135,11 @@ async GetUserPageRight(id:number) {
             ]
           }
         },
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
       ],
 
       styles: {

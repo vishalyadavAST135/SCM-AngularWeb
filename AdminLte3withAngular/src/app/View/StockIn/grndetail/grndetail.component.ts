@@ -1333,6 +1333,11 @@ export class GRNDetailComponent implements OnInit {
             ]
           }
         },
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
       ],
 
       styles: {
@@ -1733,6 +1738,11 @@ export class GRNDetailComponent implements OnInit {
             ]
           }
         },
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
       ],
 
       styles: {
@@ -3862,7 +3872,6 @@ export class GRNDetailComponent implements OnInit {
   //#endregion
   //#region  GRN  Detail Save 
   SaveGRNCRNDetail() {
-    debugger
     if (this.dynamicArray.length < 1) {
       alert('Please select at least one Item');
       return false;
@@ -3895,7 +3904,7 @@ export class GRNDetailComponent implements OnInit {
           } else {
             objSaveGRNCRNModelDetail.PoId = this.PoeditId;
           }
-        }
+        }        
         var SDate = checkUndefined(this.model.Podate);
         objSaveGRNCRNModelDetail.Podate = SDate.day + '/' + SDate.month + '/' + SDate.year;
         objSaveGRNCRNModelDetail.CompanyId = this.CompanyId;
@@ -3971,8 +3980,9 @@ export class GRNDetailComponent implements OnInit {
           objSaveGRNCRNModelDetail.DispatchDate = GrnSrnDispatchDate.day + '/' + GrnSrnDispatchDate.month + '/' + GrnSrnDispatchDate.year;
         } else {
           objSaveGRNCRNModelDetail.DispatchDate = null;
-        }
+        }        
         objSaveGRNCRNModelDetail.Remarks = this.model.Remarks;
+        
         if (this.model.GRNById == 1) {
           objSaveGRNCRNModelDetail.Flag = "1";
         } else if (this.model.GRNById == 2) {
@@ -4084,9 +4094,11 @@ export class GRNDetailComponent implements OnInit {
           }
           this.GrndynamicItemArray.push(objGRNDynamicItemGrid)
         }
+
         objSaveGRNCRNModelDetail.GRNItemDetailList = this.GrndynamicItemArray;
         var CurrentDate = this.datePipe.transform(Date(), "yyyyMMddhhmmss");
         var formdata = new FormData();
+        
         if (this.InvChallanEditFile == 1) {
           formdata.append('Challanfile', this.ChallanUploadFile, 'GRNInvoice' + this.model.ChallanNo + CurrentDate + this.ChallanUploadFile.name);
         } else if (this.InvChallanEditFile == 0) {

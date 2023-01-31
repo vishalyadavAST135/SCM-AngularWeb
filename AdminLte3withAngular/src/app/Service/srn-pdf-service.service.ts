@@ -448,7 +448,6 @@ export class SrnPdfServiceService {
           text: `${this.model.PdfHeaderName}`,
           style: 'header'
         },
-
         {
           margin: [0, 0, 0, 0],
           table: {
@@ -1224,13 +1223,11 @@ export class SrnPdfServiceService {
             ]
           }
         },
-
-
         {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['5%', '20%', '6%', '7%', '5.5%', '8%', '10%', '8.3%', '10%', '13%', '10%'],
+            widths: ['5%', '30%', '6%', '7%', '5.5%', '8%', '10%', '8.3%', '10%', '13%'],
             body: [
               [
                 { text: 'S.No', bold: true, fontSize: 9 },
@@ -1243,7 +1240,7 @@ export class SrnPdfServiceService {
                 { text: 'Amount', bold: true, alignment: 'center', fontSize: 9 },
                 { text: 'Discount', bold: true, alignment: 'center', fontSize: 9 },
                 { text: 'Grand Total', bold: true, alignment: 'center', fontSize: 9 },
-                { text: 'Site Id', bold: true, alignment: 'center', fontSize: 9 }
+                // { text: 'Site Id', bold: true, alignment: 'center', fontSize: 9 }
               ],
               // change by Hemant Tyagi 04/09/2022
               ...this.dynamicArrayDispatchPdf.map(p => (
@@ -1256,8 +1253,8 @@ export class SrnPdfServiceService {
                 { text: p.Rate, alignment: 'center', fontSize: 8 },
                 { text: p.TotalAmount, alignment: 'center', fontSize: 8 },
                 { text: p.Discount, alignment: 'center', fontSize: 8 },
-                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center', fontSize: 8 },
-                { text: p.CustomerSiteId, alignment: 'center', fontSize: 6 }
+                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center', fontSize: 8 }
+                // { text: p.CustomerSiteId, alignment: 'center', fontSize: 6 }
                 ])),
               //[{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' },{ text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
               [{},
@@ -1272,8 +1269,8 @@ export class SrnPdfServiceService {
               {
                 text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹',
                 bold: true, alignment: 'center'
-              },
-              { text: '' }
+              }
+              // { text: '' }
               ]
             ]
           }
@@ -2217,7 +2214,7 @@ export class SrnPdfServiceService {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['4%', '20.1%', '4%', '5%', '5.9%', '5%', '6%', '8%', '5%', '5%', '5%', '5%', '5%', '8%', '9%'],
+            widths: ['4%', '29.1%', '4%', '5%', '5.9%', '5%', '6%', '8%', '5%', '5%', '5%', '5%', '5%', '8%'],
             body: [
               [
                 { text: 'S.No', bold: true, },
@@ -2233,8 +2230,8 @@ export class SrnPdfServiceService {
                 { text: 'SGST', bold: true, alignment: 'center' },
                 { text: 'Rate(%)', bold: true, alignment: 'center' },
                 { text: 'IGST', bold: true, alignment: 'center' },
-                { text: 'Grand Total', bold: true, alignment: 'center' },
-                { text: 'SiteId', bold: true, alignment: 'center' }
+                { text: 'Grand Total', bold: true, alignment: 'center' }
+                // { text: 'SiteId', bold: true, alignment: 'center' }
               ],
               ...this.dynamicArrayDispatchPdf.map(p => ([
                 { text: p.RowId },
@@ -2250,8 +2247,8 @@ export class SrnPdfServiceService {
                 { text: p.SGST, alignment: 'center' },
                 { text: p.IGSTValue, alignment: 'center' },
                 { text: p.IGST, alignment: 'center' },
-                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' },
-                { text: p.CustomerSiteId, alignment: 'center' }
+                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }
+                // { text: p.CustomerSiteId, alignment: 'center' }
               ])),
               // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' },{ text: '' }, { text: '' }, { text: '' }, { text: '' }],
               [{},
@@ -2270,8 +2267,8 @@ export class SrnPdfServiceService {
               {
                 text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹',
                 bold: true, alignment: 'center'
-              },
-              { text: '' }
+              }
+              // { text: '' }
               ]
             ]
           }

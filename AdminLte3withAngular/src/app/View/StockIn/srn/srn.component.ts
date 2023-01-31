@@ -275,8 +275,9 @@ export class SrnComponent implements OnInit {
     this.UserName = objUserModel.UserName;
     this.IsApprovalstatusbtnhideShow = false;
     this.ArrayRoleId = objUserModel.Role_Id.split(',');
-    for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {
-      if (this.ArrayRoleId[i] == UserRole.UserRoleId) {
+    
+    for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {      
+      if (this.ArrayRoleId[i] == UserRole.UserRoleId || this.ArrayRoleId[i]==UserRole.SCMHo) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == "14") {
         this.SRNEditUserRoleId = this.ArrayRoleId[i];
@@ -284,9 +285,11 @@ export class SrnComponent implements OnInit {
         this.RoleCorrectionEntry = true;
       }
     }
+
     if (objUserModel == null || objUserModel == "null") {
       this.router.navigate(['']);
     }
+
     var objCompanyModel = new CompanyModel();
     objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
     this.CompanyId = objCompanyModel.Company_Id;
@@ -500,6 +503,7 @@ export class SrnComponent implements OnInit {
     this._Commonservices.GetUserPageRight(this.UserId, MenuName.SRN).subscribe(data => {
       if (data.Status == 1) {
         console.log(data);
+        debugger
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
@@ -2061,8 +2065,14 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.DriverName = this.model.DriverName;
         objDispatchTrackingModel.PhoneNo = this.model.DriverPhoneNo;
         objDispatchTrackingModel.GRNo = this.model.GRNo;
+
         var GRNoDate = this._Commonservices.checkUndefined(this.model.GRDate);
-        objDispatchTrackingModel.GRDate = GRNoDate.day + '/' + GRNoDate.month + '/' + GRNoDate.year;
+        if (GRNoDate != "") {
+          objDispatchTrackingModel.GRDate = GRNoDate.day + '/' + GRNoDate.month + '/' + GRNoDate.year;
+        }else{
+          objDispatchTrackingModel.GRDate="";
+        }
+
       } else if (this.model.TrasporationMode == TransPortModeType.ByHand) {
         objDispatchTrackingModel.CodeAndNo = this.model.EmployeeCode;
         objDispatchTrackingModel.TransporterName = this.model.EmployeeName;
@@ -3081,10 +3091,10 @@ export class SrnComponent implements OnInit {
             } else {
               this.model.ddlVehicleType = 0;
             }
-
+              debugger
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
             if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-              if (this.UserRoleId == UserRole.UserRoleId) {
+              if (this.UserRoleId == UserRole.UserRoleId || this.UserRoleId == UserRole.SCMHo) {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsReadonlyField = true;
@@ -3239,7 +3249,7 @@ export class SrnComponent implements OnInit {
             } else if (this.model.TrasporationMode == TransPortModeType.Other) {
               this.model.Name = data.Data[0].TrasporationName;
               this.model.PhoneNo = data.Data[0].PhoneNo;
-            }
+             }
             if (data.Data[0].IstransferTypeId != null || data.Data[0].IstransferTypeId != "") {
               if (this.model.TransferTypeId == PageActivity.Srn_SiteWithinState) {
                 this.model.SiteId = data.Data[0].Site_Id;

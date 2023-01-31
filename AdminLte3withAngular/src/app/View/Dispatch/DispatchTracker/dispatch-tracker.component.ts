@@ -1334,17 +1334,30 @@ export class DispatchTrackerComponent implements OnInit {
     ];
   }
 
-  ChangeSite() {
+  ChangeSite(index: number) {
     try {
+      let siteId = 0;
+      if (this.dynamicArray[index].SiteId == 0 || this.dynamicArray[index].SiteId == null) {
+        siteId = this.model.siteId;
+      } else {
+        siteId = this.dynamicArray[index].SiteId;
+      }
+
       var objdropdownmodel = new DropdownModel();
       objdropdownmodel.User_Id = this.UserId;
-      objdropdownmodel.Parent_Id = this.model.SiteId;
+      objdropdownmodel.Parent_Id = siteId.toString();
       objdropdownmodel.Other_Id = this.model.ShippedfromWHId;
       objdropdownmodel.Company_Id = this.CompanyId;
       objdropdownmodel.Flag = 'Dispatch';
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
+          
+          let ItemId=this.dynamicArray[index].ItemNameId;
+          this.OpenPreviousHistoryPopup(ItemId);
+        }else{
+          jQuery("#PreviousHistory").modal('hide');
+          jQuery("#NoPreviousHistory").modal('show');     
         }
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "GetAllPreviousDataBySiteId", "WHTOSite");
@@ -1352,16 +1365,15 @@ export class DispatchTrackerComponent implements OnInit {
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAllPreviousDataBySiteId", "WHTOSite");
     }
-
-
   }
 
-  OpenPreviousHistoryPopup(value: any) {
+  OpenPreviousHistoryPopup(itemId: any) {
     var PreviousHistoryData = null;
     var value1 = this._Commonservices.checkUndefined(this.PreviousDataHistoryData)
     if (value1 != '') {
       PreviousHistoryData = this.PreviousDataHistoryData.filter(
-        m => m.ItemMaster_Id === parseInt(value));
+        m => m.ItemMaster_Id === parseInt(itemId));
+
       if (PreviousHistoryData != null && PreviousHistoryData != '') {
         this.PreviousDatarowData = PreviousHistoryData;
         jQuery("#PreviousHistory").modal('show');
@@ -1377,7 +1389,13 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ClickHistory(Id: any, index: any) {
-    this.OpenPreviousHistoryPopup(Id);
+    // hemant Tygai 18/01/2023    
+    if( this.model.TransferTypeId==PageActivity.Dis_SiteWithinState 
+      || this.model.TransferTypeId==PageActivity.Dis_SiteOtherState){
+      this.ChangeSite(index);
+    }
+
+    //this.OpenPreviousHistoryPopup(Id);
   }
 
   onClickCustomer(para: string) {
@@ -2376,7 +2394,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.ClientName = items.ClientName;
     this.model.Destination = items.DistrictName;
     this.ClientGSTNo = items.GSTNo;
-    this.ChangeSite();
+    //this.ChangeSite(this.model.SiteId);
     this.GetAllTechCOHbySiteId(this.model.SiteId);
 
   }
@@ -2519,8 +2537,10 @@ export class DispatchTrackerComponent implements OnInit {
     } else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
+    } else if (this.validationDICustomerSiteId() == 1) {
+      setTimeout(function () { this.IsError = false; }, 3000);
+      return false;
     } else {
-
       jQuery('#confirm').modal('show');
     }
   }
@@ -3355,23 +3375,6 @@ export class DispatchTrackerComponent implements OnInit {
               }
             }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             // Change by Hemant Tyagi 20/10/2022            
             // else if (this.CompanyId == 1) {
             //   if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
@@ -3638,7 +3641,6 @@ export class DispatchTrackerComponent implements OnInit {
                   this.model.IsMultipleSite = data.Data[0].IsMultipleSite;
                   this.model.EmployeeId = "0";
                 }
-
                 //hemant Tyagi current 02/08/2022
                 this.GetAllDispatchInstructionNoEdit(this.model.ShippedfromWHId, Id, data.Data[0].DispatchInstructionId);
 
@@ -3792,7 +3794,6 @@ export class DispatchTrackerComponent implements OnInit {
                 this.model.CustomerAddress = data.Data[0].CustomerAddress;
                 this.model.CustomerGSTIN = data.Data[0].ShippedToGSTNO;
                 this.model.OtherStateCode = data.Data[0].ShippedToStateCode;
-
               }
               else if (this.model.TransferTypeId == PageActivity.Dis_Vendor
                 || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
@@ -3828,7 +3829,6 @@ export class DispatchTrackerComponent implements OnInit {
                   this.model.RadioId = data.Data[0].VenAddressId;
                 }
 
-
                 this.model.VendorCode = data.Data[0].VendorCode;
                 this.model.VenGSTIN = data.Data[0].VenderGSTINNo;
                 this.model.VendorAddress = data.Data[0].VenderAddress;
@@ -3852,7 +3852,6 @@ export class DispatchTrackerComponent implements OnInit {
                 //change by Hemant Tyagi 18/06/2022
               }
             }
-
           }
           this.CorrectionItemCodeList = JSON.parse(data.Data[0].CorrectionItemCodeList);
           if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
@@ -4367,6 +4366,7 @@ export class DispatchTrackerComponent implements OnInit {
         }
 
         // add by Hemant Tyagi 02/08/2022
+        objdynamic.SiteId = ItemEditDataArr[i].SiteId;
         objdynamic.CustomerSiteId = ItemEditDataArr[i].CustomerSiteId;
         objdynamic.DIList_Id = ItemEditDataArr[i].DIList_Id;
         this.dynamicArray.push(objdynamic);
@@ -5476,9 +5476,6 @@ export class DispatchTrackerComponent implements OnInit {
       this.fnBindItemGrossToatl();
     }
 
-
-
-
     //this.fnBindItemGrossToatl();
   }
 
@@ -5645,6 +5642,7 @@ export class DispatchTrackerComponent implements OnInit {
     objNewItemGrid.ItemNameId = "0";
     objNewItemGrid.ItemMakeId = "0";
     objNewItemGrid.ItemId = "0";
+    objNewItemGrid.SiteId = 0;
     objNewItemGrid.SiteName = "";
     objNewItemGrid.CustomerSiteId = "";
     objNewItemGrid.ReasonCode = "";
@@ -6846,6 +6844,7 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         $("#ddlDispatchType_" + icount).css('border-color', '');
       }
+
       if (this.model.DisatchTrackeringId == 0) {
         if (this.dynamicArray[icount].ClientId == "0") {
           $('#ddlClient_' + icount).css('border-color', 'red');
@@ -7071,5 +7070,24 @@ export class DispatchTrackerComponent implements OnInit {
       }
     }
   }
-}
 
+  validationDICustomerSiteId() {
+    let returnStatus = 0;
+    if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+      || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
+
+      returnStatus = 1;
+      for (var i = 0; i < this.dynamicArray.length; i++) {
+        if (this.dynamicArray[i].CustomerSiteId == this.model.HideCustomerId) {
+          returnStatus = 0;
+        }
+      }
+    }
+
+    if (returnStatus == 1) {
+      this.IsError = true;
+      this.errorMessage = "CustomerSiteId don't match with Dispatch Instruction(CustomerSiteId)";
+    }
+    return returnStatus;
+  }
+}

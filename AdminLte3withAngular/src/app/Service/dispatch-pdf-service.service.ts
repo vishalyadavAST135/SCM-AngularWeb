@@ -2621,9 +2621,6 @@ export class DispatchPdfServiceService {
           ]
         }
       ],
-
-
-
       styles: {
         header: {
           fontSize: 10,

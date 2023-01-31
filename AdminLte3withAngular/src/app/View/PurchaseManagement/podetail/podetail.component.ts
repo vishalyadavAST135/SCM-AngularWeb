@@ -1643,6 +1643,7 @@ export class PodetailComponent implements OnInit {
           objdynamic.RowId = this.ItemPdfEditData[i].RowId;
           objdynamic.ItemCode = this.ItemPdfEditData[i].ItemCode;
           objdynamic.ItemName = this.ItemPdfEditData[i].ItemName;
+          objdynamic.Month = this.ItemPdfEditData[i].WMonth;
           objdynamic.UnitName = this.ItemPdfEditData[i].UnitName;
           objdynamic.Rate = parseFloat(this.ItemPdfEditData[i].Rate).toFixed(3);
           objdynamic.Qty = this.ItemPdfEditData[i].Qty;
@@ -2038,12 +2039,33 @@ export class PodetailComponent implements OnInit {
                     style: 'TableHeader',
                     table: {
                       headerRows: 1,
-                      widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                      widths: ['auto', '*', 'auto', 'auto','auto', 'auto', 'auto', 'auto', 'auto'],
                       body: [
-                        [{ text: 'S.No', bold: true }, { text: 'Description of Goods', bold: true, alignment: 'center' }, { text: 'HSN Code', bold: true, alignment: 'center' }, { text: 'Part No', bold: true, alignment: 'center' }, { text: 'UOM', bold: true, alignment: 'center' }, { text: 'Quantity', bold: true, alignment: 'center' }, { text: 'Rate', bold: true, alignment: 'center' }, { text: 'Amount', bold: true, alignment: 'center' }],
-                        ...this.dynamicArrayPOPdf.map(p => ([{ text: p.RowId }, { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] }, { text: p.HSN, alignment: 'center' }, { text: p.ItemCode, alignment: 'center' }, { text: p.UnitName, alignment: 'center' }, { text: p.POQty, alignment: 'center' }, { text: this._Commonservices.thousands_separators(p.Rate), alignment: 'center' }, { text: this._Commonservices.thousands_separators(p.TotalAmount), alignment: 'center' }])),
-                        [{}, { text: '\n\n', colSpan: 1, margin: [0, test, 0, 0] }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
-                        [{}, { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true }, { text: '' }, { text: '' }, { text: '' }, { text: `${this.PurchaseOrderPdfData.Data[0].Quantity}`, alignment: 'center', bold: true }, { text: '' },
+                        [{ text: 'S.No', bold: true }, 
+                        { text: 'Description of Goods', bold: true, alignment: 'center' }, 
+                        { text: 'HSN Code', bold: true, alignment: 'center' }, 
+                        { text: 'Part No', bold: true, alignment: 'center' },
+                        { text: 'Warranty Month', bold: true, alignment: 'center' }, 
+                        { text: 'UOM', bold: true, alignment: 'center' }, 
+                        { text: 'Quantity', bold: true, alignment: 'center' }, 
+                        { text: 'Rate', bold: true, alignment: 'center' }, 
+                        { text: 'Amount', bold: true, alignment: 'center' }],
+                        ...this.dynamicArrayPOPdf.map(p => ([
+                          { text: p.RowId }, 
+                          { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] }, 
+                          { text: p.HSN, alignment: 'center' }, 
+                          { text: p.ItemCode, alignment: 'center' }, 
+                          { text: p.Month, alignment: 'center' }, 
+                          { text: p.UnitName, alignment: 'center' }, 
+                          { text: p.POQty, alignment: 'center' }, 
+                          { text: this._Commonservices.thousands_separators(p.Rate), alignment: 'center' }, 
+                          { text: this._Commonservices.thousands_separators(p.TotalAmount), alignment: 'center' }])),
+                        [{}, { text: '\n\n', colSpan: 1, margin: [0, test, 0, 0] }, 
+                        { text: '' },{ text: '' }, 
+                        { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
+                        [{}, { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true },
+                         { text: '' },{ text: '' },
+                          { text: '' }, { text: '' }, { text: `${this.PurchaseOrderPdfData.Data[0].Quantity}`, alignment: 'center', bold: true }, { text: '' },
                         { text: this._Commonservices.thousands_separators(`${this.PurchaseOrderPdfData.Data[0].GrossTotal.toFixed(2)}`) + `${PdfCurranyType}`, bold: true }]
                       ]
                     }
@@ -2194,8 +2216,13 @@ export class PodetailComponent implements OnInit {
                       ]
                     }
                   },
-
-
+                  
+                  {
+                    // add by Hemant Tyagi
+                    columns: [
+                      { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+                    ]
+                  }
                 ]
               }],
             ]
@@ -2653,12 +2680,35 @@ export class PodetailComponent implements OnInit {
                       //   return (row + 1) * 25;
                       // },
                       headerRows: 1,
-                      widths: ['auto', '*', 'auto', 'auto', 'auto', 'auto', 'auto'],
+                      widths: ['auto', '*', 'auto','auto','auto', 'auto', 'auto', 'auto', 'auto'],
                       body: [
-                        [{ text: 'S.No', bold: true }, { text: 'Description of Goods', bold: true, alignment: 'center' }, { text: 'Part No', bold: true, alignment: 'center' }, { text: 'UOM', bold: true, alignment: 'center' }, { text: 'Quantity', bold: true, alignment: 'center' }, { text: 'Rate', bold: true, alignment: 'center' }, { text: 'Amount', bold: true, alignment: 'center' }],
-                        ...this.dynamicArrayPOPdf.map(p => ([{ text: p.RowId }, { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] }, { text: p.ItemCode, alignment: 'center' }, { text: p.UnitName, alignment: 'center' }, { text: p.POQty, alignment: 'center' }, { text: this._Commonservices.thousands_separators(p.Rate), alignment: 'center' }, { text: this._Commonservices.thousands_separators(p.TotalAmount), alignment: 'center' }])),
-                        [{}, { text: '\n\n', colSpan: 1 }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
-                        [{}, { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true }, { text: '' }, { text: '' }, { text: `${this.PurchaseOrderPdfData.Data[0].Quantity}`, alignment: 'center', bold: true }, { text: '' },
+                        [{ text: 'S.No', bold: true }, 
+                        { text: 'Description of Goods', bold: true, alignment: 'center' }, 
+                        { text: 'HSN Code', bold: true, alignment: 'center' }, 
+                        { text: 'Part No', bold: true, alignment: 'center' }, 
+                        { text: 'Warranty Month', bold: true, alignment: 'center' }, 
+                        { text: 'UOM', bold: true, alignment: 'center' }, 
+                        { text: 'Quantity', bold: true, alignment: 'center' }, 
+                        { text: 'Rate', bold: true, alignment: 'center' }, 
+                        { text: 'Amount', bold: true, alignment: 'center' }],
+                        ...this.dynamicArrayPOPdf.map(p => ([
+                          { text: p.RowId }, 
+                          { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] }, 
+                          { text: p.HSN, alignment: 'center' }, 
+                          { text: p.ItemCode, alignment: 'center' }, 
+                          { text: p.Month, alignment: 'center' }, 
+                          { text: p.UnitName, alignment: 'center' }, 
+                          { text: p.POQty, alignment: 'center' }, 
+                          { text: this._Commonservices.thousands_separators(p.Rate), alignment: 'center' }, 
+                          { text: this._Commonservices.thousands_separators(p.TotalAmount), alignment: 'center' }
+                        ])),
+                        [{}, { text: '\n\n', colSpan: 1 }, { text: '' },{ text: '' },{ text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
+                        [{}, 
+                          { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true }, 
+                          { text: '' },{ text: '' }, 
+                          { text: '' },{ text: '' }, 
+                          { text: `${this.PurchaseOrderPdfData.Data[0].Quantity}`, alignment: 'center', bold: true }, 
+                          { text: '' },
                         { text: this._Commonservices.thousands_separators(`${this.PurchaseOrderPdfData.Data[0].GrossTotal.toFixed(2)}`) + `${PdfCurranyType}`, bold: true }]
                       ]
                     }
@@ -2810,9 +2860,14 @@ export class PodetailComponent implements OnInit {
                     }
                   },
 
-
+                  {
+                    // add by Hemant Tyagi
+                    columns: [
+                      { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+                    ]
+                  }
                 ]
-              }],
+              }]              
             ]
           },
 
@@ -2845,7 +2900,6 @@ export class PodetailComponent implements OnInit {
                   return 0;
               }
             },
-
           },
         },
         pageBreakBefore: function (currentNode, followingNodesOnPage, nodesOnNextPage, previousNodesOnPage) {

@@ -20,9 +20,9 @@
     /* position: fixed !important; */
     z-index: auto !important;
     /* top: 0px;
-  left: 0px;
-  will-change: transform;
-  transform: translate(863px, 84px); */
+    left: 0px;
+    will-change: transform;
+    transform: translate(863px, 84px); */
   }
 
   .ChildCSS {
@@ -1006,8 +1006,8 @@
                     </div>
 
                     <!--vishal--->
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice Date<span
-                        style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTaxInvoiceNo">Tax Invoice Date
+                      <span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2" *ngIf="IsTaxInvoiceNo">
                       <div class="input-group" (mouseenter)="onKeypressInvoicedDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate"
@@ -3366,8 +3366,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" [disabled]="loading"
-          (click)="UpadateCancelSRN()">Save
+        <button type="button" class="btn btn-success" [disabled]="loading" (click)="UpadateCancelSRN()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
       </div>
