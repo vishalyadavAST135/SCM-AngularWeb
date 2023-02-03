@@ -263,7 +263,7 @@ export class SrnComponent implements OnInit {
   ngOnInit(): void {
     this.model.TransporterId = "";
     this.model.SRNFrom = "0";
-    this.model.SRNType = 2;
+    this.model.SRNType = 0;
     this.model.ReasonId = "0"
     this.model.IsActiveCancel = 2;
     this.model.CustomerId = "0";
@@ -3101,18 +3101,18 @@ export class SrnComponent implements OnInit {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsReadonlyField = true;
-                this.IsSaveButtonDisable = true;
+                //this.IsSaveButtonDisable = true;
                 this.IsCancelButtonDisable = false;
               } else {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = false;
                 this.IsReadonlyField = true;
-                if (data.Data[0].IsReceived == 1) {
-                  this.IsSaveButtonDisable = true;
-                  this.IsPartialUpDateSRNRequest = true;
-                } else {
-                  this.IsSaveButtonDisable = false;
-                }
+              }
+              if (data.Data[0].IsReceived == 1) {
+                this.IsSaveButtonDisable = true;
+                this.IsPartialUpDateSRNRequest = true;
+              } else {
+                this.IsSaveButtonDisable = false;
               }
             } else {
               this.IsItemListDisabled = false;
