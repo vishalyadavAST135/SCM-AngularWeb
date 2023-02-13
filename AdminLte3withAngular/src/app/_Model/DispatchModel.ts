@@ -74,6 +74,8 @@ export class DispatchTrackingModel
     DispatchInstructionId:string;
     DIStatusId:any;
     TaxInvoiceDate: string //vishal, 03/12/2022
+    DispatchNoId:number
+   
 
 }
 export class DispatchTrackingItemDetialModel
@@ -177,6 +179,7 @@ export class SearchDispatchTrackerModel extends CommonSearchPanelModel
     DINo:string; //Brahamjot kaur 23/6/2022
     CustomerSiteId:string;
     WHStateId: number; //vishal
+    DispatchNoId:number
 }
 
 // Brahamjot kaur 22/6/2022

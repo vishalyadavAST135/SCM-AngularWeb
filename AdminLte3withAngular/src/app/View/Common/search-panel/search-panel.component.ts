@@ -66,7 +66,7 @@ export class SearchPanelComponent implements OnInit {
   @Input() IsHiddenSearchCustomer: any = true;
   ClientList: any;
   minDate: { year: number; month: number; day: number; };
-  
+  IsTimeDisable: boolean = true; //vishal, 10/02/2023
 
   constructor(private SearchPanel: SearchpanelService, private _Commonservices: CommonService, private datePipe: DatePipe,) { }
   ngOnInit(): void {
@@ -361,11 +361,13 @@ export class SearchPanelComponent implements OnInit {
   }
 
   changeTimePeriod(TimePeriodVal: string) {
+    this.IsTimeDisable = true;
     var sfDate = new Date();
     var stDate = new Date();
     var fromDate = "";
     var toDate = "";
     if (TimePeriodVal == 'Tod') {
+      this.IsTimeDisable = true;
       toDate = this.datePipe.transform(sfDate, "yyyy/MM/dd");
       this.model.StartDateModel = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
       this.model.EndDateModel = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
@@ -421,6 +423,7 @@ export class SearchPanelComponent implements OnInit {
       this.objCommonSearchPanelModel.Enddate = toDate;
       this.SearchPanel.SearchPanelDataChanges(this.objCommonSearchPanelModel);
     } else if (TimePeriodVal == 'Dsd') {
+      this.IsTimeDisable = false;
       this.model.StartDateModel = null;
       this.model.EndDateModel = null;
 

@@ -142,10 +142,10 @@
                                             &nbsp; <button type="submit" class="btn btn-sm btn-success"
                                                 (click)="createNew()"><i class="fa fa-plus"></i>
                                                 New </button>
-                                            &nbsp;<button type="button" class="btn btn-sm btn-success" 
+                                            &nbsp;<button type="button" class="btn btn-sm btn-success"
                                                 (click)="conformPopup()"><i class="fa fa-save"></i> Save</button>
-                                                
-                                                
+
+
 
                                         </div>
                                     </div>
@@ -166,7 +166,8 @@
                                                             <div class="input-group">
                                                                 <input type="text" id="toolKitName_"
                                                                     [(ngModel)]="objEmpToolkitModel.ToolkitName"
-                                                                    placeholder="Enter toolkit name" [readonly]="this.isEditable" 
+                                                                    placeholder="Enter toolkit name"
+                                                                    [readonly]="this.isEditable"
                                                                     class="form-control form-control-sm" />
                                                             </div>
                                                         </div>
@@ -216,9 +217,8 @@
                                                     <td (click)="deleteRow(i)" style="width:20px;">
                                                         <i class="fa fa-trash" title="Delete"></i>
                                                     </td>
-                                                    <td style="width:80px;">
-                                                        <select style="width:80px;"
-                                                            class="form-control form-control-sm ItemName"
+                                                    <td style="width:60px;">
+                                                        <select class="form-control form-control-sm ItemName"
                                                             id="ddlItemNameId_{{i}}"
                                                             [(ngModel)]="dynamicArray[i].ItemNameId"
                                                             [ngStyle]="{'border-color': submitted ? 'red':'none'}"
@@ -230,9 +230,8 @@
                                                         </select>
                                                     </td>
                                                     <td style="width:80px;">
-                                                        <select style="width:80px;"
-                                                            class="form-control form-control-sm ItemMake"
-                                                            id="ddlItemMake_{{i}}" 
+                                                        <select class="form-control form-control-sm ItemMake"
+                                                            id="ddlItemMake_{{i}}"
                                                             [ngStyle]="{'border-color': submitted ? 'red':'none'}"
                                                             (change)="changeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"
                                                             [(ngModel)]="dynamicArray[i].ItemMakeId">
@@ -243,8 +242,7 @@
                                                         </select>
                                                     </td>
                                                     <td style="width:80px;">
-                                                        <select style="width:80px;"
-                                                            class="form-control form-control-sm ItemCode"
+                                                        <select class="form-control form-control-sm ItemCode"
                                                             id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                                                             (change)="changeEditItemCode(dynamicArray[i].ItemId,i)"
                                                             [ngStyle]="{'border-color': submitted ? 'red':'none'}">
@@ -258,10 +256,10 @@
 
                                                     <td style="width:280px;">
                                                         <textarea [(ngModel)]="dynamicArray[i].ItemDescription"
-                                                            class="form-control form-control-sm" type="text" 
+                                                            class="form-control form-control-sm" type="text"
                                                             style="text-align:center;"> </textarea>
                                                     </td>
-                                                    <td style="width:50px;">
+                                                    <td style="width:40px;">
                                                         <select class="form-control form-control-sm UnitName"
                                                             id="ddlUnitName_{{i}}"
                                                             [(ngModel)]="dynamicArray[i].UnitName"
@@ -273,12 +271,11 @@
                                                             </option>
                                                         </select>
                                                     </td>
-                                                    <td style="width:80px;">
-                                                        <input class="form-control form-control-sm Qty"
-                                                            id="txtQty_{{i}}" autocomplete="off"
+                                                    <td style="width:60px;">
+                                                        <input  class="form-control form-control-sm Qty"
+                                                            id="txtQty_{{i}}" autocomplete="off" 
                                                             [(ngModel)]="dynamicArray[i].Qty" appCopyPastNumFloatValue
-                                                            type="text" style="text-align:center;"
-                                                             />
+                                                            type="text" style="text-align:center;" />
                                                     </td>
                                                 </tr>
                                                 <tr *ngIf="ItemAddrowhideshow">
@@ -316,8 +313,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-success" [disabled]="loading" 
-                    (click)="addUpdateToolkitDetial()" >Save
+                <button type="button" class="btn btn-success" [disabled]="loading"
+                    (click)="addUpdateToolkitDetial()">Save
                     <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
                 </button>
             </div>

@@ -107,7 +107,7 @@ export class EmployeesAccessoriesComponent implements OnInit {
     Flag: "", ToolkitItemList: [], SWHId: "0", SWHStateId: "0",
     EmpAddress: "", Designation: "", MobileNo: "", CircleId: 0, Circle:"0"
   };
- 
+  //objSearchReturnToolkitModel={Id:0}
 
   TechDataList: any[] = [];
   UniqueItemkeyword = 'UserName';
@@ -122,7 +122,6 @@ export class EmployeesAccessoriesComponent implements OnInit {
   EmpCodeList: any[] = []; //vishal
   IsReceivedHideShow: boolean = false;
   IsHideShowCancelBtn: boolean = false;
-
   SearchCircleList: any[] = [];
   // SelectedCircleList: any[] = [];
 
@@ -159,7 +158,8 @@ export class EmployeesAccessoriesComponent implements OnInit {
     //this.model.CircleId = 0;
     this.model.EqpType = "0";
     this.model.Qty = "";
-    this.GetReturnToolkitItemList('List')
+    this.model.ReturnQty = "";
+    //this.GetReturnToolkitItemList('List')
 
     this.columnDefs = [
       {
@@ -183,8 +183,9 @@ export class EmployeesAccessoriesComponent implements OnInit {
       { headerName: 'Item Name', field: 'ItemName', width: 100, resizable: true },
       { headerName: 'CreatedBy', field: 'CreatedBy', width: 100, resizable: true }
     ];
+
     this.columnDefs2 = [
-     
+      { headerName: 'Item Name', field: 'ItemCodeId', width: 150 },
       { headerName: 'Return Eqp Type', field: 'EqpTypeId', width: 150 },
       { headerName: 'Return Qty', field: 'Qty', width: 110, sortable: true },
       { headerName: 'Return By', field: 'CreatedBy', width: 110, sortable: true },
@@ -937,32 +938,40 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
   //vishal, 17/03/2023, Desc: For Save Return Item
 
+  EqTypeId = 0;
+  Qty=0
   returnPopup(Id:any) {
-    console.log(Id)
+      console.log(Id)
+    this.dynamicArray.filter((item: any, i) => {
+      if(item.Id==Id) {
+        this.EqTypeId = item.EqTypeId;
+        this.Qty= item.Qty
+        // console.log(this.Qty)
+      }
+    })
     jQuery('#return').modal('show'); 
-    //this.SaveReturnToolkitItem()
 
   }
 
    SaveReturnToolkitItem() {
+    debugger
      jQuery('#return').modal('hide');
     try {
       let objReturnToolkitModel = new ReturnToolkitItemModel();
-      objReturnToolkitModel.Id = this.objEmpToolkitModel.Id;
       objReturnToolkitModel.UserId = this.UserId;
-      //objReturnToolkitModel.Qty = this.model.ReturnQty;
 
       let ReturnToolkitItemList: ReturnToolkitItemdt[] = [];
       for (let i = 0, len = this.dynamicArray.length; i < len; i++) {
         let objReturnToolkitItemList = new ReturnToolkitItemdt();
         objReturnToolkitItemList.Id = this.dynamicArray[i].Id;
-        objReturnToolkitItemList.Qty = parseInt(this.dynamicArray[i].Qty);
+        objReturnToolkitItemList.ItemCodeId = parseInt(this.dynamicArray[i].ItemId);
+        objReturnToolkitItemList.Qty = this.model.ReturnQty;
         objReturnToolkitItemList.EqpTypeId = parseInt(this.dynamicArray[i].EqTypeId);
         ReturnToolkitItemList.push(objReturnToolkitItemList)
       }
-
       objReturnToolkitModel.ReturnToolkitItemList = ReturnToolkitItemList;
-      //console.log(JSON.stringify(objReturnToolkitModel))
+      
+      console.log(JSON.stringify(objReturnToolkitModel))
       this._EmployeeAccessoriesService.SaveReturnToolkitItem(objReturnToolkitModel).subscribe(data => {
         alert(data.Remarks);
         this.clearReturnForm();
@@ -980,21 +989,20 @@ export class EmployeesAccessoriesComponent implements OnInit {
 
   clearReturnForm(){
     this.model.EqpType = "0";
-    this.model.Qty = "0";
-    
+    this.model.ReturnQty = "0";
+   
   }
 
   //vishal, 23/01/2023 desc:for return toolkit item list
-   GetReturnToolkitItemList(para: string) {
- 
+   GetReturnToolkitItemList(para:any) {
+ debugger
     try {
-      var objPara = new ReturnToolkitModel();
-      objPara.Id = this.objEmpToolkitModel.Id;
-      objPara.UserId = this.objEmpToolkitModel.UserId;
-     
-       this._EmployeeAccessoriesService.GetReturnToolkitItemList(objPara).subscribe(data => {
+      let objReturnToolkitModel = new ReturnToolkitItemModel();
+      //objReturnToolkitModel.Id = objReturnToolkitModel.WHEmpAcrId;
+debugger
+       this._EmployeeAccessoriesService.GetReturnToolkitItemList(objReturnToolkitModel).subscribe(data => {
+        debugger
         if (data.Status == 1) {
-          
             if (data.Data != null) {
               this.ReturnToolkitItem = data.Data;
             } else {

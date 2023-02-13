@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { from } from 'rxjs';
 import { CommonService } from 'src/app/Service/common.service';
 import { UserManagementService } from 'src/app/Service/user-management.service';
 import { newUser } from 'src/app/_Model/UserManagementModel';
@@ -20,6 +21,7 @@ export class NewUserComponent implements OnInit {
   isNewUser: boolean = false;
   @Input() UserDataList = [];
   @Output() disabledButtons = new EventEmitter();
+  
   constructor(
     private UserManagementService: UserManagementService,
     private _Commonservices: CommonService) {

@@ -734,9 +734,10 @@
             <div class="modal-header">
                 <h4 class="modal-title">Return Item !</h4>
             </div>
-            <div class="modal-body" *ngFor="let dynamic of dynamicArray; let i = index">
+            <div class="modal-body">
+                <!-- *ngFor="let dynamic of dynamicArray; let i = index" -->
                 <div class="row">
-                    <div class="col-sm-8">
+                    <div class="col-sm-9">
                         <div class="row" style="margin-left:3px">
                             <div class="col-sm-2">
                                 <label class="col-form-label-xs">Return Qty<span style="color: red;"
@@ -744,20 +745,30 @@
                             </div>
                             <div class="col-sm-2">
                                 <input type="text" class="form-control form-control-sm" id="" placeholder="Qty"
-                                [(ngModel)]="dynamicArray[i].Qty" >
+                                [(ngModel)]="model.ReturnQty" >
+                                
                             </div>
 
                             <div class="col-sm-2">
                                 <label class="col-form-label-xs">Eqp Type<span style="color: red;"
                                         class="Mandatoryfield"><b>*</b></span></label>
                             </div>
-                            <div class="col-sm-5">
+                            <div class="col-sm-3">
                                 <select class="form-control form-control-sm" id="ddlEqpType" 
-                                [(ngModel)]="dynamicArray[i].EqTypeId">
+                                [(ngModel)]="EqTypeId">
                                     <option class="dropdown-item" [value]="0">Select</option>
                                     <option *ngFor="let item of EquipmentTypeList" [value]="item.id">{{item.itemName}}
                                     </option>
                                 </select>
+                            </div>
+
+                            <div class="col-sm-2">
+                                <label class="col-form-label-xs">Total Qty</label>
+                            </div>
+                            <div class="col-sm-1">
+                                    <input type="text" class="form-control form-control-sm" id="" placeholder="Qty"
+                                [(ngModel)]="Qty" readonly>
+                            
                             </div>
                         </div>
                        
@@ -787,3 +798,4 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+</div>

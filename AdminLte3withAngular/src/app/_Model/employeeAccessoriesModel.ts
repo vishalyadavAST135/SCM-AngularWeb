@@ -34,16 +34,17 @@ export class ToolkitAccessoriesItemDet {
 export class ReturnToolkitItemModel{
     Id: number;
     UserId: number;
-    EqpTypeId: number;
-    Qty: number;
+    WHEmpAcrId: number
     ReturnToolkitItemList: ReturnToolkitItemdt[] = [];  
 }
 
 export class ReturnToolkitItemdt{
     Id: number;
+    ItemCodeId: number;
     Qty: number;
     EqpTypeId: number;
    
 }
 
 //end-vishal
+

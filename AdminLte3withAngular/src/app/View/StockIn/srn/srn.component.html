@@ -106,7 +106,7 @@
               </div>
               <div class="col-sm-2">
                 <select class="form-control form-control-sm" id="txtVoucher" [(ngModel)]="model.SRNType">
-                  <option class="dropdown-item" value=2>Select </option>
+                  <option class="dropdown-item" value=0>Select </option>
                   <option class="dropdown-item" value=0>Request</option>
                   <option class="dropdown-item" value=1>Received</option>
                 </select>
@@ -123,7 +123,7 @@
               </div>
             </div>
             <div class="row mb-1" style="margin-left:3px">
-               <div class="col-sm-1">
+              <div class="col-sm-1">
                 <label class="col-form-label-xs">Customer </label>
               </div>
               <div class="col-sm-2">
@@ -131,15 +131,15 @@
                   [settings]="MultidropdownSettings" (onDeSelectAll)="onClickCustomer('DelAll')"
                   (ngModelChange)="onClickCustomer('')">
                 </angular2-multiselect>
-              </div> 
+              </div>
               <div class="col-sm-6">
                 <app-site-panel class="ChildCSS"></app-site-panel>
               </div>
-             
-            </div>
-            
 
-            <div class="row"> 
+            </div>
+
+
+            <div class="row">
               <div class="col-sm-12" style="background-color:#28a745;">
                 <div class="btn-group btn-group-sm">
                   <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch"
@@ -302,12 +302,24 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row mb-1">
+                      <div class="row mb-1" *ngIf="IsTransferTypeSite">
                         <div class="col-sm-12">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-2">Regd.Office</label>
                             <div class="col-sm-10">
                               <textarea rows="2" placeholder="" tabindex="4" [(ngModel)]="model.RegdOffice" readonly
+                                class="form-control form-control-sm"></textarea>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-1"  *ngIf="IsTransferTypeOtherSite">
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Regd.Office </label>
+                            <div class="col-sm-10">
+                              <textarea rows="2" placeholder="" tabindex="4" [(ngModel)]="model.SiteRegdOffice" readonly
                                 class="form-control form-control-sm"></textarea>
                             </div>
 
@@ -351,6 +363,7 @@
                           </div>
                         </div>
                       </div>
+                      
                     </fieldset>
 
 
@@ -411,7 +424,7 @@
                             </div>
                           </div>
                         </div>
-                        
+
                         <input type="hidden" [(ngModel)]="model.HideCustomerId" />
                         <div class="col-sm-6">
                           <div class="row">
@@ -688,7 +701,7 @@
                                 class="Mandatoryfield"><b></b></span></label>
                             <div class="col-sm-10">
                               <div class="input-group">
-                                <input type="text" id="txtToCompanyName" autocomplete="off" [disabled]="IsReadonlyField"
+                                <input type="text" id="txtToCompanyName" (keypress)="ToCompanyNameKeyPress()" autocomplete="off" [disabled]="IsReadonlyField"
                                   placeholder="" [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
                               </div>
                             </div>
@@ -1025,13 +1038,33 @@
                     </div>
                     <!--vishal--->
 
-
-
+                    <!--by:vishal, desc: for autocomplete dispatch no-->
                     <label class="col-form-label-xs col-sm-1">Dispatch No</label>
                     <div class="col-sm-2">
-                      <input type="input" id="txtIsdispatch" class="form-control form-control-sm"
-                        [(ngModel)]="model.DispatchNo" placeholder="" />
+
+                      <div class="input-group">
+                        <div class="ng-autocomplete">
+                          <ng-autocomplete [data]="AutoCompleteDispatchNoList" [searchKeyword]="DocumentNokeyword"
+                            (inputCleared)="SearchDispatchCleared()" (selected)='SearchAutoDispatchNo($event)'
+                            (inputChanged)='onChangeDispatchSearch($event)' (inputFocused)='onFocused($event)'
+                            [(ngModel)]="model.AutoDispatchNo" [itemTemplate]="itemDocumentNoTemplate"
+                            [notFoundTemplate]="notFoundDocumentNoTemplate" [debounceTime]="1500" [minQueryLength]="2"
+                            placeHolder="Search Document No..">
+                          </ng-autocomplete>
+                          <ng-template #itemDocumentNoTemplate let-item>
+                            <a [innerHTML]="item.DocumentNo"></a>
+                          </ng-template>
+                          <ng-template #notFoundDocumentNoTemplate let-notFound>
+                            <div [innerHTML]="notFound"></div>
+                          </ng-template>
+                        </div>
+                      </div>
+                      <input type="hidden" [(ngModel)]="model.DispatchNo">
+                      <input type="hidden" [(ngModel)]="model.DispatchNoId">
+                      <!-- <input type="input" id="txtIsdispatch" class="form-control form-control-sm"
+                        [(ngModel)]="model.DispatchNo" placeholder="" /> -->
                     </div>
+
                     <label class="col-form-label-xs col-sm-1"> Reason<span style="color: red;"
                         class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2">
@@ -1180,8 +1213,8 @@
                               </option>
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="ReceiveddynamicArray[i].ItemMakeId"
                               (change)="ChangeReceivedEditItemMake(ReceiveddynamicArray[i].ItemMakeId,ReceiveddynamicArray[i].ItemNameId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -1190,8 +1223,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="ReceiveddynamicArray[i].ItemId"
                               (change)="ChangeReceivedEditItemCode(ReceiveddynamicArray[i].ItemId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -1494,8 +1527,8 @@
                               </option>
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="ReceiveddynamicArray[i].ItemMakeId"
                               (change)="ChangeReceivedEditItemMake(ReceiveddynamicArray[i].ItemMakeId,ReceiveddynamicArray[i].ItemNameId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -1504,8 +1537,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="ReceiveddynamicArray[i].ItemId"
                               (change)="ChangeReceivedEditItemCode(ReceiveddynamicArray[i].ItemId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -1805,8 +1838,8 @@
                             </select>
                           </td>
 
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               [disabled]="IsItemListDisabled" id="ddlItemMake_{{i}}"
                               [(ngModel)]="dynamicArray[i].ItemMakeId"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
@@ -1816,8 +1849,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               [disabled]="IsItemListDisabled" id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -2072,8 +2105,8 @@
                               </option>
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               [disabled]="IsItemListDisabled" id="ddlItemMake_{{i}}"
                               [(ngModel)]="dynamicArray[i].ItemMakeId"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
@@ -2083,8 +2116,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               [disabled]="IsItemListDisabled" id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -3381,7 +3414,7 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <fieldset class="scheduler-border">
-        <legend class="scheduler-border">SRN of Item History By Site</legend>
+        <legend class="scheduler-border">Dispatch of Item History By Site</legend>
         <div class="col-sm-12">
           <div class="row">
             <ag-grid-angular style="width: 100%; height: 400px;" class="ag-theme-alpine" [enableSorting]="true"

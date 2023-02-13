@@ -24,6 +24,7 @@ export class SrnPdfServiceService {
 
 
   GenerateSRNPdfById(Value: any, SRNId: any) {
+    debugger
     try {
       this.model.DispatchId = SRNId;
       this.model.FunctionFlagValue = null;
@@ -31,11 +32,14 @@ export class SrnPdfServiceService {
       var objModel = new SearchDispatchTrackerModel();
       objModel.DispatchTracker_Id = this.model.DispatchId;
       this._MaterialMovementService.GenerateSRNPdfListById(objModel).pipe(first()).subscribe(data => {
+        debugger
         if (data.Status == 1) {
           if (data.RegData != null && data.RegData != '') {
             this.model.PdfStateCode = data.RegData[0].StateCode;
             this.model.PdfCompanyName = data.RegData[0].CompanyName;
             this.model.PdfRegdOffice = data.RegData[0].OfficeAddress;
+
+
             this.model.PdfGSTINNo = data.RegData[0].GSTIN_UIN;
             this.model.PdfCIN = data.RegData[0].CIN;
             this.model.PdfWHState = data.RegData[0].StateName;
@@ -54,7 +58,8 @@ export class SrnPdfServiceService {
           if (data.Data != null && data.Data != '') {
             this.model.DisatchTrackeringId = data.Data[0].SRNId;
             this.model.ddlCompanyId = data.Data[0].Company_Id;
-            this.model.TransferTypeId = data.Data[0].IstransferTypeId;
+            this.model.TransferTypeId = data.Data[0].IstransferTypeId;         
+
             //this.model.PdfDocumentNo=data.Data[0].DocumentNo;
             this.model.PdfDocumentDate = data.Data[0].DocumentDate;
             this.model.GrossTotalAmount = data.Data[0].GrossTotalAmount;
@@ -312,7 +317,8 @@ export class SrnPdfServiceService {
             if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
               this.BindItemPdfArrayOtherState(data.ItemData);
             }
-            this.generateOteherStatePDF('open');
+            // vishal 09/02/2022
+            this.generateOteherStatePDF('print');
           }
 
         }
@@ -1253,7 +1259,7 @@ export class SrnPdfServiceService {
                 { text: p.TotalAmount, alignment: 'center', fontSize: 8 },
                 { text: p.Discount, alignment: 'center', fontSize: 8 },
                 { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center', fontSize: 8 }
-                // { text: p.CustomerSiteId, alignment: 'center', fontSize: 6 }
+                  // { text: p.CustomerSiteId, alignment: 'center', fontSize: 6 }
                 ])),
               //[{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' },{ text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
               [{},
@@ -1269,7 +1275,7 @@ export class SrnPdfServiceService {
                 text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹',
                 bold: true, alignment: 'center'
               },
-              // { text: '' }
+                // { text: '' }
               ]
             ]
           }
@@ -2267,7 +2273,7 @@ export class SrnPdfServiceService {
                 text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹',
                 bold: true, alignment: 'center'
               }
-              // { text: '' }
+                // { text: '' }
               ]
             ]
           }

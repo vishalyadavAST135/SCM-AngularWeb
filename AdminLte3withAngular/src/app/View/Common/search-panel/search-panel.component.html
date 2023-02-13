@@ -160,7 +160,7 @@
       </div>  
       <div class="col-sm-2">         
             <div class="input-group" (click)="StatDateInput($event)">
-              <input class="form-control form-control-sm" placeholder=""
+              <input class="form-control form-control-sm" placeholder="" [disabled]="IsTimeDisable"
               name="dpfrom" [(ngModel)]="model.StartDateModel" ngbDatepicker #dfromDate="ngbDatepicker" [maxDate]="minDate" >
               <div class="input-group-append">
                 <span class="input-group-text" (click)="dfromDate.toggle()"><i class="far fa-calendar-alt"></i></span>            
@@ -172,7 +172,7 @@
     </div> 
      <div class="col-sm-2">         
           <div class="input-group" (click)="EndDateInput($event)">
-            <input class="form-control form-control-sm" placeholder=""[maxDate]="minDate"
+            <input class="form-control form-control-sm" placeholder=""[maxDate]="minDate" [disabled]="IsTimeDisable"
                    name="dpToDate" [(ngModel)]="model.EndDateModel" ngbDatepicker #dToDate="ngbDatepicker">
             <div class="input-group-append">
               <span class="input-group-text" (click)="dToDate.toggle()"><i class="far fa-calendar-alt"></i></span>            

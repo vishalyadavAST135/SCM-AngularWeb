@@ -2,7 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { DropdownModel, WebAPIConfig } from '../_Model/commonModel';
-import {  ReturnToolkitItemModel, SearchEmployeeAccessoriesModel } from '../_Model/employeeAccessoriesModel';
+import {  ReturnToolkitItemdt, ReturnToolkitItemModel, SearchEmployeeAccessoriesModel } from '../_Model/employeeAccessoriesModel';
 import { EmpToolkitModel, ReturnToolkitModel } from '../_Model/MastersModel';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -69,9 +69,9 @@ export class EmployeeAccessoriesService {
     return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/SaveReturnToolkitItem", objReturnToolkitModel);
   }
 
-  GetReturnToolkitItemList(objReturnToolkit: ReturnToolkitModel): Observable<any> {
+  GetReturnToolkitItemList(objReturnToolkitModel: ReturnToolkitItemModel): Observable<any> {
     var objBaseUrl = new WebAPIConfig();
-    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/GetToolkitReturnList", objReturnToolkit);
+    return this.httpclient.post(objBaseUrl.ApIUrl + "ToolkitAcr/GetToolkitReturnList", objReturnToolkitModel);
   }
 
   //end-vishal

@@ -1335,6 +1335,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ChangeSite(index: number) {
+    debugger
     try {
       let siteId = 0;
       if (this.dynamicArray[index].SiteId == 0 || this.dynamicArray[index].SiteId == null) {
@@ -1349,6 +1350,7 @@ export class DispatchTrackerComponent implements OnInit {
       objdropdownmodel.Other_Id = this.model.ShippedfromWHId;
       objdropdownmodel.Company_Id = this.CompanyId;
       objdropdownmodel.Flag = 'Dispatch';
+      debugger
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
@@ -3156,7 +3158,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
-    debugger
+  
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();
@@ -5794,7 +5796,10 @@ export class DispatchTrackerComponent implements OnInit {
   EwayBillNoKeyPress() {
     $("#txtEwayBillNo").css('border-color', '');
   }
-
+  //vishal, 08/02/2023
+  ToCompanyNameKeyPress() {
+    $("#txtToCompanyName").css('border-color', '');
+  }
   QtyKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Qty').val();
@@ -6322,6 +6327,18 @@ export class DispatchTrackerComponent implements OnInit {
         flag = 1;
       } else {
         $("#txtSiteAddress").css('border-color', '');
+      }
+
+       //vishal, 08/02/2023, company name with customer gst selection
+
+       if (this.model.GSTType == "2") {
+        if (this.model.CompanyName == "" || this.model.CompanyName == null) {
+          $('#txtToCompanyName').css('border-color', 'red');
+          $('#txtToCompanyName').focus();
+          flag = 1;
+        } else {
+          $("#txtToCompanyName").css('border-color', '');
+        }
       }
 
     }

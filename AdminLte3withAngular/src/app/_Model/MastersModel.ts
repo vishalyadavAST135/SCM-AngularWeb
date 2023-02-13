@@ -151,6 +151,7 @@ export class EmpToolkitModel  {
 export class ReturnToolkitModel  {
     Id: number;
     UserId: number;
+    ItemCodeId: number;
     EqpTypeId: number;
     Qty: number
  

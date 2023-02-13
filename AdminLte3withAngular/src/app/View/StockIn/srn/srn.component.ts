@@ -237,6 +237,9 @@ export class SrnComponent implements OnInit {
   ObjUserPageRight = new UserPageRight();
   Save: any;
   SrnId: number = 0;
+  AutoCompleteDispatchNoList: any; //vishal, 04/02/2023
+  DocumentNokeyword = 'DocumentNo';
+
   constructor(private router: Router, private _Commonservices: CommonService, private _SrnPdfServiceService: SrnPdfServiceService,
     private _PurchaseOrderService: PurchaseOrderService, private _GrncrnService: GrncrnService,
     private _MaterialMovementService: MaterialMovementService,
@@ -263,7 +266,7 @@ export class SrnComponent implements OnInit {
   ngOnInit(): void {
     this.model.TransporterId = "";
     this.model.SRNFrom = "0";
-    this.model.SRNType = 2;
+    this.model.SRNType = 0;
     this.model.ReasonId = "0"
     this.model.IsActiveCancel = 2;
     this.model.CustomerId = "0";
@@ -275,9 +278,9 @@ export class SrnComponent implements OnInit {
     this.UserName = objUserModel.UserName;
     this.IsApprovalstatusbtnhideShow = false;
     this.ArrayRoleId = objUserModel.Role_Id.split(',');
-    
-    for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {      
-      if (this.ArrayRoleId[i] == UserRole.UserRoleId || this.ArrayRoleId[i]==UserRole.SCMHo) {
+
+    for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {
+      if (this.ArrayRoleId[i] == UserRole.UserRoleId || this.ArrayRoleId[i] == UserRole.SCMHo) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == "14") {
         this.SRNEditUserRoleId = this.ArrayRoleId[i];
@@ -502,8 +505,7 @@ export class SrnComponent implements OnInit {
   async GetUserPageRight(id: number) {
     this._Commonservices.GetUserPageRight(this.UserId, MenuName.SRN).subscribe(data => {
       if (data.Status == 1) {
-        console.log(data);
-        debugger
+        //console.log(data);
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
@@ -1812,7 +1814,7 @@ export class SrnComponent implements OnInit {
       objdropdownmodel.Parent_Id = this.model.SiteId;
       objdropdownmodel.Other_Id = this.model.ShippedfromWHId;
       objdropdownmodel.Company_Id = this.CompanyId;
-      objdropdownmodel.Flag = 'SRN';
+      objdropdownmodel.Flag = 'Dispatch';
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
@@ -1918,6 +1920,8 @@ export class SrnComponent implements OnInit {
       this.model.DocumentDate = "";
       this.ItemAddrowhideshow = false;
       this.IsSRNInstraction = true;
+      this.model.DispatchNo = ""; //vishal 04/02/2023
+      this.model.DispatchNoId = null;
     }
     this.ChangeTrasporationMode(TransPortModeType.ByRoad);
     //brahamjot kaur 15/7/2022
@@ -1925,6 +1929,7 @@ export class SrnComponent implements OnInit {
       this.AutoFillSRNDetailByDIId(this.CreateDispatchForDIId);
     }
     //this.ChangeSiteOtherState();
+    this.AutoCompleteDispatchNoList = []; //vishal
   }
 
   GetCustomerName() {
@@ -2037,10 +2042,10 @@ export class SrnComponent implements OnInit {
     } else {
       jQuery('#confirm').modal('show');
     }
+
   }
 
   SaveUpDateSRNDetail() {
-    debugger
     this.loading = true;
     try {
       jQuery('#confirm').modal('hide');
@@ -2070,8 +2075,8 @@ export class SrnComponent implements OnInit {
         var GRNoDate = this._Commonservices.checkUndefined(this.model.GRDate);
         if (GRNoDate != "") {
           objDispatchTrackingModel.GRDate = GRNoDate.day + '/' + GRNoDate.month + '/' + GRNoDate.year;
-        }else{
-          objDispatchTrackingModel.GRDate="";
+        } else {
+          objDispatchTrackingModel.GRDate = "";
         }
 
       } else if (this.model.TrasporationMode == TransPortModeType.ByHand) {
@@ -2110,7 +2115,19 @@ export class SrnComponent implements OnInit {
       objDispatchTrackingModel.VehicleType_Id = this.model.ddlVehicleType;
       objDispatchTrackingModel.EwayBillNo = this.model.EwayBillNo;
       objDispatchTrackingModel.IsDispatch = this.model.IsDispatch;
-      objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+
+      // vishal 
+
+      if (this.model.AutoDispatchNo != "") {
+
+        objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+        objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
+      } else {
+        objDispatchTrackingModel.DispatchNo = null;
+        objDispatchTrackingModel.DispatchNoId = null;
+      }
+
+
       objDispatchTrackingModel.CompanyName = this.model.CompanyName;
       objDispatchTrackingModel.ReasonId = this.model.ReasonId;
       objDispatchTrackingModel.ReasonRemarks = this.model.ReasonRemarks;
@@ -2190,6 +2207,7 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.GSTTypeId = this.model.GSTType;
         objDispatchTrackingModel.TECHFE = this.model.TECHFE;
         objDispatchTrackingModel.COHCI = this.model.COHCI;
+       
         //brahamjot kaur 26/09/2022
         if (this.selectedDIArr.length > 0) {
           objDispatchTrackingModel.DispatchInstructionId = this.selectedDIArr.map(xx => xx.id).join(',');
@@ -2349,14 +2367,18 @@ export class SrnComponent implements OnInit {
       } else {
         formdata.append('SRNDocumentFile', this.SRNDocumentFile, this.SRNDocumentFile.name);
       }
+
       formdata.append('jsonDetail', JSON.stringify(objDispatchTrackingModel));
-      console.log(JSON.stringify(objDispatchTrackingModel));
+      //console.log(JSON.stringify(objDispatchTrackingModel));
       this._MaterialMovementService.AddUpadteSRNDeatil(formdata).pipe(first()).subscribe(data => {
+
+
         if (data.Status == 1) {
           this.loading = false;
           this.model.DisatchTrackeringId = data.Value;
           this.IsDisabledPreviewGenratebutton = false;
           this.IsSaveButtonDisable = true;
+
           //alert('your data has been Succesfully with SRN No-'+data.Remarks);
           jQuery('#confirm').modal('hide');
           this.succesMessage = "Your data has been save successfully with SRN No-" + data.Remarks + "";
@@ -2414,7 +2436,11 @@ export class SrnComponent implements OnInit {
 
 
   PartialUpadteSRNDetail() {
+
     try {
+      if (this.PartialUpdateValidation() == 1) {
+        return false;
+      }
       //jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
       objDispatchTrackingModel.DispatchTracker_Id = this.model.DisatchTrackeringId;
@@ -2458,8 +2484,6 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.TaxInvoiceDate = "";
       }
 
-
-
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
       objDispatchTrackingModel.Pageflag = this.model.TransferTypeId;
@@ -2468,7 +2492,25 @@ export class SrnComponent implements OnInit {
       objDispatchTrackingModel.VehicleType_Id = this.model.ddlVehicleType;
       objDispatchTrackingModel.EwayBillNo = this.model.EwayBillNo;
       objDispatchTrackingModel.IsDispatch = this.model.IsDispatch;
-      objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+      //objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+
+      //vishal 
+      if (this.model.AutoDispatchNo != "") {
+
+        objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+        objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
+      } else {
+        objDispatchTrackingModel.DispatchNo = null;
+        objDispatchTrackingModel.DispatchNoId = null;
+      }
+      // if (this.model.DispatchNo != "") {
+      //   debugger
+      //   objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
+      //   objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
+      // } else {
+      //   objDispatchTrackingModel.DispatchNo = null;
+      //   objDispatchTrackingModel.DispatchNoId = null;
+      // }
       objDispatchTrackingModel.ReasonId = this.model.ReasonId;
       objDispatchTrackingModel.ReasonRemarks = this.model.ReasonRemarks;
       objDispatchTrackingModel.Note = this.model.Note;
@@ -2794,7 +2836,6 @@ export class SrnComponent implements OnInit {
         objpara.CustomerId = '0';
       }
       this._MaterialMovementService.GetSRNList(objpara).pipe(first()).subscribe(data => {
-        debugger
         this.gridApi.hideOverlay();
         this.Exportloading = false;
         if (data.Status == 1) {
@@ -2806,7 +2847,6 @@ export class SrnComponent implements OnInit {
               this.rowData = null
             }
           } else if (para == "Export") {
-            debugger
             if (data.Data != null) {
               var CurrentDate = this.datePipe.transform(Date(), "dd/MM/yyyy");
               this._PurchaseOrderService.exportAsExcelFile(data.Data, 'SRN Detail' + CurrentDate);
@@ -3009,6 +3049,7 @@ export class SrnComponent implements OnInit {
   }
 
   SearchSRNEditListBySRNId(Id: any) {
+    debugger
     try {
       this.gridApi.showLoadingOverlay();
       this.IsPreviousSiteDataGrid = false;
@@ -3024,6 +3065,16 @@ export class SrnComponent implements OnInit {
           if (data.RegData != null && data.RegData != '') {
             this.model.StateCode = data.RegData[0].StateCode;
             this.model.RegdOffice = data.RegData[0].OfficeAddress;
+
+            //vishal, 09/02/2023
+
+            // if (this.model.TransferTypeId == PageActivity.Srn_SiteOtherState) {
+            //   this.model.RegdOffice = data.RegData[0].OfficeAddress;
+            // } else {
+            //   this.model.SiteRegdOffice = data.RegData[0].OfficeAddress;
+            // }
+            
+
             this.model.GSTINNo = data.RegData[0].GSTIN_UIN;
             this.model.CIN = data.RegData[0].CIN;
             this.model.WHState = data.RegData[0].StateName;
@@ -3043,7 +3094,21 @@ export class SrnComponent implements OnInit {
             this.model.DisatchTrackeringId = data.Data[0].DisatchTrackeringId;
             this.model.ddlStateId = data.Data[0].State_Id;
             this.model.DocumentNo = data.Data[0].DocumentNo;
-            this.model.DispatchNo = data.Data[0].DispatchNo;
+
+            //vishal, 08/02/2023
+
+            if (data.Data[0].DispatchNo != '') {
+              this.model.AutoDispatchNo = data.Data[0].DispatchNo;
+              this.model.DispatchNo = data.Data[0].DispatchNo;
+              this.model.DispatchNoId = data.Data[0].DispatchNoId;
+
+            } else {
+              this.model.AutoDispatchNo = null;
+              this.model.DispatchNo = '';
+              this.model.DispatchNoId = null;
+
+            }
+
             //brahamjot kaur 15/7/2022
             //this.model.SRNInstructionId = data.Data[0].DispatchInstructionId;
             //brahamjot kaur 21/7/2022
@@ -3094,7 +3159,6 @@ export class SrnComponent implements OnInit {
             } else {
               this.model.ddlVehicleType = 0;
             }
-              debugger
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
             if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
               if (this.UserRoleId == UserRole.UserRoleId || this.UserRoleId == UserRole.SCMHo) {
@@ -3252,7 +3316,7 @@ export class SrnComponent implements OnInit {
             } else if (this.model.TrasporationMode == TransPortModeType.Other) {
               this.model.Name = data.Data[0].TrasporationName;
               this.model.PhoneNo = data.Data[0].PhoneNo;
-             }
+            }
             if (data.Data[0].IstransferTypeId != null || data.Data[0].IstransferTypeId != "") {
               if (this.model.TransferTypeId == PageActivity.Srn_SiteWithinState) {
                 this.model.SiteId = data.Data[0].Site_Id;
@@ -3336,9 +3400,12 @@ export class SrnComponent implements OnInit {
                       FilterStateCode = null;
                       var FilterStateCode = this.OtherSiteStateList.filter(
                         m => m.id === parseInt(data.Data[0].ToState_Id));
+                       
                       if (FilterStateCode.length > 0) {
                         if (FilterStateCode[0].GSTNo != null) {
                           this.StateGSTNo = FilterStateCode[0].GSTNo;
+                          //vishal, 09/02/2023
+                          this.model.SiteRegdOffice = FilterStateCode[0].regOfficeAddress; 
                           this.model.ToSiteWHGSTIN = data.Data[0].ShippedToGSTNO;
                         } else {
                           this.model.ToSiteWHGSTIN = data.Data[0].ShippedToGSTNO;
@@ -3361,6 +3428,7 @@ export class SrnComponent implements OnInit {
                 this.model.CuUniqueSiteId = data.Data[0].Site_Id;
                 this.model.ClientName = data.Data[0].ClientName;
                 this.model.CompanyName = data.Data[0].CompanyName;
+               
                 //this.GetAllTechCOHbySiteId(this.model.SiteId);
                 if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
                   this.model.GSTType = '' + data.Data[0].GSTTypeId + '';
@@ -3890,6 +3958,7 @@ export class SrnComponent implements OnInit {
     this.isShownEdit = true;
     this.model.SecondReqAndRecvedClickId = 0;
     this.model.ReqAndRecvedClickId = 0;
+    //this.model.DispatchNo= ""
   }
 
   ChangeSiteOtherState(StId: any) {
@@ -3899,8 +3968,10 @@ export class SrnComponent implements OnInit {
       m => m.id === parseInt(StId));
     this.model.ToSiteStateCode = FilterStateCode[0].Code;
     this.model.ToSiteWHGSTIN = FilterStateCode[0].GSTNo;
+    this.model.SiteRegdOffice = FilterStateCode[0].regOfficeAddress;//vishal, 09/02/2023
     this.model.PreviewToStateName = FilterStateCode[0].itemName;
     this.StateGSTNo = FilterStateCode[0].GSTNo;
+
     this.model.GSTType = 1;
     this.AutoCompleteCustomerSiteIdList = [];
     this.model.CuValueSiteId = "";
@@ -3911,6 +3982,7 @@ export class SrnComponent implements OnInit {
     this.model.CuUniqueSiteId = "";
     this.model.ClientName = "";
     this.model.CompanyName = "";
+
   }
 
   clearEditForm() {
@@ -3933,6 +4005,7 @@ export class SrnComponent implements OnInit {
     this.model.ddlStateId = '0';
     this.model.StateCode = "";
     this.model.RegdOffice = "";
+    this.model.SiteRegdOffice = ""; //vishal, 09/02/2023
     this.model.WHAddress = "";
     this.model.ShippedWHAddress = "";
     this.model.GSTINNo = "";
@@ -3973,6 +4046,7 @@ export class SrnComponent implements OnInit {
     this.model.ConductorNo = "";
     this.model.Name = "";
     this.model.PhoneNo = "";
+    this.model.AutoDispatchNo = "";
     this.ClearDispatchToSiteToState();
   }
   //#region Correction Entry Work
@@ -4354,6 +4428,7 @@ export class SrnComponent implements OnInit {
     this.model.CuUniqueSiteId = "";
     this.model.ClientName = "";
     this.model.CompanyName = "";
+
   }
 
   ClearDispatchToSiteToOtherState() {
@@ -4368,6 +4443,7 @@ export class SrnComponent implements OnInit {
     this.model.CuUniqueSiteId = "";
     this.model.ClientName = "";
     this.model.CompanyName = "";
+    this.model.SiteRegdOffice = "";
 
   }
 
@@ -4588,6 +4664,10 @@ export class SrnComponent implements OnInit {
   SRNReasonKeypress() {
     $("#txtReasonRemarks").css('border-color', '');
   }
+  //vishal, 08/02/2023
+  ToCompanyNameKeyPress() {
+    $("#txtToCompanyName").css('border-color', '');
+  }
   QtyKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Qty').val();
@@ -4697,7 +4777,12 @@ export class SrnComponent implements OnInit {
   }
   PartialUpdateValidation() {
     var flag = 0;
-
+    //vishal, 06/02/2023
+    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined || this.model.DispatchNoId == null
+      || this.model.DispatchNoId == 0)) {
+      flag = 1;
+      alert('Please Select Correct Document No');
+    }
     if (this.model.TrasporationMode == "" || this.model.TrasporationMode == "0") {
       $('#txtTrasporationMode').css('border-color', 'red');
       $('#txtTrasporationMode').focus();
@@ -4742,14 +4827,7 @@ export class SrnComponent implements OnInit {
       } else {
         $("#txtGRDate").css('border-color', '');
       }
-      //vishal, 03/12/2022
-      // if (this.model.TaxInvoiceDate == "" || this.model.TaxInvoiceDate == null) {
-      //   $('#txtInvoiceDate').css('border-color', 'red');
-      //   $('#txtInvoiceDate').focus();
-      //   flag = 1;
-      // } else {
-      //   $("#txtInvoiceDate").css('border-color', '');
-      // }
+
 
       if (this.model.ddlVehicleType == "null" || this.model.ddlVehicleType == "0") {
         $('#txtVehicleType').css('border-color', 'red');
@@ -4772,8 +4850,6 @@ export class SrnComponent implements OnInit {
           alert('Please Select Bilty Document');
         }
       }
-
-
 
 
     }
@@ -4891,6 +4967,12 @@ export class SrnComponent implements OnInit {
       flag = 1;
     } else {
       $("#txtddlStateId").css('border-color', '');
+    }
+
+    //vishal, 06/02/2023
+    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined || this.model.DispatchNoId == 0 || this.model.DispatchNoId == null)) {
+      flag = 1;
+      alert('Please Select Correct Document No');
     }
 
     if (this.model.TransferTypeId == "null" || this.model.TransferTypeId == "0") {
@@ -5145,6 +5227,19 @@ export class SrnComponent implements OnInit {
       } else {
         $("#txtToSiteWHGSTIN").css('border-color', '');
       }
+
+      //vishal, 08/02/2023, company name with customer gst selection
+
+      if (this.model.GSTType == "2") {
+        if (this.model.CompanyName == "" || this.model.CompanyName == null) {
+          $('#txtToCompanyName').css('border-color', 'red');
+          $('#txtToCompanyName').focus();
+          flag = 1;
+        } else {
+          $("#txtToCompanyName").css('border-color', '');
+        }
+      }
+
       if (this.model.SiteAddress == "" || this.model.SiteAddress == null) {
         $('#txtSiteAddress').css('border-color', 'red');
         $('#txtSiteAddress').focus();
@@ -5542,4 +5637,33 @@ export class SrnComponent implements OnInit {
     }
   }
   //#endregion
+  //by:vishal 04/02/2023 desc: for auto complete dispatch no search. 
+
+  onChangeDispatchSearch(val: string) {
+    this.model.DispatchNoId = null;
+    this.AutoCompleteDispatchNoList = [];
+    var objdropdownmodel = new DropdownModel();
+    objdropdownmodel.User_Id = 0;
+    objdropdownmodel.Parent_Id = val;
+    objdropdownmodel.Company_Id = this.CompanyId;
+    objdropdownmodel.Flag = 'DispatchOnSite';
+    this._GrncrnService.GetAutoCompleteDocumentNo(objdropdownmodel).subscribe((data) => {
+      this.AutoCompleteDispatchNoList = data.Data;
+    })
+  }
+  SearchDispatchCleared() {
+    this.AutoCompleteDispatchNoList = [];
+    this.model.DispatchNo = "";
+    this.model.DispatchNoId = '';
+    this.model.AutoDispatchNo = "";
+
+
+  }
+
+  SearchAutoDispatchNo(item: any) {
+    this.model.DispatchNo = item.DocumentNo;
+    this.model.DispatchNoId = item.id;
+  }
+
+
 }

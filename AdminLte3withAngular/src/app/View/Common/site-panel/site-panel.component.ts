@@ -126,14 +126,14 @@ export class SitePanelComponent implements OnInit {
     if (val == 1) {
       this.model.CuValueSiteId = "";
     } else if (val == 2) {
-      this.model.CuUniqueSiteId = "";
-    } else if(val == 3) {
-      this.model.oldCuValueSiteId = "";
-    }
+      this.model.CuUniqueSiteId = "";}
+    // } else if(val == 3) {
+    //   this.model.oldCuValueSiteId = "";
+    // }
      else {
       this.model.CuValueSiteId = "";
       this.model.CuUniqueSiteId = "";
-      this.model.oldCuValueSiteId = "";
+      //this.model.oldCuValueSiteId = "";
     }
     this.model.SiteId = 0;
     this.model.SiteName = "";

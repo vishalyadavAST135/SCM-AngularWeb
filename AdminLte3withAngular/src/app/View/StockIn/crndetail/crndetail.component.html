@@ -269,27 +269,27 @@
                              <i class="fa fa-trash"  title="Delete"></i>    
                           </td>    
                           <td style="width:100px;">  
-                            <select  class="form-control form-control-sm ItemName" [(ngModel)]="dynamicArray[i].ItemNameId" (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)" >
+                            <select style="width:80px;"  class="form-control form-control-sm ItemName" [(ngModel)]="dynamicArray[i].ItemNameId" (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)" >
                               <option class="dropdown-item"  [value]="0">Select</option>
                               <option *ngFor="let item of ItemNameDetailData" [value]="item.id" >{{item.itemName}}</option>
                           </select>
                           </td> 
                           <td style="width:100px;">    
-                            <select class="form-control form-control-sm ItemMake" [(ngModel)]="dynamicArray[i].ItemMakeId"(change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"  >
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake" [(ngModel)]="dynamicArray[i].ItemMakeId"(change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"  >
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id" >{{item.itemName}}</option>
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                           </select>
                           </td>
                           <td style="width:100px;">    
-                            <select class="form-control form-control-sm ItemCode" [(ngModel)]="dynamicArray[i].ItemId"(change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" >
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode" [(ngModel)]="dynamicArray[i].ItemId"(change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" >
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id" >{{item.itemName}}</option>
                              
                           </select>
                           </td>  
                           <td style="width:100px;">    
-                            <select class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}" [(ngModel)]="dynamicArray[i].EqTypeId"  (change)="ChangeEqupment(dynamicArray[i].EqTypeId,i)" >  
+                            <select style="width:80px;" class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}" [(ngModel)]="dynamicArray[i].EqTypeId"  (change)="ChangeEqupment(dynamicArray[i].EqTypeId,i)" >  
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of EquipmentTypeList" [value]="item.id" >{{item.itemName}}</option>    
                             </select>
@@ -344,8 +344,8 @@
                               <td style="width:120px;">    
                                <input  class="form-control form-control-sm itmsTotalAmount" readonly [(ngModel)]="dynamicArray[i].TotalAmount" appNumFloat type="text" style="text-align:center;"/>    
                              </td>  
-                             <td style="width:10px;">    
-                              <input type="file" style="width:50px;" name="FaultyImage" [(ngModel)]="dynamicArray[i].FaultyFile" id="fileImage" multiple #filePicker (change)="FaultyImageFileChange($event,i)" accept="application/pdf, image/jpeg">
+                             <td style="width:100px;">    
+                              <input type="file" style="width:150px;" name="FaultyImage" [(ngModel)]="dynamicArray[i].FaultyFile" id="fileImage" multiple #filePicker (change)="FaultyImageFileChange($event,i)" accept="application/pdf, image/jpeg">
                             </td>  
                          </tr> 
                         <tr>

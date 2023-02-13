@@ -494,7 +494,8 @@
                                 class="Mandatoryfield"><b></b></span></label>
                             <div class="col-sm-10">
                               <div class="input-group">
-                                <input type="text" id="txtToCompanyName" autocomplete="off" placeholder=""
+                                <input type="text" id="txtToCompanyName" autocomplete="off" placeholder="" 
+                                (keypress)="ToCompanyNameKeyPress()"
                                   [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
                               </div>
                             </div>
@@ -769,6 +770,7 @@
                             <div class="col-sm-10">
                               <div class="input-group">
                                 <input type="text" id="txtToCompanyName" autocomplete="off" placeholder=""
+                                (keypress)="ToCompanyNameKeyPress()"
                                   [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
                               </div>
                             </div>
@@ -1659,8 +1661,8 @@
                             </select>
                           </td>
 
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"
                               [disabled]="IsItemListDisabled">
@@ -1670,8 +1672,8 @@
                             </select>
                           </td>
 
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -1992,8 +1994,8 @@
                             </select>
                           </td>
 
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"
                               [disabled]="IsItemListDisabled"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
@@ -2003,8 +2005,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
@@ -2348,8 +2350,8 @@
                             </select>
                           </td>
 
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"
                               [disabled]="IsItemListDisabled"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
@@ -2359,8 +2361,8 @@
                               <!-- <option *ngFor="let item4 of ItemListDataDetail" [value]="item4.id" >{{item4.itemName}}</option> -->
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)" [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>

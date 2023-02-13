@@ -51,6 +51,7 @@ export class StocksearchpanelComponent implements OnInit {
   WareHouseId: any;
   ClientList: any;
   UniqueSitekeyword = 'itemName';
+  IsTimeDisable: boolean = true; //vishal, 10/02/2023
 
   constructor(private SearchPanel: SearchpanelService, private _Commonservices: CommonService, private datePipe: DatePipe) {
 
@@ -300,6 +301,7 @@ export class StocksearchpanelComponent implements OnInit {
   // }
 
   changeTimePeriod(TimePeriodVal: string) {
+    this.IsTimeDisable = true;
     var sfDate = new Date();
     var stDate = new Date();
     var fromDate = "";
@@ -363,7 +365,7 @@ export class StocksearchpanelComponent implements OnInit {
     } else if (TimePeriodVal == 'Dsd') {
       //  this.model.StartDateModel=null;
       //  this.model.EndDateModel=null;
-
+      this.IsTimeDisable = false;
       toDate = this.datePipe.transform(sfDate, "yyyy/MM/dd");
 
       this.model.StartDateModel = { year: parseInt(toDate.split('/')[0]), month: parseInt(toDate.split('/')[1]), day: parseInt("1") };

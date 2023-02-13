@@ -14,6 +14,7 @@ import { UserManagementService } from 'src/app/Service/user-management.service';
 import { SearchUserModel } from 'src/app/_Model/UserManagementModel';
 import { CompanyModel } from 'src/app/_Model/userModel';
 import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
+import { NewUserComponent } from './new-user/new-user.component';
 
 @Component({
   selector: 'app-user-management',
@@ -48,7 +49,6 @@ export class UserManagementComponent implements OnInit {
   UserDataList:any[] = [];
   ObjUserPageRight = new UserPageRight();
   Save: any;
-  @Input('form') public form: NgForm;
   constructor(
     public router: Router,
     public userApi: UserManagementService,
@@ -99,6 +99,7 @@ export class UserManagementComponent implements OnInit {
     objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
     this.CompanyId = objCompanyModel.Company_Id;
   }
+
 
   addColumn(){
     this.columnDefs = [
@@ -182,12 +183,10 @@ export class UserManagementComponent implements OnInit {
     this.roleMapping = false;
     this.companyMapping = false;
     this.whMapping = false;
-    this.pageMapping =false;
-    this.form.reset();
-   
-  }
+    this.pageMapping = false;
 
-  
+  }
+ 
  
   ShowUserManagementDeatil(e){
     this.userApi.EditData.next(e.rowData);
@@ -198,7 +197,7 @@ export class UserManagementComponent implements OnInit {
       disabledSaveButton:true})
     this.CreateNew();
   }
-
+  
   onClickTab(event:any,tab:any){
     //console.log(event.target.value,tab);
     this.newUser = false;
@@ -218,6 +217,7 @@ export class UserManagementComponent implements OnInit {
     }else if(tab == "Page Mapping"){
       this.pageMapping = true;
     }
+    
   }
 
   BackPage(){

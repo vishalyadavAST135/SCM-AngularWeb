@@ -22,6 +22,8 @@ export class TimePeriodComponent implements OnInit {
   }
 
   minDate: { year: number; month: number; day: number; };
+
+  IsTimeDisable: boolean = true; //vishal, 10/02/2023
   constructor(private SearchTimePanel: TimePeriodService, private _Commonservices: CommonService, private datePipe: DatePipe,) { }
 
   ngOnInit(): void {
@@ -44,11 +46,12 @@ export class TimePeriodComponent implements OnInit {
 
   }
   changeTimePeriod(TimePeriodVal: string) {
+    this.IsTimeDisable = true;
     var sfDate = new Date();
     var stDate = new Date();
     var fromDate = "";
     var toDate = "";
-    if (TimePeriodVal == 'Tod') {
+    if (TimePeriodVal == 'Tod') {  
       toDate = this.datePipe.transform(sfDate, "yyyy/MM/dd");
       this.model.StartDateModel = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
       this.model.EndDateModel = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
@@ -92,7 +95,6 @@ export class TimePeriodComponent implements OnInit {
 
 
     } else if (TimePeriodVal == '1M') {
-
       toDate = this.datePipe.transform(sfDate, "yyyy/MM/dd");
       stDate.setDate(stDate.getDate() - 30);
       fromDate = this.datePipe.transform(stDate, "yyyy/MM/dd");
@@ -109,6 +111,7 @@ export class TimePeriodComponent implements OnInit {
       this.objCommonSearchPanelModel.Startdate = '';
       this.objCommonSearchPanelModel.Enddate = '';
       this.SearchTimePanel.SearchTimePeriodPaneChanges(this.objCommonSearchPanelModel);
+      this.IsTimeDisable = false;
 
     }
 

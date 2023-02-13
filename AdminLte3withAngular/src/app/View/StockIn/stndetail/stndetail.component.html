@@ -330,8 +330,8 @@
                     <option *ngFor="let item of SearchItemNameList" [value]="item.id">{{item.itemName}}</option>
                   </select>
                 </td>
-                <td style="width:80px;">
-                  <select style="width:80px;" class="form-control form-control-sm ItemMake" id="ddlItemMake_{{i}}"
+                <td style="width:100px;">
+                  <select style="width:100px;" class="form-control form-control-sm ItemMake" id="ddlItemMake_{{i}}"
                     [(ngModel)]="dynamicArray[i].ItemMakeId"
                     (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
                     <option class="dropdown-item" [value]="0">Select</option>
@@ -339,8 +339,8 @@
                     </option>
                   </select>
                 </td>
-                <td style="width:80px;">
-                  <select style="width:80px;" class="form-control form-control-sm ItemCode" id="ddlItemId_{{i}}"
+                <td style="width:100px;">
+                  <select style="width:100px;" class="form-control form-control-sm ItemCode" id="ddlItemId_{{i}}"
                     [(ngModel)]="dynamicArray[i].ItemId" (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
                     <option class="dropdown-item" [value]="0">Select</option>
                     <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id">{{item.itemName}}
