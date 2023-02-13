@@ -143,6 +143,8 @@ export class DispatchTrackingItemDetialModel
     SaleUnit:any;
     DIList_Id:number;
     ItemName: string;
+    // Hemant Tyagi
+    FaultyQty: any;
 }
 export class SearchMaterialInstallationModel
 { 

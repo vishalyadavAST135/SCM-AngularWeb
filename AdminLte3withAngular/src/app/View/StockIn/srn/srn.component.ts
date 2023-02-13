@@ -3165,18 +3165,18 @@ export class SrnComponent implements OnInit {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsReadonlyField = true;
-                this.IsSaveButtonDisable = true;
+                //this.IsSaveButtonDisable = true;
                 this.IsCancelButtonDisable = false;
               } else {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = false;
                 this.IsReadonlyField = true;
-                if (data.Data[0].IsReceived == 1) {
-                  this.IsSaveButtonDisable = true;
-                  this.IsPartialUpDateSRNRequest = true;
-                } else {
-                  this.IsSaveButtonDisable = false;
-                }
+              }
+              if (data.Data[0].IsReceived == 1) {
+                this.IsSaveButtonDisable = true;
+                this.IsPartialUpDateSRNRequest = true;
+              } else {
+                this.IsSaveButtonDisable = false;
               }
             } else {
               this.IsItemListDisabled = false;
@@ -5614,6 +5614,7 @@ export class SrnComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAutoCompleteMRNO", "ApprovalStatus");
     }
   }
+
   // brahamjot kaur 26/09/2022
   ChangeSRNInstruction(para: string) {
     let multiSelectDI = "0";
@@ -5622,15 +5623,22 @@ export class SrnComponent implements OnInit {
     } else if (this.selectedDIArr.length > 0) {
       multiSelectDI = this.selectedDIArr.map(xx => xx.id).join(',');
     }
+    
     try {
       var objModel = new SRNInstructionSearchModel();
       objModel.DispatchInstruction_Id = multiSelectDI;
       this._MaterialMovementService.GetSRNInstructionListByDIId(objModel).subscribe((data) => {
+
+        if (data.SRNStatus != "") {
+          this.model.ReasonId=data.SRNStatus[0].SRNReason;
+        }
+        
         if (data.Data != "") {
           this.BindItemArray(data.Data)
         } else {
           alert('Please Select Correct Site Id and DI No');
         }
+        
       })
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "ChangeDispatchInstruction", "Dispatch Tracker");

@@ -79,7 +79,7 @@ export class FaultytorepairComponent implements OnInit {
   public multiSortKey: string;
   ItemEditDataArr: any = [];
   TableHeight: number[];
-  FaultuRep_Id: any = 0 ;
+  FaultuRep_Id: any = 0;
   public loadingTemplate;
   DocumentNokeyword = 'DocumentNo';
   AutoCompleteDocumentNoList: any;
@@ -102,13 +102,13 @@ export class FaultytorepairComponent implements OnInit {
   IsPreviewPdfHide: boolean;
   IsHideShowCancelBtn: boolean;
   CancelReasonData: any;
-  DisableSerialNoField:boolean = true;
+  DisableSerialNoField: boolean = true;
   FlagForSerialNo: number;
   ObjUserPageRight = new UserPageRight();
   Save: any;
   constructor(private datePipe: DatePipe, private _objSearchpanelService: SearchpanelService,
     private _Commonservices: CommonService, private _StockserviceService: StockserviceService,
-    private _PurchaseOrderService: PurchaseOrderService, 
+    private _PurchaseOrderService: PurchaseOrderService,
     private _MaterialMovementService: MaterialMovementService,
     private _GrncrnService: GrncrnService,) {
     this.tooltipShowDelay = 0;
@@ -187,7 +187,6 @@ export class FaultytorepairComponent implements OnInit {
       { headerName: 'Certification No', field: 'RepairedCertificationNo', width: 180 },
       { headerName: 'WH Name', field: 'WHName', width: 150 },
       { headerName: 'Equipment Type', field: 'OldEquepmentType', width: 130, sortable: true },
-
       { headerName: 'Item Name', field: 'ItemName', width: 150 },
       { headerName: 'Item Description', field: 'ItemDescription', cellClass: "cell-wrap-text", tooltipField: 'ItemDescription', tooltipComponent: 'customtooltip', width: 150, resizable: true },
       { headerName: 'Unit Name', field: 'UnitName', width: 100 },
@@ -202,32 +201,32 @@ export class FaultytorepairComponent implements OnInit {
     this.model.InCaseReason = "0";
     this.RepairedType();
     this.ItemReason();
-      //brahamjot kaur 31/10/2022
-      this.GetUserPageRight(this.FaultuRep_Id);
-    }
-  
     //brahamjot kaur 31/10/2022
-    async GetUserPageRight(id:number) {
-      this._Commonservices.GetUserPageRight(this.UserId, MenuName.RepairedCertification).subscribe(data => {
-        if (data.Status == 1) {
-          console.log(data);
-          this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
-          this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
-          this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
-          this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
-          this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
-          this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-          debugger
-          if(this.ObjUserPageRight.IsCreate == 1 && id == 0){
-            this.Save = 1;
-          }else if(this.ObjUserPageRight.IsEdit == 1 && id != 0){
-            this.Save = 1;
-          }else{
-            this.Save = 0
-          }
+    this.GetUserPageRight(this.FaultuRep_Id);
+  }
+
+  //brahamjot kaur 31/10/2022
+  async GetUserPageRight(id: number) {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.RepairedCertification).subscribe(data => {
+      if (data.Status == 1) {
+        console.log(data);
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
+        this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        debugger
+        if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
         }
-      })
-    }
+      }
+    })
+  }
 
 
 
@@ -342,6 +341,7 @@ export class FaultytorepairComponent implements OnInit {
       this.dynamicArray[index].Class = FilterData[0].Class;
       this.dynamicArray[index].Scrap = 0;
       this.dynamicArray[index].Repaired = 0;
+      this.dynamicArray[index].FaultyQty = 0;
       this.dynamicArray[index].EditItemMake = [];
       this.dynamicArray[index].EditItemCode = [];
       var objdropdownmodel = new DropdownModel();
@@ -470,7 +470,7 @@ export class FaultytorepairComponent implements OnInit {
   }
 
   ChangeClient(ClientId: any, index: any) {
-    console.log(ClientId,index);
+    console.log(ClientId, index);
     this.SerialNoList = null;
     this.SerialNoTableShowhide = false;
     var FilterData = this.ClientList.filter(m => m.Id === parseInt(ClientId));
@@ -485,12 +485,13 @@ export class FaultytorepairComponent implements OnInit {
     });
     // Brahamjot kaur 27/06/2022
     // if (this.dynamicArray[index].Class == "1519" && ClientId == '60') {
-      this.dynamicArray[index].IsDisabled = true;
+    this.dynamicArray[index].IsDisabled = true;
     // } else {
     //   this.dynamicArray[index].IsDisabled = false;
     // }
     this.dynamicArray[index].Repaired = 0;
     this.dynamicArray[index].Scrap = 0;
+    this.dynamicArray[index].FaultyQty = 0;
     try {
       var objStockQtyModel = new StockQtyModel();
       objStockQtyModel.Client_Id = ClientId;
@@ -501,7 +502,7 @@ export class FaultytorepairComponent implements OnInit {
       this.SerialNoList = [];
       this.dynamicArray[index].GSerialNumbers = [];
       this._StockserviceService.GetAllStockQtyByItemCode(objStockQtyModel).pipe(first()).subscribe(data => {
-        console.log(data);
+        //console.log(data);
         if (data.Status = 1) {
           if (data.Data != null) {
             this.dynamicArray[index].Qty = data.Data[0].StockQty;
@@ -627,56 +628,43 @@ export class FaultytorepairComponent implements OnInit {
   blurScrap(value: any, index: any) {
     $('#txtScrap_' + index).css('border-color', '');
     $('#txtRepaired_' + index).css('border-color', '');
+    $('#txtfaulty_' + index).css('border-color', '');
     //brahamjot kaur 28/6/2022
+    if (this.IsMandatory(index) == true) {
+      if (this.dynamicArray[index].Scrap != '' || this.dynamicArray[index].Scrap != 0) {
+        this.dynamicArray[index].Repaired = 0;
+        this.dynamicArray[index].FaultyQty = 0;
+      }
+    }
 
-    // if (this.dynamicArray[index].SerialNo != "") {
-      // if (this.dynamicArray[index].Class == "1519" && this.dynamicArray[index].ClientId == '60') {
-        if (this.IsMandatory(index) == true) {
-          if (this.dynamicArray[index].Scrap != '' || this.dynamicArray[index].Scrap != 0) {
-            this.dynamicArray[index].Repaired = 0;
-          }
-    } 
-  // }
-  if (parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired) > parseInt(this.dynamicArray[index].Qty)) {
-    this.dynamicArray[index].Repaired = 0;
-    this.dynamicArray[index].Scrap = 0;
-  }
+    if ((parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired)
+      + parseInt(this.dynamicArray[index].FaultyQty)) > parseInt(this.dynamicArray[index].Qty)) {
+      this.dynamicArray[index].Repaired = 0;
+      this.dynamicArray[index].Scrap = 0;
+      this.dynamicArray[index].FaultyQty = 0;
+    }
   }
 
   blurRepaired(value: any, index: any) {
     $('#txtScrap_' + index).css('border-color', '');
     $('#txtRepaired_' + index).css('border-color', '');
-    // if (this.dynamicArray[index].SerialNo != "") {
-      //brahamjot kaur 28/6/2022
-        if (this.IsMandatory(index) == true) {
-          if (this.dynamicArray[index].Repaired != '' || this.dynamicArray[index].Repaired != 0) {
-            this.dynamicArray[index].Scrap = 0;
-          }
-      // if (this.dynamicArray[index].Class == "1519" && this.dynamicArray[index].ClientId == '60') {
-       
-      // }
-      // if (this.dynamicArray[index].ClientId != '60') {
-      // if (this.dynamicArray[index].Repaired != '' || this.dynamicArray[index].Repaired != 0) {
-      //   this.dynamicArray[index].Scrap = 0;
-      // }
-      // }
-    }   
-  // }
-  // if (parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired) > parseInt(this.dynamicArray[index].Qty)) {
-  //   this.dynamicArray[index].Repaired = 0;
-  //   this.dynamicArray[index].Scrap = 0;
-  // }
-   
-    // if (this.dynamicArray[index].ItemName == 'BB' || this.dynamicArray[index].ItemName == 'DGB') {
-    //   if (this.dynamicArray[index].Repaired != '' || this.dynamicArray[index].Repaired != 0) {
-    //     this.dynamicArray[index].Scrap = 0;
-    //   }
-    // } else {
-      if (parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired) > parseInt(this.dynamicArray[index].Qty)) {
-        this.dynamicArray[index].Repaired = 0;
+
+
+    //brahamjot kaur 28/6/2022
+    if (this.IsMandatory(index) == true) {
+      if (this.dynamicArray[index].Repaired != '' || this.dynamicArray[index].Repaired != 0) {
         this.dynamicArray[index].Scrap = 0;
+        this.dynamicArray[index].FaultyQty = 0;
       }
-    // }
+    }
+
+    if ((parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired)
+      + parseInt(this.dynamicArray[index].FaultyQty)) > parseInt(this.dynamicArray[index].Qty)) {
+      this.dynamicArray[index].Repaired = 0;
+      this.dynamicArray[index].Scrap = 0;
+      this.dynamicArray[index].FaultyQty = 0;
+    }
+
   }
 
   QtyKeyPress(index: any) {
@@ -851,6 +839,7 @@ export class FaultytorepairComponent implements OnInit {
     objNewItemGrid.SerialNo = "";
     objNewItemGrid.Scrap = 0;
     objNewItemGrid.Repaired = 0;
+    objNewItemGrid.FaultyQty = 0;
     if (this.CompanyId == 4) {
       objNewItemGrid.ClientId = "0";
     } else {
@@ -896,8 +885,8 @@ export class FaultytorepairComponent implements OnInit {
     });
     this.headerItemName = result[0].itemName;
     this.headerQty = this.dynamicArray[this.indexv].Qty;
-    
-      
+
+
     if (ItemNameId != "4") {
       this.genrateOther(index);
     } else {
@@ -914,8 +903,8 @@ export class FaultytorepairComponent implements OnInit {
           this.editBB(index);
         }
       }
-    
-  }
+
+    }
   }
 
   genrateOther(index: any) {
@@ -1171,8 +1160,8 @@ export class FaultytorepairComponent implements OnInit {
 
 
   conformPopup() {
-   // this.IsSaveButtonDisable = true;
-   
+    // this.IsSaveButtonDisable = true;
+
     if (this.Validation() == 1) {
       return false;
     } else if (this.dynamicArray.length < 1) {
@@ -1182,7 +1171,7 @@ export class FaultytorepairComponent implements OnInit {
       setTimeout(function () { this.IsError = false; }, 3000);
       return false;
     } else {
-     
+
       jQuery('#confirm').modal('show');
     }
   }
@@ -1219,6 +1208,7 @@ export class FaultytorepairComponent implements OnInit {
         objDispatchTrackingItemDetialModel.TestingTime = this.dynamicArray[i].TestingTime;
         objDispatchTrackingItemDetialModel.Scrap = this.dynamicArray[i].Scrap;
         objDispatchTrackingItemDetialModel.Repaired = this.dynamicArray[i].Repaired;
+        objDispatchTrackingItemDetialModel.FaultyQty = this.dynamicArray[i].FaultyQty;
         objDispatchTrackingItemDetialModel.MaterialUsed = this.dynamicArray[i].MaterialUsed;
         objDispatchTrackingItemDetialModel.TypeFaultyId = this.dynamicArray[i].TypeFaultyId;
         objDispatchTrackingItemDetialModel.SerialNo = this.dynamicArray[i].SerialNo;
@@ -1246,7 +1236,7 @@ export class FaultytorepairComponent implements OnInit {
       //  console.log(JSON.stringify(objSaveUpaderStockQtyModel))
       formdata.append('jsonDetail', JSON.stringify(objSaveUpaderStockQtyModel));
       this._StockserviceService.SaveUpDateStStock(formdata).pipe(first()).subscribe(data => {
-      
+
         if (data.Status == 1) {
           jQuery('#confirm').modal('hide');
           alert(data.Remarks);
@@ -1427,6 +1417,7 @@ export class FaultytorepairComponent implements OnInit {
             objdynamic.TestingLoad = this.ItemEditDataArr[i].TestingLoad;
             objdynamic.Scrap = this.ItemEditDataArr[i].ScrapQty;
             objdynamic.Repaired = this.ItemEditDataArr[i].RepairedQty;
+            objdynamic.FaultyQty = this.ItemEditDataArr[i].FaultyQty;
             if (this.ItemEditDataArr[i].RepairedBy_Id == 9999) {
               this.IsRepaired = true;
               objdynamic.RepairedBy = this.ItemEditDataArr[i].RepairBy;
@@ -1530,8 +1521,10 @@ export class FaultytorepairComponent implements OnInit {
               objdynamic.TestedBy = this.ItemEditDataArr[i].TestedBy;
               objdynamic.RepairBy = this.ItemEditDataArr[i].RepairBy;
               objdynamic.RepairedQty = this.ItemEditDataArr[i].RepairedQty;
+              objdynamic.FaultyQty = this.ItemEditDataArr[i].FaultyQty;
               this.dynamicStockPdfGrid.push(objdynamic);
             }
+            debugger
             this.generatePDFWithOtherState('open');
           }
         }
@@ -1572,7 +1565,7 @@ export class FaultytorepairComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "UpadateCancelDispatch", "WHTOSite");
     }
   }
-
+  
   CancelValidation() {
     var flag = 0;
     if (this.model.InCaseReason == "0") {
@@ -1584,9 +1577,11 @@ export class FaultytorepairComponent implements OnInit {
     }
     return flag;
   }
+
   changeCaseReason() {
     $("#txtInCaseReason").css('border-color', '');
   }
+
   generatePDFWithOtherState(action = 'open') {
     let docDefinition = {
       // pageSize: 'A4',
@@ -1600,6 +1595,7 @@ export class FaultytorepairComponent implements OnInit {
           margin: [0, 0, 0, 0],
           border: [1, 1, 1, 1],
           table: {
+            widths:['100%'],
             body: [
               [
                 {
@@ -1633,13 +1629,11 @@ export class FaultytorepairComponent implements OnInit {
                               ]
                             },
                           ]
-                        },
-
-                      ],
-
+                        }
+                      ]
                     ]
                   }
-                },
+                }
               ],
               [
                 {
@@ -1676,18 +1670,12 @@ export class FaultytorepairComponent implements OnInit {
                           columns: [
                             { text: 'Date', fontSize: 10, bold: true, width: 60 }, { text: `${this.model.RepairDate}`, fontSize: 10, bold: true, width: 60 },
                           ]
-                        },
-                      ],
-
-
-
+                        }
+                      ]
                     ]
                   }
-                },
-
-
+                }
               ],
-
               [
                 {
                   border: [1, 0, 1, 0],
@@ -1715,43 +1703,102 @@ export class FaultytorepairComponent implements OnInit {
                           columns: [
                             { text: 'Output', fontSize: 10, bold: true, width: 120 },
                           ]
-                        },
-                      ],
-
-
-
+                        }
+                      ]
                     ]
                   }
-                },
-              ],
-
+                }
+              ]
             ]
           }
         },
-
-
         {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['4%', '6%', '23%', '10%', '12%', '8%', '5%', '5%', '5%', '5%', '5%', '6.3%', '6%'],
+            widths: ['4%', '6%', '22%', '8%', '10%', '8%', '5%', '5%', '5%', '5%', '5%','5%','6%', '6%'],
             body: [
-              [{ text: 'S.No', bold: true, }, { text: 'Eqp. Name', alignment: 'center', bold: true, }, { text: 'Description', bold: true, alignment: 'center' }, { text: 'Eqp. Sl No.', bold: true, alignment: 'center' }, { text: 'Nature of Fault', bold: true, alignment: 'center' }, { text: 'Spare Used', bold: true, alignment: 'center' }, { text: 'Qty', bold: true, alignment: 'center' }, { text: 'Load (AMP)', bold: true, alignment: 'center' }, { text: 'Time (Hour)', bold: true, alignment: 'center' }, { text: 'Repaired', bold: true, alignment: 'center' }, { text: 'BER', bold: true, alignment: 'center' }, { text: 'Repaired BY', bold: true, alignment: 'center' }, { text: 'Tested BY', bold: true, alignment: 'center' }],
-              ...this.dynamicStockPdfGrid.map(p => ([{ text: p.RowId }, { text: p.EqpName }, { text: p.ItemDescription, alignment: 'center' }, { text: p.SerialNo, alignment: 'center' }, { text: p.TypeOfFaulty, alignment: 'center' }, { text: p.MaterialUsed, alignment: 'center' }, { text: p.StockQty, alignment: 'center' }, { text: p.Load, alignment: 'center' }, { text: p.TestingTime, alignment: 'center' }, { text: p.RepairedQty, alignment: 'center' }, { text: p.ScrapQty, alignment: 'center' }, { text: p.RepairBy, alignment: 'center' }, { text: p.TestedBy, alignment: 'center' },])),
-              [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
-              [{ text: 'Final Remarks', colSpan: 10, alignment: 'left', bold: true }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }]
-
+              [
+                { text: 'S.No', bold: true, },
+                { text: 'Eqp. Name', alignment: 'center', bold: true, }, 
+                { text: 'Description', bold: true, alignment: 'center' },
+                { text: 'Eqp. Sl No.', bold: true, alignment: 'center' }, 
+                { text: 'Nature of Fault', bold: true, alignment: 'center' },
+                
+                { text: 'Spare Used', bold: true, alignment: 'center' }, 
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Load (AMP)', bold: true, alignment: 'center' }, 
+                { text: 'Time (Hour)', bold: true, alignment: 'center' },
+                { text: 'Repaired', bold: true, alignment: 'center' }, 
+                
+                { text: 'BER', bold: true, alignment: 'center' },
+                { text: 'Faulty', bold: true, alignment: 'center' }, 
+                { text: 'Repaired BY', bold: true, alignment: 'center' },
+                { text: 'Tested BY', bold: true, alignment: 'center' }
+              ],
+              ...this.dynamicStockPdfGrid.map(p => ([
+                { text: p.RowId }, 
+                { text: p.EqpName }, 
+                { text: p.ItemDescription, alignment: 'center' },
+                { text: p.SerialNo, alignment: 'center' }, 
+                { text: p.TypeOfFaulty, alignment: 'center' },
+                
+                { text: p.MaterialUsed, alignment: 'center' }, 
+                { text: p.StockQty, alignment: 'center' },
+                { text: p.Load, alignment: 'center' }, 
+                { text: p.TestingTime, alignment: 'center' },
+                { text: p.RepairedQty, alignment: 'center' }, 
+                
+                { text: p.ScrapQty, alignment: 'center' },
+                { text: p.FaultyQty, alignment: 'center' }, 
+                { text: p.RepairBy, alignment: 'center' },
+                { text: p.TestedBy, alignment: 'center' }
+              ])),
+              [
+                {}, 
+                { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }
+              ],
+              [
+                { text: 'Final Remarks', colSpan: 10, alignment: 'left', bold: true }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' }, 
+                
+                { text: '' }, 
+                { text: '' }, 
+                { text: '' },
+                { text: '' }
+              ]
             ]
           }
         },
-
         {
           columns: [
             { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
           ]
         }
       ],
-
 
       styles: {
         header: {
@@ -1786,9 +1833,7 @@ export class FaultytorepairComponent implements OnInit {
     } else {
       if (this.model.FunctionFlagValue == 2) {
         pdfMake.createPdf(docDefinition).open();
-      } else {
-        //pdfMake.createPdf(docDefinition).open();
-        // pdfMake.createPdf(docDefinition).download();
+      } else {       
         pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
           PDFdata = dataURL;
         });
@@ -1796,7 +1841,6 @@ export class FaultytorepairComponent implements OnInit {
           this.SaveUpdateFaultyToRepairedPdf();
         }, 1200);
       }
-
     }
   }
 
@@ -1892,7 +1936,7 @@ export class FaultytorepairComponent implements OnInit {
     });
   }
 
- 
+
 
 
   Validation() {
@@ -1903,7 +1947,7 @@ export class FaultytorepairComponent implements OnInit {
       flag = 1;
     } else {
       $("#txtTOWHStateId").css('border-color', '');
-      
+
     }
     if ($('#txtWHId').val() == "" || $('#txtWHId').val() == '0') {
       $('#txtWHId').css('border-color', 'red');
@@ -1921,14 +1965,14 @@ export class FaultytorepairComponent implements OnInit {
     }
 
     //vishal 21-01-2023
-  
+
     if ($('#txtRepairDate').val() == "" || $('#txtRepairDate').val() == '0' || $('#txtRepairDate').val() == null) {
       $('#txtRepairDate').css('border-color', 'red');
       $('#txtRepairDate').focus();
       flag = 1;
     } else {
       $("#txtRepairDate").css('border-color', '');
-    }  
+    }
     //end-vishal
 
     if (this.model.Repaired == 'In WareHouse-Repaired by Vendor') {
@@ -1942,7 +1986,8 @@ export class FaultytorepairComponent implements OnInit {
     }
 
     for (var icount = 0, len = this.dynamicArray.length; icount < len; icount++) {
-      if (this.dynamicArray[icount].ItemNameId == "" || this.dynamicArray[icount].ItemNameId == "null" || this.dynamicArray[icount].ItemNameId == "0") {
+      if (this.dynamicArray[icount].ItemNameId == "" || this.dynamicArray[icount].ItemNameId == "null"
+        || this.dynamicArray[icount].ItemNameId == "0") {
         $('#ddlItemNameId_' + icount).css('border-color', 'red');
         $('#ddlItemNameId_' + icount).focus();
         flag = 1;
@@ -1950,7 +1995,8 @@ export class FaultytorepairComponent implements OnInit {
         $("#ddlItemNameId_" + icount).css('border-color', '');
       }
 
-      if (this.dynamicArray[icount].ItemMakeId == "" || this.dynamicArray[icount].ItemMakeId == "null" || this.dynamicArray[icount].ItemMakeId == "0") {
+      if (this.dynamicArray[icount].ItemMakeId == "" || this.dynamicArray[icount].ItemMakeId == "null"
+        || this.dynamicArray[icount].ItemMakeId == "0") {
         $('#ddlItemMake_' + icount).css('border-color', 'red');
         $('#ddlItemMake_' + icount).focus();
         flag = 1;
@@ -1958,20 +2004,24 @@ export class FaultytorepairComponent implements OnInit {
         $("#ddlItemMake_" + icount).css('border-color', '');
       }
 
-      if (this.dynamicArray[icount].ItemId == "" || this.dynamicArray[icount].ItemId == "null" || this.dynamicArray[icount].ItemId == "0") {
+      if (this.dynamicArray[icount].ItemId == "" || this.dynamicArray[icount].ItemId == "null"
+        || this.dynamicArray[icount].ItemId == "0") {
         $('#ddlItemId_' + icount).css('border-color', 'red');
         $('#ddlItemId_' + icount).focus();
         flag = 1;
       } else {
         $("#ddlItemId_" + icount).css('border-color', '');
       }
-      if (this.dynamicArray[icount].EqTypeId == "" || this.dynamicArray[icount].EqTypeId == "null" || this.dynamicArray[icount].EqTypeId == "0") {
+
+      if (this.dynamicArray[icount].EqTypeId == "" || this.dynamicArray[icount].EqTypeId == "null"
+        || this.dynamicArray[icount].EqTypeId == "0") {
         $('#ddlEqTypeId_' + icount).css('border-color', 'red');
         $('#ddlEqTypeId_' + icount).focus();
         flag = 1;
       } else {
         $("#ddlEqTypeId_" + icount).css('border-color', '');
       }
+
       if (this.dynamicArray[icount].NewEqTypeId == "" || this.dynamicArray[icount].NewEqTypeId == "0") {
         $('#ddlNewEqTypeId_' + icount).css('border-color', 'red');
         $('#ddlNewEqTypeId_' + icount).focus();
@@ -1979,6 +2029,7 @@ export class FaultytorepairComponent implements OnInit {
       } else {
         $("#ddlNewEqTypeId_" + icount).css('border-color', '');
       }
+
       if (this.dynamicArray[icount].ClientId == "" || this.dynamicArray[icount].ClientId == "0") {
         $('#ddlClient_' + icount).css('border-color', 'red');
         $('#ddlClient_' + icount).focus();
@@ -2006,7 +2057,7 @@ export class FaultytorepairComponent implements OnInit {
 
       if (this.dynamicArray[icount].NatureBerId != "" && this.dynamicArray[icount].NatureBerId != "0") {
         $("#txtTestingTime_" + icount).css('border-color', '');
-        $("#txtTestingLoad_" + icount).css('border-color', '');   
+        $("#txtTestingLoad_" + icount).css('border-color', '');
       } else {
         if (this.dynamicArray[icount].TestingTime == "" || this.dynamicArray[icount].TestingTime == "null" || this.dynamicArray[icount].TestingTime == "0") {
           $('#txtTestingTime_' + icount).css('border-color', 'red');
@@ -2022,14 +2073,17 @@ export class FaultytorepairComponent implements OnInit {
         } else {
           $("#txtTestingLoad_" + icount).css('border-color', '');
         }
-        if ((this.dynamicArray[icount].Scrap == "0" && this.dynamicArray[icount].Repaired == "0")) {
+        if ((this.dynamicArray[icount].Scrap == "0" && this.dynamicArray[icount].Repaired == "0"
+          && this.dynamicArray[icount].FaultyQty == "0")) {
           $('#txtScrap_' + icount).css('border-color', 'red');
           $('#txtRepaired_' + icount).css('border-color', 'red');
+          $('#txtfaulty_' + icount).css('border-color', 'red');
           $('#txtTestingLoad_' + icount).focus();
           flag = 1;
         } else {
           $('#txtScrap_' + icount).css('border-color', '');
           $('#txtRepaired_' + icount).css('border-color', '');
+          $('#txtfaulty_' + icount).css('border-color', '');
         }
       }
       // if (this.dynamicArray[icount].RepairedById == "" || this.dynamicArray[icount].RepairedById == "0") {
@@ -2039,6 +2093,7 @@ export class FaultytorepairComponent implements OnInit {
       // } else {
       //   $("#ddlRepairedById_" + icount).css('border-color', '');
       // }
+
       if (this.dynamicArray[icount].TestedById == "" || this.dynamicArray[icount].TestedById == "0") {
         $('#ddlTestedById_' + icount).css('border-color', 'red');
         $('#ddlClient_' + icount).focus();
@@ -2046,6 +2101,7 @@ export class FaultytorepairComponent implements OnInit {
       } else {
         $("#ddlTestedById_" + icount).css('border-color', '');
       }
+
       if (this.dynamicArray[icount].Scrap != "0") {
         if (this.dynamicArray[icount].NatureBerId == "" || this.dynamicArray[icount].NatureBerId == "0") {
           $('#ddlNatureBer_' + icount).css('border-color', 'red');
@@ -2055,6 +2111,7 @@ export class FaultytorepairComponent implements OnInit {
           $("#ddlNatureBer_" + icount).css('border-color', '');
         }
       }
+
       if (this.dynamicArray[icount].ClientId != "99999") {
         if (this.dynamicArray[icount].Qty == "" || this.dynamicArray[icount].Qty == "0") {
           $('#txtQty_' + icount).css('border-color', 'red');
@@ -2076,6 +2133,7 @@ export class FaultytorepairComponent implements OnInit {
       } else {
         $("#txtSerialNo_" + icount).css('border-color', '');
       }
+
       if (this.dynamicArray[icount].RepairedById == "9999") {
         if (this.dynamicArray[icount].RepairedBy == "") {
           $('#ddlRepairedBy_' + icount).css('border-color', 'red');
@@ -2095,63 +2153,70 @@ export class FaultytorepairComponent implements OnInit {
           $("#ddlTestedBy_" + icount).css('border-color', '');
         }
       }
-      // $('#tblOne > tbody >tr').each(function () {
-      //   var valueChallanQty = $(this).find('.Qty').val();
-      //   if (valueChallanQty == '0' || valueChallanQty == '') {
-      //     flag = 1;
-      //     $(this).find('.Qty').css('border-color', 'red');
-      //   }
 
-      //   var valueAcceptedQty = $(this).find('.ChangeQty').val();
-      //   if (valueAcceptedQty == '') {
-      //     flag = 1;
-      //     $(this).find('.ChangeQty').css('border-color', 'red');
-      //   }
-      // });
     }
-    // if (flag == 0) {
-    //   flag = this.validateItemData();
-    // }
 
     return flag;
   }
 
-// brahamjot kaur 28/6/2022
+  // brahamjot kaur 28/6/2022
   validateStockQty() {
     var returnValue = 0;
     var DefaultySetValue = 48
-      for (var i = 0; i < this.dynamicArray.length; i++) {
-        let FQty = (this.dynamicArray[i].FQty ?? 0);
-        let Qty = (this.dynamicArray[i].Qty ?? 0);
-        
-        //console.log(this.dynamicArray[i].Qty);
-        var ItemNameId = this.dynamicArray[i].ItemNameId
-        const resultItemList = this.SearchItemNameList.filter(element => {
-          return element.id === parseInt(ItemNameId);
+    for (var i = 0; i < this.dynamicArray.length; i++) {
+      let FQty = (this.dynamicArray[i].FQty ?? 0);
+      let Qty = (this.dynamicArray[i].Qty ?? 0);
+
+      //console.log(this.dynamicArray[i].Qty);
+      var ItemNameId = this.dynamicArray[i].ItemNameId
+      const resultItemList = this.SearchItemNameList.filter(element => {
+        return element.id === parseInt(ItemNameId);
+      });
+      var itmName = resultItemList[0].itemName;
+
+      if (itmName == 'BB' && this.dynamicArray[i].UnitName == '8') {
+        const resultItemCodeList = this.dynamicArray[i].EditItemCode.filter(element => {
+          return element.id === parseInt(this.dynamicArray[i].ItemId);
         });
-        var itmName = resultItemList[0].itemName;
-        
-        if (itmName == 'BB' && this.dynamicArray[i].UnitName == '8') {
-          const resultItemCodeList = this.dynamicArray[i].EditItemCode.filter(element => {
-            return element.id === parseInt(this.dynamicArray[i].ItemId);
-          });
-          var cellVolt = resultItemCodeList[0].CellVolt;
-          Qty = (DefaultySetValue / cellVolt) * (Qty);
-        }
-       
-        if (Qty > FQty && itmName != "MISC") {
-            this.IsError = true;
-            this.errorMessage = "Dispatch(" + itmName + ") Qty can not be greater then stock Qty(" + this.dynamicArray[i].FQty + ")."
-            returnValue = 1;
-          }
-        
-        
+        var cellVolt = resultItemCodeList[0].CellVolt;
+        Qty = (DefaultySetValue / cellVolt) * (Qty);
       }
- 
+
+      if (Qty > FQty && itmName != "MISC") {
+        this.IsError = true;
+        this.errorMessage = "Dispatch(" + itmName + ") Qty can not be greater then stock Qty(" + this.dynamicArray[i].FQty + ")."
+        returnValue = 1;
+      }
+
+
+    }
+
     return returnValue;
   }
 
- 
+  // Hemant Tyagi 06/02/2022
+  blurfaulty(index: any) {
+    $('#txtScrap_' + index).css('border-color', '');
+    $('#txtRepaired_' + index).css('border-color', '');
+    $('#txtfaulty_' + index).css('border-color', '');
+
+    //brahamjot kaur 28/6/2022
+    if (this.IsMandatory(index) == true) {
+      if (this.dynamicArray[index].FaultyQty != '' || this.dynamicArray[index].FaultyQty != 0) {
+        this.dynamicArray[index].Repaired = 0;
+        this.dynamicArray[index].Scrap = 0;
+      }
+    }
+
+    if ((parseInt(this.dynamicArray[index].Scrap) + parseInt(this.dynamicArray[index].Repaired)
+      + parseInt(this.dynamicArray[index].FaultyQty)) > parseInt(this.dynamicArray[index].Qty)) {
+      this.dynamicArray[index].Repaired = 0;
+      this.dynamicArray[index].Scrap = 0;
+      this.dynamicArray[index].FaultyQty = 0;
+    }
+
+  }
+
 }
 
 
