@@ -41,7 +41,6 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title" id="modal-basic-title">Please confirm..</h5>
-
       <div>
       </div>
     </div>
@@ -123,7 +122,7 @@
               </div>
             </div>
             <div class="row mb-1" style="margin-left:3px">
-               <div class="col-sm-1">
+              <div class="col-sm-1">
                 <label class="col-form-label-xs">Customer </label>
               </div>
               <div class="col-sm-2">
@@ -131,15 +130,15 @@
                   [settings]="MultidropdownSettings" (onDeSelectAll)="onClickCustomer('DelAll')"
                   (ngModelChange)="onClickCustomer('')">
                 </angular2-multiselect>
-              </div> 
+              </div>
               <div class="col-sm-6">
                 <app-site-panel class="ChildCSS"></app-site-panel>
               </div>
-             
-            </div>
-            
 
-            <div class="row"> 
+            </div>
+
+
+            <div class="row">
               <div class="col-sm-12" style="background-color:#28a745;">
                 <div class="btn-group btn-group-sm">
                   <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch"
@@ -411,8 +410,9 @@
                             </div>
                           </div>
                         </div>
-                        
+
                         <input type="hidden" [(ngModel)]="model.HideCustomerId" />
+                        
                         <div class="col-sm-6">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-4"> Site Name </label>
