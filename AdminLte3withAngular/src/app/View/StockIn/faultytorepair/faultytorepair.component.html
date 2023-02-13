@@ -1,177 +1,189 @@
-
 <style>
-    .table th, .table td {
-        padding: 4px 4px 4px 4px;
-        vertical-align: top;
-        border-top: 1px solid #dee2e6;
-    }
-    .table thead th {
-        border-bottom: 2px solid #dee2e6;
-        text-align: center;
-        font-size: smaller;
-    }   
-    .Mandatoryfield
-    {
-    font-size:15px
-     }
-     .ng-star-inserted
-     {
-      /* position: fixed !important; */
-      z-index:999 !important;
+  .table th,
+  .table td {
+    padding: 4px 4px 4px 4px;
+    vertical-align: top;
+    border-top: 1px solid #dee2e6;
+  }
+
+  .table thead th {
+    border-bottom: 2px solid #dee2e6;
+    text-align: center;
+    font-size: smaller;
+  }
+
+  .Mandatoryfield {
+    font-size: 15px
+  }
+
+  .ng-star-inserted {
+    /* position: fixed !important; */
+    z-index: 999 !important;
     /* top: 0px;
     left: 0px;
     will-change: transform;
     transform: translate(863px, 84px); */
-     }.ChildCSS
-    {
+  }
+
+  .ChildCSS {
     width: 100%;
     display: flex;
     justify-content: flex-end;
     margin-top: -50px;
-    }
-    #table-wrapper
-    {
-      height: 300px;
-      overflow: auto;
-    }
-    
-    </style>
+  }
+
+  #table-wrapper {
+    height: 300px;
+    overflow: auto;
+  }
+</style>
 
 <div class="wrapper">
-  
-    <app-main-header></app-main-header>   
-    <!-- Main Sidebar Container -->
-    <app-main-sidebar></app-main-sidebar>
-    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">  
-      <p style="color: white">Please Wait. </p>  
-      </ngx-spinner> 
-    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
-        <!-- Content Header (Page header) -->
-      <div class="content-header bg-light">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-xs-12">
-              <nav aria-label="breadcrumb">
+
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
+  <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+    <p style="color: white">Please Wait. </p>
+  </ngx-spinner>
+  <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+    <!-- Content Header (Page header) -->
+    <div class="content-header bg-light">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-xs-12">
+            <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
                 <li class="breadcrumb-item active">WH Management / Repaired Certification Process</li>
               </ol>
-              </nav>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- /.content-header -->
+    <section class="content" style="padding-top:2px;">
+      <div class="container-fluid">
+        <div class="row" *ngIf="isShownList">
+          <div class="col-sm-12">
+            <app-search-panel></app-search-panel>
+            <div class="row mb-1" style="margin-left:3px">
+
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Active/Cancel</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="txtVoucher" [(ngModel)]="model.ddlActive">
+                  <option class="dropdown-item" [value]="2">Select</option>
+                  <option class="dropdown-item" [value]="1">Active</option>
+                  <option class="dropdown-item" [value]="0">Cancel</option>
+                </select>
+              </div>
             </div>
+            <!-- /.Ravider -->
+
+            <div class="row">
+              <div class="col-sm-12" style="background-color:#28a745;">
+                <div class="btn-group btn-group-sm">
+                  <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"
+                    (click)="SearchFaultyRepaired('List')"> <i class="fa fa-search" aria-hidden="true"></i>
+                    Search</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success"
+                    (click)="SearchFaultyRepaired('Export')">
+                    <i class="fa fa-download" aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin"
+                      *ngIf="loading"></i></button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success"
+                    (click)="CreateNew()"><i class="fa fa-plus"></i> New</button>
+                </div>
+              </div>
             </div>
           </div>
-      </div>
-           <!-- /.content-header -->
-           <section class="content" style="padding-top:2px;" >
-              <div class="container-fluid">  
-                <div class="row" *ngIf="isShownList">
-                    <div class="col-sm-12">                   
-                      <app-search-panel></app-search-panel>  
-                      <div class="row mb-1" style="margin-left:3px">
+          <div class="col-sm-12">
+            <div class="row">
+              <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine" [enableSorting]="true"
+                [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="columnDefs"
+                [multiSortKey]="multiSortKey" [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)">
+              </ag-grid-angular>
+            </div>
+          </div>
+        </div>
 
-                        <div class="col-sm-1">
-                          <label class="col-form-label-xs">Active/Cancel</label>
-                        </div>
-                        <div class="col-sm-2">
-                          <select class="form-control form-control-sm" id="txtVoucher" [(ngModel)]="model.ddlActive">
-                            <option class="dropdown-item" [value]="2">Select</option>
-                            <option class="dropdown-item" [value]="1">Active</option>
-                            <option class="dropdown-item" [value]="0">Cancel</option>
-                          </select>
-                        </div>
-                      </div>
-                            <!-- /.Ravider -->
-                     
-                      <div class="row">
-                                <div class="col-sm-12" style="background-color:#28a745;">
-                                <div class="btn-group btn-group-sm">
-                                    <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"(click)="SearchFaultyRepaired('List')" > <i class="fa fa-search" aria-hidden="true"></i> Search</button>
-                                    <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success" (click)="SearchFaultyRepaired('Export')">
-                                      <i class="fa fa-download" aria-hidden="true"></i> Excel Export<i class="fa fa-spinner fa-spin" *ngIf="loading"></i></button>
-                                    <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success" (click)="CreateNew()"><i class="fa fa-plus"></i> New</button> 
-                                  </div>                                    
-                                </div>
-                              </div>
-                          </div>
-                      <div class="col-sm-12">                     
-                        <div class="row">
-                          <ag-grid-angular
-                            style="width: 100%; height: 500px;"
-                            class="ag-theme-alpine"
-                            [enableSorting]="true"
-                            [enableFilter]="true"
-                            [pagination]="true"
-                            paginationPageSize ="20"  
-                            [columnDefs]="columnDefs"                         
-                            [multiSortKey]="multiSortKey"
-                            [tooltipShowDelay]="tooltipShowDelay"
-                            [rowData]="rowData"
-                            [frameworkComponents]="frameworkComponents"
-                            (gridReady)="onGridReady($event)"
-                            >      
-                          </ag-grid-angular>
-                        </div>
+        <div class="row" *ngIf="isShownEdit">
+          <div class="col-sm-12 col-md-12">
+            <div class="card card-success">
+              <div class="card-body">
+                <div class="alert alert-danger" *ngIf="IsError" role="alert">
+                  <strong>Error!</strong> {{errorMessage}}
+                </div>
+                <div class="alert alert-success" *ngIf="IsSuccess" role="alert">
+                  {{succesMessage}}
+                </div>
+                <div class="row mb-1">
+                  <div class="col-sm-12 content-header bg-light">
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i
+                          class="fa fa-arrow-circle-left"></i> Back</button>
+                      &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-sm btn-success"
+                        (click)="CreateNew()"><i class="fa fa-plus"></i>
+                        New </button>
+                      &nbsp;<button type="button" *ngIf="Save" class="btn btn-sm btn-success" (click)="conformPopup()"
+                        [disabled]="IsSaveDisabled"><i class="fa fa-save"></i> Save</button>
+                      &nbsp;<button type="button" *ngIf="ObjUserPageRight.IsGenPdf" class="btn btn-sm btn-success"
+                        (click)="SearchFaultyRepPDFDataById(1)"><i class="fa fa-download"></i> Generate
+                        Certificate</button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success"
+                        (click)="SearchFaultyRepPDFDataById(2)"><i class="fa fa-download"></i>Certificate</button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success" *ngIf="IsPreviewPdfHide"
+                        (click)="SearchPdfPreview()"><i class="fa fa-save"></i> Preview</button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success"
+                        *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn" (click)="conformCancelPopup()">Cancel
+                        RC</button>
                     </div>
+                  </div>
                 </div>
 
-                <div class="row" *ngIf="isShownEdit">
-                  <div class="col-sm-12 col-md-12">
-                    <div class="card card-success">
-                      <div class="card-body">
-                        <div class="alert alert-danger" *ngIf="IsError" role="alert">
-                          <strong>Error!</strong> {{errorMessage}}
-                        </div>
-                        <div class="alert alert-success" *ngIf="IsSuccess" role="alert">
-                          {{succesMessage}}
-                        </div>
-                        <div class="row mb-1">
-                          <div class="col-sm-12 content-header bg-light">                                   
-                            <div class="col-sm-12">
-                              <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
-                              &nbsp; <button type="submit"   *ngIf="ObjUserPageRight.IsCreate"class="btn btn-sm btn-success" (click)="CreateNew()"   ><i class="fa fa-plus"></i> 
-                                 New </button>
-                                 &nbsp;<button type="button" *ngIf="Save" class="btn btn-sm btn-success" (click)="conformPopup()" [disabled]="IsSaveDisabled"><i class="fa fa-save"></i> Save</button>
-                              &nbsp;<button type="button" *ngIf="ObjUserPageRight.IsGenPdf" class="btn btn-sm btn-success" (click)="SearchFaultyRepPDFDataById(1)" ><i class="fa fa-download"></i> Generate Certificate</button>
-                              &nbsp;<button type="button" class="btn btn-sm btn-success" (click)="SearchFaultyRepPDFDataById(2)" ><i class="fa fa-download"></i>Certificate</button>
-                                   &nbsp;<button type="button" class="btn btn-sm btn-success" *ngIf="IsPreviewPdfHide" (click)="SearchPdfPreview()" ><i class="fa fa-save"></i> Preview</button>
-                                   &nbsp;<button type="button" class="btn btn-sm btn-success" *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn" (click)="conformCancelPopup()" >Cancel RC</button>
-                              </div>                                    
-                          </div>
-                        </div>
-    
-                      
-                        <div class="row mb-1">
-                          <label class="col-form-label-xs col-sm-1">WH State<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
-                          <div class="col-sm-2">
-                            <select class="form-control form-control-sm" id="txtTOWHStateId" [(ngModel)]="model.WHStateId" (change)="ChangeToState(model.WHStateId)">
-                              <option class="dropdown-item"  value="0">Select</option>
-                              <option *ngFor="let item of WHStateList" [value]="item.id" >{{item.itemName}}</option>
-                            </select>
-                          </div>
-                          <label class="col-form-label-xs col-sm-1">WH Name<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
-                          <div class="col-sm-2">
-                            <select class="form-control form-control-sm" id="txtWHId"  [(ngModel)]="model.WHId" (change)="ChangeWH(model.WHId)">
-                              <option class="dropdown-item"  value="0">Select</option>
-                              <option *ngFor="let item of WHList" [value]="item.id" >{{item.itemName}}</option>
-                            </select>
-                          </div>
+                <div class="row mb-1">
+                  <label class="col-form-label-xs col-sm-1">WH State<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <select class="form-control form-control-sm" id="txtTOWHStateId" [(ngModel)]="model.WHStateId"
+                      (change)="ChangeToState(model.WHStateId)">
+                      <option class="dropdown-item" value="0">Select</option>
+                      <option *ngFor="let item of WHStateList" [value]="item.id">{{item.itemName}}</option>
+                    </select>
+                  </div>
+                  <label class="col-form-label-xs col-sm-1">WH Name<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <select class="form-control form-control-sm" id="txtWHId" [(ngModel)]="model.WHId"
+                      (change)="ChangeWH(model.WHId)">
+                      <option class="dropdown-item" value="0">Select</option>
+                      <option *ngFor="let item of WHList" [value]="item.id">{{item.itemName}}</option>
+                    </select>
+                  </div>
 
-                          <label class="col-form-label-xs col-sm-1">Repaired Type<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
-                          <div class="col-sm-2">
-                            <select class="form-control form-control-sm" id="txtRepairedType"  [(ngModel)]="model.RepairedType" (change)="ChangeRepairedType(model.RepairedType)">
-                              <option class="dropdown-item"  value="0">Select</option>
-                              <option *ngFor="let item of RepairedTypeData" [value]="item.id" >{{item.RepairedName}}</option>
-                            </select>
-                          </div>
-                          <label class="col-form-label-xs col-sm-1" *ngIf="IsDocumentShowHide">Vendor Name<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
-                          <div class="col-sm-2" *ngIf="IsDocumentShowHide">
-                            <select class="form-control form-control-sm" id="txtVendorType"  [(ngModel)]="model.VendorName" (change)="ChangeVendorType(model.VendorName)">
-                              <option class="dropdown-item"  value="0">Select</option>
-                              <option *ngFor="let item of VendorList" [value]="item.id" >{{item.itemName}}</option>
-                            </select>
-                          </div>
+                  <label class="col-form-label-xs col-sm-1">Repaired Type<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <select class="form-control form-control-sm" id="txtRepairedType" [(ngModel)]="model.RepairedType"
+                      (change)="ChangeRepairedType(model.RepairedType)">
+                      <option class="dropdown-item" value="0">Select</option>
+                      <option *ngFor="let item of RepairedTypeData" [value]="item.id">{{item.RepairedName}}</option>
+                    </select>
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsDocumentShowHide">Vendor Name<span
+                      style="color:red;" class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsDocumentShowHide">
+                    <select class="form-control form-control-sm" id="txtVendorType" [(ngModel)]="model.VendorName"
+                      (change)="ChangeVendorType(model.VendorName)">
+                      <option class="dropdown-item" value="0">Select</option>
+                      <option *ngFor="let item of VendorList" [value]="item.id">{{item.itemName}}</option>
+                    </select>
+                  </div>
 
-                          <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsDocumentShowHide">Document/Tax Invoice No</label>                           
+                  <!-- <label class="col-form-label-xs col-sm-1" *ngIf="IsDocumentShowHide">Document/Tax Invoice No</label>                           
                           <div class="col-sm-2" *ngIf="IsDocumentShowHide">
                             <div class="ng-autocomplete">
                               <ng-autocomplete 
@@ -198,266 +210,358 @@
                               </ng-template>
                             </div> 
                           </div> -->
-                        
-                        </div> 
-                        <div class="row mb-1" *ngIf="IsDocumentShowHide">
-                          <label class="col-form-label-xs col-sm-1">Invoice Value<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
-                          <div class="col-sm-2">
-                            <input class="form-control form-control-sm" maxlength="20" placeholder="" id="txtInvoiceValue" autocomplete="off" appCopyPastNumFloatValue
-                            [(ngModel)]="model.InvoiceValue" >
-                          </div>
-                          <label class="col-form-label-xs col-sm-1">Invoice Date<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
-                          <div class="col-sm-2">
-                            <div class="input-group" >
-                              <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate" autocomplete="off"readonly
-                               [(ngModel)]="model.InvoiceDate" ngbDatepicker #InvoiceDate="ngbDatepicker">
-                              <div class="input-group-append">
-                                <span class="input-group-text" (click)="InvoiceDate.toggle()"><i class="far fa-calendar-alt"></i></span>
-                              </div>
-                            </div>
-                          </div>
 
-                          <label class="col-form-label-xs col-sm-1">Upload Invoice File<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
-                          <div class="col-sm-2">
-                            <input type="file" id="UploadInvoiceFile" [(ngModel)]="model.UploadInvoiceFile"
-                            accept="application/pdf, image/jpeg" placeholder="Choose file"  (change)="onUploadInvoiceFileChange($event)">
-                          </div>
-                        </div> 
-                        <div class="row mb-1">
-                          <label class="col-form-label-xs col-sm-1">Repaired/Tested Date<span style="color:red;"class="Mandatoryfield"><b>*</b></span></label>                           
-                          <div class="col-sm-2">
-                            <div class="input-group" >
-                              <input class="form-control form-control-sm" placeholder="" id="txtRepairDate" autocomplete="off" 
-                               [(ngModel)]="model.RepairDate"  ngbDatepicker #RepairDateDate="ngbDatepicker" readonly>
-                              <div class="input-group-append">
-                                <span class="input-group-text" (click)="RepairDateDate.toggle()"><i class="far fa-calendar-alt"></i></span>
-                              </div>
-                            </div>
-                          </div>
-                          <label class="col-form-label-xs col-sm-1">Upload Signed Certificate<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
-                          <div class="col-sm-2">
-                            <input type="file" id="UploadCertificateFile" [(ngModel)]="model.UploadCertificate"
-                            accept="application/pdf, image/jpeg" placeholder="Choose file"  (change)="onUploadCertificateChange($event)">
-                          </div>
-                         
-                          <label class="col-form-label-xs col-sm-1">Remarks<span style="color:red;"class="Mandatoryfield"><b></b></span></label>                           
-                          <div class="col-sm-2">
-                            <textarea type="text" id="txtRepairBy"  autocomplete="off"
-                            [(ngModel)]="model.Remarks" placeholder=""  class="form-control form-control-sm" ></textarea>
-                          </div>
-                          <label class="col-form-label-xs col-sm-1" *ngIf="IsHideShowCancelBtn">Cancellation Reason<span style="color: red;"class="Mandatoryfield"><b>*</b></span></label>
-                          <div class="col-sm-2" *ngIf="IsHideShowCancelBtn">
-                            <select class="form-control form-control-sm" id="txtInCaseReason" [(ngModel)]="model.InCaseReason" (change)="changeCaseReason()">
-                              <option class="dropdown-item"  value="0">Select</option>
-                              <option *ngFor="let item of CancelReasonData" [value]="item.id" >{{item.ReasonName}}</option>
-                            </select>
-                          </div>
-                        </div>
+                </div>
+                <div class="row mb-1" *ngIf="IsDocumentShowHide">
+                  <label class="col-form-label-xs col-sm-1">Invoice Value<span style="color:red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2">
+                    <input class="form-control form-control-sm" maxlength="20" placeholder="" id="txtInvoiceValue"
+                      autocomplete="off" appCopyPastNumFloatValue [(ngModel)]="model.InvoiceValue">
+                  </div>
+                  <label class="col-form-label-xs col-sm-1">Invoice Date<span style="color:red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2">
+                    <div class="input-group">
+                      <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate" autocomplete="off"
+                        readonly [(ngModel)]="model.InvoiceDate" ngbDatepicker #InvoiceDate="ngbDatepicker">
+                      <div class="input-group-append">
+                        <span class="input-group-text" (click)="InvoiceDate.toggle()"><i
+                            class="far fa-calendar-alt"></i></span>
+                      </div>
+                    </div>
+                  </div>
 
-                  <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Item Details</legend> 
-                    <div class="col-sm-12" style="overflow-x:scroll; min-height:150px;">
-                      <table id="tblOne" class="table table-striped table-bordered">    
-                        <thead>    
-                          <tr>    
-                               <th></th>   
-                               <th>Item Name<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>    
-                               <th>Item Make<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>    
-                               <th>Part No<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th>
-                               <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
-                               <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>   
-                               <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>   -->
-                               <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
-                               <!-- <th>HSN/SAC<span  style="color:red" class="Mandatoryfield"><b>*</b></span></th>   -->
-                               <th>&nbsp;&nbsp;&nbsp;Stock&nbsp;Qty<span style="color:red" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                               <!-- <th style="text-align: center;" >Serial&nbsp;No<span style="color:red" class="Mandatoryfield"><b></b></span></th> -->
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;No<span style="color:red;"class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> 
-                               <th>Nature&nbsp;of&nbsp;Fault<span style="color:red;"class="Mandatoryfield"><b>*</b></span></th> 
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spare&nbsp;Used&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                               <th>Testing&nbsp; Time(Hour)<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
-                               <th>Testing&nbsp; Load(AMP)<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
-                              
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;BER&nbsp;Qty<span style="color:red;"class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th> 
-                               <th>Repaired&nbsp;Qty<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                               <th>Nature&nbsp;of&nbsp;BER<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remarks<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>     
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repaired&nbsp;By<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> 
-                               <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repaired&nbsp;By<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>  -->
-                               <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tested&nbsp;By<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> 
-                               <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tested&nbsp;By<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>  -->
-                              </tr>    
-                        </thead>    
-                        <tbody>    
-                          <tr *ngFor="let dynamic of dynamicArray; let i = index" >    
-                            <td (click)="deleteRow(i)" style="width:20px;">    
-                               <i class="fa fa-trash"  title="Delete"></i>    
-                            </td>    
-                            <td style="width:80px;">  
-                              <select style="width:80px;" class="form-control form-control-sm ItemName" id="ddlItemNameId_{{i}}" [(ngModel)]="dynamicArray[i].ItemNameId" (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)"  >
-                                <option class="dropdown-item"  [value]="0">Select</option>
-                                <option *ngFor="let item of SearchItemNameList" [value]="item.id" >{{item.itemName}}</option>
+                  <label class="col-form-label-xs col-sm-1">Upload Invoice File<span style="color:red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2">
+                    <input type="file" id="UploadInvoiceFile" [(ngModel)]="model.UploadInvoiceFile"
+                      accept="application/pdf, image/jpeg" placeholder="Choose file"
+                      (change)="onUploadInvoiceFileChange($event)">
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <label class="col-form-label-xs col-sm-1">Repaired/Tested Date<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <div class="input-group">
+                      <input class="form-control form-control-sm" placeholder="" id="txtRepairDate" autocomplete="off"
+                        [(ngModel)]="model.RepairDate" ngbDatepicker #RepairDateDate="ngbDatepicker" readonly>
+                      <div class="input-group-append">
+                        <span class="input-group-text" (click)="RepairDateDate.toggle()"><i
+                            class="far fa-calendar-alt"></i></span>
+                      </div>
+                    </div>
+                  </div>
+                  <label class="col-form-label-xs col-sm-1">Upload Signed Certificate<span style="color:red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2">
+                    <input type="file" id="UploadCertificateFile" [(ngModel)]="model.UploadCertificate"
+                      accept="application/pdf, image/jpeg" placeholder="Choose file"
+                      (change)="onUploadCertificateChange($event)">
+                  </div>
+
+                  <label class="col-form-label-xs col-sm-1">Remarks<span style="color:red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2">
+                    <textarea type="text" id="txtRepairBy" autocomplete="off" [(ngModel)]="model.Remarks" placeholder=""
+                      class="form-control form-control-sm"></textarea>
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsHideShowCancelBtn">Cancellation Reason<span
+                      style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsHideShowCancelBtn">
+                    <select class="form-control form-control-sm" id="txtInCaseReason" [(ngModel)]="model.InCaseReason"
+                      (change)="changeCaseReason()">
+                      <option class="dropdown-item" value="0">Select</option>
+                      <option *ngFor="let item of CancelReasonData" [value]="item.id">{{item.ReasonName}}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Item Details</legend>
+                  <div class="col-sm-12" style="overflow-x:scroll; min-height:150px;">
+                    <table id="tblOne" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>Item Name<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>Item Make<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>Part No<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>   -->
+                          <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>HSN/SAC<span  style="color:red" class="Mandatoryfield"><b>*</b></span></th>   -->
+                          <th>&nbsp;&nbsp;&nbsp;Stock&nbsp;Qty<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th style="text-align: center;" >Serial&nbsp;No<span style="color:red" class="Mandatoryfield"><b></b></span></th> -->
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;No<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>Nature&nbsp;of&nbsp;Fault<span style="color:red;" class="Mandatoryfield"><b>*</b></span>
+                          </th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Spare&nbsp;Used&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>Testing&nbsp; Time(Hour)<span style="color:red" class="Mandatoryfield"><b>*</b></span>
+                          </th>
+                          <th>Testing&nbsp; Load(AMP)<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
+
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;BER&nbsp;Qty<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>Repaired&nbsp;Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Faulty&nbsp;Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Nature&nbsp;of&nbsp;BER<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remarks<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repaired&nbsp;By<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Repaired&nbsp;By<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>  -->
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tested&nbsp;By<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Tested&nbsp;By<span style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>  -->
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                          <td (click)="deleteRow(i)" style="width:20px;">
+                            <i class="fa fa-trash" title="Delete"></i>
+                          </td>
+                          <td style="width:80px;">
+                            <select style="width:80px;" class="form-control form-control-sm ItemName"
+                              id="ddlItemNameId_{{i}}" [(ngModel)]="dynamicArray[i].ItemNameId"
+                              (change)="ChangeEditItemName(dynamicArray[i].ItemNameId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of SearchItemNameList" [value]="item.id">{{item.itemName}}
+                              </option>
                             </select>
-                            </td> 
-                            <td style="width:80px;">    
-                              <select style="width:80px;" class="form-control form-control-sm ItemMake" id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"(change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)"  >
-                                <option class="dropdown-item" [value]="0">Select</option>
-                                <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id" >{{item.itemName}}</option>
+                          </td>
+                          <td style="width:80px;">
+                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                              id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"
+                              (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].EditItemMake" [value]="item.id">
+                                {{item.itemName}}</option>
                             </select>
-                            </td> 
-                            <td style="width:80px;">    
-                              <select  style="width:80px;"class="form-control form-control-sm ItemCode" id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"(change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)"  >
-                                <option class="dropdown-item" [value]="0">Select</option>
-                                <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id" >{{item.itemName}}</option>
-                               
+                          </td>
+                          <td style="width:80px;">
+                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                              id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
+                              (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id">
+                                {{item.itemName}}</option>
+
                             </select>
-                            </td>   
-                            <td style="width:100px;">    
-                              <select class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}" [(ngModel)]="dynamicArray[i].EqTypeId" (change)="ChangeEqupmnet(dynamicArray[i].EqTypeId,i)" >  
-                                <option class="dropdown-item" [value]="0">Select</option>
-                                <option *ngFor="let item of FilterEquipmentTypeList" [value]="item.id" >{{item.itemName}}</option>    
-                              </select>
-                            </td>  
-                            <td style="width:120px;">    
-                              <select class="form-control form-control-sm Client" id="ddlClient_{{i}}" [(ngModel)]="dynamicArray[i].ClientId"  (change)="ChangeClient(dynamicArray[i].ClientId,i)"  >  
-                                <option class="dropdown-item" [value]="0">Select</option>
-                                <option *ngFor="let item of ClientList" [value]="item.Id" >{{item.Name}}</option>    
-                              </select>
-                            </td> 
-                            <td style="width:280px;">    
-                              <textarea  [(ngModel)]="dynamicArray[i].ItemDescription" readonly  class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea>   
-                              </td>
-                              <!-- <td style="width:280px;">    
+                          </td>
+                          <td style="width:100px;">
+                            <select class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}"
+                              [(ngModel)]="dynamicArray[i].EqTypeId"
+                              (change)="ChangeEqupmnet(dynamicArray[i].EqTypeId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of FilterEquipmentTypeList" [value]="item.id">{{item.itemName}}
+                              </option>
+                            </select>
+                          </td>
+                          <td style="width:120px;">
+                            <select class="form-control form-control-sm Client" id="ddlClient_{{i}}"
+                              [(ngModel)]="dynamicArray[i].ClientId"
+                              (change)="ChangeClient(dynamicArray[i].ClientId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                          </td>
+                          <td style="width:280px;">
+                            <textarea [(ngModel)]="dynamicArray[i].ItemDescription" readonly
+                              class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea>
+                          </td>
+                          <!-- <td style="width:280px;">    
                                 <textarea  [(ngModel)]="dynamicArray[i].SubDescription"   class="form-control form-control-sm" type="text"  > </textarea>   
                                 </td> -->
-                                <td style="width:50px;"> 
-                                  <select class="form-control form-control-sm UnitName" id="ddlUnitName_{{i}}" [(ngModel)]="dynamicArray[i].UnitName"(change)="ChangeUnit(dynamicArray[i].UnitName,i)">  
-                                    <option class="dropdown-item" [value]="0">Select</option>
-                                    <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id" >{{item.UnitName}}</option>    
-                                  </select>   
-                                  <!-- <input style="width:50px;" class="form-control form-control-sm"  [(ngModel)]="dynamicArray[i].UnitName" readonly type="text" />    
+                          <td style="width:50px;">
+                            <select class="form-control form-control-sm UnitName" id="ddlUnitName_{{i}}"
+                              [(ngModel)]="dynamicArray[i].UnitName" (change)="ChangeUnit(dynamicArray[i].UnitName,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id">{{item.UnitName}}
+                              </option>
+                            </select>
+                            <!-- <input style="width:50px;" class="form-control form-control-sm"  [(ngModel)]="dynamicArray[i].UnitName" readonly type="text" />    
                                   <label *ngIf="dynamicArray[i].HideShowConValue">S-UOM</label>
                                   <input style="width:50px;" class="form-control form-control-sm"  *ngIf="dynamicArray[i].HideShowConValue" readonly [(ngModel)]="dynamicArray[i].ConversionUnit"  type="text"/> 
                                  -->
-                                </td>
-                             
-                              <!-- <input   class="form-control form-control-sm "   type="hidden" autocomplete="off"   [(ngModel)]="dynamicArray[i].HideConversionValue" />     -->
-                              <td style="width:80px;">    
-                                <input   class="form-control form-control-sm Qty"  id="txtQty_{{i}}" autocomplete="off" (blur)="QtyKeyPress(i)"  [(ngModel)]="dynamicArray[i].Qty" [disabled]="dynamicArray[i].IsDisabled" appCopyPastNumFloatValue  type="text" style="text-align:center;" />    
-                                <!-- <label *ngIf="dynamicArray[i].HideShowConValue">S-Qty</label>
+                          </td>
+
+                          <!-- <input   class="form-control form-control-sm "   type="hidden" autocomplete="off"   [(ngModel)]="dynamicArray[i].HideConversionValue" />     -->
+                          <td style="width:80px;">
+                            <input class="form-control form-control-sm Qty" id="txtQty_{{i}}" autocomplete="off"
+                              (blur)="QtyKeyPress(i)" [(ngModel)]="dynamicArray[i].Qty"
+                              [disabled]="dynamicArray[i].IsDisabled" appCopyPastNumFloatValue type="text"
+                              style="text-align:center;" />
+                            <!-- <label *ngIf="dynamicArray[i].HideShowConValue">S-Qty</label>
                                 <input style="width:70px;" *ngIf="dynamicArray[i].HideShowConValue" class="form-control form-control-sm ConversionValue"  [(ngModel)]="dynamicArray[i].ConversionValue" (blur)="OnblurConversionValue()" appCopyPastNumFloatValue type="text" style="text-align:center;" />    
                                 <input style="width:120px;"  class="form-control form-control-sm hideIsConversion"  [(ngModel)]="dynamicArray[i].IsConversion"  type="hidden" style="text-align:center;"/> 
                               -->
-                              </td> 
-                              
-                              <!-- <td style="width:100px;text-align: center;">    
+                          </td>
+
+                          <!-- <td style="width:100px;text-align: center;">    
                                 <a (click)="showModal(dynamicArray[i].Qty, i)">
                                   <i _ngcontent-dpu-c137="" class="fa fa-plus"></i> 
                                 </a> 
                               </td>  -->
-                              <td style="width:100px;"> 
-                                <a (click)="showModal(dynamicArray[i].Qty, i)" style="width:20px;">
-                                  <i _ngcontent-dpu-c137="" class="fa fa-plus"></i> 
-                                </a>    
-                                  <input class="form-control form-control-sm SerialNo" maxlength="30"  id="txtSerialNo_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" type="text" style="text-align:center;width:120px;float:left;" />    
-                               
-                                </td> 
-                              <td style="width:100px;">    
-                                <select class="form-control form-control-sm TypeFaultyId" id="ddlTypeFaultyId_{{i}}" [(ngModel)]="dynamicArray[i].TypeFaultyId" (change)="ChangeNewType(dynamicArray[i].TypeFaultyId,i)" >  
-                                  <option class="dropdown-item" [value]="0">Select</option>
-                                  <option *ngFor="let item of NatureFaultyList" [value]="item.Id" >{{item.Name}}</option>  
-                                </select>
-                              </td>
-                              <td style="width:80px;">    
-                                <textarea   class="form-control form-control-sm MaterialUsed"  id="txtMaterialUsed_{{i}}" autocomplete="off"   [(ngModel)]="dynamicArray[i].MaterialUsed"     type="text" style="text-align:center;" ></textarea>    
-                            </td>
-                              <td style="width:80px;">    
-                                <input   class="form-control form-control-sm TestingTime" maxlength="4" id="txtTestingTime_{{i}}" appCopyPastNumFloatValue autocomplete="off"   [(ngModel)]="dynamicArray[i].TestingTime"     type="text" style="text-align:center;"  (keypress)="KeyPressTestingTime()" />    
-                            </td>
-                            <td style="width:80px;">    
-                              <input   class="form-control form-control-sm TestingLoad" maxlength="3" id="txtTestingLoad_{{i}}" numberOnly autocomplete="off"   [(ngModel)]="dynamicArray[i].TestingLoad"     type="text" style="text-align:center;" (keypress)="KeyPressTestingLoad()"  />    
+                          <td style="width:100px;">
+                            <a (click)="showModal(dynamicArray[i].Qty, i)" style="width:20px;">
+                              <i _ngcontent-dpu-c137="" class="fa fa-plus"></i>
+                            </a>
+                            <input class="form-control form-control-sm SerialNo" maxlength="30" id="txtSerialNo_{{i}}"
+                              autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" type="text"
+                              style="text-align:center;width:120px;float:left;" />
+
                           </td>
-                         
-                              <td style="width:100px;">    
-                                <input class="form-control form-control-sm Scrap"  id="txtScrap_{{i}}" appCopyPastNumFloatValue  autocomplete="off" [(ngModel)]="dynamicArray[i].Scrap" (blur)="blurScrap(dynamicArray[i].Scrap,i)"   type="text" style="text-align:center;" />    
-                              </td> 
-                              <td style="width:100px;">    
-                                <input class="form-control form-control-sm Repaired"  id="txtRepaired_{{i}}" appCopyPastNumFloatValue autocomplete="off" [(ngModel)]="dynamicArray[i].Repaired"  (blur)="blurRepaired(dynamicArray[i].Repaired,i)"  type="text" style="text-align:center;" />    
-                              </td> 
-                              <td style="width:100px;">    
-                                <select class="form-control form-control-sm NatureBerId" id="ddlNatureBer_{{i}}" [(ngModel)]="dynamicArray[i].NatureBerId" (change)="ChangeNatureBer(dynamicArray[i].NatureBerId,i)" >  
-                                  <option class="dropdown-item" [value]="0">Select</option>
-                                  <option *ngFor="let item of NatureBerList" [value]="item.Id" >{{item.Name}}</option>  
-                                </select>
-                              </td>
-                            <td style="width:280px;">    
-                                <textarea  [(ngModel)]="dynamicArray[i].Remarks" maxlength="200"   class="form-control form-control-sm" type="text"  > </textarea>   
-                                </td>
-                                <td style="width:100px;">    
-                                  <select class="form-control form-control-sm RepairedById" id="ddlRepairedById_{{i}}" [(ngModel)]="dynamicArray[i].RepairedById" (change)="ChangeRepairedEmpType(dynamicArray[i].RepairedById,i)" >  
-                                    <option class="dropdown-item" [value]="0">Select</option>
-                                    <option *ngFor="let item of RepairedEmployeeList" [value]="item.Id" >{{item.Name}}</option>  
-                                  </select>
-                                  <span></span>
-                                  <input  [(ngModel)]="dynamicArray[i].RepairedBy" id="ddlRepairedBy_{{i}}" *ngIf="IsRepaired"  class="form-control form-control-sm RepairedBy" type="text" (keypress)="KeyPressRepairedBy()" />  
-                                </td>
-                                <!-- <td style="width:280px;">    
+                          <td style="width:100px;">
+                            <select class="form-control form-control-sm TypeFaultyId" id="ddlTypeFaultyId_{{i}}"
+                              [(ngModel)]="dynamicArray[i].TypeFaultyId"
+                              (change)="ChangeNewType(dynamicArray[i].TypeFaultyId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of NatureFaultyList" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                          </td>
+                          <td style="width:80px;">
+                            <textarea class="form-control form-control-sm MaterialUsed" id="txtMaterialUsed_{{i}}"
+                              autocomplete="off" [(ngModel)]="dynamicArray[i].MaterialUsed" type="text"
+                              style="text-align:center;"></textarea>
+                          </td>
+                          <td style="width:80px;">
+                            <input class="form-control form-control-sm TestingTime" maxlength="4"
+                              id="txtTestingTime_{{i}}" appCopyPastNumFloatValue autocomplete="off"
+                              [(ngModel)]="dynamicArray[i].TestingTime" type="text" style="text-align:center;"
+                              (keypress)="KeyPressTestingTime()" />
+                          </td>
+                          <td style="width:80px;">
+                            <input class="form-control form-control-sm TestingLoad" maxlength="3"
+                              id="txtTestingLoad_{{i}}" numberOnly autocomplete="off"
+                              [(ngModel)]="dynamicArray[i].TestingLoad" type="text" style="text-align:center;"
+                              (keypress)="KeyPressTestingLoad()" />
+                          </td>
+
+                          <td style="width:100px;">
+                            <input class="form-control form-control-sm Scrap" id="txtScrap_{{i}}"
+                              appCopyPastNumFloatValue autocomplete="off" [(ngModel)]="dynamicArray[i].Scrap"
+                              (blur)="blurScrap(dynamicArray[i].Scrap,i)" type="text" style="text-align:center;" />
+                          </td>
+                          <td style="width:100px;">
+                            <input class="form-control form-control-sm Repaired" id="txtRepaired_{{i}}"
+                              appCopyPastNumFloatValue autocomplete="off" [(ngModel)]="dynamicArray[i].Repaired"
+                              (blur)="blurRepaired(dynamicArray[i].Repaired,i)" type="text"
+                              style="text-align:center;" />
+                          </td>
+                          <!-- Hemant Tyagi -->
+                          <td style="width:100px;">
+                            <input class="form-control form-control-sm faulty" id="txtfaulty_{{i}}"
+                              appCopyPastNumFloatValue autocomplete="off" [(ngModel)]="dynamicArray[i].FaultyQty"
+                              (blur)="blurfaulty(i)" type="text"
+                              style="text-align:center;" />
+                          </td>
+                          <td style="width:100px;">
+                            <select class="form-control form-control-sm NatureBerId" id="ddlNatureBer_{{i}}"
+                              [(ngModel)]="dynamicArray[i].NatureBerId"
+                              (change)="ChangeNatureBer(dynamicArray[i].NatureBerId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of NatureBerList" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                          </td>
+                          <td style="width:280px;">
+                            <textarea [(ngModel)]="dynamicArray[i].Remarks" maxlength="200"
+                              class="form-control form-control-sm" type="text"> </textarea>
+                          </td>
+                          <td style="width:100px;">
+                            <select class="form-control form-control-sm RepairedById" id="ddlRepairedById_{{i}}"
+                              [(ngModel)]="dynamicArray[i].RepairedById"
+                              (change)="ChangeRepairedEmpType(dynamicArray[i].RepairedById,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of RepairedEmployeeList" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                            <span></span>
+                            <input [(ngModel)]="dynamicArray[i].RepairedBy" id="ddlRepairedBy_{{i}}" *ngIf="IsRepaired"
+                              class="form-control form-control-sm RepairedBy" type="text"
+                              (keypress)="KeyPressRepairedBy()" />
+                          </td>
+                          <!-- <td style="width:280px;">    
                                   <input  [(ngModel)]="dynamicArray[i].RepairedBy"   class="form-control form-control-sm RepairedBy" type="text" (keypress)="KeyPressRepairedBy()" />  
                                   </td> -->
-                                  <td style="width:100px;">    
-                                    <select class="form-control form-control-sm TestedById" id="ddlTestedById_{{i}}" [(ngModel)]="dynamicArray[i].TestedById" (change)="ChangeTestedType(dynamicArray[i].TestedById,i)" >  
-                                      <option class="dropdown-item" [value]="0">Select</option>
-                                      <option *ngFor="let item of TestedEmployeeList" [value]="item.Id" >{{item.Name}}</option> 
-                                    </select>
-                                    <span></span>
-                                    <input  [(ngModel)]="dynamicArray[i].TestedBy" id="ddlTestedBy_{{i}}"  *ngIf="IsTested"  class="form-control form-control-sm TestedBy" type="text" (keypress)="KeyPressTestedBy()"  />  
-                                  </td>
-                                  <!-- <td style="width:280px;">    
+                          <td style="width:100px;">
+                            <select class="form-control form-control-sm TestedById" id="ddlTestedById_{{i}}"
+                              [(ngModel)]="dynamicArray[i].TestedById"
+                              (change)="ChangeTestedType(dynamicArray[i].TestedById,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of TestedEmployeeList" [value]="item.Id">{{item.Name}}</option>
+                            </select>
+                            <span></span>
+                            <input [(ngModel)]="dynamicArray[i].TestedBy" id="ddlTestedBy_{{i}}" *ngIf="IsTested"
+                              class="form-control form-control-sm TestedBy" type="text"
+                              (keypress)="KeyPressTestedBy()" />
+                          </td>
+                          <!-- <td style="width:280px;">    
                                     <input  [(ngModel)]="dynamicArray[i].TestedBy"   class="form-control form-control-sm TestedBy" type="text" (keypress)="KeyPressTestedBy()"  />  
                                     </td> -->
-                           </tr> 
-                           <tr>
-                            <td colspan="15"></td>  
-                            <!-- <td style="text-align:center;">{{totalSumPOQuantity}}</td>     -->
-                            <td></td> 
-                            <td></td>                                   
-                            <td></td>
-                            <td *ngIf="IsUnitConversion"></td>
-                            <td *ngIf="IsUnitConversion"></td>
-                            <!-- <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="15"></td>
+                          <!-- <td style="text-align:center;">{{totalSumPOQuantity}}</td>     -->
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td *ngIf="IsUnitConversion"></td>
+                          <td *ngIf="IsUnitConversion"></td>
+                          <!-- <td></td>
                            
                             <td style="text-align:center;">{{totalSumAmount}}</td> -->
-                            <td></td>
-                            <td></td>
-                            
-                          </tr>
-                           <tr>    
-                             <td (click)="addRow()">    
-                               <i class="fa fa-plus"></i>    
-                             </td>    
-                           </tr>    
-                        </tbody>    
-                      </table> 
+                          <td></td>
+                          <td></td>
 
-                    </div>
-                  </fieldset>
+                        </tr>
+                        <tr>
+                          <td (click)="addRow()">
+                            <i class="fa fa-plus"></i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+                </fieldset>
 
 
-                  <!-- <fieldset class="scheduler-border" *ngIf="SerialNoTableShowhide">
+                <!-- <fieldset class="scheduler-border" *ngIf="SerialNoTableShowhide">
                     <legend class="scheduler-border">Item SerialNo</legend> 
                     <div class="col-sm-12" style="overflow-y:scroll; height:200px;">
                       <table class="table table-striped table-bordered" > -->
-                        <!-- <tr *ngFor="let value of srnlst; let i = index"> -->
-                          <!-- <td > -->
-                            <!-- {{i+1}}
+                <!-- <tr *ngFor="let value of srnlst; let i = index"> -->
+                <!-- <td > -->
+                <!-- {{i+1}}
                             &nbsp; &nbsp;
                             <input class="" [(ngModel)]="srnlst[i].Ischecked" type="checkbox"
                             style="text-align:center;" />
                             &nbsp;
                             <input class="" [(ngModel)]="srnlst[i].InitialSrno" type="text"
                            /> -->
-                         
-                           <!-- <div class="row mb-1">
+
+                <!-- <div class="row mb-1">
                             <div class="col-sm-3" *ngFor="let value of srnlst; let i = index">
                            <label  > {{i+1}}.</label>
                            &nbsp;
@@ -471,10 +575,10 @@
                       
                          
                         </div> -->
-                         
 
-                          <!-- </td> -->
-                          <!-- <td colspan="2">
+
+                <!-- </td> -->
+                <!-- <td colspan="2">
                             <input class="" [(ngModel)]="srnlst[i].Ischecked" type="checkbox"
                             style="text-align:center;" />
                           </td>
@@ -482,231 +586,234 @@
                             <input class="form-control" [(ngModel)]="srnlst[i].InitialSrno" type="text"
                               style="text-align:center;" />
                           </td> -->
-                        <!-- </tr> -->
-                      <!-- </table>
+                <!-- </tr> -->
+                <!-- </table>
 
                     </div>
                   </fieldset> -->
-                        <br>
-                     
-                      </div> 
+                <br>
 
-                 
-                   </div> 
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="row" *ngIf="isPdfPreview">
+          <div class="col-sm-12 col-md-12">
+            <div class="card card-success">
+              <div class="card-body">
+
+                <div class="row mb-1">
+                  <div class="col-sm-12 content-header bg-light">
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-sm btn-success" (click)="BackPreviewPage()"><i
+                          class="fa fa-arrow-circle-left"></i> Back</button>
+                    </div>
                   </div>
                 </div>
 
 
+                <div class="row mb-1">
+                  <div class="col-sm-3">
+                    <img src="http://localhost:4200/assets/logo.jpg" style="height: 50px;width: 50px;">
+                  </div>
+                  <label class="col-form-label-xs col-sm-6"><b>
+                      <h5 style="text-align:center">{{model.CompanyName}}</h5>
+                    </b>
+                    <span style="text-align:center">{{model.WHAddress}}</span>
+                  </label>
+                </div>
 
-                <div class="row" *ngIf="isPdfPreview">
-                  <div class="col-sm-12 col-md-12">
-                    <div class="card card-success">
-                      <div class="card-body">
-                     
-                        <div class="row mb-1">
-                          <div class="col-sm-12 content-header bg-light">                                   
-                            <div class="col-sm-12">
-                              <button type="button" class="btn btn-sm btn-success" (click)="BackPreviewPage()"><i class="fa fa-arrow-circle-left"></i> Back</button>
-                              </div>                                    
-                          </div>
-                        </div>
-    
-                      
-                        <div class="row mb-1">
-                          <div class="col-sm-3">
-                            <img src="http://localhost:4200/assets/logo.jpg" style="height: 50px;width: 50px;">
-                          </div>
-                          <label class="col-form-label-xs col-sm-6"><b><h5 style="text-align:center">{{model.CompanyName}}</h5></b>
-                           <span style="text-align:center">{{model.WHAddress}}</span>
-                          </label>                           
-                        </div> 
+                <div class="row mb-1">
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-4">State Name </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.StateName}}</b> </label>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-4">WH Name </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.WHName}}</b> </label>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-5">Repaired Type </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.Repaired}}</b> </label>
+                  </div>
 
-                        <div class="row mb-1">
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-4">State Name </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.StateName}}</b> </label>
-                          </div>
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-4">WH Name   </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.WHName}}</b> </label>
-                          </div>
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-5">Repaired Type   </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.Repaired}}</b> </label>
-                          </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-5">VendorName</label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewVendorName}}</b> </label>
+                  </div>
+                </div>
 
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-5">VendorName</label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewVendorName}}</b> </label>
-                          </div>
-                        </div> 
+                <div class="row mb-1">
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-4">Invoice Value </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.InvoiceValue}}</b> </label>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-4">Invoice Date </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewInvoiceDate}}</b> </label>
+                  </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-5">Repaired Date </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewRepairDate}}</b> </label>
+                  </div>
 
-                        <div class="row mb-1">
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-4">Invoice Value </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.InvoiceValue}}</b> </label>
-                          </div>
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-4">Invoice Date   </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewInvoiceDate}}</b> </label>
-                          </div>
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-5">Repaired Date   </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.PreviewRepairDate}}</b> </label>
-                          </div>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs col-sm-5">Remarks </label>
+                    <label class="col-form-label-xs col-sm-6"><b>{{model.Remarks}}</b> </label>
+                  </div>
+                </div>
 
-                          <div class="col-sm-3">
-                            <label class="col-form-label-xs col-sm-5">Remarks   </label> 
-                          <label class="col-form-label-xs col-sm-6"><b>{{model.Remarks}}</b> </label>
-                          </div>
-                        </div> 
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Item Details</legend>
+                  <div class="col-sm-12">
+                    <table id="tblOne" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <th>Item Name<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Part No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Equipment Type<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <th>Customer<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <th>Item Description<span class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>   -->
+                          <th>UOM<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th>HSN/SAC<span  style="color:red" class="Mandatoryfield"><b>*</b></span></th>   -->
+                          <th>Stock Qty<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th style="text-align: center;" >Serial&nbsp;No<span style="color:red" class="Mandatoryfield"><b></b></span></th> -->
+                          <th>Serial No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Nature of Fault<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Spare Used<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <th>Testing Time(Hour)<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <th>Testing Load(AMP)<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                          <th>BER Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Repaired Qty<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Nature BER<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Remarks<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Repaired By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Repaired By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Tested By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Tested By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label>{{dynamicArray[i].ItemCode}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].CustomerName}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
+                          </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].SerialNo}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].TypeFaulty}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].MaterialUsed}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].TestingTime}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].TestingLoad}}</label>
+                          </td>
 
-                        <fieldset class="scheduler-border">
-                          <legend class="scheduler-border">Item Details</legend> 
-                          <div class="col-sm-12" >
-                            <table id="tblOne" class="table table-striped table-bordered">    
-                              <thead>    
-                                <tr>    
-                                     <th>Item Name<span style="color:red;"class="Mandatoryfield"><b></b></span></th>    
-                                     <th>Item Make<span style="color:red;"class="Mandatoryfield"><b></b></span></th>    
-                                     <th>Part No<span style="color:red;"class="Mandatoryfield"><b></b></span></th>
-                                     <th>Equipment Type<span style="color:red"class="Mandatoryfield"><b></b></span></th>
-                                     <th>Customer<span style="color:red"class="Mandatoryfield"><b></b></span></th>
-                                     <th>Item Description<span class="Mandatoryfield"><b></b></span></th>   
-                                     <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>   -->
-                                     <th>UOM<span style="color:red" class="Mandatoryfield"><b></b></span></th>
-                                     <!-- <th>HSN/SAC<span  style="color:red" class="Mandatoryfield"><b>*</b></span></th>   -->
-                                     <th>Stock Qty<span style="color:red" class="Mandatoryfield"><b></b></span></th>
-                                     <!-- <th style="text-align: center;" >Serial&nbsp;No<span style="color:red" class="Mandatoryfield"><b></b></span></th> -->
-                                     <th>Serial No<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                                     <th>Nature of Fault<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                                     <th>Spare Used<span style="color:red" class="Mandatoryfield"><b></b></span></th>
-                                     <th>Testing Time(Hour)<span style="color:red" class="Mandatoryfield"><b></b></span></th>
-                                     <th>Testing Load(AMP)<span style="color:red" class="Mandatoryfield"><b></b></span></th>
-                                     <th>BER Qty<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                                     <th>Repaired Qty<span style="color:red;"class="Mandatoryfield"><b></b></span></th> 
-                                     <th>Nature BER<span style="color:red;" class="Mandatoryfield"><b></b></span></th>  
-                                     <th>Remarks<span style="color:red;" class="Mandatoryfield"><b></b></span></th>     
-                                     <th>Repaired By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                                     <th>Repaired By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                                     <th>Tested By<span style="color:red;" class="Mandatoryfield"><b></b></span></th> 
-                                     <th>Tested By<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                                    </tr>    
-                              </thead>    
-                              <tbody>    
-                                <tr *ngFor="let dynamic of dynamicArray; let i = index" >    
-                                  <td style="width:80px;">  
-                                  <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
-                                  </td> 
-                                  <td style="width:80px;">    
-                                  <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
-                                  </td> 
-                                  <td style="width:80px;">    
-                                  <label>{{dynamicArray[i].ItemCode}}</label>
-                                  </td>   
-                                  <td style="width:100px;">    
-                                    <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
-                                  </td>  
-                                  <td style="width:120px;">    
-                                    <label style="text-align:center">{{dynamicArray[i].CustomerName}}</label>
-                                  </td> 
-                                  <td style="width:280px;">    
-                                    <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
-                                  </td>
-                                      <td style="width:50px;"> 
-                                        <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
-                                      </td>
-                                    <td style="width:80px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
-                                    </td> 
-                                    <td style="width:100px;"> 
-                                        <label style="text-align:center">{{dynamicArray[i].SerialNo}}</label>
-                                      </td> 
-                                    <td style="width:100px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].TypeFaulty}}</label>
-                                    </td>
-                                    <td style="width:80px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].MaterialUsed}}</label>
-                                    </td>
-                                    <td style="width:80px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].TestingTime}}</label>
-                                    </td>
-                                  <td style="width:80px;">    
-                                    <label style="text-align:center">{{dynamicArray[i].TestingLoad}}</label>
-                                  </td>
-                                   
-                                    <td style="width:100px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].Scrap}}</label>
-                                    </td> 
-                                    <td style="width:100px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].Repaired}}</label>
-                                    </td> 
-                                    <td style="width:100px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].NatureBerName}}</label>
-                                    </td> 
-                                  <!-- <td style="width:100px;">    
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].Scrap}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].Repaired}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].NatureBerName}}</label>
+                          </td>
+                          <!-- <td style="width:100px;">    
                                       <select class="form-control form-control-sm NewEqTypeId" id="ddlNewEqTypeId_{{i}}" [(ngModel)]="dynamicArray[i].NewEqTypeId" (change)="ChangeNewType()" >  
                                         <option class="dropdown-item" [value]="0">Select</option>
                                         <option *ngFor="let item of FilterNewTypeList" [value]="item.id" >{{item.itemName}}</option>    
                                       </select>
                                     </td> -->
-                                  <td style="width:280px;">    
-                                      <label style="text-align:center">{{dynamicArray[i].Remarks}}</label>
-                                    </td>
-                                      <td style="width:280px;">    
-                                        <label style="text-align:center">{{dynamicArray[i].RepairedName}}</label>
-                                      </td>
-                                      <td style="width:280px;">    
-                                        <label style="text-align:center">{{dynamicArray[i].RepairedBy}}</label>
-                                      </td>
-                                        <td style="width:280px;">    
-                                          <label style="text-align:center">{{dynamicArray[i].TestedName}}</label>
-                                          </td>
-                                          <td style="width:280px;">    
-                                            <label style="text-align:center">{{dynamicArray[i].TestedBy}}</label>
-                                          </td>
-                                 </tr> 
-                                 
-                              </tbody>    
-                            </table> 
-      
-                          </div>
-                        </fieldset>
-               
-                        <br>
-                     
-                      </div> 
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].Remarks}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].RepairedName}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].RepairedBy}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].TestedName}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].TestedBy}}</label>
+                          </td>
+                        </tr>
 
-                 
-                   </div> 
+                      </tbody>
+                    </table>
+
                   </div>
-                </div>
+                </fieldset>
 
+                <br>
 
               </div>
-           </section>
-               
-    </div>
+
+
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
+
+  </div>
 </div>
 
 <div class="modal fade" id="myModal" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
-    
+
       <div class="modal-header">
-        <h6 class="modal-title">Serial Number({{headerItemName}}) &nbsp;&nbsp;&nbsp;   Stock Qty ({{headerQty}}) 
+        <h6 class="modal-title">Serial Number({{headerItemName}}) &nbsp;&nbsp;&nbsp; Stock Qty ({{headerQty}})
         </h6>
-        <input type="text" style="width: 25%;" class="form-control form-control-sm" [(ngModel)]="searchText"  placeholder="Search Serial Number... " 
-           />
+        <input type="text" style="width: 25%;" class="form-control form-control-sm" [(ngModel)]="searchText"
+          placeholder="Search Serial Number... " />
       </div>
-  
+
       <div class="modal-body">
-       
+
         <div id="table-wrapper">
           <div id="table-scroll">
             <table class="table table-striped table-bordered" style="width: 100%;">
               <!-- <tr *ngFor="let value of srnlst; let i = index"> -->
-                <!-- <td>
+              <!-- <td>
                   {{i+1}}
                 </td>
                 <td colspan="2">
@@ -717,45 +824,39 @@
                   <input class="form-control form-control-sm itmsRate" [(ngModel)]="srnlst[i].InitialSrno" type="text"
                     style="text-align:center;" />
                 </td> -->
-                <td>
-                  <div class="row mb-1">
-                    <div class="col-sm-3" *ngFor="let val of srnlst | filter: searchText; let i = index">
-                   <label> {{i+1}}.</label>
-                   &nbsp;
-                      <!-- <input class=""  
+              <td>
+                <div class="row mb-1">
+                  <div class="col-sm-3" *ngFor="let val of srnlst | filter: searchText; let i = index">
+                    <label> {{i+1}}.</label>
+                    &nbsp;
+                    <!-- <input class=""  
                       [(ngModel)]="srnlst[i].InitialSrno" 
                       type="radio" 
                       [value]="srnlst[i].InitialSrno" 
                       name="srnlst[i].Ischecked" 
                       required="false" 
                       (change)="ChangeSerialNo(srnlst[i].InitialSrno)" /> -->
-                      <input 
-                      type="radio" 
-                      name="val" 
-                      required="false" 
-                      [value]="val.InitialSrno" 
-                      (click)="ChangeSerialNo(val.InitialSrno)"
-                     
-                    />
-                      &nbsp;
-                      <input type="text"  [(ngModel)]="srnlst[i].InitialSrno" class="form-control form-control-sm"  style="float: right;
-                      width: 72% ;margin-bottom:10px;text-align:center;" (blur)="CheckSerialNo(srnlst[i].InitialSrno,i)"
-                         />
-                   
+                    <input type="radio" name="val" required="false" [value]="val.InitialSrno"
+                      (click)="ChangeSerialNo(val.InitialSrno)" />
+                    &nbsp;
+                    <input type="text" [(ngModel)]="srnlst[i].InitialSrno" class="form-control form-control-sm" style="float: right;
+                      width: 72% ;margin-bottom:10px;text-align:center;"
+                      (blur)="CheckSerialNo(srnlst[i].InitialSrno,i)" />
+
                   </div>
-              
-                 
+
+
                 </div>
-                </td>
+              </td>
               <!-- </tr> -->
             </table>
           </div>
         </div>
       </div>
 
-  
+
       <div class="modal-footer">
-        <button type="submit" class="btn btn-sm btn-success" (click)="hideModal()" >
+        <button type="submit" class="btn btn-sm btn-success" (click)="hideModal()">
           <i class="fa fa-save"></i> Add </button>
         <!-- <button type="button" class="btn btn-sm btn-danger" (click)="hideModal()">
           <i class="fa fa-save"></i>
@@ -765,18 +866,19 @@
   </div>
 </div>
 
-<div class="modal fade" id="Cancleconfirm" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal fade" id="Cancleconfirm" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm">
     <div class="modal-content">
       <div class="modal-header">
         <h4 class="modal-title">Confirm !</h4>
       </div>
       <div class="modal-body">
-        Please confirm that you want to Cancel. 
+        Please confirm that you want to Cancel.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" [disabled]="loading" (click)="UpadateCancelDispatch()" >Save
+        <button type="button" class="btn btn-success" [disabled]="loading" (click)="UpadateCancelDispatch()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
       </div>
@@ -926,10 +1028,11 @@
         After submitting data will make it permanent change.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-success" *ngIf="IsPreviewPdfHide" (click)="SearchPdfPreview()" ><i class="fa fa-save"></i> Preview</button>
+        <button type="button" class="btn btn-sm btn-success" *ngIf="IsPreviewPdfHide" (click)="SearchPdfPreview()"><i
+            class="fa fa-save"></i> Preview</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading" (click)="SaveUpDateOkFaultyStock()"
-          >Save
+        <button type="button" class="btn btn-success" *ngIf="Save" [disabled]="loading"
+          (click)="SaveUpDateOkFaultyStock()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
       </div>

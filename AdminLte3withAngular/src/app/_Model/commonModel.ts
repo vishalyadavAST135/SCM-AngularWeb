@@ -89,7 +89,6 @@ export class DropdownModel {
     Company_Id: number;
     searchKey: string;
     Circle_Id: string;
-
 }
 export class SearchItemLineTypeModel {
     UserId: number;

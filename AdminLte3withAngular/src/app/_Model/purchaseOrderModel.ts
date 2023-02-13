@@ -170,13 +170,13 @@ export class DynamicItemGrid{
     DIList_Id:number;
 
 
-//vishal, 14/11/2022, for emp-toolkit
-
-    
+   //vishal, 14/11/2022, for emp-toolkit
     ItemCodeId:number;
     Unit_Id: number;
     ToolkitName: any;
-    
+
+    // Hemant Tyagi
+    FaultyQty:any;
     
 }
 export class DynamicAnxHeaderItemGrid{  
@@ -404,6 +404,7 @@ export class DynamicStockPdfGrid{
     TestedBy:string;
     RepairBy:string;
     StockQty:string;
+    FaultyQty:string
 }
 
 //by:visha, 14/11/2022
