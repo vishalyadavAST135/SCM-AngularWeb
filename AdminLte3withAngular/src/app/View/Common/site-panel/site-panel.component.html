@@ -1,152 +1,67 @@
+<div class="col-sm-2">
+  <label class="col-form-label-xs">Unique Site Id</label>
+</div>
+<div class="col-sm-4">
+  <div class="ng-autocomplete">
+    <ng-autocomplete [data]="AutoCompleteUniqueSiteIdList" [searchKeyword]="UniqueSitekeyword"
+      (inputCleared)="ClearedCustomerSiteId(1)" [(ngModel)]="model.CuUniqueSiteId"
+      (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchUniqueSiteId($event)'
+      (inputFocused)='onFocused($event)' [itemTemplate]="UniqueiteIditemTemplate"
+      [notFoundTemplate]="UniqueiteIditemTemplate" [debounceTime]="600" [minQueryLength]="2"
+      placeHolder="Search Unique Site Id">
+    </ng-autocomplete>
+    <ng-template #UniqueiteIditemTemplate let-item>
+      <a [innerHTML]="item.SiteId"></a>
+    </ng-template>
+    <ng-template #UniqueiteIditemTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
+  </div>
+</div>
 
 
-<!-- <div class="row mb-1 " style="margin-left:6px"> -->
-    <!-- <div class="col-sm-6">
-      <div class="row">
-        <label class="col-form-label-xs col-sm-2">Unique Site Id<span style="color: red;"class="Mandatoryfield"><b></b></span></label>                           
-        <div class="col-sm-8">
-          <div class="ng-autocomplete" >
-            <ng-autocomplete 
-            [data]="AutoCompleteUniqueSiteIdList" [searchKeyword]="UniqueSitekeyword" 
-            (inputCleared)="ClearedCustomerSiteId(1)" 
-            [(ngModel)]="model.CuUniqueSiteId"
-            (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchUniqueSiteId($event)' 
-            (inputFocused)='onFocused($event)' [itemTemplate]="UniqueiteIditemTemplate"
-            [notFoundTemplate]="UniqueiteIditemTemplate"
-            [debounceTime]="600" 
-            [minQueryLength]="2" 
-            placeHolder="Search Unique Site Id">
-            </ng-autocomplete>
-            <ng-template #UniqueiteIditemTemplate let-item>
-                <a [innerHTML]="item.SiteId"></a>
-            </ng-template>
-            <ng-template #UniqueiteIditemTemplate let-notFound>
-                <div [innerHTML]="notFound"></div>
-            </ng-template>
-          </div> 
-         </div>
-      </div>
-    </div>   
-     -->
-    
-     <div class="col-sm-2">
-      <label class="col-form-label-xs">Unique Site Id</label>
-     </div>
-     <div class="col-sm-4">
-      <div class="ng-autocomplete" >
-        <ng-autocomplete 
-        [data]="AutoCompleteUniqueSiteIdList" [searchKeyword]="UniqueSitekeyword" 
-        (inputCleared)="ClearedCustomerSiteId(1)" 
-        [(ngModel)]="model.CuUniqueSiteId"
-        (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchUniqueSiteId($event)' 
-        (inputFocused)='onFocused($event)' [itemTemplate]="UniqueiteIditemTemplate"
-        [notFoundTemplate]="UniqueiteIditemTemplate"
-        [debounceTime]="600" 
-        [minQueryLength]="2" 
-        placeHolder="Search Unique Site Id">
-        </ng-autocomplete>
-        <ng-template #UniqueiteIditemTemplate let-item>
-            <a [innerHTML]="item.SiteId"></a>
-        </ng-template>
-        <ng-template #UniqueiteIditemTemplate let-notFound>
-            <div [innerHTML]="notFound"></div>
-        </ng-template>
-      </div> 
-     </div>
+<div class="col-sm-2">
+  <label class="col-form-label-xs">Current Site Id</label>
+</div>
+<div class="col-sm-4">
+  <div class="ng-autocomplete">
+    <ng-autocomplete [data]="AutoCompleteCustomerSiteIdList" [searchKeyword]="CustomerSitekeyword"
+      (inputCleared)="ClearedCustomerSiteId(2)" [(ngModel)]="model.CuValueSiteId"
+      (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchCustomerSiteId($event)'
+      (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+      [notFoundTemplate]="CuSiteIdnotFoundTemplate" [debounceTime]="600" [minQueryLength]="2"
+      placeHolder="Search Site Id">
+    </ng-autocomplete>
+    <ng-template #CuSiteIditemTemplate let-item>
+      <a [innerHTML]="item.CustomerSiteId"></a>
+    </ng-template>
+    <ng-template #CuSiteIdnotFoundTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
+  </div>
+</div>
 
-    <!-- <div class="col-sm-6">
-      <div class="row">
-        <label class="col-form-label-xs col-sm-4">Site Id<span style="color: red;"class="Mandatoryfield"><b></b></span></label>                           
-        <div class="col-sm-8">
-          <div class="ng-autocomplete">
-            <ng-autocomplete 
-            [data]="AutoCompleteCustomerSiteIdList" [searchKeyword]="CustomerSitekeyword" 
-            (inputCleared)="ClearedCustomerSiteId(2)" 
-            [(ngModel)]="model.CuValueSiteId"
-            (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchCustomerSiteId($event)' 
-            (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
-            [notFoundTemplate]="CuSiteIdnotFoundTemplate"
-            [debounceTime]="600" 
-            [minQueryLength]="2" 
-            placeHolder="Search Site Id">
-            </ng-autocomplete>
-            <ng-template #CuSiteIditemTemplate let-item>
-                <a [innerHTML]="item.CustomerSiteId"></a>
-            </ng-template>
-            <ng-template #CuSiteIdnotFoundTemplate let-notFound>
-                <div [innerHTML]="notFound"></div>
-            </ng-template>
-          </div> 
-         </div>
-      </div>
-    </div> -->
+<!--vishal 19/01/2023-->
+<div class="col-sm-2">
+  <label class="col-form-label-xs">Original Site Id</label>
+</div>
+<div class="col-sm-4">
+  <div class="ng-autocomplete">
+    <ng-autocomplete [data]="AutoCompleteOldSiteIdList" [searchKeyword]="CustomerSitekeyword"
+      (inputCleared)="ClearedCustomerSiteId(2)" [(ngModel)]="model.oldCuValueSiteId"
+      (selected)='SelectOldCustomerSiteId($event)' (inputChanged)='onChangeSearchOldCustomerSiteId($event)'
+      (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+      [notFoundTemplate]="CuSiteIdnotFoundTemplate" [debounceTime]="600" [minQueryLength]="2"
+      placeHolder="Search Original Site Id">
+    </ng-autocomplete>
+    <ng-template #oldCuSiteIditemTemplate let-item>
+      <a [innerHTML]="item.CustomerSiteId"></a>
+    </ng-template>
+    <ng-template #oldCuSiteIdnotFoundTemplate let-notFound>
+      <div [innerHTML]="notFound"></div>
+    </ng-template>
+  </div>
+</div>
 
 
-    <div class="col-sm-2">
-      <label class="col-form-label-xs">Current Site Id</label>
-     </div>
-     <div class="col-sm-4">
-      <div class="ng-autocomplete">
-        <ng-autocomplete 
-        [data]="AutoCompleteCustomerSiteIdList" [searchKeyword]="CustomerSitekeyword" 
-        (inputCleared)="ClearedCustomerSiteId(2)" 
-        [(ngModel)]="model.CuValueSiteId"
-        (selected)='SelectCustomerSiteId($event)' (inputChanged)='onChangeSearchCustomerSiteId($event)' 
-        (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
-        [notFoundTemplate]="CuSiteIdnotFoundTemplate"
-        [debounceTime]="600" 
-        [minQueryLength]="2" 
-        placeHolder="Search Site Id">
-        </ng-autocomplete>
-        <ng-template #CuSiteIditemTemplate let-item>
-            <a [innerHTML]="item.CustomerSiteId"></a>
-        </ng-template>
-        <ng-template #CuSiteIdnotFoundTemplate let-notFound>
-            <div [innerHTML]="notFound"></div>
-        </ng-template>
-      </div> 
-     </div>
-
-     <!--vishal 19/01/2023-->
-     <div class="col-sm-2">
-      <label class="col-form-label-xs">Original Site Id</label>
-     </div>
-     <div class="col-sm-4">
-      <div class="ng-autocomplete">
-        <ng-autocomplete 
-        [data]="AutoCompleteOldSiteIdList" [searchKeyword]="CustomerSitekeyword" 
-        (inputCleared)="ClearedCustomerSiteId(2)" 
-        [(ngModel)]="model.oldCuValueSiteId"
-        (selected)='SelectOldCustomerSiteId($event)' (inputChanged)='onChangeSearchOldCustomerSiteId($event)' 
-        (inputFocused)='onFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
-        [notFoundTemplate]="CuSiteIdnotFoundTemplate"
-        [debounceTime]="600" 
-        [minQueryLength]="2" 
-        placeHolder="Search Original Site Id">
-        </ng-autocomplete>
-        <ng-template #oldCuSiteIditemTemplate let-item>
-            <a [innerHTML]="item.CustomerSiteId"></a>
-        </ng-template>
-        <ng-template #oldCuSiteIdnotFoundTemplate let-notFound>
-            <div [innerHTML]="notFound"></div>
-        </ng-template>
-      </div> 
-     </div>
-
-
-    <input type="hidden"  [(ngModel)]="model.HideCustomerId" />
-    
-                                      <!-- <div class="col-sm-3">
-                                        <div class="row">
-                                          <label class="col-form-label-xs col-sm-4"><span style="color: red;"class="Mandatoryfield" >{{model.SiteName}}</span></label>                           
-                                          <div class="col-sm-8">
-                                            <select class="form-control form-control-sm" id="txtTransferType"   [(ngModel)]="model.DispatchTo" (change)="ChangeDispatchTo(model.DispatchTo)">
-                                              <option  [value]="0" >Select Dispatch Type</option>
-                                              <option *ngFor="let item of TransferDataList" [value]="item.Id" >{{item.PageName}}</option>
-                                           </select>
-                                          </div>
-                                        </div>
-                                      </div> -->
-
-    
-  <!-- </div> -->
+<input type="hidden" [(ngModel)]="model.HideCustomerId" />
