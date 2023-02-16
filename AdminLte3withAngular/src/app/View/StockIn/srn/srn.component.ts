@@ -1955,7 +1955,7 @@ export class SrnComponent implements OnInit {
   onChangeSearch(val: string) {
     this.AutoCompleteSRNNoList = [];
     var objdropdownmodel = new DropdownModel();
-    objdropdownmodel.User_Id = 0;
+    objdropdownmodel.User_Id = this.UserId;
     objdropdownmodel.Parent_Id = val;
     objdropdownmodel.Company_Id = this.CompanyId;
     objdropdownmodel.Flag = 'SRN';
@@ -1963,6 +1963,7 @@ export class SrnComponent implements OnInit {
       this.AutoCompleteSRNNoList = data.Data;
     })
   }
+  
   SearchSRNCleared() {
     this.AutoCompleteSRNNoList = [];
     this.model.SRNNoData = "";
@@ -2207,7 +2208,7 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.GSTTypeId = this.model.GSTType;
         objDispatchTrackingModel.TECHFE = this.model.TECHFE;
         objDispatchTrackingModel.COHCI = this.model.COHCI;
-       
+
         //brahamjot kaur 26/09/2022
         if (this.selectedDIArr.length > 0) {
           objDispatchTrackingModel.DispatchInstructionId = this.selectedDIArr.map(xx => xx.id).join(',');
@@ -3073,7 +3074,7 @@ export class SrnComponent implements OnInit {
             // } else {
             //   this.model.SiteRegdOffice = data.RegData[0].OfficeAddress;
             // }
-            
+
 
             this.model.GSTINNo = data.RegData[0].GSTIN_UIN;
             this.model.CIN = data.RegData[0].CIN;
@@ -3400,12 +3401,12 @@ export class SrnComponent implements OnInit {
                       FilterStateCode = null;
                       var FilterStateCode = this.OtherSiteStateList.filter(
                         m => m.id === parseInt(data.Data[0].ToState_Id));
-                       
+
                       if (FilterStateCode.length > 0) {
                         if (FilterStateCode[0].GSTNo != null) {
                           this.StateGSTNo = FilterStateCode[0].GSTNo;
                           //vishal, 09/02/2023
-                          this.model.SiteRegdOffice = FilterStateCode[0].regOfficeAddress; 
+                          this.model.SiteRegdOffice = FilterStateCode[0].regOfficeAddress;
                           this.model.ToSiteWHGSTIN = data.Data[0].ShippedToGSTNO;
                         } else {
                           this.model.ToSiteWHGSTIN = data.Data[0].ShippedToGSTNO;
@@ -3428,7 +3429,7 @@ export class SrnComponent implements OnInit {
                 this.model.CuUniqueSiteId = data.Data[0].Site_Id;
                 this.model.ClientName = data.Data[0].ClientName;
                 this.model.CompanyName = data.Data[0].CompanyName;
-               
+
                 //this.GetAllTechCOHbySiteId(this.model.SiteId);
                 if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
                   this.model.GSTType = '' + data.Data[0].GSTTypeId + '';
@@ -3972,7 +3973,9 @@ export class SrnComponent implements OnInit {
     this.model.PreviewToStateName = FilterStateCode[0].itemName;
     this.StateGSTNo = FilterStateCode[0].GSTNo;
 
-    this.model.GSTType = 1;
+    //hemant tyagi 15/02/2023
+    //this.model.GSTType = 1;
+    this.ChangeGSTType(1);
     this.AutoCompleteCustomerSiteIdList = [];
     this.model.CuValueSiteId = "";
     this.model.SiteId = 0;
@@ -4331,9 +4334,11 @@ export class SrnComponent implements OnInit {
   ChangeGSTType(Id: any) {
     this.model.ToSiteWHGSTIN = "";
     if (Id == 1) {
+      this.model.GSTType = 1;
       this.IsTaxInvoiceNo = true;
       this.model.ToSiteWHGSTIN = this.StateGSTNo
       this.model.previewGStType = "AST GST";
+      $("#txtToCompanyName").css('border-color', '');
     } else if (Id == 2) {
       this.IsTaxInvoiceNo = false;
       this.model.ToSiteWHGSTIN = this.ClientGSTNo;
@@ -5158,10 +5163,12 @@ export class SrnComponent implements OnInit {
       } else {
         $("#txtSiteAddress").css('border-color', '');
       }
+
       if (this.model.SiteId == "0" || this.model.SiteId == null) {
         alert("Please select Site Id");
         flag = 1;
       }
+
       if (this.model.TECHFE == "0" || this.model.TECHFE == null || this.model.TECHFE == "") {
         $('#txtTECHFE').css('border-color', 'red');
         $('#txtTECHFE').focus();
@@ -5192,7 +5199,8 @@ export class SrnComponent implements OnInit {
     // }
 
     // brahamjot kaur 26/09/2022
-    if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
+    if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+      || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
       if (this.selectedDIArr.length == 0 || this.selectedDIArr == undefined) {
         alert("Please Select Dispatch Instruction.");
         flag = 1;
@@ -5200,6 +5208,7 @@ export class SrnComponent implements OnInit {
         $("#txtSRNInstraction").css('border-color', '');
       }
     }
+
     if (this.model.TransferTypeId == PageActivity.Srn_SiteOtherState) {
       if (this.model.ToSiteStateId == "0" || this.model.ToSiteStateId == null) {
         $('#txtToSiteStateId').css('border-color', 'red');
@@ -5228,6 +5237,14 @@ export class SrnComponent implements OnInit {
         $("#txtToSiteWHGSTIN").css('border-color', '');
       }
 
+      if (this.model.GSTType == "0" || this.model.GSTType == null) {
+        $('#txtGSTType').css('border-color', 'red');
+        $('#txtGSTType').focus();
+        flag = 1;
+      } else {
+        $("#txtGSTType").css('border-color', '');
+      }
+
       //vishal, 08/02/2023, company name with customer gst selection
 
       if (this.model.GSTType == "2") {
@@ -5238,6 +5255,8 @@ export class SrnComponent implements OnInit {
         } else {
           $("#txtToCompanyName").css('border-color', '');
         }
+      } else {
+        $("#txtToCompanyName").css('border-color', '');
       }
 
       if (this.model.SiteAddress == "" || this.model.SiteAddress == null) {
@@ -5623,22 +5642,24 @@ export class SrnComponent implements OnInit {
     } else if (this.selectedDIArr.length > 0) {
       multiSelectDI = this.selectedDIArr.map(xx => xx.id).join(',');
     }
-    
+
     try {
       var objModel = new SRNInstructionSearchModel();
       objModel.DispatchInstruction_Id = multiSelectDI;
       this._MaterialMovementService.GetSRNInstructionListByDIId(objModel).subscribe((data) => {
 
         if (data.SRNStatus != "") {
-          this.model.ReasonId=data.SRNStatus[0].SRNReason;
+          this.model.ReasonId = data.SRNStatus[0].SRNReason;
+        } else {
+          this.model.ReasonId = "0";
         }
-        
+
         if (data.Data != "") {
           this.BindItemArray(data.Data)
         } else {
           alert('Please Select Correct Site Id and DI No');
         }
-        
+
       })
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "ChangeDispatchInstruction", "Dispatch Tracker");
@@ -5649,9 +5670,10 @@ export class SrnComponent implements OnInit {
 
   onChangeDispatchSearch(val: string) {
     this.model.DispatchNoId = null;
+    this.model.DispatchNo = "";
     this.AutoCompleteDispatchNoList = [];
     var objdropdownmodel = new DropdownModel();
-    objdropdownmodel.User_Id = 0;
+    objdropdownmodel.User_Id = this.UserId;
     objdropdownmodel.Parent_Id = val;
     objdropdownmodel.Company_Id = this.CompanyId;
     objdropdownmodel.Flag = 'DispatchOnSite';
@@ -5659,13 +5681,12 @@ export class SrnComponent implements OnInit {
       this.AutoCompleteDispatchNoList = data.Data;
     })
   }
+
   SearchDispatchCleared() {
     this.AutoCompleteDispatchNoList = [];
     this.model.DispatchNo = "";
     this.model.DispatchNoId = '';
     this.model.AutoDispatchNo = "";
-
-
   }
 
   SearchAutoDispatchNo(item: any) {

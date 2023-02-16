@@ -340,7 +340,7 @@ export class DispatchTrackerComponent implements OnInit {
   ngOnInit(): void {
 
     this.GettAllVechTransModeTransfertypeDispatch();
-    this.model.TransporterId = "";
+    this.model.TransporterId = "0";
     this.model.DispatchTo = "0";
     this.model.IsActiveCancel = 2;
     this.model.CustomerId = "0";
@@ -548,6 +548,7 @@ export class DispatchTrackerComponent implements OnInit {
       month: current.getMonth() + 1,
       day: current.getDate()
     };
+
     this.min = {
       year: current.getUTCFullYear(),
       month: current.getMonth() + 1,
@@ -1613,7 +1614,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsValidationShowandhide = true;
       this.IsVehicleType = true;
       this.IsVehicleValidationHideShow = true;
-      this.model.TransporterId = "";
+      this.model.TransporterId = "0";
       this.model.EmployeeCode = "";
       this.model.EmployeeName = "";
       this.model.EmployeePhoneNo = "";
@@ -1628,7 +1629,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.model.PhoneNo = "";
     } else if (Id == TransPortModeType.ByBus) {
       this.IsBus = true;
-      this.model.TransporterId = "";
+      this.model.TransporterId = "0";
       this.model.TransporterName = "";
       this.model.TransporterGSTNo = "";
       this.model.DriverName = "";
@@ -1648,7 +1649,7 @@ export class DispatchTrackerComponent implements OnInit {
     } else if (Id == TransPortModeType.ByHand) {
       this.IsVehicleType = true;
       this.IsByHand = true;
-      this.model.TransporterId = "";
+      this.model.TransporterId = "0";
       this.model.TransporterName = "";
       this.model.TransporterGSTNo = "";
       this.model.DriverName = "";
@@ -1668,7 +1669,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.CourierTypeDetail = this.TransporterAndCourierTypeDetail.filter(m => m.IsCourier == 1 || m.IsCourier == 2);
       this.IsVehicleType = true;
       this.IsCourier = true;
-      this.model.TransporterId = "";
+      this.model.TransporterId = "0";
       this.model.TransporterName = "";
       this.model.TransporterGSTNo = "";
       this.model.DriverName = "";
@@ -1686,7 +1687,7 @@ export class DispatchTrackerComponent implements OnInit {
     } else if (Id == TransPortModeType.Other) {
       this.IsOther = true;
       this.IsVehicleType = true;
-      this.model.TransporterId = "";
+      this.model.TransporterId = "0";
       this.model.TransporterName = "";
       this.model.TransporterGSTNo = "";
       this.model.DriverName = "";
@@ -2437,9 +2438,11 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.ToSiteWHGSTIN = "";
     if (Id == 1) {
       //this.IsTaxInvoiceNoSameState = false;
+      this.model.GSTType = 1;
       this.IsTaxInvoiceNo = true;
       this.model.ToSiteWHGSTIN = this.StateGSTNo;
       this.model.previewGStType = "AST GST";
+      $("#txtToCompanyName").css('border-color', '');
     } else if (Id == 2) {
       //this.IsTaxInvoiceNoSameState = true;
       this.IsTaxInvoiceNo = false;
@@ -3446,7 +3449,8 @@ export class DispatchTrackerComponent implements OnInit {
               if (data.Data[0].Transporter_Id != 0 && data.Data[0].Transporter_Id != null) {
                 this.model.TransporterId = data.Data[0].Transporter_Id;
               } else {
-                this.model.TransporterId = "";
+                // hemant tygai 15/2/2023
+                this.model.TransporterId = "0";
               }
               this.model.DocketNo = data.Data[0].CodeAndNo;
               this.model.CourierCompanyName = data.Data[0].TrasporationName;
@@ -4574,7 +4578,10 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.ToSiteWHGSTIN = FilterStateCode[0].GSTNo;
     this.StateGSTNo = FilterStateCode[0].GSTNo;
     this.model.PreviewToStateName = FilterStateCode[0].itemName;
-    this.model.GSTType = 1;
+
+    //hemant Tyagi 15/02/2023
+    this.ChangeGSTType(1);
+    //this.model.GSTType = 1;
     this.model.previewGStType = "AST GST";
     this.AutoCompleteCustomerSiteIdList = [];
     this.model.CuValueSiteId = "";
@@ -4599,7 +4606,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.selectedDIArr = [];
 
     // this.model.DispatchInstructionId = "0";
-    this.model.TransporterId = "";
+    this.model.TransporterId = "0";
     this.model.EditStateId = '0';
     this.model.ShippedfromWHId = "0";
     this.model.ddlVehicleType = "0";
@@ -5325,11 +5332,13 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   DispatchDateformat(Id: any) {
-    if (Id == 1) {
-      this.DateFormate = this.min;
-    } else {
-      this.DateFormate = this.minDate;
-    }
+    // change by Hemant Tyagi 14/02/2023
+    // if (Id == 1) {
+    //   this.DateFormate = this.min;
+    // } else {
+    //   this.DateFormate = this.minDate;
+    // }
+    this.DateFormate = this.minDate;
   }
 
   ChangeCustomerName(CustomerId: string) {
@@ -5979,7 +5988,7 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.model.DisatchTrackeringId > 0 && this.model.TrasporationMode == TransPortModeType.ByRoad) {
 
       //#region Transpotor
-      if (this.model.TransporterId == "") {
+      if (this.model.TransporterId == "0") {
         $('#txtTransporterId').css('border-color', 'red');
         $('#txtTransporterId').focus();
         flag = 1;
@@ -6329,8 +6338,15 @@ export class DispatchTrackerComponent implements OnInit {
         $("#txtSiteAddress").css('border-color', '');
       }
 
-       //vishal, 08/02/2023, company name with customer gst selection
+      if (this.model.GSTType == "0" || this.model.GSTType == null) {
+        $('#txtGSTType').css('border-color', 'red');
+        $('#txtGSTType').focus();
+        flag = 1;
+      } else {
+        $("#txtGSTType").css('border-color', '');
+      }
 
+       //vishal, 08/02/2023, company name with customer gst selection
        if (this.model.GSTType == "2") {
         if (this.model.CompanyName == "" || this.model.CompanyName == null) {
           $('#txtToCompanyName').css('border-color', 'red');
@@ -6339,6 +6355,8 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           $("#txtToCompanyName").css('border-color', '');
         }
+      }else {
+        $("#txtToCompanyName").css('border-color', '');
       }
 
     }
@@ -6568,7 +6586,7 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.model.DisatchTrackeringId > 0 && this.model.TrasporationMode == TransPortModeType.ByRoad) {
 
       //#region Transpotor
-      if (this.model.TransporterId == "") {
+      if (this.model.TransporterId == "0") {
         $('#txtTransporterId').css('border-color', 'red');
         $('#txtTransporterId').focus();
         flag = 1;

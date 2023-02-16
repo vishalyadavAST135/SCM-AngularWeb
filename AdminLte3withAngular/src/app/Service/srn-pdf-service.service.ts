@@ -318,7 +318,7 @@ export class SrnPdfServiceService {
               this.BindItemPdfArrayOtherState(data.ItemData);
             }
             // vishal 09/02/2022
-            this.generateOteherStatePDF('print');
+            this.generateOteherStatePDF('open');
           }
 
         }

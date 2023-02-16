@@ -338,8 +338,8 @@
                               </option>
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemMake"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemMake"
                               id="ddlItemMake_{{i}}" [(ngModel)]="dynamicArray[i].ItemMakeId"
                               [ngStyle]="{'border-color': submitted ? 'red':'none'}"
                               (change)="ChangeEditItemMake(dynamicArray[i].ItemMakeId,dynamicArray[i].ItemNameId,i)">
@@ -348,8 +348,8 @@
                                 {{item.itemName}}</option>
                             </select>
                           </td>
-                          <td style="width:80px;">
-                            <select style="width:80px;" class="form-control form-control-sm ItemCode"
+                          <td style="width:100px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
                               id="ddlItemId_{{i}}" [(ngModel)]="dynamicArray[i].ItemId"
                               [ngStyle]="{'border-color': submitted ? 'red':'none'}"
                               (change)="ChangeEditItemCode(dynamicArray[i].ItemId,i)">
