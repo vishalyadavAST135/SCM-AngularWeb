@@ -101,6 +101,7 @@ export class WHModel {
     Status: string;
     GSTNo: string;
     CircleId: string;
+    WHInChargeName: string //vishal
 
 }
 export class WHAddresDetial {

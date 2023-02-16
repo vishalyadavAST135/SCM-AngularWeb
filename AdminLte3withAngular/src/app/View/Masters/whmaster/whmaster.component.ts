@@ -233,7 +233,6 @@ export class WhmasterComponent implements OnInit {
   }
 
   AddUpdateWHBasicDetial() {
-    debugger
     try {
       if (this.ValidationBasic() == 1) {
         return false;
@@ -247,6 +246,7 @@ export class WhmasterComponent implements OnInit {
       objWHModel.StateId = this.model.StateId;
       objWHModel.MobileNo = this.model.MobileNo;
       objWHModel.Email = this.model.EmailId;
+      objWHModel.WHInChargeName = this.model.WHInChargeName; //vishal, 14/02/2023
       objWHModel.GSTNo = this.model.GSTNo;
       objWHModel.Status = this.model.StatusId;
       this._MasterService.SaveWHBasicDetial(JSON.stringify(objWHModel)).subscribe(data => {
@@ -393,7 +393,7 @@ export class WhmasterComponent implements OnInit {
   }
 
   ShowWHMasterDeatil(e) {
-    //// debugger
+     debugger
     this.isShownList = false;
     this.isShownEdit = true;
     this.WHId = e.rowData.WHId;
