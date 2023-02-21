@@ -3184,33 +3184,41 @@ export class SrnComponent implements OnInit {
             } else {
               this.model.ddlVehicleType = 0;
             }
+
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
             if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-              if (this.UserRoleId == UserRole.UserRoleId || this.UserRoleId == UserRole.SCMHo) {
+              if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = true;
                 this.IsReadonlyField = true;
-                //this.IsSaveButtonDisable = true;
-                this.IsCancelButtonDisable = false;
+              } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+                && data.Data[0].MonthOverDate == 0) {
+                this.IsItemListDisabled = true;
+                this.IsHideShowCancelBtn = true;
+                this.IsReadonlyField = true;
               } else {
                 this.IsItemListDisabled = true;
                 this.IsHideShowCancelBtn = false;
                 this.IsReadonlyField = true;
               }
+
               if (data.Data[0].IsReceived == 1) {
                 this.IsSaveButtonDisable = true;
                 this.IsPartialUpDateSRNRequest = true;
+                this.IsHideShowCancelBtn = false;
               } else {
                 this.IsSaveButtonDisable = false;
               }
+              
             } else {
               this.IsItemListDisabled = false;
-              this.IsReadonlyField = false;
-              this.IsHideShowCancelBtn = true;
+              this.IsReadonlyField = false;              
               if (data.Data[0].IsReceived == 1) {
                 this.IsSaveButtonDisable = true;
                 this.IsPartialUpDateSRNRequest = true;
+                this.IsHideShowCancelBtn = false;
               } else {
+                this.IsHideShowCancelBtn = true;
                 this.IsSaveButtonDisable = false;
               }
             }

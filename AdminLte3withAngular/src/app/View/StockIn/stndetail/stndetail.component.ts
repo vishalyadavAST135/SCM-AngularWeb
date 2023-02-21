@@ -185,6 +185,7 @@ export class StndetailComponent implements OnInit {
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        this.ObjUserPageRight.IsEdit=data.Data[0].IsEdit;
         if (this.ObjUserPageRight.IsCreate == 1) {
           this.Save = 1;
         } else if (this.ObjUserPageRight.IsEdit == 1) {
@@ -1056,7 +1057,11 @@ export class StndetailComponent implements OnInit {
             //       }
             //     }
             //  }
+
+
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
+
+
             if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
               if (this.UserRoleId == UserRole.Admin || this.UserRoleId == UserRole.SCMLead) {
                 this.IsSaveButtonDisable = true;
@@ -1069,6 +1074,10 @@ export class StndetailComponent implements OnInit {
               this.IsDownloadPrintHideShow = true;
               this.IsSaveButtonDisable = false;
             }
+
+
+
+
             if (data.Data[0].CLRPdfile != null && data.Data[0].CLRPdfile != "") {
               this.IsLRFile = true;
               this.LRFile = data.Data[0].CLRPdfile;

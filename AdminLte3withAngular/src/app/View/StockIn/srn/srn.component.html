@@ -211,8 +211,7 @@
                           class="fa fa-save"></i> Generate Pdf</button>
                       &nbsp;
                       <button type="button" *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn"
-                        class="btn btn-sm btn-success" [disabled]="IsCancelButtonDisable"
-                        (click)="conformCancelPopup()">Cancel SRN</button>
+                        class="btn btn-sm btn-success" (click)="conformCancelPopup()">Cancel SRN</button>
                       &nbsp;
 
                       <app-view-approvalpage [ChildApprovalList]="ApprovalList" [ManueId]="ManueId" [TableId]="TableId"

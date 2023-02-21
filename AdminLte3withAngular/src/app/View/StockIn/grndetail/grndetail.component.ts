@@ -280,16 +280,19 @@ export class GRNDetailComponent implements OnInit {
     this.model.ddlActive = "2"
     localStorage.removeItem("Id");
     this.ArrayRoleId = objUserModel.Role_Id.split(',');
+
     for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {
-      if (this.ArrayRoleId[i] == UserRole.Admin || this.ArrayRoleId[i] == UserRole.SCMLead) {
+      if (this.ArrayRoleId[i] == UserRole.SCMHo || this.ArrayRoleId[i] == UserRole.SCMLead) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == UserRole.GRNCorrectionEntryRole) {
         this.RoleCorrectionEntry = true;
       }
     }
+
     if (objUserModel == null || objUserModel == "null") {
       this.router.navigate(['']);
     }
+
     this.BindCorrectionentryReason();
     this.model.GRNSTNId = "0";
     this.model.GRNById = "1";
@@ -386,9 +389,10 @@ export class GRNDetailComponent implements OnInit {
     this.BindVoucherType();
     this.ItemReason();
 
-    if (this._Commonservices.checkUndefined(this.grnNumber)) {
-      this.editFromReport(this.grnNumber);
-    }
+    // if (this._Commonservices.checkUndefined(this.grnNumber)) {
+    //   this.editFromReport(this.grnNumber);
+    // }
+
     this.PageLoadEquipmentType();
     this.BindTransporterTypeDetail();
     this.model.TransporterId = "";
@@ -400,7 +404,6 @@ export class GRNDetailComponent implements OnInit {
   async GetUserPageRight(id: number) {
     this._Commonservices.GetUserPageRight(this.UserId, MenuName.GRN).subscribe(data => {
       if (data.Status == 1) {
-        console.log(data);
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
@@ -408,6 +411,8 @@ export class GRNDetailComponent implements OnInit {
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        this.ObjUserPageRight.IsEdit=data.Data[0].IsEdit;
+        debugger
         if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
           this.Save = 1;
         } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
@@ -2847,8 +2852,15 @@ export class GRNDetailComponent implements OnInit {
         this.ModifiedName = data.Data[0].ModifiedName;
         this.ModifiedDate = data.Data[0].ModifiedDate;
         this.model.DateDiffHour = data.Data[0].DateDiffHour;
+
+        // Hemant Tyagi 17/02/2023
         if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-          if (this.UserRoleId == UserRole.Admin || this.UserRoleId == UserRole.SCMLead) {
+          if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
+            this.IsHideShowCancelBtn = true;
+            this.IsSaveButtonDisable = true;
+            this.IsCancelButtonDisable = false;
+          } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+            && data.Data[0].MonthOverDate == 0) {
             this.IsHideShowCancelBtn = true;
             this.IsSaveButtonDisable = true;
             this.IsCancelButtonDisable = false;
@@ -2860,6 +2872,7 @@ export class GRNDetailComponent implements OnInit {
           this.IsHideShowCancelBtn = true;
           this.IsSaveButtonDisable = false;
         }
+
         this.Addrowhideandshow = true;
         this.Correctioncolumnhideandshow = false;
         this.ApprovalList = null;
@@ -2937,8 +2950,6 @@ export class GRNDetailComponent implements OnInit {
         }
 
 
-
-
         if (data.WHData != null && data.WHData != "" && data.WHData.length > 0) {
           this.model.EditStateId = '' + this.GRNCRNRowData[0].WHState_Id + ''
           this.GRNCRNWHList = data.WHData;
@@ -2958,10 +2969,12 @@ export class GRNDetailComponent implements OnInit {
         }
 
         this.model.ActivityTypeId = this.GRNCRNRowData[0].Flag;
+
         if (this.GRNCRNRowData[0].GRNDate != null) {
           var GrnDate = this.GRNCRNRowData[0].GRNDate.split('/');
           this.model.GRNdate = { year: parseInt(GrnDate[2]), month: parseInt(GrnDate[1]), day: parseInt(GrnDate[0]) };
         }
+
         this.model.GRNCRNNo = this.GRNCRNRowData[0].GRNNo;
         this.InvoiceListData = data.InvoiceNoData;
         this.model.ChallanNo = this.GRNCRNRowData[0].InvChallanNo;
@@ -3907,7 +3920,7 @@ export class GRNDetailComponent implements OnInit {
           } else {
             objSaveGRNCRNModelDetail.PoId = this.PoeditId;
           }
-        }        
+        }
         var SDate = checkUndefined(this.model.Podate);
         objSaveGRNCRNModelDetail.Podate = SDate.day + '/' + SDate.month + '/' + SDate.year;
         objSaveGRNCRNModelDetail.CompanyId = this.CompanyId;
@@ -3983,9 +3996,9 @@ export class GRNDetailComponent implements OnInit {
           objSaveGRNCRNModelDetail.DispatchDate = GrnSrnDispatchDate.day + '/' + GrnSrnDispatchDate.month + '/' + GrnSrnDispatchDate.year;
         } else {
           objSaveGRNCRNModelDetail.DispatchDate = null;
-        }        
+        }
         objSaveGRNCRNModelDetail.Remarks = this.model.Remarks;
-        
+
         if (this.model.GRNById == 1) {
           objSaveGRNCRNModelDetail.Flag = "1";
         } else if (this.model.GRNById == 2) {
@@ -4101,7 +4114,7 @@ export class GRNDetailComponent implements OnInit {
         objSaveGRNCRNModelDetail.GRNItemDetailList = this.GrndynamicItemArray;
         var CurrentDate = this.datePipe.transform(Date(), "yyyyMMddhhmmss");
         var formdata = new FormData();
-        
+
         if (this.InvChallanEditFile == 1) {
           formdata.append('Challanfile', this.ChallanUploadFile, 'GRNInvoice' + this.model.ChallanNo + CurrentDate + this.ChallanUploadFile.name);
         } else if (this.InvChallanEditFile == 0) {
