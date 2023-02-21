@@ -535,7 +535,7 @@ export class PodetailComponent implements OnInit {
 
 
 
-    var objVendormodel = new VendorOrWhModel();
+    let objVendormodel = new VendorOrWhModel();
     objVendormodel.Id = '0';
     objVendormodel.flag = '1460';
     this.model.ApprovalStatus = "0";
@@ -563,7 +563,6 @@ export class PodetailComponent implements OnInit {
   async GetUserPageRight(id: number) {
     this._Commonservices.GetUserPageRight(this.UserId, MenuName.PurchaseOrder).subscribe(data => {
       if (data.Status == 1) {
-        console.log(data);
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;

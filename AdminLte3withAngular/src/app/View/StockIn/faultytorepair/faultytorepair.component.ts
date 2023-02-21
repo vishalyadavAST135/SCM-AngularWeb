@@ -106,6 +106,11 @@ export class FaultytorepairComponent implements OnInit {
   FlagForSerialNo: number;
   ObjUserPageRight = new UserPageRight();
   Save: any;
+
+  //vishal 20/02/2023
+  minRepDt: { year: any; month: any; day: number; };
+  maxRepDt: { year: any; month: any; day: number; };
+
   constructor(private datePipe: DatePipe, private _objSearchpanelService: SearchpanelService,
     private _Commonservices: CommonService, private _StockserviceService: StockserviceService,
     private _PurchaseOrderService: PurchaseOrderService,
@@ -123,6 +128,7 @@ export class FaultytorepairComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.setDateRange()
     this.model.WHStateId = "0";
     this.model.WHId = "0";
     this.model.RepairDate = "0"
@@ -811,7 +817,13 @@ export class FaultytorepairComponent implements OnInit {
     this.model.RepairedType = "0";
     this.model.InvoiceValue = "0.00";
     this.model.InvoiceDate = "";
-    this.model.RepairDate = "";
+    //this.model.RepairDate = "";
+//vishal, 20/02/2023
+    var toDate = "";
+    toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
+    this.model.RepairDate = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
+    this.setDateRange(); 
+
     this.FaultuRep_Id = 0;
     this.model.VendorName = "0";
     this.SearchSTNCleared();
@@ -2215,6 +2227,11 @@ export class FaultytorepairComponent implements OnInit {
       this.dynamicArray[index].FaultyQty = 0;
     }
 
+  }
+
+  setDateRange() {
+    this.minRepDt = this.model.RepairDate;
+    this.maxRepDt = this.model.RepairDate;
   }
 
 }

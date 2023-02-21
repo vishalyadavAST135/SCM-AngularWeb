@@ -1186,7 +1186,7 @@
                       <div class="input-group" (mouseenter)="onKeypressDocumentDatee($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtDocDate" autocomplete="off"
                           [(ngModel)]="model.DocumentDate" ngbDatepicker #DocDate="ngbDatepicker"
-                          [minDate]="DateFormate" [maxDate]="MaxDate">
+                          [minDate]="minDispatchDt" [maxDate]="maxDispatchDt" readonly>
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="DocDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -1351,7 +1351,8 @@
                     <div class="col-sm-2" *ngIf="IsTransporter">
                       <div class="input-group" (mouseenter)="onKeypressGRDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtGRDate" autocomplete="off"
-                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker">
+                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker" 
+                          [minDate]="minBiltyDt" [maxDate]="maxBiltyDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="GrDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -1448,7 +1449,7 @@
                       <div class="input-group" (mouseenter)="onKeypressInvoicedDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate"
                           autocomplete="off" [(ngModel)]="model.TaxInvoiceDate" ngbDatepicker
-                          #InvoiceDate="ngbDatepicker">
+                          #InvoiceDate="ngbDatepicker" [minDate]="minInvoiceDt" [maxDate]="maxInvoiceDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="InvoiceDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -1479,7 +1480,7 @@
                       <div class="input-group" (mouseenter)="onKeypressExpectedDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtExpected" autocomplete="off"
                           [(ngModel)]="model.ExpectedDate" ngbDatepicker #ExpectedDate="ngbDatepicker"
-                          [minDate]="minDate">
+                          [minDate]="minExpdelDt">
 
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="ExpectedDate.toggle()"><i
@@ -2765,7 +2766,8 @@
                     <div class="col-sm-2">
                       <div class="input-group" (mouseenter)="onKeypressDocumentDatee($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtDeliveredDate"
-                          autocomplete="off" [(ngModel)]="model.DeliveredDate" ngbDatepicker #Delivered="ngbDatepicker">
+                          autocomplete="off" [(ngModel)]="model.DeliveredDate" ngbDatepicker #Delivered="ngbDatepicker"
+                          [minDate]="minDeleveredDt" [maxDate]="maxDeleveredDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="Delivered.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -4432,7 +4434,8 @@
             <ag-grid-angular style="width: 100%; height: 400px;" class="ag-theme-alpine" [enableSorting]="true"
               [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="PreviousDatacolumnDefs"
               [multiSortKey]="multiSortKey" [rowData]="PreviousDatarowData" rowSelection="multiple"
-              (gridReady)="PreviousGridReady($event)" [overlayLoadingTemplate]="loadingTemplate1">
+              (gridReady)="PreviousGridReady($event)" [overlayLoadingTemplate]="loadingTemplate1"
+              [enableCellTextSelection]="true">
             </ag-grid-angular>
           </div>
         </div>

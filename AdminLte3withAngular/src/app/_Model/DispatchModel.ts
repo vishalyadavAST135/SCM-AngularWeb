@@ -74,7 +74,7 @@ export class DispatchTrackingModel
     DispatchInstructionId:string;
     DIStatusId:any;
     TaxInvoiceDate: string //vishal, 03/12/2022
-    DispatchNoId:number
+    DispatchNoId:number //vishal
    
 
 }

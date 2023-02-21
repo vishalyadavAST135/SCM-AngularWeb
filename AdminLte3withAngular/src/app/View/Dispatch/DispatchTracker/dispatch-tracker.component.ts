@@ -307,6 +307,21 @@ export class DispatchTrackerComponent implements OnInit {
   // }
   //end-vishal
 
+//vishal 16/02/2023
+minDispatchDt: { year: any; month: any; day: number; };
+maxDispatchDt: { year: any; month: any; day: number; };
+
+minBiltyDt: { year: any; month: any; day: number; };
+maxBiltyDt: { year: any; month: any; day: number; };
+
+minInvoiceDt: { year: any; month: any; day: number; };
+maxInvoiceDt: { year: any; month: any; day: number; };
+
+minExpdelDt: { year: any; month: any; day: number; };
+maxExpdelDt: { year: any; month: any; day: number; };
+
+minDeleveredDt: { year: any; month: any; day: number; };
+maxDeleveredDt: { year: any; month: any; day: number; };
 
   constructor(private router: Router, private _Commonservices: CommonService,
     private _GrncrnService: GrncrnService,
@@ -2495,6 +2510,8 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsEditDisabled = false;
     toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
     this.model.DocumentDate = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
+    this.setDateRange(); //vishal
+
     this.clearEditForm();
     const current1 = new Date();
     this.ChangeTrasporationMode(TransPortModeType.ByRoad);
@@ -2554,7 +2571,6 @@ export class DispatchTrackerComponent implements OnInit {
   SaveUpDateDispatchRequest() {
     try {
 
-      debugger
       // this.IsSaveButtonDisable = true;
       jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
@@ -2604,7 +2620,7 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingModel.TaxInvoiceDate = "";
       }
       //end-vishal
-
+     
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
       objDispatchTrackingModel.AmountChargeable = this.model.AmountChargeable;
@@ -2657,7 +2673,7 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         objDispatchTrackingModel.ExpDeliveryDate = "";
       }
-
+     
       // if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
       //   this.IsModelShow = false;} //vishal, 05/12/2022
 
@@ -3035,6 +3051,7 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           objDispatchTrackingModel.GRDate = "";
         }
+
       } else if (this.model.TrasporationMode == TransPortModeType.ByHand) {
         objDispatchTrackingModel.CodeAndNo = this.model.EmployeeCode;
         objDispatchTrackingModel.TransporterName = this.model.EmployeeName;
@@ -3072,6 +3089,7 @@ export class DispatchTrackerComponent implements OnInit {
       }
 
       //end-vishal
+   
       var ExpDeliveryDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
       objDispatchTrackingModel.ExpDeliveryDate = ExpDeliveryDate.day + '/' + ExpDeliveryDate.month + '/' + ExpDeliveryDate.year;
       objDispatchTrackingModel.Note = this.model.Note;
@@ -3300,6 +3318,8 @@ export class DispatchTrackerComponent implements OnInit {
             var DDate = data.Data[0].DocumentDate.split('/');
             this.model.DocumentDate = { year: parseInt(DDate[2]), month: parseInt(DDate[1]), day: parseInt(DDate[0]) };
 
+            this.setDateRange()
+
             if (data.Data[0].ExpDeliveryDate != null) {
               var ExpDelDate = data.Data[0].ExpDeliveryDate.split('/');
               this.model.ExpectedDate = { year: parseInt(ExpDelDate[2]), month: parseInt(ExpDelDate[1]), day: parseInt(ExpDelDate[0]) };
@@ -3502,6 +3522,7 @@ export class DispatchTrackerComponent implements OnInit {
             } else {
               this.model.GRDate = "";
             }
+
             if (data.Data[0].GRFile != null && data.Data[0].GRFile != "") {
               this.IsGRFile = true;
               this.GRFile = data.Data[0].GRFile;
@@ -3564,6 +3585,7 @@ export class DispatchTrackerComponent implements OnInit {
               var DelDate = data.Data[0].DeliveredDate.split('/');
               this.model.DeliveredDate = { year: parseInt(DelDate[2]), month: parseInt(DelDate[1]), day: parseInt(DelDate[0]) };
             }
+
             if (data.Data[0].ReceivingDocumentFile != "" && data.Data[0].ReceivingDocumentFile != null) {
               this.IsReceivingFile = true;
               this.ReceivingFile = data.Data[0].ReceivingDocumentFile;
@@ -7128,4 +7150,80 @@ export class DispatchTrackerComponent implements OnInit {
     }
     return returnStatus;
   }
+
+//vishal/ 20/02/2022
+
+setDateRange() {
+  this.minDispatchDt = this.model.DocumentDate;
+  this.maxDispatchDt = this.model.DocumentDate;
+
+  //#region mindate, maxdate formula of BiltyDate  
+  this.minBiltyDt = this.model.DocumentDate;
+  let BLDt: Date;
+  BLDt = new Date(this.model.DocumentDate.year,
+    this.model.DocumentDate.month - 1,
+    this.model.DocumentDate.day);
+  BLDt.setDate(BLDt.getDate() + 3);
+
+  this.maxBiltyDt = {
+    year: BLDt.getFullYear(),
+    month: BLDt.getMonth() + 1,
+    day: BLDt.getDate()
+  };
+  //#endregion
+
+  //#region mindate, maxdate formula of InvoiceDate  
+  this.minInvoiceDt = this.model.DocumentDate;
+  let InvDt: Date;
+  InvDt = new Date(this.model.DocumentDate.year,
+    this.model.DocumentDate.month - 1,
+    this.model.DocumentDate.day);
+
+  InvDt.setDate(InvDt.getDate() + 7);
+
+  this.maxInvoiceDt = {
+    year: InvDt.getFullYear(),
+    month: InvDt.getMonth() + 1,
+    day: InvDt.getDate()
+  };
+  //#endregion
+
+  //region for expected delivery date
+
+  // this.minExpdelDt = this.model.DocumentDate;
+  // let DelDt: Date;
+  // DelDt = new Date(this.model.DocumentDate.year,
+  //   this.model.DocumentDate.month - 1,
+  //   this.model.DocumentDate.day);
+
+  // DelDt.setDate(DelDt.getDate() + 10);
+
+  // this.maxExpdelDt = {
+  //   year: DelDt.getFullYear(),
+  //   month: DelDt.getMonth() + 1,
+  //   day: DelDt.getDate()
+  // };
+
+  this.minExpdelDt = this.model.DocumentDate;
+    let DelDt: Date;
+    DelDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+
+    this.maxExpdelDt ={
+      year: DelDt.getFullYear(),
+      month: DelDt.getMonth() + 1,
+      day: DelDt.getDate()
+    };
+
+    this.minDeleveredDt = this.model.DocumentDate;
+    let Dt: Date;
+    Dt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+
+    this.maxDeleveredDt ={
+      year: Dt.getFullYear(),
+      month: Dt.getMonth() + 1,
+      day: Dt.getDate()
+    };
+
+}
+
 }

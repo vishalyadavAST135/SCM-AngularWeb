@@ -203,7 +203,6 @@ export class SrnComponent implements OnInit {
   inputExcelOther: ElementRef;
   @ViewChild('inputExcelBB', { static: false })
   inputExcelBB: ElementRef;
-  min: { year: any; month: any; day: number; };
   IsSRNPreview: boolean;
   SRNEditUserRoleId: any;
   IsPreviewhideandShow: boolean;
@@ -239,6 +238,25 @@ export class SrnComponent implements OnInit {
   SrnId: number = 0;
   AutoCompleteDispatchNoList: any; //vishal, 04/02/2023
   DocumentNokeyword = 'DocumentNo';
+ 
+  
+
+  //vishal 16/02/2023
+  minSRNDt: { year: any; month: any; day: number; };
+  maxSRNDt: { year: any; month: any; day: number; };
+
+  minBiltyDt: { year: any; month: any; day: number; };
+  maxBiltyDt: { year: any; month: any; day: number; };
+
+  minInvoiceDt: { year: any; month: any; day: number; };
+  maxInvoiceDt: { year: any; month: any; day: number; };
+
+  minRecDt: { year: any; month: any; day: number; };
+  maxRecDt: { year: any; month: any; day: number; };
+
+
+
+
 
   constructor(private router: Router, private _Commonservices: CommonService, private _SrnPdfServiceService: SrnPdfServiceService,
     private _PurchaseOrderService: PurchaseOrderService, private _GrncrnService: GrncrnService,
@@ -482,11 +500,19 @@ export class SrnComponent implements OnInit {
     this.ItemReason();
     this.GetCustomerName();
     const current = new Date();
-    this.min = {
-      year: current.getUTCFullYear(),
-      month: current.getMonth() + 1,
-      day: current.getDate() - 7
-    };
+
+    // this.minSRNDt = {
+    //   year: current.getUTCFullYear(),
+    //   month: current.getMonth() + 1,
+    //   day: current.getDate()
+    // };
+
+    // this.maxSRNDt = {
+    //   year: current.getUTCFullYear(),
+    //   month: current.getMonth() + 1,
+    //   day: current.getDate()
+    // };
+
     this.BindCorrectionentryReason();
     //brahamjot kaur 15/7/2022
     this.CreateDispatchForDIId = "0";
@@ -548,7 +574,6 @@ export class SrnComponent implements OnInit {
     this.model.PreviewExpectedDate = this._Commonservices.ConvertDateFormat(this.model.ExpectedDate);
     //this.model.PreviewDispatchDate = this._Commonservices.ConvertDateFormat(this.model.DispatchDate);
     this.model.PreviewLRDate = this._Commonservices.ConvertDateFormat(this.model.LRdate);
-
   }
 
   BackPreviewSRN() {
@@ -1908,9 +1933,13 @@ export class SrnComponent implements OnInit {
       this.AutoCompleteSRNNoList = [];
       this.ItemAddrowhideshow = true;
       this.IsReceivingField = false;
+      this.AutoCompleteDispatchNoList =[]; //vishal
+    
       var toDate = "";
       toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
       this.model.DocumentDate = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
+      //this.model.DocumentDate = { day: 28, month: 2, year: 2023 };
+      this.setDateRange();
     } else {
       this.IsSRNNoShowAndHide = true;
       this.IsReadonlyField = true;
@@ -1920,16 +1949,19 @@ export class SrnComponent implements OnInit {
       this.model.DocumentDate = "";
       this.ItemAddrowhideshow = false;
       this.IsSRNInstraction = true;
-      this.model.DispatchNo = ""; //vishal 04/02/2023
-      this.model.DispatchNoId = null;
+
+      //vishal 04/02/2023
+      this.model.AutoDispatchNo = ""; 
+       this.model.DispatchNo = ""; 
+       this.model.DispatchNoId =null;
     }
+
     this.ChangeTrasporationMode(TransPortModeType.ByRoad);
     //brahamjot kaur 15/7/2022
     if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
       this.AutoFillSRNDetailByDIId(this.CreateDispatchForDIId);
     }
-    //this.ChangeSiteOtherState();
-    this.AutoCompleteDispatchNoList = []; //vishal
+  
   }
 
   GetCustomerName() {
@@ -1963,7 +1995,7 @@ export class SrnComponent implements OnInit {
       this.AutoCompleteSRNNoList = data.Data;
     })
   }
-  
+
   SearchSRNCleared() {
     this.AutoCompleteSRNNoList = [];
     this.model.SRNNoData = "";
@@ -2106,6 +2138,7 @@ export class SrnComponent implements OnInit {
       } else {
         objDispatchTrackingModel.TaxInvoiceDate = "";
       }
+      
 
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
@@ -2120,7 +2153,6 @@ export class SrnComponent implements OnInit {
       // vishal 
 
       if (this.model.AutoDispatchNo != "") {
-
         objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
         objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
       } else {
@@ -2225,6 +2257,7 @@ export class SrnComponent implements OnInit {
       } else {
         objDispatchTrackingModel.DeliveredDate = "";
       }
+
       if (this.model.ReqAndRecvedClickId == 1) {
         this.DispatchTrackingItem = [];
 
@@ -2437,7 +2470,6 @@ export class SrnComponent implements OnInit {
 
 
   PartialUpadteSRNDetail() {
-
     try {
       if (this.PartialUpdateValidation() == 1) {
         return false;
@@ -2458,6 +2490,7 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.GRNo = this.model.GRNo;
         var GRNoDate = this._Commonservices.checkUndefined(this.model.GRDate);
         objDispatchTrackingModel.GRDate = GRNoDate.day + '/' + GRNoDate.month + '/' + GRNoDate.year;
+
       } else if (this.model.TrasporationMode == TransPortModeType.ByHand) {
         objDispatchTrackingModel.CodeAndNo = this.model.EmployeeCode;
         objDispatchTrackingModel.TransporterName = this.model.EmployeeName;
@@ -2497,21 +2530,13 @@ export class SrnComponent implements OnInit {
 
       //vishal 
       if (this.model.AutoDispatchNo != "") {
-
         objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
         objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
       } else {
         objDispatchTrackingModel.DispatchNo = null;
         objDispatchTrackingModel.DispatchNoId = null;
       }
-      // if (this.model.DispatchNo != "") {
-      //   debugger
-      //   objDispatchTrackingModel.DispatchNo = this.model.DispatchNo;
-      //   objDispatchTrackingModel.DispatchNoId = this.model.DispatchNoId;
-      // } else {
-      //   objDispatchTrackingModel.DispatchNo = null;
-      //   objDispatchTrackingModel.DispatchNoId = null;
-      // }
+     
       objDispatchTrackingModel.ReasonId = this.model.ReasonId;
       objDispatchTrackingModel.ReasonRemarks = this.model.ReasonRemarks;
       objDispatchTrackingModel.Note = this.model.Note;
@@ -3050,8 +3075,7 @@ export class SrnComponent implements OnInit {
   }
 
   SearchSRNEditListBySRNId(Id: any) {
-    debugger
-    try {
+    try {      
       this.gridApi.showLoadingOverlay();
       this.IsPreviousSiteDataGrid = false;
       this.IsDisabledPreviewGenratebutton = false;
@@ -3097,18 +3121,16 @@ export class SrnComponent implements OnInit {
             this.model.DocumentNo = data.Data[0].DocumentNo;
 
             //vishal, 08/02/2023
-
-            if (data.Data[0].DispatchNo != '') {
+            if (data.Data[0].DispatchNo != "" && data.Data[0].DispatchNo != null) {
               this.model.AutoDispatchNo = data.Data[0].DispatchNo;
               this.model.DispatchNo = data.Data[0].DispatchNo;
               this.model.DispatchNoId = data.Data[0].DispatchNoId;
-
             } else {
-              this.model.AutoDispatchNo = null;
-              this.model.DispatchNo = '';
-              this.model.DispatchNoId = null;
-
-            }
+              // this.SearchDispatchCleared()
+              this.model.AutoDispatchNo = "";
+              this.model.DispatchNo = "";
+              this.model.DispatchNoId = null;   
+            }            
 
             //brahamjot kaur 15/7/2022
             //this.model.SRNInstructionId = data.Data[0].DispatchInstructionId;
@@ -3116,6 +3138,8 @@ export class SrnComponent implements OnInit {
             //this.model.SRNInstructionId = data.Data[0].DispatchInstructionId;
             var DDate = data.Data[0].DocumentDate.split('/');
             this.model.DocumentDate = { year: parseInt(DDate[2]), month: parseInt(DDate[1]), day: parseInt(DDate[0]) };
+            
+            this.setDateRange();
             this.TableId = data.Data[0].DisatchTrackeringId;
             this.ManueId = this.PageMenuId;
             this.CreateName = data.Data[0].CreateName;
@@ -3208,7 +3232,9 @@ export class SrnComponent implements OnInit {
             if (data.Data[0].GRDate != null && data.Data[0].GRDate != "") {
               var GrDate = data.Data[0].GRDate.split('/');
               this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
+              
             }
+
             //vishal, 03/12/2022
             if (data.Data[0].TaxInvoiceDate != null && data.Data[0].TaxInvoiceDate != "") {
               var TxtInvDate = data.Data[0].TaxInvoiceDate.split('/');
@@ -3217,6 +3243,7 @@ export class SrnComponent implements OnInit {
               this.model.TaxInvoiceDate = "";
             }
             //end-vishal
+
             this.model.VehicleNumber = data.Data[0].VehicleNumber;
             this.model.TaxInvoiceNo = data.Data[0].TaxInvoiceNO;
             this.model.Note = data.Data[0].Note;
@@ -3272,7 +3299,8 @@ export class SrnComponent implements OnInit {
               var DelDate = data.Data[0].DeliveredDate.split('/');
               this.model.DeliveredDate = { year: parseInt(DelDate[2]), month: parseInt(DelDate[1]), day: parseInt(DelDate[0]) };
             }
-
+            //vishal, 17/02/2023
+            
             this.model.IsMultipleSite = data.Data[0].IsMultipleSite;
             if (data.Data[0].IsMultipleSite == true && data.Data[0].IsMultipleSite != 0) {
               jQuery('#MultisiteDispatchPopup').modal('show');
@@ -4050,6 +4078,8 @@ export class SrnComponent implements OnInit {
     this.model.Name = "";
     this.model.PhoneNo = "";
     this.model.AutoDispatchNo = "";
+    this.model.DispatchNo = "";
+    this.model.DispatchNoId = null;
     this.ClearDispatchToSiteToState();
   }
   //#region Correction Entry Work
@@ -4782,12 +4812,14 @@ export class SrnComponent implements OnInit {
   }
   PartialUpdateValidation() {
     var flag = 0;
+
     //vishal, 06/02/2023
-    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined || this.model.DispatchNoId == null
-      || this.model.DispatchNoId == 0)) {
+    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined 
+      || this.model.DispatchNoId == null || this.model.DispatchNoId == 0)) {
       flag = 1;
-      alert('Please Select Correct Document No');
+      alert('Please Select Correct Dispatch No');
     }
+
     if (this.model.TrasporationMode == "" || this.model.TrasporationMode == "0") {
       $('#txtTrasporationMode').css('border-color', 'red');
       $('#txtTrasporationMode').focus();
@@ -4973,11 +5005,13 @@ export class SrnComponent implements OnInit {
     } else {
       $("#txtddlStateId").css('border-color', '');
     }
-
+    debugger
     //vishal, 06/02/2023
-    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined || this.model.DispatchNoId == 0 || this.model.DispatchNoId == null)) {
+    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined ||
+       this.model.DispatchNoId == null || this.model.DispatchNoId == 0 )) {
+        debugger
       flag = 1;
-      alert('Please Select Correct Document No');
+      alert('Please Select Correct Dispatch No');
     }
 
     if (this.model.TransferTypeId == "null" || this.model.TransferTypeId == "0") {
@@ -5685,7 +5719,7 @@ export class SrnComponent implements OnInit {
   SearchDispatchCleared() {
     this.AutoCompleteDispatchNoList = [];
     this.model.DispatchNo = "";
-    this.model.DispatchNoId = '';
+    this.model.DispatchNoId = null;
     this.model.AutoDispatchNo = "";
   }
 
@@ -5694,5 +5728,50 @@ export class SrnComponent implements OnInit {
     this.model.DispatchNoId = item.id;
   }
 
+  setDateRange() {
+    this.minSRNDt = this.model.DocumentDate;
+    this.maxSRNDt = this.model.DocumentDate;
 
+    //#region mindate, maxdate formula of BiltyDate  
+    this.minBiltyDt = this.model.DocumentDate;
+    let BLDt: Date;
+    BLDt = new Date(this.model.DocumentDate.year,
+      this.model.DocumentDate.month - 1,
+      this.model.DocumentDate.day);
+    BLDt.setDate(BLDt.getDate() + 3);
+
+    this.maxBiltyDt = {
+      year: BLDt.getFullYear(),
+      month: BLDt.getMonth() + 1,
+      day: BLDt.getDate()
+    };
+    //#endregion
+
+    //#region mindate, maxdate formula of InvoiceDate  
+    this.minInvoiceDt = this.model.DocumentDate;
+    let InvDt: Date;
+    InvDt = new Date(this.model.DocumentDate.year,
+      this.model.DocumentDate.month - 1,
+      this.model.DocumentDate.day);
+
+    InvDt.setDate(InvDt.getDate() + 7);
+
+    this.maxInvoiceDt = {
+      year: InvDt.getFullYear(),
+      month: InvDt.getMonth() + 1,
+      day: InvDt.getDate()
+    };
+    //#endregion
+
+    this.minRecDt = this.model.DocumentDate;
+    let RecDt: Date;
+    RecDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+
+    this.maxRecDt ={
+      year: RecDt.getFullYear(),
+      month: RecDt.getMonth() + 1,
+      day: RecDt.getDate()
+    };
+
+  }
 }

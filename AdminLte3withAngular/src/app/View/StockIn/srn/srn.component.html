@@ -312,7 +312,7 @@
                           </div>
                         </div>
                       </div>
-                      <div class="row mb-1"  *ngIf="IsTransferTypeOtherSite">
+                      <div class="row mb-1" *ngIf="IsTransferTypeOtherSite">
                         <div class="col-sm-12">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-2">Regd.Office </label>
@@ -418,7 +418,7 @@
                         </div>
 
                         <input type="hidden" [(ngModel)]="model.HideCustomerId" />
-                        
+
                         <div class="col-sm-6">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-4"> Site Name </label>
@@ -619,7 +619,7 @@
                         <div class="col-sm-6">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-4"> GST Type<span style="color: red;"
-                              class="Mandatoryfield"><b>*</b></span></label>
+                                class="Mandatoryfield"><b>*</b></span></label>
                             <div class="col-sm-8">
                               <select class="form-control form-control-sm" id="txtGSTType" [(ngModel)]="model.GSTType"
                                 [disabled]="IsReadonlyField" (change)="ChangeGSTType(model.GSTType)">
@@ -689,11 +689,12 @@
                         <div class="col-sm-12">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-2">Company Name<span style="color: red;"
-                              class="Mandatoryfield" *ngIf="!IsTaxInvoiceNo"><b>*</b></span></label>
+                                class="Mandatoryfield" *ngIf="!IsTaxInvoiceNo"><b>*</b></span></label>
                             <div class="col-sm-10">
                               <div class="input-group">
-                                <input type="text" id="txtToCompanyName" (keypress)="ToCompanyNameKeyPress()" autocomplete="off" [disabled]="IsReadonlyField"
-                                  placeholder="" [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
+                                <input type="text" id="txtToCompanyName" (keypress)="ToCompanyNameKeyPress()"
+                                  autocomplete="off" [disabled]="IsReadonlyField" placeholder=""
+                                  [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
                               </div>
                             </div>
                           </div>
@@ -787,7 +788,8 @@
                     <div class="col-sm-2">
                       <div class="input-group">
                         <input class="form-control form-control-sm" placeholder="" id="txtDocDate" autocomplete="off"
-                          [(ngModel)]="model.DocumentDate" ngbDatepicker [minDate]="min" #Date="ngbDatepicker">
+                          [(ngModel)]="model.DocumentDate" ngbDatepicker [minDate]="minSRNDt" [maxDate]="maxSRNDt"
+                          #Date="ngbDatepicker" readonly>
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="Date.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -952,7 +954,8 @@
                     <div class="col-sm-2" *ngIf="IsTransporter">
                       <div class="input-group" (mouseenter)="onKeypressGRDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtGRDate" autocomplete="off"
-                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker">
+                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker" [minDate]="minBiltyDt"
+                          [maxDate]="maxBiltyDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="GrDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -1020,7 +1023,7 @@
                       <div class="input-group" (mouseenter)="onKeypressInvoicedDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtInvoiceDate"
                           autocomplete="off" [(ngModel)]="model.TaxInvoiceDate" ngbDatepicker
-                          #InvoiceDate="ngbDatepicker">
+                          #InvoiceDate="ngbDatepicker" [minDate]="minInvoiceDt" [maxDate]="maxInvoiceDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="InvoiceDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -2357,7 +2360,8 @@
                   <div class="col-sm-2">
                     <div class="input-group" (mouseenter)="onKeypressDocumentDate($event)">
                       <input class="form-control form-control-sm" placeholder="" id="txtDeliveredDate"
-                        autocomplete="off" [(ngModel)]="model.DeliveredDate" ngbDatepicker #Delivered="ngbDatepicker">
+                        autocomplete="off" [(ngModel)]="model.DeliveredDate" ngbDatepicker #Delivered="ngbDatepicker"
+                        [minDate]="minRecDt" [maxDate]="maxRecDt">
                       <div class="input-group-append">
                         <span class="input-group-text" (click)="Delivered.toggle()"><i
                             class="far fa-calendar-alt"></i></span>
@@ -3410,7 +3414,8 @@
             <ag-grid-angular style="width: 100%; height: 400px;" class="ag-theme-alpine" [enableSorting]="true"
               [enableFilter]="true" [pagination]="true" paginationPageSize="20" [columnDefs]="PreviousDatacolumnDefs"
               [multiSortKey]="multiSortKey" [rowData]="PreviousDatarowData" rowSelection="multiple"
-              (gridReady)="PreviousGridReady($event)" [overlayLoadingTemplate]="loadingTemplate1">
+              (gridReady)="PreviousGridReady($event)" [overlayLoadingTemplate]="loadingTemplate1"
+               [enableCellTextSelection]="true">
             </ag-grid-angular>
           </div>
         </div>
