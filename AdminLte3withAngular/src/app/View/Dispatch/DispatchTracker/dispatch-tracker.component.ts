@@ -355,7 +355,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsApprovalstatusbtnhideShow = false;
     this.ArrayRoleId = objUserModel.Role_Id.split(',');
     for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {
-      if (this.ArrayRoleId[i] == "4") {
+      if (this.ArrayRoleId[i] == UserRole.SCMLead || this.ArrayRoleId[i] == UserRole.SCMHo) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == UserRole.DispatchCorrectionEntryRole) {
         this.RoleCorrectionEntry = true;
@@ -1355,12 +1355,12 @@ export class DispatchTrackerComponent implements OnInit {
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
-          
-          let ItemId=this.dynamicArray[index].ItemNameId;
+
+          let ItemId = this.dynamicArray[index].ItemNameId;
           this.OpenPreviousHistoryPopup(ItemId);
-        }else{
+        } else {
           jQuery("#PreviousHistory").modal('hide');
-          jQuery("#NoPreviousHistory").modal('show');     
+          jQuery("#NoPreviousHistory").modal('show');
         }
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "GetAllPreviousDataBySiteId", "WHTOSite");
@@ -1393,8 +1393,8 @@ export class DispatchTrackerComponent implements OnInit {
 
   ClickHistory(Id: any, index: any) {
     // hemant Tygai 18/01/2023    
-    if( this.model.TransferTypeId==PageActivity.Dis_SiteWithinState 
-      || this.model.TransferTypeId==PageActivity.Dis_SiteOtherState){
+    if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+      || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
       this.ChangeSite(index);
     }
 
@@ -3161,7 +3161,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
-  
+
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();
@@ -3323,15 +3323,47 @@ export class DispatchTrackerComponent implements OnInit {
 
             // Change by Hemant Tyagi 20/10/2022
             if (this.CompanyId == 4) {
+
+
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
                 this.IsSaveButtonDisable = true;
-                this.IsHideShowCancelBtn = true;
+
+                if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
+
+                  if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
+                    this.IsHideShowCancelBtn = true;
+                  } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+                    && data.Data[0].MonthOverDate == 0) {
+                    this.IsHideShowCancelBtn = true;
+                  } else {
+                    this.IsHideShowCancelBtn = false;
+                  }
+
+                } else {
+                  this.IsHideShowCancelBtn = true;
+                }
+
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = false;
               } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
                 this.IsSaveButtonDisable = true;
-                this.IsHideShowCancelBtn = false;
+
+                if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
+
+                  if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
+                    this.IsHideShowCancelBtn = true;
+                  } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+                    && data.Data[0].MonthOverDate == 0) {
+                    this.IsHideShowCancelBtn = false;
+                  } else {
+                    this.IsHideShowCancelBtn = false;
+                  }
+
+                } else {
+                  this.IsHideShowCancelBtn = true;
+                }
+
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = true;
@@ -3342,6 +3374,9 @@ export class DispatchTrackerComponent implements OnInit {
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
               }
+
+
+
             } else if (this.CompanyId == 1) {
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
                 ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
@@ -6346,8 +6381,8 @@ export class DispatchTrackerComponent implements OnInit {
         $("#txtGSTType").css('border-color', '');
       }
 
-       //vishal, 08/02/2023, company name with customer gst selection
-       if (this.model.GSTType == "2") {
+      //vishal, 08/02/2023, company name with customer gst selection
+      if (this.model.GSTType == "2") {
         if (this.model.CompanyName == "" || this.model.CompanyName == null) {
           $('#txtToCompanyName').css('border-color', 'red');
           $('#txtToCompanyName').focus();
@@ -6355,7 +6390,7 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
           $("#txtToCompanyName").css('border-color', '');
         }
-      }else {
+      } else {
         $("#txtToCompanyName").css('border-color', '');
       }
 

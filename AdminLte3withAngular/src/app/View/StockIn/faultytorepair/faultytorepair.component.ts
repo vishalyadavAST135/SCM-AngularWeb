@@ -9,7 +9,7 @@ import { CommonService } from 'src/app/Service/common.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { SearchpanelService } from 'src/app/Service/searchpanel.service';
 import { StockserviceService } from 'src/app/Service/stockservice.service';
-import { ApprovelStatusModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, MenuName } from 'src/app/_Model/commonModel';
+import { ApprovelStatusModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, MenuName, UserRole } from 'src/app/_Model/commonModel';
 import { DispatchTrackingItemDetialModel, SearchDispatchTrackerModel } from 'src/app/_Model/DispatchModel';
 import { CellNo, DynamicItemGrid, DynamicStockPdfGrid, GSerialNumber, VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { SaveUpdateStockQtyModel, StockQtyModel } from 'src/app/_Model/StockModel';
@@ -41,6 +41,8 @@ export class FaultytorepairComponent implements OnInit {
   CompanyId: any;
   UserId: any;
   UserName: any;
+  UserRoleId: string;
+  ArrayRoleId: any;
   WareHouseId: any;
   SearchItemNameList: any;
   EquipmentTypeList: any;
@@ -135,6 +137,14 @@ export class FaultytorepairComponent implements OnInit {
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.UserId = objUserModel.User_Id;
     this.UserName = objUserModel.User_Id;
+    this.ArrayRoleId = objUserModel.Role_Id.split(',');
+
+    for (var i = 0, len = this.ArrayRoleId.length; i < len; i++) {
+      if (this.ArrayRoleId[i] == UserRole.SCMHo || this.ArrayRoleId[i] == UserRole.SCMLead) {
+        this.UserRoleId = this.ArrayRoleId[i];
+      }
+    }
+
     var objCompanyModel = new CompanyModel();
     objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
     this.CompanyId = objCompanyModel.Company_Id;
@@ -213,9 +223,11 @@ export class FaultytorepairComponent implements OnInit {
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
         this.ObjUserPageRight.IsBulkPdfDwnload = data.Data[0].IsBulkPdfDwnload;
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+
         debugger
         if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
           this.Save = 1;
@@ -1329,7 +1341,6 @@ export class FaultytorepairComponent implements OnInit {
     this.isPdfPreview = false;
     this.IsPreviewPdfHide = false;
     this.IsSaveDisabled = true;
-    this.IsHideShowCancelBtn = true;
     this.SearchFaultyRepById(e.rowData.FaultyId);
   }
   SearchPdfPreview() {
@@ -1355,6 +1366,20 @@ export class FaultytorepairComponent implements OnInit {
       this.GetUserPageRight(this.FaultuRep_Id);
       this._StockserviceService.SearchFaultyRepEditById(objModel).pipe(first()).subscribe(data => {
         if (data.Status == 1) {
+          // Hemant Tyagi 17/02/2023
+          if (data.Data[0].DateDiffHour > CommonStaticClass.DifferenceDay) {
+            if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
+              this.IsHideShowCancelBtn = true;
+            } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+              && data.Data[0].MonthOverDate == 0) {
+              this.IsHideShowCancelBtn = true;
+            } else {
+              this.IsHideShowCancelBtn = false;
+            }
+          } else {
+            this.IsHideShowCancelBtn = true;
+          }
+
           this.SerialNoList = [];
           this.model.WHStateId = data.Data[0].State_Id;
           var StateId = this._Commonservices.checkUndefined(this.model.WHStateId);
@@ -1393,8 +1418,10 @@ export class FaultytorepairComponent implements OnInit {
           } else {
             this.model.RepairDate = "";
           }
+
           this.model.DocumentId = data.Data[0].Dispatch_Id;
           this.model.DocumentNoData = data.Data[0].DocumentNo;
+
           this.dynamicArray = [];
           this.ItemEditDataArr = data.ItemData;
           for (var i = 0, len = this.ItemEditDataArr.length; i < len; i++) {
@@ -1565,7 +1592,7 @@ export class FaultytorepairComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "UpadateCancelDispatch", "WHTOSite");
     }
   }
-  
+
   CancelValidation() {
     var flag = 0;
     if (this.model.InCaseReason == "0") {
@@ -1595,7 +1622,7 @@ export class FaultytorepairComponent implements OnInit {
           margin: [0, 0, 0, 0],
           border: [1, 1, 1, 1],
           table: {
-            widths:['100%'],
+            widths: ['100%'],
             body: [
               [
                 {
@@ -1716,77 +1743,77 @@ export class FaultytorepairComponent implements OnInit {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['4%', '6%', '22%', '8%', '10%', '8%', '5%', '5%', '5%', '5%', '5%','5%','6%', '6%'],
+            widths: ['4%', '6%', '22%', '8%', '10%', '8%', '5%', '5%', '5%', '5%', '5%', '5%', '6%', '6%'],
             body: [
               [
                 { text: 'S.No', bold: true, },
-                { text: 'Eqp. Name', alignment: 'center', bold: true, }, 
+                { text: 'Eqp. Name', alignment: 'center', bold: true, },
                 { text: 'Description', bold: true, alignment: 'center' },
-                { text: 'Eqp. Sl No.', bold: true, alignment: 'center' }, 
+                { text: 'Eqp. Sl No.', bold: true, alignment: 'center' },
                 { text: 'Nature of Fault', bold: true, alignment: 'center' },
-                
-                { text: 'Spare Used', bold: true, alignment: 'center' }, 
+
+                { text: 'Spare Used', bold: true, alignment: 'center' },
                 { text: 'Qty', bold: true, alignment: 'center' },
-                { text: 'Load (AMP)', bold: true, alignment: 'center' }, 
+                { text: 'Load (AMP)', bold: true, alignment: 'center' },
                 { text: 'Time (Hour)', bold: true, alignment: 'center' },
-                { text: 'Repaired', bold: true, alignment: 'center' }, 
-                
+                { text: 'Repaired', bold: true, alignment: 'center' },
+
                 { text: 'BER', bold: true, alignment: 'center' },
-                { text: 'Faulty', bold: true, alignment: 'center' }, 
+                { text: 'Faulty', bold: true, alignment: 'center' },
                 { text: 'Repaired BY', bold: true, alignment: 'center' },
                 { text: 'Tested BY', bold: true, alignment: 'center' }
               ],
               ...this.dynamicStockPdfGrid.map(p => ([
-                { text: p.RowId }, 
-                { text: p.EqpName }, 
+                { text: p.RowId },
+                { text: p.EqpName },
                 { text: p.ItemDescription, alignment: 'center' },
-                { text: p.SerialNo, alignment: 'center' }, 
+                { text: p.SerialNo, alignment: 'center' },
                 { text: p.TypeOfFaulty, alignment: 'center' },
-                
-                { text: p.MaterialUsed, alignment: 'center' }, 
+
+                { text: p.MaterialUsed, alignment: 'center' },
                 { text: p.StockQty, alignment: 'center' },
-                { text: p.Load, alignment: 'center' }, 
+                { text: p.Load, alignment: 'center' },
                 { text: p.TestingTime, alignment: 'center' },
-                { text: p.RepairedQty, alignment: 'center' }, 
-                
+                { text: p.RepairedQty, alignment: 'center' },
+
                 { text: p.ScrapQty, alignment: 'center' },
-                { text: p.FaultyQty, alignment: 'center' }, 
+                { text: p.FaultyQty, alignment: 'center' },
                 { text: p.RepairBy, alignment: 'center' },
                 { text: p.TestedBy, alignment: 'center' }
               ])),
               [
-                {}, 
-                { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
+                {},
+                { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+
+                { text: '' },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+
+                { text: '' },
+                { text: '' },
+                { text: '' },
                 { text: '' }
               ],
               [
-                { text: 'Final Remarks', colSpan: 10, alignment: 'left', bold: true }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                { text: '' }, 
-                
-                { text: '' }, 
-                { text: '' }, 
+                { text: 'Final Remarks', colSpan: 10, alignment: 'left', bold: true },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+
+                { text: '' },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+                { text: '' },
+
+                { text: '' },
+                { text: '' },
                 { text: '' },
                 { text: '' }
               ]
@@ -1833,7 +1860,7 @@ export class FaultytorepairComponent implements OnInit {
     } else {
       if (this.model.FunctionFlagValue == 2) {
         pdfMake.createPdf(docDefinition).open();
-      } else {       
+      } else {
         pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
           PDFdata = dataURL;
         });

@@ -216,7 +216,7 @@
                       &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-sm btn-success"
                         (click)="IsPageActive=true; isShownPOEdit=false"><i class="fa fa-save"></i>
                         New STN </button>
-                      &nbsp; <button type="submit"  *ngIf="Save"[disabled]="IsSaveButtonDisable" class="btn btn-sm btn-success"
+                      &nbsp; <button type="submit"  *ngIf="Save" [disabled]="IsSaveButtonDisable" class="btn btn-sm btn-success"
                         (click)="conformPopup()"><i class="fa fa-save"></i>
                         Save </button>
                       &nbsp; <button type="submit" *ngIf="IsNewPreview" class="btn btn-sm btn-success"
