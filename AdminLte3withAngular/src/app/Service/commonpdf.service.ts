@@ -1793,7 +1793,7 @@ export class CommonpdfService {
                         ],
                         [
                           {
-                            border: [0, 0, 0, 0],
+                            border: [0, 0, 0, 1],
                             columns: [
                               {
                                 width: 60,
@@ -1807,7 +1807,7 @@ export class CommonpdfService {
                           },
   
                           {
-                            border: [1, 0, 0, 0],
+                            border: [1, 0, 0, 1],
                             columns: [
                               {
                                 width: 170,
@@ -1818,9 +1818,7 @@ export class CommonpdfService {
                               },
                             ]
                           },
-                        ],
-
-                       
+                        ]                    
   
                       ]
                     }
@@ -1851,9 +1849,7 @@ export class CommonpdfService {
                         ],
                       ]
                     }
-                  },
-  
-  
+                  },  
   
                   {
                     border: [1, 1, 1, 0],
@@ -2035,7 +2031,7 @@ export class CommonpdfService {
                         ],
                         [
                           {
-                            border: [0, 0, 0, 0],
+                            border: [0, 0, 0, 1],
                             columns: [
                               {
                                 width: 80,
@@ -2049,7 +2045,7 @@ export class CommonpdfService {
                           },
   
                           {
-                            border: [1, 0, 0, 0],
+                            border: [1, 0, 0, 1],
                             columns: [
                               {
                                 width: 150,
@@ -2061,6 +2057,34 @@ export class CommonpdfService {
                             ]
                           },
                         ],
+                        [
+                          {
+                            border: [0, 0, 0, 1],
+                            columns: [
+                              {
+                                width: 80,
+                                fontSize: 10,
+                                text: [
+                                  { text: 'SRNReason', bold: true },
+  
+                                ]
+                              },
+                            ]
+                          },
+  
+                          {
+                            border: [1, 0, 0, 1],
+                            columns: [
+                              {
+                                width: 150,
+                                fontSize: 10,
+                                text: [
+                                  { text: `${objdata[0].SRNReasontext}` }
+                                ]
+                              },
+                            ]
+                          },
+                        ]
   
                       ]
                     }
@@ -3473,7 +3497,34 @@ export class CommonpdfService {
                             ]
                           },
                         ],
+                        [
+                          {
+                            border: [0, 0, 0, 1],
+                            columns: [
+                              {
+                                width: 80,
+                                fontSize: 10,
+                                text: [
+                                  { text: 'SRNReason', bold: true },
   
+                                ]
+                              },
+                            ]
+                          },
+  
+                          {
+                            border: [1, 0, 0, 1],
+                            columns: [
+                              {
+                                width: 150,
+                                fontSize: 10,
+                                text: [
+                                  { text: `${objdata[0].SRNReasontext}` }
+                                ]
+                              },
+                            ]
+                          },
+                        ]
                       ]
                     }
                   },

@@ -112,9 +112,9 @@ export class MaterialReconciliationComponent implements OnInit {
     }
     var value;
     if (this.CompanyId == 4) {
-      value = 'http://api.astnoc.com/scmimages/SCMExcel/Telecom/Reconcile' + this.model.ddlFinancialYears + '.xlsx';
+      value = 'http://api.astnoc.com/scmimages/SCMExcel/Telecom/Reconcile' + this.model.ddlFinancialYears + '.csv';
     } else {
-      value = 'http://api.astnoc.com/scmimages/SCMExcel/ATM/Reconcile' + this.model.ddlFinancialYears + '.xlsx';
+      value = 'http://api.astnoc.com/scmimages/SCMExcel/ATM/Reconcile' + this.model.ddlFinancialYears + '.csv';
     }
     var formdata = new FormData();
     formdata.append("SendDownloadFile", JSON.stringify(value));

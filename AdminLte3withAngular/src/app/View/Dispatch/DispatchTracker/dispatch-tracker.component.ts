@@ -307,21 +307,21 @@ export class DispatchTrackerComponent implements OnInit {
   // }
   //end-vishal
 
-//vishal 16/02/2023
-minDispatchDt: { year: any; month: any; day: number; };
-maxDispatchDt: { year: any; month: any; day: number; };
+  //vishal 16/02/2023
+  minDispatchDt: { year: any; month: any; day: number; };
+  maxDispatchDt: { year: any; month: any; day: number; };
 
-minBiltyDt: { year: any; month: any; day: number; };
-maxBiltyDt: { year: any; month: any; day: number; };
+  minBiltyDt: { year: any; month: any; day: number; };
+  maxBiltyDt: { year: any; month: any; day: number; };
 
-minInvoiceDt: { year: any; month: any; day: number; };
-maxInvoiceDt: { year: any; month: any; day: number; };
+  minInvoiceDt: { year: any; month: any; day: number; };
+  maxInvoiceDt: { year: any; month: any; day: number; };
 
-minExpdelDt: { year: any; month: any; day: number; };
-maxExpdelDt: { year: any; month: any; day: number; };
+  minExpdelDt: { year: any; month: any; day: number; };
+  maxExpdelDt: { year: any; month: any; day: number; };
 
-minDeleveredDt: { year: any; month: any; day: number; };
-maxDeleveredDt: { year: any; month: any; day: number; };
+  minDeleveredDt: { year: any; month: any; day: number; };
+  maxDeleveredDt: { year: any; month: any; day: number; };
 
   constructor(private router: Router, private _Commonservices: CommonService,
     private _GrncrnService: GrncrnService,
@@ -2620,7 +2620,7 @@ maxDeleveredDt: { year: any; month: any; day: number; };
         objDispatchTrackingModel.TaxInvoiceDate = "";
       }
       //end-vishal
-     
+
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
       objDispatchTrackingModel.AmountChargeable = this.model.AmountChargeable;
@@ -2673,7 +2673,7 @@ maxDeleveredDt: { year: any; month: any; day: number; };
       } else {
         objDispatchTrackingModel.ExpDeliveryDate = "";
       }
-     
+
       // if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState) {
       //   this.IsModelShow = false;} //vishal, 05/12/2022
 
@@ -3089,7 +3089,7 @@ maxDeleveredDt: { year: any; month: any; day: number; };
       }
 
       //end-vishal
-   
+
       var ExpDeliveryDate = this._Commonservices.checkUndefined(this.model.ExpectedDate);
       objDispatchTrackingModel.ExpDeliveryDate = ExpDeliveryDate.day + '/' + ExpDeliveryDate.month + '/' + ExpDeliveryDate.year;
       objDispatchTrackingModel.Note = this.model.Note;
@@ -3342,54 +3342,35 @@ maxDeleveredDt: { year: any; month: any; day: number; };
             this.IsApprovalstatusbtnhideShow = false;
 
             // Change by Hemant Tyagi 20/10/2022
+            if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
+              if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
+                this.IsHideShowCancelBtn = true;
+              } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
+                && data.Data[0].MonthOverDate == 0) {
+                this.IsHideShowCancelBtn = true;
+              } else if (this.CompanyId == 1 && data.Data[0].MonthOverDate == 0) {
+                this.IsHideShowCancelBtn = true;
+              } else {
+                this.IsHideShowCancelBtn = false;
+              }
+            } else {
+              this.IsHideShowCancelBtn = true;
+            }
+
             if (this.CompanyId == 4) {
-
-
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
                 this.IsSaveButtonDisable = true;
-
-                if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-
-                  if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
-                    this.IsHideShowCancelBtn = true;
-                  } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
-                    && data.Data[0].MonthOverDate == 0) {
-                    this.IsHideShowCancelBtn = true;
-                  } else {
-                    this.IsHideShowCancelBtn = false;
-                  }
-
-                } else {
-                  this.IsHideShowCancelBtn = true;
-                }
-
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = false;
               } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
                 this.IsSaveButtonDisable = true;
-
-                if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-
-                  if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
-                    this.IsHideShowCancelBtn = true;
-                  } else if ((this.UserRoleId == UserRole.SCMHo || this.UserRoleId == UserRole.SCMLead)
-                    && data.Data[0].MonthOverDate == 0) {
-                    this.IsHideShowCancelBtn = false;
-                  } else {
-                    this.IsHideShowCancelBtn = false;
-                  }
-
-                } else {
-                  this.IsHideShowCancelBtn = true;
-                }
-
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = true;
               } else {
                 this.IsSaveButtonDisable = false;
-                this.IsHideShowCancelBtn = true;
+                //this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = false;
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
@@ -3407,7 +3388,6 @@ maxDeleveredDt: { year: any; month: any; day: number; };
                   || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
               ) {
                 this.IsSaveButtonDisable = true;
-                this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = false;
@@ -3419,74 +3399,22 @@ maxDeleveredDt: { year: any; month: any; day: number; };
                 ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
               ) {
                 this.IsSaveButtonDisable = true;
-                this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = false;
               } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
                 this.IsSaveButtonDisable = true;
-                this.IsHideShowCancelBtn = false;
                 this.IsPartialUpDateDispatchRequest = true;
                 this.IsReceivedHideShow = true;
                 this.IsRecivedButtonDisable = true;
               } else {
                 this.IsSaveButtonDisable = false;
-                this.IsHideShowCancelBtn = true;
                 this.IsPartialUpDateDispatchRequest = false;
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
               }
-            }
-
-            // Change by Hemant Tyagi 20/10/2022            
-            // else if (this.CompanyId == 1) {
-            //   if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
-            //     if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
-            //       this.IsHideShowCancelBtn = false;
-            //       this.IsSaveButtonDisable = true;
-            //       this.IsReceivedDetail = true;
-            //       this.IsRecivedButtonDisable = false;
-            //       this.IsPartialUpDateDispatchRequest = true;
-            //     } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
-            //       this.IsHideShowCancelBtn = false;
-            //       this.IsSaveButtonDisable = true;
-            //       this.IsReceivedDetail = true;
-            //       this.IsRecivedButtonDisable = true;
-            //       this.IsPartialUpDateDispatchRequest = true;
-            //     } else {
-            //       this.IsHideShowCancelBtn = false;
-            //       this.IsSaveButtonDisable = false;
-            //       this.IsReceivedDetail = true;
-            //       this.IsRecivedButtonDisable = false;
-            //     }
-            //   } else {
-            //     if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" 
-            //     && this.model.TrasporationMode != TransPortModeType.ByHand) {
-            //       this.IsHideShowCancelBtn = true;
-            //       this.IsSaveButtonDisable = false;
-            //       this.IsReceivedDetail = false;
-            //       this.IsRecivedButtonDisable = false;
-            //       this.IsPartialUpDateDispatchRequest = true;
-            //     }
-            //     else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
-            //       this.IsHideShowCancelBtn = false;
-            //       this.IsSaveButtonDisable = true;
-            //       this.IsReceivedDetail = true;
-            //       this.IsRecivedButtonDisable = true;
-            //       this.IsPartialUpDateDispatchRequest = true;
-            //     } else {
-            //       this.IsHideShowCancelBtn = true;
-            //       this.IsSaveButtonDisable = false;
-            //       this.IsReceivedDetail = true;
-            //       this.IsRecivedButtonDisable = false;
-            //     }
-            //   }
-            // }
-
-            // Change by Hemant Tyagi
-            //this.model.DispatchInstructionId = data.Data[0].DispatchInstructionId;
-            // this.model.DIStatusId = data.Data[0].DIStatusId; // brahamjot kaur 19/7/2022
-
+            }            
+            
             if (this.model.TrasporationMode == TransPortModeType.ByRoad) {
               this.model.TransporterId = data.Data[0].Transporter_Id;
               this.model.TransporterName = data.Data[0].TrasporationName;
@@ -7186,64 +7114,64 @@ maxDeleveredDt: { year: any; month: any; day: number; };
     return returnStatus;
   }
 
-//vishal/ 20/02/2022
+  //vishal/ 20/02/2022
 
-setDateRange() {
-  this.minDispatchDt = this.model.DocumentDate;
-  this.maxDispatchDt = this.model.DocumentDate;
+  setDateRange() {
+    this.minDispatchDt = this.model.DocumentDate;
+    this.maxDispatchDt = this.model.DocumentDate;
 
-  //#region mindate, maxdate formula of BiltyDate  
-  this.minBiltyDt = this.model.DocumentDate;
-  let BLDt: Date;
-  BLDt = new Date(this.model.DocumentDate.year,
-    this.model.DocumentDate.month - 1,
-    this.model.DocumentDate.day);
-  BLDt.setDate(BLDt.getDate() + 3);
+    //#region mindate, maxdate formula of BiltyDate  
+    this.minBiltyDt = this.model.DocumentDate;
+    let BLDt: Date;
+    BLDt = new Date(this.model.DocumentDate.year,
+      this.model.DocumentDate.month - 1,
+      this.model.DocumentDate.day);
+    BLDt.setDate(BLDt.getDate() + 3);
 
-  this.maxBiltyDt = {
-    year: BLDt.getFullYear(),
-    month: BLDt.getMonth() + 1,
-    day: BLDt.getDate()
-  };
-  //#endregion
+    this.maxBiltyDt = {
+      year: BLDt.getFullYear(),
+      month: BLDt.getMonth() + 1,
+      day: BLDt.getDate()
+    };
+    //#endregion
 
-  //#region mindate, maxdate formula of InvoiceDate  
-  this.minInvoiceDt = this.model.DocumentDate;
-  let InvDt: Date;
-  InvDt = new Date(this.model.DocumentDate.year,
-    this.model.DocumentDate.month - 1,
-    this.model.DocumentDate.day);
+    //#region mindate, maxdate formula of InvoiceDate  
+    this.minInvoiceDt = this.model.DocumentDate;
+    let InvDt: Date;
+    InvDt = new Date(this.model.DocumentDate.year,
+      this.model.DocumentDate.month - 1,
+      this.model.DocumentDate.day);
 
-  InvDt.setDate(InvDt.getDate() + 7);
+    InvDt.setDate(InvDt.getDate() + 7);
 
-  this.maxInvoiceDt = {
-    year: InvDt.getFullYear(),
-    month: InvDt.getMonth() + 1,
-    day: InvDt.getDate()
-  };
-  //#endregion
+    this.maxInvoiceDt = {
+      year: InvDt.getFullYear(),
+      month: InvDt.getMonth() + 1,
+      day: InvDt.getDate()
+    };
+    //#endregion
 
-  //region for expected delivery date
+    //region for expected delivery date
 
-  // this.minExpdelDt = this.model.DocumentDate;
-  // let DelDt: Date;
-  // DelDt = new Date(this.model.DocumentDate.year,
-  //   this.model.DocumentDate.month - 1,
-  //   this.model.DocumentDate.day);
+    // this.minExpdelDt = this.model.DocumentDate;
+    // let DelDt: Date;
+    // DelDt = new Date(this.model.DocumentDate.year,
+    //   this.model.DocumentDate.month - 1,
+    //   this.model.DocumentDate.day);
 
-  // DelDt.setDate(DelDt.getDate() + 10);
+    // DelDt.setDate(DelDt.getDate() + 10);
 
-  // this.maxExpdelDt = {
-  //   year: DelDt.getFullYear(),
-  //   month: DelDt.getMonth() + 1,
-  //   day: DelDt.getDate()
-  // };
+    // this.maxExpdelDt = {
+    //   year: DelDt.getFullYear(),
+    //   month: DelDt.getMonth() + 1,
+    //   day: DelDt.getDate()
+    // };
 
-  this.minExpdelDt = this.model.DocumentDate;
+    this.minExpdelDt = this.model.DocumentDate;
     let DelDt: Date;
     DelDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
 
-    this.maxExpdelDt ={
+    this.maxExpdelDt = {
       year: DelDt.getFullYear(),
       month: DelDt.getMonth() + 1,
       day: DelDt.getDate()
@@ -7253,12 +7181,10 @@ setDateRange() {
     let Dt: Date;
     Dt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
 
-    this.maxDeleveredDt ={
+    this.maxDeleveredDt = {
       year: Dt.getFullYear(),
       month: Dt.getMonth() + 1,
       day: Dt.getDate()
     };
-
-}
-
+  }
 }

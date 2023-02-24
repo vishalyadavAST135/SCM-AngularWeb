@@ -2502,9 +2502,9 @@
                           <div class="row">
                             <label class="col-form-label-xs col-sm-2">Regd.Office:</label>
                             <div class="col-sm-10">
-                              <label class="col-form-label-xs">{{model.RegdOffice}}</label>
+                              <label class="col-form-label-xs" *ngIf="IsTransferTypeSite">{{model.RegdOffice}}</label>
+                              <label class="col-form-label-xs" *ngIf="IsTransferTypeOtherSite">{{model.SiteRegdOffice}}</label>
                             </div>
-
                           </div>
                         </div>
                       </div>

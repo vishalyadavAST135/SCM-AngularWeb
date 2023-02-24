@@ -238,8 +238,8 @@ export class SrnComponent implements OnInit {
   SrnId: number = 0;
   AutoCompleteDispatchNoList: any; //vishal, 04/02/2023
   DocumentNokeyword = 'DocumentNo';
- 
-  
+
+
 
   //vishal 16/02/2023
   minSRNDt: { year: any; month: any; day: number; };
@@ -1933,8 +1933,8 @@ export class SrnComponent implements OnInit {
       this.AutoCompleteSRNNoList = [];
       this.ItemAddrowhideshow = true;
       this.IsReceivingField = false;
-      this.AutoCompleteDispatchNoList =[]; //vishal
-    
+      this.AutoCompleteDispatchNoList = []; //vishal
+
       var toDate = "";
       toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
       this.model.DocumentDate = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
@@ -1951,9 +1951,9 @@ export class SrnComponent implements OnInit {
       this.IsSRNInstraction = true;
 
       //vishal 04/02/2023
-      this.model.AutoDispatchNo = ""; 
-       this.model.DispatchNo = ""; 
-       this.model.DispatchNoId =null;
+      this.model.AutoDispatchNo = "";
+      this.model.DispatchNo = "";
+      this.model.DispatchNoId = null;
     }
 
     this.ChangeTrasporationMode(TransPortModeType.ByRoad);
@@ -1961,7 +1961,7 @@ export class SrnComponent implements OnInit {
     if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
       this.AutoFillSRNDetailByDIId(this.CreateDispatchForDIId);
     }
-  
+
   }
 
   GetCustomerName() {
@@ -2138,7 +2138,7 @@ export class SrnComponent implements OnInit {
       } else {
         objDispatchTrackingModel.TaxInvoiceDate = "";
       }
-      
+
 
       objDispatchTrackingModel.PlaceofDispatch = this.model.PlaceofDispatch;
       objDispatchTrackingModel.Destination = this.model.Destination;
@@ -2536,7 +2536,7 @@ export class SrnComponent implements OnInit {
         objDispatchTrackingModel.DispatchNo = null;
         objDispatchTrackingModel.DispatchNoId = null;
       }
-     
+
       objDispatchTrackingModel.ReasonId = this.model.ReasonId;
       objDispatchTrackingModel.ReasonRemarks = this.model.ReasonRemarks;
       objDispatchTrackingModel.Note = this.model.Note;
@@ -3075,7 +3075,7 @@ export class SrnComponent implements OnInit {
   }
 
   SearchSRNEditListBySRNId(Id: any) {
-    try {      
+    try {
       this.gridApi.showLoadingOverlay();
       this.IsPreviousSiteDataGrid = false;
       this.IsDisabledPreviewGenratebutton = false;
@@ -3115,12 +3115,15 @@ export class SrnComponent implements OnInit {
             } else {
               this.model.ReqAndRecvedClickId = 1;
             }
+
             this.model.IsReceived = data.Data[0].IsReceived;
             this.model.DisatchTrackeringId = data.Data[0].DisatchTrackeringId;
             this.model.ddlStateId = data.Data[0].State_Id;
             this.model.DocumentNo = data.Data[0].DocumentNo;
 
             //vishal, 08/02/2023
+
+            debugger
             if (data.Data[0].DispatchNo != "" && data.Data[0].DispatchNo != null) {
               this.model.AutoDispatchNo = data.Data[0].DispatchNo;
               this.model.DispatchNo = data.Data[0].DispatchNo;
@@ -3129,8 +3132,8 @@ export class SrnComponent implements OnInit {
               // this.SearchDispatchCleared()
               this.model.AutoDispatchNo = "";
               this.model.DispatchNo = "";
-              this.model.DispatchNoId = null;   
-            }            
+              this.model.DispatchNoId = null;
+            }
 
             //brahamjot kaur 15/7/2022
             //this.model.SRNInstructionId = data.Data[0].DispatchInstructionId;
@@ -3138,7 +3141,7 @@ export class SrnComponent implements OnInit {
             //this.model.SRNInstructionId = data.Data[0].DispatchInstructionId;
             var DDate = data.Data[0].DocumentDate.split('/');
             this.model.DocumentDate = { year: parseInt(DDate[2]), month: parseInt(DDate[1]), day: parseInt(DDate[0]) };
-            
+
             this.setDateRange();
             this.TableId = data.Data[0].DisatchTrackeringId;
             this.ManueId = this.PageMenuId;
@@ -3186,6 +3189,7 @@ export class SrnComponent implements OnInit {
             }
 
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
+
             if (this.model.DateDiffHour > CommonStaticClass.DifferenceDay) {
               if (this.UserRoleId == UserRole.SCMHo && data.Data[0].MonthOverDate == 1) {
                 this.IsItemListDisabled = true;
@@ -3209,10 +3213,9 @@ export class SrnComponent implements OnInit {
               } else {
                 this.IsSaveButtonDisable = false;
               }
-              
             } else {
               this.IsItemListDisabled = false;
-              this.IsReadonlyField = false;              
+              this.IsReadonlyField = false;
               if (data.Data[0].IsReceived == 1) {
                 this.IsSaveButtonDisable = true;
                 this.IsPartialUpDateSRNRequest = true;
@@ -3240,7 +3243,7 @@ export class SrnComponent implements OnInit {
             if (data.Data[0].GRDate != null && data.Data[0].GRDate != "") {
               var GrDate = data.Data[0].GRDate.split('/');
               this.model.GRDate = { year: parseInt(GrDate[2]), month: parseInt(GrDate[1]), day: parseInt(GrDate[0]) };
-              
+
             }
 
             //vishal, 03/12/2022
@@ -3308,7 +3311,7 @@ export class SrnComponent implements OnInit {
               this.model.DeliveredDate = { year: parseInt(DelDate[2]), month: parseInt(DelDate[1]), day: parseInt(DelDate[0]) };
             }
             //vishal, 17/02/2023
-            
+
             this.model.IsMultipleSite = data.Data[0].IsMultipleSite;
             if (data.Data[0].IsMultipleSite == true && data.Data[0].IsMultipleSite != 0) {
               jQuery('#MultisiteDispatchPopup').modal('show');
@@ -3354,6 +3357,7 @@ export class SrnComponent implements OnInit {
               this.model.Name = data.Data[0].TrasporationName;
               this.model.PhoneNo = data.Data[0].PhoneNo;
             }
+
             if (data.Data[0].IstransferTypeId != null || data.Data[0].IstransferTypeId != "") {
               if (this.model.TransferTypeId == PageActivity.Srn_SiteWithinState) {
                 this.model.SiteId = data.Data[0].Site_Id;
@@ -3468,13 +3472,18 @@ export class SrnComponent implements OnInit {
 
                 //this.GetAllTechCOHbySiteId(this.model.SiteId);
                 if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
+                  
                   this.model.GSTType = '' + data.Data[0].GSTTypeId + '';
+                  this.ChangeGSTType(data.Data[0].GSTTypeId);
                 } else {
                   this.model.GSTType = 0;
                 }
-                if (data.Data[0].GSTTypeId == 2) {
+
+                if (data.Data[0].GSTTypeId == 2) {                  
                   this.ClientGSTNo = data.Data[0].ShippedToGSTNO;
                 }
+
+
                 this.IsRecivedbyandNo = true;
                 this.IsRecivedbyandNoOther = false;
                 //this.bindTechCoh(this.model.SiteId, data.Data[0].FE_Tech, data.Data[0].COH_CI);
@@ -4822,7 +4831,7 @@ export class SrnComponent implements OnInit {
     var flag = 0;
 
     //vishal, 06/02/2023
-    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined 
+    if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined
       || this.model.DispatchNoId == null || this.model.DispatchNoId == 0)) {
       flag = 1;
       alert('Please Select Correct Dispatch No');
@@ -5016,8 +5025,8 @@ export class SrnComponent implements OnInit {
     debugger
     //vishal, 06/02/2023
     if (this.model.AutoDispatchNo != "" && (this.model.DispatchNoId == undefined ||
-       this.model.DispatchNoId == null || this.model.DispatchNoId == 0 )) {
-        debugger
+      this.model.DispatchNoId == null || this.model.DispatchNoId == 0)) {
+      debugger
       flag = 1;
       alert('Please Select Correct Dispatch No');
     }
@@ -5775,7 +5784,7 @@ export class SrnComponent implements OnInit {
     let RecDt: Date;
     RecDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
 
-    this.maxRecDt ={
+    this.maxRecDt = {
       year: RecDt.getFullYear(),
       month: RecDt.getMonth() + 1,
       day: RecDt.getDate()
