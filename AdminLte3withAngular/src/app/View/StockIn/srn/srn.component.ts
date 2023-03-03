@@ -3472,14 +3472,14 @@ export class SrnComponent implements OnInit {
 
                 //this.GetAllTechCOHbySiteId(this.model.SiteId);
                 if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
-                  
+
                   this.model.GSTType = '' + data.Data[0].GSTTypeId + '';
                   this.ChangeGSTType(data.Data[0].GSTTypeId);
                 } else {
                   this.model.GSTType = 0;
                 }
 
-                if (data.Data[0].GSTTypeId == 2) {                  
+                if (data.Data[0].GSTTypeId == 2) {
                   this.ClientGSTNo = data.Data[0].ShippedToGSTNO;
                 }
 
@@ -5746,8 +5746,10 @@ export class SrnComponent implements OnInit {
   }
 
   setDateRange() {
+    //#region mindate, maxdate formula of DocumentDate 
     this.minSRNDt = this.model.DocumentDate;
     this.maxSRNDt = this.model.DocumentDate;
+    //#endregion
 
     //#region mindate, maxdate formula of BiltyDate  
     this.minBiltyDt = this.model.DocumentDate;
@@ -5780,15 +5782,33 @@ export class SrnComponent implements OnInit {
     };
     //#endregion
 
-    this.minRecDt = this.model.DocumentDate;
+    //#region mindate, maxdate formula of Received Date 
     let RecDt: Date;
-    RecDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+    let currentDate: Date;
+    currentDate = new Date();
+    let currentMonth = currentDate.getMonth() + 1;
+
+
+    if ((currentMonth <= this.minSRNDt.month)
+      && (currentDate.getFullYear() <= this.minSRNDt.year)
+    ) {
+      this.minRecDt = this.model.DocumentDate;
+      RecDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+    } else {
+      this.minRecDt = {
+        year: currentDate.getFullYear(),
+        month: currentDate.getMonth() + 1,
+        day: 1
+      };
+      RecDt = new Date(currentDate.getFullYear(), currentMonth, 0);
+    }
 
     this.maxRecDt = {
       year: RecDt.getFullYear(),
       month: RecDt.getMonth() + 1,
       day: RecDt.getDate()
     };
+    //#endregion
 
   }
 }

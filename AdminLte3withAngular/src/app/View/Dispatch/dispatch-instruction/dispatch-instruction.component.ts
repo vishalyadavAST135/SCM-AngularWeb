@@ -137,7 +137,7 @@ export class DispatchInstructionComponent implements OnInit {
     this.model.indentType = "0";
     this.model.dIType = "0";
     this.model.dIStatus = "0";
-    this.model.dispatchedStatus= "1";
+    this.model.dispatchedStatus = "1";
 
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.userId = objUserModel.User_Id;
@@ -155,7 +155,7 @@ export class DispatchInstructionComponent implements OnInit {
     this.model.ApprovalStatus = "0";
     this.model.ApprovalReason = "0";
     this._commonServices.GettApprovalStatusAndReasondropdown(objVendormodel).subscribe(st1 => {
-      
+
       if (st1.Status == 1 && st1.ReasonData != null) {
         this.reasonDataList = st1.ReasonData;
       }
@@ -164,30 +164,30 @@ export class DispatchInstructionComponent implements OnInit {
       }
     });
     this.bindCompanyStateVendorItem();
-     //brahamjot kaur 31/10/2022
-     this.GetUserPageRight();
-    }
-  
     //brahamjot kaur 31/10/2022
-    async GetUserPageRight() {
-      this._commonServices.GetUserPageRight(this.userId, MenuName.DispatchInstruction).subscribe(data => {
-        if (data.Status == 1) {
-          console.log(data);
-          this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
-          this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
-          this.ObjUserPageRight.IsApprove = data.Data[0].IsApprove;
-          // this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
-          // this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
-          // if(this.ObjUserPageRight.IsCreate == 1){
-          //   this.Save = 1;
-          // }else if(this.ObjUserPageRight.IsEdit == 1){
-          //   this.Save = 1;
-          // }else{
-          //   this.Save = 0
-          // }
-        }
-      })
-    }
+    this.GetUserPageRight();
+  }
+
+  //brahamjot kaur 31/10/2022
+  async GetUserPageRight() {
+    this._commonServices.GetUserPageRight(this.userId, MenuName.DispatchInstruction).subscribe(data => {
+      if (data.Status == 1) {
+        console.log(data);
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsApprove = data.Data[0].IsApprove;
+        // this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        // this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
+        // if(this.ObjUserPageRight.IsCreate == 1){
+        //   this.Save = 1;
+        // }else if(this.ObjUserPageRight.IsEdit == 1){
+        //   this.Save = 1;
+        // }else{
+        //   this.Save = 0
+        // }
+      }
+    })
+  }
 
   bindGrid() {
     this.columnDefs = [
@@ -347,7 +347,7 @@ export class DispatchInstructionComponent implements OnInit {
       this.searchItemClassList = this.apiCSVIData.ItemClassArray;
       this.projectTypeList = this.apiCSVIData.ProjectArray;
       this.DispatchedStatusList = this.apiCSVIData.DispatchedStatusArray; //By vishal yadav 14/09/2022
-    
+
     }
 
     this.multiDropdownSettings = {
@@ -456,7 +456,7 @@ export class DispatchInstructionComponent implements OnInit {
   searchApprovalMRStatus(para: string) {
     debugger
     try {
-      
+
       this.gridApi.showLoadingOverlay();
       var objSearchDIRequestModel = new SearchDIRequestModel();
       objSearchDIRequestModel.UserId = this.userId;
@@ -499,12 +499,12 @@ export class DispatchInstructionComponent implements OnInit {
       }
       objSearchDIRequestModel.IsSRN = this.model.indentType;
       objSearchDIRequestModel.DIType = this.model.dIType;
-      objSearchDIRequestModel.DispatchStatus= this.model.dispatchedStatus;
-       //vishal 14/09/2022
+      objSearchDIRequestModel.DispatchStatus = this.model.dispatchedStatus;
+      //vishal 14/09/2022
       objSearchDIRequestModel.flag2 = para;
       this._dispatchInstructionService.GetDIRequestList(objSearchDIRequestModel).subscribe(data => {
-        this.rowData=null;
-        this.searchData =null;
+        this.rowData = null;
+        this.searchData = null;
         this.scmPendingCount = 0;
         this.scmApprovedCount = 0;
         this.scmRejectCount = 0;
