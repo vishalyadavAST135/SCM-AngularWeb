@@ -3413,8 +3413,8 @@ export class DispatchTrackerComponent implements OnInit {
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
               }
-            }            
-            
+            }
+
             if (this.model.TrasporationMode == TransPortModeType.ByRoad) {
               this.model.TransporterId = data.Data[0].Transporter_Id;
               this.model.TransporterName = data.Data[0].TrasporationName;
@@ -7117,8 +7117,10 @@ export class DispatchTrackerComponent implements OnInit {
   //vishal/ 20/02/2022
 
   setDateRange() {
+    //#region mindate, maxdate formula of DocumentDate 
     this.minDispatchDt = this.model.DocumentDate;
     this.maxDispatchDt = this.model.DocumentDate;
+    //#endregion
 
     //#region mindate, maxdate formula of BiltyDate  
     this.minBiltyDt = this.model.DocumentDate;
@@ -7141,7 +7143,6 @@ export class DispatchTrackerComponent implements OnInit {
     InvDt = new Date(this.model.DocumentDate.year,
       this.model.DocumentDate.month - 1,
       this.model.DocumentDate.day);
-
     InvDt.setDate(InvDt.getDate() + 7);
 
     this.maxInvoiceDt = {
@@ -7151,22 +7152,7 @@ export class DispatchTrackerComponent implements OnInit {
     };
     //#endregion
 
-    //region for expected delivery date
-
-    // this.minExpdelDt = this.model.DocumentDate;
-    // let DelDt: Date;
-    // DelDt = new Date(this.model.DocumentDate.year,
-    //   this.model.DocumentDate.month - 1,
-    //   this.model.DocumentDate.day);
-
-    // DelDt.setDate(DelDt.getDate() + 10);
-
-    // this.maxExpdelDt = {
-    //   year: DelDt.getFullYear(),
-    //   month: DelDt.getMonth() + 1,
-    //   day: DelDt.getDate()
-    // };
-
+    //#region mindate, maxdate formula of expected delivery date
     this.minExpdelDt = this.model.DocumentDate;
     let DelDt: Date;
     DelDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
@@ -7176,15 +7162,33 @@ export class DispatchTrackerComponent implements OnInit {
       month: DelDt.getMonth() + 1,
       day: DelDt.getDate()
     };
+    //#endregion
 
-    this.minDeleveredDt = this.model.DocumentDate;
-    let Dt: Date;
-    Dt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+    //#region mindate, maxdate formula of Received Date    
+    let RecDt: Date;
+    let currentDate: Date;
+    currentDate = new Date();
+    let currentMonth = currentDate.getMonth() + 1;
+
+    if ((currentMonth <= this.model.DocumentDate.month)
+      && (currentDate.getFullYear() <= this.minDispatchDt.year)
+    ) {
+      this.minDeleveredDt = this.model.DocumentDate;
+      RecDt = new Date(this.model.DocumentDate.year, this.model.DocumentDate.month, 0);
+    } else {
+      this.minDeleveredDt = {
+        year: currentDate.getFullYear(),
+        month: currentDate.getMonth() + 1,
+        day: 1
+      };
+      RecDt = new Date(currentDate.getFullYear(), currentMonth, 0);
+    }
 
     this.maxDeleveredDt = {
-      year: Dt.getFullYear(),
-      month: Dt.getMonth() + 1,
-      day: Dt.getDate()
+      year: RecDt.getFullYear(),
+      month: RecDt.getMonth() + 1,
+      day: RecDt.getDate()
     };
+    //#endregion
   }
 }
