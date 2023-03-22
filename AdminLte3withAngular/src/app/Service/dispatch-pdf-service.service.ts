@@ -28,13 +28,13 @@ export class DispatchPdfServiceService {
   EditWHList: any;
   totalSumQuantity: number;
   @ViewChild("content") modalContent: TemplateRef<any>;
-  EmailData: any = [];
+  // EmailData: any = [];
+  PdfPath: string = "";
 
   constructor(private _MaterialMovementService: MaterialMovementService, private _Commonservices: CommonService,
     private _objSendMailService: SendmailService, private modalService: NgbModal,) { }
 
-  DispatchPdfbyDispatchId(Value: any, DispatchId: any) {
-    debugger
+  DispatchPdfbyDispatchId(Value: any, DispatchId: any): string {
     try {
       this.model.DispatchId = DispatchId;
       this.model.FunctionFlagValue = null;
@@ -42,9 +42,6 @@ export class DispatchPdfServiceService {
       var objModel = new SearchDispatchTrackerModel();
       objModel.DispatchTracker_Id = DispatchId;
       this._MaterialMovementService.GenerateDispatchTrackerPdfListById(objModel).pipe(first()).subscribe(data => {
-        // console.log('pdf',data)
-        // this._objSendMailService._SetSendMailData(data.Data[0].DocumentFile); //vishal
-
         if (data.Status == 1) {
           if (data.RegData != null && data.RegData != '') {
             this.model.PdfStateCode = data.RegData[0].StateCode;
@@ -583,10 +580,8 @@ export class DispatchPdfServiceService {
                   this.model.MultiSiteName = "";
                 }
               }
-
             }
           }
-
           if (this.model.WithInState == "WithInState") {
             if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
               this.BindItemPdfArray(data.ItemData);
@@ -605,6 +600,7 @@ export class DispatchPdfServiceService {
     } catch (Error) {
       this._Commonservices.ErrorFunction("", Error.message, "GenerateDispatchPdfbyDispatchId", "WHTOSite");
     }
+    return this.PdfPath;
   }
 
   async BindItemPdfArray(ItemEditDataArr: any) {
@@ -678,13 +674,13 @@ export class DispatchPdfServiceService {
         objdynamic.TotalAmount = ItemEditDataArr[i].TotalAmount.toFixed(2);
         objdynamic.Discount = ItemEditDataArr[i].Discount.toFixed(2);
         objdynamic.GetTotalAmount = ItemEditDataArr[i].GrandTotalAmt.toFixed(2);
-        objdynamic.SerialNo = ItemEditDataArr[i].ManufacturerSerialNo;        
+        objdynamic.SerialNo = ItemEditDataArr[i].ManufacturerSerialNo;
         objdynamic.IGST = ItemEditDataArr[i].IGST;
         objdynamic.IGSTValue = ItemEditDataArr[i].IGSTValue;
         objdynamic.SGST = ItemEditDataArr[i].SGST;
         objdynamic.RateSGST = ItemEditDataArr[i].RateSGST;
         objdynamic.CGST = ItemEditDataArr[i].CGST;
-        objdynamic.CGSTRate = ItemEditDataArr[i].CGSTRate;        
+        objdynamic.CGSTRate = ItemEditDataArr[i].CGSTRate;
         this.dynamicArrayDispatchPdf.push(objdynamic);
         this.fnBindItemGrossTotal();
       }
@@ -2475,7 +2471,7 @@ export class DispatchPdfServiceService {
           style: 'TableHeader',
           table: {
             headerRows: 1,
-            widths: ['4%', '30.1%', '4%', '6%', '5.9%', '6%', '8%','4%','5%', '4%', '5%', '4%', '5%', '9%'],
+            widths: ['4%', '30.1%', '4%', '6%', '5.9%', '6%', '8%', '4%', '5%', '4%', '5%', '4%', '5%', '9%'],
             body: [
               [
                 { text: 'S.No', bold: true, },
@@ -2488,7 +2484,7 @@ export class DispatchPdfServiceService {
                 { text: 'Rate (%)', bold: true, alignment: 'center' },
                 { text: 'CGST', bold: true, alignment: 'center' },
                 { text: 'Rate (%)', bold: true, alignment: 'center' },
-                { text: 'SGST', bold: true, alignment: 'center' },                
+                { text: 'SGST', bold: true, alignment: 'center' },
                 { text: 'IGST(%)', bold: true, alignment: 'center' },
                 { text: 'IGST', bold: true, alignment: 'center' },
                 { text: 'Grand Total', bold: true, alignment: 'center' }],
@@ -2498,14 +2494,14 @@ export class DispatchPdfServiceService {
                 { text: p.HSN, alignment: 'center' },
                 { text: p.Qty, alignment: 'center' },
                 { text: p.UnitName, alignment: 'center' },
-                { text: p.Rate, alignment: 'center' }, 
-                { text: p.TotalAmount, alignment: 'center' },                 
-                { text: p.CGSTRate, alignment: 'center' }, 
-                { text: p.CGST, alignment: 'center' }, 
-                { text: p.RateSGST, alignment: 'center' }, 
-                { text: p.SGST, alignment: 'center' },                 
-                { text: p.IGSTValue, alignment: 'center' }, 
-                { text: p.IGST, alignment: 'center' }, 
+                { text: p.Rate, alignment: 'center' },
+                { text: p.TotalAmount, alignment: 'center' },
+                { text: p.CGSTRate, alignment: 'center' },
+                { text: p.CGST, alignment: 'center' },
+                { text: p.RateSGST, alignment: 'center' },
+                { text: p.SGST, alignment: 'center' },
+                { text: p.IGSTValue, alignment: 'center' },
+                { text: p.IGST, alignment: 'center' },
                 { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
               // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
               [{},
@@ -2513,9 +2509,9 @@ export class DispatchPdfServiceService {
               { text: '' },
               { text: `${this.model.totalSumPOQuantity}`, alignment: 'center', bold: true },
               { text: '' },
-              { text: '' }, 
-              { text: '' }, { text: '' }, { text: '' }, { text: '' }, 
-              { text: '' }, { text: '' }, { text: '' }, 
+              { text: '' },
+              { text: '' }, { text: '' }, { text: '' }, { text: '' },
+              { text: '' }, { text: '' }, { text: '' },
               { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
             ]
           }
@@ -2652,7 +2648,6 @@ export class DispatchPdfServiceService {
         //pdfMake.createPdf(docDefinition).open();
         // pdfMake.createPdf(docDefinition).download();
         pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
-       
           PDFdata = dataURL;
         });
         setTimeout(() => {
@@ -2664,41 +2659,26 @@ export class DispatchPdfServiceService {
 
   SaveUpdateDispatchPDF() {
     try {
-   
       let objDispatchTrackingModel = new DispatchTrackingModel();
       objDispatchTrackingModel.DispatchTracker_Id = this.model.DispatchId;
       objDispatchTrackingModel.DocumentFile = PDFdata;
-
       this._MaterialMovementService.SaveDispatchPDF(objDispatchTrackingModel).pipe(first()).subscribe(data => {
-    
         if (data.Status == 1) {
           alert('Document has been generated');
-         
           let objdata = new MailSenderModel();
           objdata.Id = this.model.DispatchId;
           objdata.flag = mailFor.Dispatch;
           this._Commonservices.GetEmailSenderDeatil(objdata).subscribe(data => {
-        
-              this._objSendMailService._SetSendMailData(data.Data[0].PdfUrl); //vishal
-
+            this.PdfPath = data.Data[0].PdfUrl; //vishal           
             if (data.Status == 1) {
               let objEmailModel = new EmailModel();
               objEmailModel = data.Data[0];
               let formdata = new FormData();
               formdata.append('jsonEmailDetail', JSON.stringify(objEmailModel));
               this._Commonservices.EmailSendDeatil(formdata).subscribe(data => {
-        
-                // if (data.Status == 1) {
-                //   alert('your email has been successfully send')
-                // } else if (data.Status == 0) {
-                //   alert('your email Id not correct format')
-                // }
               });
             }
           });
-
-
-
         } else if (data.Status == 2) {
           alert('Document does not generated');
         }
@@ -2708,23 +2688,17 @@ export class DispatchPdfServiceService {
     } catch (Error) {
       this._Commonservices.ErrorFunction("", Error.message, "SaveDispatchPdf", "WHTOSite");
     }
-     //  //vishal
-     setTimeout(() => {
+    //  //vishal
+    setTimeout(() => {
       if (this.model.TransferTypeId == PageActivity.Dis_SiteOtherState || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
         || this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorSale ||
         this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
-        //this.IsModelShow = false;
         jQuery('#sendMailModel').modal('show');
-
       } else if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
         || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter) {
-        //this.IsModelShow = true;
         jQuery('#sendMailModel').modal('hide');
-
       } else {
         jQuery('#sendMailModel').modal('show');
-        // this.IsModelShow = false;
-
       } //end-vishal
     }, 3000);
   }

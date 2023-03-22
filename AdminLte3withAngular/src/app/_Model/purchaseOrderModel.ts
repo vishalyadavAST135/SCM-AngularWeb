@@ -373,10 +373,10 @@ export class CellNo
 export class PODropDownModel{
     ClientList:[];
     SearchClientList:[];
-    EMIList:[];
-    POCategoryList:[];
-    PurchaseTypeList:[];
-    ExpenseTypeList:[];
+    EMIList:any[]=[];
+    POCategoryList:any[]=[];
+    PurchaseTypeList:any[]=[];
+    ExpenseTypeList:any[]=[];
     SearchPOStatusList:[];
     POStatusList:[];
     NarrationTypeList:[];

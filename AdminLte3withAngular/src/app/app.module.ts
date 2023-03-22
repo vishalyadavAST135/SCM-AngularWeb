@@ -86,6 +86,9 @@ import { EmployeesAccessoriesComponent } from './View/Dispatch/employees-accesso
 import { ToolkitMasterComponent } from './View/Masters/toolkit-master/toolkit-master.component';
 import { SendMailComponent } from './View/Common/send-mail/send-mail.component';
 import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/material-at-site.component';
+import { PoDocumentComponent } from './View/PurchaseManagement/po-document/po-document.component';
+import { MailHistoryComponent } from './View/Common/mail-history/mail-history.component';
+
 
 
 @NgModule({
@@ -110,7 +113,8 @@ import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/materi
     WhCircleMappingComponent, CustomerToCustomerComponent,
     AgingreportComponent, UserManagementComponent, CompanyMappingComponent,
     NewUserComponent, RoleMappingComponent, WHMappingComponent,MatchPasswordDirective, 
-    PageMappingComponent, EmployeesAccessoriesComponent, ToolkitMasterComponent, SendMailComponent, MaterialAtSiteComponent
+    PageMappingComponent, EmployeesAccessoriesComponent, ToolkitMasterComponent,
+    SendMailComponent, MaterialAtSiteComponent, PoDocumentComponent, MailHistoryComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { PoSearchModel, PoOtherDetial, PoItemDetial, UpdatePoItemDetial, VendorOrWhModel, SCMJobModel, POPdfModel, MakePOSeriesModel } from '../_Model/purchaseOrderModel';
+import { PoSearchModel, PoOtherDetial, PoItemDetial, UpdatePoItemDetial, VendorOrWhModel, SCMJobModel, POPdfModel, MakePOSeriesModel, PoBasicDetial } from '../_Model/purchaseOrderModel';
 import { DropdownModel, WebAPIConfig } from '../_Model/commonModel'
 import * as FileSaver from 'file-saver';
 import * as XLSX from 'xlsx';
@@ -42,6 +42,14 @@ export class PurchaseOrderService {
 
   PostPoBasicDetail(formdata: FormData): Observable<any> {
     return this.httpclient.post(this.objBaseUrl.ApIUrl + "PurchaseOrder/Basic", formdata);
+  }
+
+  UploadSignedPo(formdata: FormData): Observable<any> {
+    return this.httpclient.post(this.objBaseUrl.ApIUrl + "PurchaseOrder/SignedPO", formdata);
+  }
+
+  POAmended(objPoOtherDetial: PoBasicDetial): Observable<any> {
+    return this.httpclient.post(this.objBaseUrl.ApIUrl + "PurchaseOrder/POAmended", objPoOtherDetial, options);
   }
 
   PoOtherDetial(objPoOtherDetial: PoOtherDetial): Observable<any> {

@@ -54,7 +54,7 @@
   }
 </style>
 <!--Send Mail model popup-->
-<app-send-mail #child [hidden]="IsModelShow"> </app-send-mail>
+<app-send-mail #child [hidden]="IsModelShow" [EmailData]="EmailData" [pdfPath]="pdfPath"></app-send-mail>
 
 <!--end-Send Mail model popup-->
 
@@ -116,7 +116,7 @@
               <div class="col-sm-2">
                 <input type="text" placeholder="" [(ngModel)]="model.DispatchNo" class="form-control form-control-sm" />
               </div>
-             
+
               <div class="col-sm-6">
                 <app-site-panel class="ChildCSS col-sm-12"></app-site-panel>
               </div>
@@ -250,21 +250,21 @@
                         [ModifiedDate]="ModifiedDate" [CompanyId]="CompanyId"
                         [ApprovalstatusbtnhideShow]="IsApprovalstatusbtnhideShow"></app-view-approvalpage>
 
-                      <button class="badge bg-grey" [hidden]="IsMailButtonHide" type="button" title="next" style="float: right;
-                        margin-right: 19px; border-style:none" (click)="show(child['modal'])">
+                      <button class="badge bg-grey" [hidden]="IsMailButtonHide" type="button" data-toggle="modal"
+                        data-target="#sendMailModel" style="float: right; margin-right: 19px; border-style:none">
                         <a class="nav-link" data-toggle="pill" title="Send Mail" role="tab" aria-selected="false">
                           <i class="fa fa-envelope"></i>
                         </a>
-                      </button>
-
+                      </button>                      
                       <button class="badge bg-grey" [hidden]="IsMailButtonHide" type="button" data-toggle="modal"
                         data-target="#sendMailHistory" style="float: right;
-                        margin-right: 12px; border-style:none">
+                        margin-right: 12px; border-style:none" (click)="GetSendMailDetail()">
                         <a class="nav-link" data-toggle="pill" title="Send Mail History" role="tab"
                           aria-selected="false">
                           <i class="fa fa-history"></i>
                         </a>
                       </button>
+
                     </div>
                   </div>
                 </div>
@@ -494,9 +494,9 @@
                                 class="Mandatoryfield"><b></b></span></label>
                             <div class="col-sm-10">
                               <div class="input-group">
-                                <input type="text" id="txtToCompanyName" autocomplete="off" placeholder="" 
-                                (keypress)="ToCompanyNameKeyPress()"
-                                  [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
+                                <input type="text" id="txtToCompanyName" autocomplete="off" placeholder=""
+                                  (keypress)="ToCompanyNameKeyPress()" [(ngModel)]="model.CompanyName"
+                                  class="form-control form-control-sm" />
                               </div>
                             </div>
                           </div>
@@ -579,7 +579,7 @@
                                       </div>
                                     </div> -->
                       </div>
-                      
+
                       <div class="row mb-1" *ngIf="IsTransferTypeOtherSite">
                         <div class="col-sm-6">
                           <div class="row">
@@ -684,7 +684,7 @@
                         <div class="col-sm-6">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-4"> GST Type<span style="color: red;"
-                              class="Mandatoryfield"><b>*</b></span></label>
+                                class="Mandatoryfield"><b>*</b></span></label>
                             <div class="col-sm-8">
                               <select class="form-control form-control-sm" id="txtGSTType" [(ngModel)]="model.GSTType"
                                 (change)="ChangeGSTType(model.GSTType)">
@@ -767,12 +767,12 @@
                         <div class="col-sm-12">
                           <div class="row">
                             <label class="col-form-label-xs col-sm-2">Company Name<span style="color: red;"
-                              class="Mandatoryfield" *ngIf="!IsTaxInvoiceNo"><b>*</b></span></label>
+                                class="Mandatoryfield" *ngIf="!IsTaxInvoiceNo"><b>*</b></span></label>
                             <div class="col-sm-10">
                               <div class="input-group">
                                 <input type="text" id="txtToCompanyName" autocomplete="off" placeholder=""
-                                (keypress)="ToCompanyNameKeyPress()"
-                                  [(ngModel)]="model.CompanyName" class="form-control form-control-sm" />
+                                  (keypress)="ToCompanyNameKeyPress()" [(ngModel)]="model.CompanyName"
+                                  class="form-control form-control-sm" />
                               </div>
                             </div>
                           </div>
@@ -791,7 +791,7 @@
                           </div>
                         </div>
                       </div>
-                      
+
                       <div class="row mb-1" *ngIf="IsTransferTypeWH">
                         <div class="col-sm-6">
                           <div class="row">
@@ -1351,8 +1351,8 @@
                     <div class="col-sm-2" *ngIf="IsTransporter">
                       <div class="input-group" (mouseenter)="onKeypressGRDate($event)">
                         <input class="form-control form-control-sm" placeholder="" id="txtGRDate" autocomplete="off"
-                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker" 
-                          [minDate]="minBiltyDt" [maxDate]="maxBiltyDt">
+                          [(ngModel)]="model.GRDate" ngbDatepicker #GrDate="ngbDatepicker" [minDate]="minBiltyDt"
+                          [maxDate]="maxBiltyDt">
                         <div class="input-group-append">
                           <span class="input-group-text" (click)="GrDate.toggle()"><i
                               class="far fa-calendar-alt"></i></span>
@@ -1696,8 +1696,8 @@
                           </td>
                           <td style="width:120px;">
                             <select class="form-control form-control-sm Client" id="ddlClient_{{i}}"
-                              [(ngModel)]="dynamicArray[i].ClientId"
-                              (change)="ChangeClient(dynamicArray[i].ClientId,i)" [disabled]="IsItemListDisabled">
+                              [(ngModel)]="dynamicArray[i].ClientId" (change)="ChangeClient(dynamicArray[i].ClientId,i)"
+                              [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
                             </select>
@@ -1705,7 +1705,8 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)" [disabled]="IsItemListDisabled">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)"
+                              [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -2028,8 +2029,8 @@
                           </td>
                           <td style="width:120px;">
                             <select class="form-control form-control-sm Client" id="ddlClient_{{i}}"
-                              [(ngModel)]="dynamicArray[i].ClientId"
-                              (change)="ChangeClient(dynamicArray[i].ClientId,i)" [disabled]="IsItemListDisabled">
+                              [(ngModel)]="dynamicArray[i].ClientId" (change)="ChangeClient(dynamicArray[i].ClientId,i)"
+                              [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
                             </select>
@@ -2037,7 +2038,8 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)" [disabled]="IsItemListDisabled">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)"
+                              [disabled]="IsItemListDisabled">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -2546,7 +2548,7 @@
                           </td>
                           <td style="width:120px;">
                             <input class="form-control form-control-sm itmsRate" [(ngModel)]="dynamicArray[i].CGSTRate"
-                              (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()" appCopyPastNumFloatValue type="text" 
+                              (blur)="ItemRateOnblur()" (keypress)="RateKeyPress()" appCopyPastNumFloatValue type="text"
                               style="text-align:center;width: 85px;" />
                           </td>
                           <td style="width:120px;">
@@ -4396,8 +4398,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-success" [disabled]="loading"
-          (click)="UpadateCancelDispatch()">Save
+        <button type="button" class="btn btn-success" [disabled]="loading" (click)="UpadateCancelDispatch()">Save
           <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
         </button>
       </div>

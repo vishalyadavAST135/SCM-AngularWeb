@@ -1,14 +1,11 @@
-  
-  
 <div class="wrapper">
-    <!-- Navbar -->
+  <!-- Navbar -->
+  <app-main-header></app-main-header>
+  <!-- Main Sidebar Container -->
+  <app-main-sidebar></app-main-sidebar>
 
-    <app-main-header></app-main-header>    
-        <!-- Main Sidebar Container -->
-    <app-main-sidebar></app-main-sidebar>
-  
-   <!-- Content Wrapper. Contains page content -->
-   <div class="content-wrapper" style="min-height: 54.0312px;">
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper" style="min-height: 54.0312px;">
     <!-- Content Header (Page header) -->
     <div class="content-header">
       <div class="container-fluid">
@@ -16,13 +13,13 @@
           <div class="col-sm-6">
             <h1 class="m-0 text-dark">Home</h1>
           </div><!-- /.col -->
-          <!-- <div class="col-sm-6">
+          <!--<div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
               <li class="breadcrumb-item active">Dashboard v2</li>
             </ol>
-          </div> -->
-          
+          </div>-->
+
           <!-- /.col -->
         </div><!-- /.row -->
       </div><!-- /.container-fluid -->
@@ -41,7 +38,7 @@
               <div class="info-box-content">
                 <span class="info-box-text">Items list</span>
                 <span class="info-box-number">
-               {{TotalItemCount}}
+                  {{TotalItemCount}}
                   <!-- <small>%</small> -->
                 </span>
               </div>
@@ -53,14 +50,12 @@
           <div class="col-12 col-sm-6 col-md-3">
             <div class="info-box mb-3">
               <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-thumbs-up"></i></span>
-
               <div class="info-box-content">
                 <span class="info-box-text">Warehouses</span>
                 <span class="info-box-number">{{TotalWHCount}}</span>
               </div>
-            </div>        
+            </div>
           </div>
-
           <!-- fix for small devices only -->
           <div class="clearfix hidden-md-up"></div>
 
@@ -84,14 +79,12 @@
               </div>
             </div>
           </div>
-        </div>   
+        </div>
       </div>
     </section>
-   </div>
+  </div>
   <!-- /.content-wrapper -->
 
-   <!-- Main Footer -->
-   <app-main-footer></app-main-footer>
- 
- </div>
- 
+  <!-- Main Footer -->
+  <app-main-footer></app-main-footer>
+</div>

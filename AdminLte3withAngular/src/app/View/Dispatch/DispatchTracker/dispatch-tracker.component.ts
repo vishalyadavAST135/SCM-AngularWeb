@@ -11,7 +11,7 @@ import { GrncrnService } from 'src/app/Service/grncrn.service';
 import { MaterialMovementService } from 'src/app/Service/material-movement.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { SearchpanelService } from 'src/app/Service/searchpanel.service';
-import { AmountActivity, ApprovelStatusModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, EmailModel, EmailSendTotalDataModel, MenuName, PageActivity, ReasonActivity, TransPortModeType, UserRole, WebErrorLogModel } from 'src/app/_Model/commonModel';
+import { AmountActivity, ApprovelStatusModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, EmailDetailReqModel, EmailModel, EmailSendTotalDataModel, MenuName, PageActivity, ReasonActivity, TransPortModeType, UserRole, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { DISearchModel, DispatchTrackingItemDetialModel, DispatchTrackingModel, SearchDispatchTrackerModel } from 'src/app/_Model/DispatchModel';
 import { SaveGRNCRNModelDetail, SiteCustomerAutoModel } from 'src/app/_Model/grncrnModel';
 import { CellNo, DownLoadZipFileDetial, DynamicItemGrid, DynamicWHAddress, GSerialNumber, VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
@@ -293,19 +293,14 @@ export class DispatchTrackerComponent implements OnInit {
 
   public IsModelShow: boolean; // Grid List
   public IsMailButtonHide: boolean; //vishal, 13/12/2022
+  EmailData: any[];
+  pdfPath: string;
 
   //by:vishal, 27/11/2022, desc: for model popup send mail
-  show(modalRef: ElementRef) {
-    const modal = new Modal(modalRef.nativeElement);
-    modal.show();
-
-  }
-  // show2(modalRef: ElementRef) {
+  // show(modalRef: ElementRef) {
   //   const modal = new Modal(modalRef.nativeElement);
   //   modal.show();
-
-  // }
-  //end-vishal
+  // }  
 
   //vishal 16/02/2023
   minDispatchDt: { year: any; month: any; day: number; };
@@ -2871,12 +2866,11 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         formdata.append('GRfileDocumentFile', this.GRfileDocumentFile, this.GRfileDocumentFile.name);
       }
-      //var tt=JSON.stringify(objDispatchTrackingModel);
+
       formdata.append('jsonDetail', JSON.stringify(objDispatchTrackingModel));
       this._MaterialMovementService.SaveUpadteDispatchTracking(formdata).pipe(first()).subscribe(data => {
 
         if (data.Status == 1) {
-
           this.model.DisatchTrackeringId = data.Value;
           this.IsDisabledPreviewGenratebutton = false;
 
@@ -3294,7 +3288,8 @@ export class DispatchTrackerComponent implements OnInit {
       let objModel = new SearchDispatchTrackerModel();
       objModel.DispatchTracker_Id = Id;
       this._MaterialMovementService.GetDispatchTrackerEditListByDispatchId(objModel).pipe(first()).subscribe(data => {
-        this._objSendMailService._SetSendMailData(data.Data[0].DocumentFile); //vishal
+        // this._objSendMailService._SetSendMailData(data.Data[0].DocumentFile); //vishal
+        this.pdfPath = data.Data[0].DocumentFile;
         if (data.Status == 1) {
           this.IsDisabledPreviewGenratebutton = false;
           // bind 
@@ -5607,17 +5602,13 @@ export class DispatchTrackerComponent implements OnInit {
   //#region  Create Dispatch  Pdf
   GenerateDispatchPdfbyDispatchId(Value: any) {
     try {
-      debugger
-      this.model.FunctionFlagValue = null;
       this.model.FunctionFlagValue = Value;
       var objModel = new SearchDispatchTrackerModel();
       objModel.DispatchTracker_Id = this.model.DisatchTrackeringId;
-      this._DispatchPdfServiceService.DispatchPdfbyDispatchId(this.model.FunctionFlagValue, this.model.DisatchTrackeringId)
-
+      this.pdfPath = this._DispatchPdfServiceService.DispatchPdfbyDispatchId(this.model.FunctionFlagValue, this.model.DisatchTrackeringId);
     } catch (Error) {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "DispatchPdfbyDispatchId", "WHTOSite");
     }
-
   }
 
   //#endregion
@@ -7190,5 +7181,28 @@ export class DispatchTrackerComponent implements OnInit {
       day: RecDt.getDate()
     };
     //#endregion
+  }
+
+  GetSendMailDetail() {
+    try {
+      this.EmailData = [];
+      var objModel = new EmailDetailReqModel();
+      objModel.Id = this.DispatchTracker_Id;
+      objModel.Flag = 'DT';
+      this._objSendMailService.GetMailHistory(objModel).subscribe(resp => {
+        if (resp.Status == 1) {
+          if (resp.Data != null || resp.Data != "") {
+            this.EmailData = resp.Data;
+          }
+        }
+      });
+    } catch (Error) {
+      var objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "GetSendMailDetail";
+      objWebErrorLogModel.ErrorPage = "Podetail";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
   }
 }

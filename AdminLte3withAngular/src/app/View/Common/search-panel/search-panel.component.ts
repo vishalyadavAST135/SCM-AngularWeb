@@ -126,8 +126,7 @@ export class SearchPanelComponent implements OnInit {
       year: current.getFullYear(),
       month: current.getMonth()+1,
       day: current.getDate()
-    };
-    
+    };    
   }
 
   async BindCompanyStateVendorItem() {

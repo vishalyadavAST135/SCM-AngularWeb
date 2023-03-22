@@ -6,10 +6,6 @@ import { CommonService } from 'src/app/Service/common.service';
 import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-handler-service.service';
 import { VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { NgxSpinnerService } from 'ngx-spinner';
-
-
-
-
 declare var jQuery: any;
 
 @Component({
@@ -19,6 +15,7 @@ declare var jQuery: any;
 })
 export class SendMailComponent implements OnInit {
   // SendMailData: any;
+  @Input() EmailData:[];
   loaded = true;
   closeResult: string;
   model: any = {};//get Data
@@ -26,57 +23,30 @@ export class SendMailComponent implements OnInit {
   loading = false;
   UserId: any;
   urls: any = [];
-
   uplodfile: File = null;
   AttchMent: File = null;
-  public pdfPath: string;
-  EmailData: any [];
+  @Input() pdfPath: string;
+  //EmailData: any [];
   EditPoId: any;
- 
-
    @ViewChild('modal') modal: ElementRef;
    DispatchTrackingId: any;
-  
-  
   
   constructor(private _objSendMailService: SendmailService, private modalService: NgbModal,
     private _Commonservices: CommonService,
     private _GlobalErrorHandlerService: GlobalErrorHandlerServiceService, private Loader: NgxSpinnerService,
   ) {
 
-    this._objSendMailService._getSendMailSubject.subscribe(data => {
-      this.pdfPath = data;  
-      
-    });
-    
-    // this._objSendMailService._getSendMailSubject.subscribe(data => {
-    //   this.EmailData = data;  
-      
-    // });
-
-    // this._objSendMailService._getDispatchId.subscribe(Id => {
-    //   this.DispatchTrackingId = Id;
-      
-    // });
   }
 
-
-
   ngOnInit(): void {
-
     this.model.MailTo = "";
     this.model.MailCc = "";
     this.model.MailBcc = "";
     this.model.MailSubject = "";
     this.model.MailMessage = " Hi, As per attachment pls provide tax invoice against the challan no." ;
-    this.model.pdfPath = "";
-
   }
 
-
-
-  SendMail() {
-    
+  SendMail() {    
     try {
       if (this.ValidationEmailSend() == 0) {
         this.loading = true;
@@ -89,7 +59,7 @@ export class SendMailComponent implements OnInit {
         objEmailModel.MailBodyMessage = this.model.MailMessage;
         var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
         objEmailModel.UserId = objUserModel.User_Id;
-        objEmailModel.DocumentFile = this.model.pdfPath;
+        objEmailModel.DocumentFile = this.pdfPath;
         
 
         var formdata = new FormData();
@@ -177,37 +147,4 @@ export class SendMailComponent implements OnInit {
     window.open(this.pdfPath);
   }
   //end-region
-
-  
-
-  GetSendMailDetail() {
-    try {
-      // this.Loader.show();  
-      this.EmailData = [];
-      var objVendormodel = new VendorOrWhModel();
-      objVendormodel.Id = this.EditPoId;
-      objVendormodel.flag = 'EmailMaster';
-      this._Commonservices.getVendorOrWh(objVendormodel).subscribe(Email => {
-        if (Email.Status == 1) {
-          if (Email.Data != null || Email.Data != "") {
-            this.Loader.hide();
-            this.EmailData = Email.Data;
-            $('#custom-tabs-three-outbox-tab').css('background-color', '#2196f3');
-          }
-        } else {
-          this.Loader.hide();
-          $('#custom-tabs-three-outbox-tab').css('background-color', '#F9F9F9');
-        }
-
-      });
-    } catch (Error) {
-      var objWebErrorLogModel = new WebErrorLogModel();
-      objWebErrorLogModel.ErrorBy = this.UserId;
-      objWebErrorLogModel.ErrorMsg = Error.message;
-      objWebErrorLogModel.ErrorFunction = "GetSendMailDetail";
-      objWebErrorLogModel.ErrorPage = "Podetail";
-      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
-    }
-  }
-
 }

@@ -23,7 +23,6 @@ export class ViewApprovalpageComponent implements OnInit {
   @Input() CompanyId: any;
   @Input() Flag: any;
 
-
   closeResult: any;
   Remarks: any;
   ApprovalReason: any;
@@ -34,11 +33,22 @@ export class ViewApprovalpageComponent implements OnInit {
   UserId: any;
   ApprovalId: any;
   RejectedId: number;
-  constructor(private modalService: NgbModal, private _Commonservices: CommonService, private _GlobalErrorHandlerService: GlobalErrorHandlerServiceService,) { }
+  constructor(
+    private modalService: NgbModal,
+    private _Commonservices: CommonService,
+    private _GlobalErrorHandlerService: GlobalErrorHandlerServiceService) {
+
+  }
 
   ngOnInit(): void {
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.UserId = objUserModel.User_Id;
+    this.fnGetApprovalReasonAndStatus();
+    this.ApprovalId = CommonStaticClass.Approved;
+    this.RejectedId = CommonStaticClass.Reject;
+  }
+
+  fnGetApprovalReasonAndStatus() {
     var objVendormodel = new VendorOrWhModel();
     objVendormodel.Id = '0';
     objVendormodel.flag = '1460';
@@ -51,21 +61,16 @@ export class ViewApprovalpageComponent implements OnInit {
         this.ApprovalStatusDetail = st1.ApprovalStatusData;
       }
     });
-
-   
-    this.ApprovalId=CommonStaticClass.Approved;
-    this.RejectedId=CommonStaticClass.Reject;
-    
   }
 
-
-  open(content) {
+  open(content:any) {
     this.modalService.open(content, { size: <any>'lg', ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {
       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
     });
   }
+
   getDismissReason(reason: any): string {
     if (reason === ModalDismissReasons.ESC) {
       return 'by pressing ESC';
@@ -74,6 +79,31 @@ export class ViewApprovalpageComponent implements OnInit {
     } else {
       return `with: ${reason}`;
     }
+  }
+
+  ClearApprovalStatus() {
+    this.ApprovalReason = "0";
+    this.Remarks = "";
+  }
+
+  ValidationApprovalStatus() {
+    var flag = 0;
+    if (this.ApprovalReason == "0") {
+      $('#txtReason').css('border-color', 'red')
+      $('#txtReason').focus();
+      flag = 1;
+    } else {
+      $("#txtReason").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.Remarks) == "") {
+      $('#txtRemarks').css('border-color', 'red')
+      $('#txtRemarks').focus();
+      flag = 1;
+    } else {
+      $("#txtRemarks").css('border-color', '')
+    }
+    return flag;
   }
 
   SaveApprovalStatus(ApprovalStatusId: any) {
@@ -123,35 +153,12 @@ export class ViewApprovalpageComponent implements OnInit {
       objWebErrorLogModel.ErrorPage = "WHtosite";
       this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
     }
-  }
-  ClearApprovalStatus() {
-    this.ApprovalReason = "0";
-    this.Remarks = "";
-  }
-  ValidationApprovalStatus() {
-    var flag = 0;
-    if (this.ApprovalReason == "0") {
-      $('#txtReason').css('border-color', 'red')
-      $('#txtReason').focus();
-      flag = 1;
-    } else {
-      $("#txtReason").css('border-color', '')
-    }
+  }  
 
-    if (this._Commonservices.checkUndefined(this.Remarks) == "") {
-      $('#txtRemarks').css('border-color', 'red')
-      $('#txtRemarks').focus();
-      flag = 1;
-    } else {
-      $("#txtRemarks").css('border-color', '')
-    }
-    return flag;
-  }
-
-
-  Approvalchange() {
+  onChangeApprovalReason() {
     $("#txtReason").css('border-color', '')
   }
+
   KeypressRemarks() {
     $("#txtRemarks").css('border-color', '')
   }

@@ -82,7 +82,7 @@ export class ReasonActivity {
 
 }
 export class DropdownModel {
-    User_Id: number;
+   public User_Id: number;
     Other_Id: string;
     Parent_Id: string;
     Flag: string;
@@ -138,10 +138,8 @@ export class EmailModel {
     PdfUrl: string;
     UserId: string;
     PoId: number;
-
     //vishal
     DocumentFile: string;
-
 }
 
 export class ChangePasswordModel {
@@ -291,4 +289,15 @@ export class DashBoardStockModel {
     public CapacityId: string
     public EqpId: string
     public flag: number
+}
+
+export class DocumentUploadModel {
+    public DocumentTypeId: number = 0;
+    public TypeId: number = 0;
+    public Remarks: string = "";
+}
+
+export class EmailDetailReqModel {
+    public Id: number = 0
+    public Flag: string
 }
