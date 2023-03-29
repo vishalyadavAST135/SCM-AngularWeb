@@ -39,6 +39,9 @@ import { UserManagementComponent } from './View/Masters/user-management/user-man
 import { EmployeesAccessoriesComponent } from './View/Dispatch/employees-accessories/employees-accessories.component';
 import { ToolkitMasterComponent } from './View/Masters/toolkit-master/toolkit-master.component';
 import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/material-at-site.component';
+import { PoConfigComponent } from './View/Masters/po-config/po-config.component';
+import { StockMasterComponent } from './View/Masters/stock-master/stock-master.component';
+import { ReportItemMappingComponent } from './View/Masters/report-item-mapping/report-item-mapping.component';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -75,7 +78,10 @@ const routes: Routes = [
   { path: 'UserManagement', component:UserManagementComponent},
   { path: 'ToolkitMaster', component:ToolkitMasterComponent},
   { path: 'EmployeesAccessories', component:EmployeesAccessoriesComponent},
-  { path: 'MaterialAtSite', component:MaterialAtSiteComponent}
+  { path: 'MaterialAtSite', component:MaterialAtSiteComponent},
+  { path: 'PoConfig', component:PoConfigComponent},
+  { path: 'ReportMaster', component:StockMasterComponent},
+  { path: 'ReportItemMapping', component:ReportItemMappingComponent}
 ];
 
 @NgModule({

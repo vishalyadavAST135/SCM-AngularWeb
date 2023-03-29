@@ -1,0 +1,215 @@
+<style>
+    .table th,
+    .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+
+    .Mandatoryfield {
+        font-size: 15px
+    }
+
+    .ng-star-inserted {
+        z-index: 999 !important;
+    }
+
+    .box {
+        border: 1px solid red;
+    }
+</style>
+<!--modal--for--confirmation-->
+<div class="modal fade" id="ConfirmDelete" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm !</h4>
+            </div>
+            <div class="modal-body">
+                Please confirm do you want to delete Report And Item Mapping.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button type="submit" class="btn btn-success" data-dismiss="modal"
+                    (click)="deleteReportItemMappingDetail('deleteId')">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---end-modal-->
+
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+        <p style="color: white">Please Wait. </p>
+    </ngx-spinner>
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Masters / ReportItemMapping</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+
+        <section class="content" style="padding-top:2px;">
+            <div class="container-fluid">
+                <div class="row" [hidden]="isShownList">
+                    <div class="col-sm-12">
+                        <div class="row mb-1" style="margin-left:3px">
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Report Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" id="ddlSReportName"
+                                    [(ngModel)]="model.SearchReportNameId"
+                                    (change)="ChangeSearchReportName(model.SearchReportNameId)">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of StockReportNameList" [value]="item.Id">
+                                        {{item.StockName}}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Category Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" id="ddlSCategoryName"
+                                    [(ngModel)]="model.SearchPoCategoryId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of SearchPOCategoryList" [value]="item.categoryId">
+                                        {{item.categoryName}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success" (click)="getReportAndItemMappingList('search')"> <i class="fa fa-search"
+                                            aria-hidden="true"></i>
+                                        Search</button>
+                                    <button type="button" class="btn btn-success" (click)="getReportAndItemMappingList('export')"> <i class="fa fa-download"
+                                            aria-hidden="true"></i>
+                                        Export</button>
+                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
+                                            class="fa fa-plus"></i> New
+                                        Mapping</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                                [enableSorting]="true" [enableFilter]="true" [pagination]="true" paginationPageSize="20"
+                                [columnDefs]="columnDefs" [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                                [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)"
+                                [enableCellTextSelection]="true">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+                </div>
+                <!--save detail form-->
+                <div class="row" [hidden]="isShownEdit">
+                    <div class="col-sm-12 col-md-12">
+                        <div class="card card-success">
+                            <div class="card-body">
+                                <div class="row mb-1">
+                                    <div class="col-sm-12 content-header bg-light">
+                                        <div class="col-sm-6">
+                                            <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i
+                                                    class="fa fa-arrow-circle-left"></i> Back</button>
+                                            &nbsp; <button type="submit" class="btn btn-sm btn-success"
+                                                (click)="createNew()"><i class="fa fa-plus"></i>
+                                                New </button>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- <hr> -->
+                                <fieldset class="scheduler-border">
+                                    <legend class="scheduler-border">Basic Details</legend>
+                                    <div class="row mb-1">
+                                        <label class="col-form-label-xs col-sm-1">Report Name<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-3">
+                                            <select class="form-control form-control-sm" id="ddlReportName"
+                                                [(ngModel)]="model.ReportNameId"
+                                                (change)="ChangeReportName(model.ReportNameId)">
+                                                <option class="dropdown-item" [value]="0">Select</option>
+                                                <option *ngFor="let item of StockReportNameList" [value]="item.Id">
+                                                    {{item.StockName}}</option>
+                                            </select>
+                                        </div>
+
+                                        <label class="col-form-label-xs col-sm-1">Category<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-3">
+                                            <select class="form-control form-control-sm" id="ddlPoCategory"
+                                                [(ngModel)]="model.PoCategoryId" >
+                                                <option class="dropdown-item" [value]="0">Select</option>
+                                                <option *ngFor="let item of POCategoryList" [value]="item.categoryId">
+                                                    {{item.categoryName}}</option>
+                                            </select>
+                                        </div>
+
+                                        <label class="col-form-label-xs col-sm-1">Item Class<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-3">
+                                            <select class="form-control form-control-sm" id="ddlItemClass"
+                                                [(ngModel)]="model.ItemClassId"
+                                                (change)="onChangeItemClass(model.ItemClassId)">
+                                                <option class="dropdown-item" [value]="0">Select</option>
+                                                <option *ngFor="let item of ItemClassList" [value]="item.id">
+                                                    {{item.itemName}}</option>
+                                            </select>
+                                        </div>
+
+                                        <label class="col-form-label-xs col-sm-1">Item Name<span style="color: red;"
+                                                class="Mandatoryfield"><b>*</b></span></label>
+                                        <div class="col-sm-3">
+                                            <angular2-multiselect [data]="ItemNameList" id="ddlItemName"
+                                                [(ngModel)]="SelectedItemNameList" [settings]="MultidropdownSettings" >
+                                            </angular2-multiselect>
+                                        </div>
+
+                                    </div>
+                                    <hr>
+                                    <div class="col-sm-1 float-right" style="margin-bottom: 15px; margin-right: 2px;">
+                                        &nbsp;<button type="button" class="btn btn-sm btn-success float-right" (click)="addUpdateReportMappingDetail()"><i
+                                                class="fa fa-save"></i> Save</button>
+                                    </div>
+
+                                </fieldset>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--//end -save region-->
+
+            </div>
+        </section>
+
+    </div>
+</div>

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observer, Observable, forkJoin } from 'rxjs';
-import { UserModel } from '../_Model/userModel';
+import { CompanyModel, UserModel } from '../_Model/userModel';
 import { VendorOrWhModel } from '../_Model/purchaseOrderModel';
 import { WebAPIConfig, DropdownModel, CompanyStateVendorItemModel, EmailSendTotalDataModel, ApprovelStatusModel, WebErrorLogModel, MRNOAutoModel, MailSenderModel, SearchItemLineTypeModel } from '../_Model/commonModel';
 import { GlobalErrorHandlerServiceService } from './global-error-handler-service.service';
@@ -274,5 +274,17 @@ export class CommonService {
  async CallMultipleApiGetAndPost(action: [action1: string, action2: string], param: HttpParams, model: any): Promise<any> {
     return await forkJoin([this.httpclient.get(this.baseUrl.ApIUrl + action[0], { params: param }),
     this.httpclient.post(this.baseUrl.ApIUrl + action[1], model, options)]).toPromise();
+  }
+
+  GetCompanySession() {
+    let objCompanyModel = new CompanyModel();
+    objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
+    return objCompanyModel;
+  }
+
+  GetUserSession() {
+    let objUserModel = new UserModel();
+    objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
+    return objUserModel;
   }
 }

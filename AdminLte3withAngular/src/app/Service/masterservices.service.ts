@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WebAPIConfig } from '../_Model/commonModel';
 import { map } from 'rxjs/operators';
-import { CapacityMasterDetail, EmpToolkitModel, ItemEquipmentDetail, ItemNameModel, MakeModel, SearchWHCircleMappingModel, VendorModel, WHCircleMappingModel, WHModel } from '../_Model/MastersModel';
+import { CapacityMasterDetail, EmpToolkitModel, ItemEquipmentDetail, ItemNameModel, MakeModel, ReportItemMappingModel, SearchWHCircleMappingModel, VendorModel, WHCircleMappingModel, WHModel } from '../_Model/MastersModel';
 import { data } from 'jquery';
 const headers = new HttpHeaders({
   'Content-Type': 'application/json',
@@ -184,5 +184,23 @@ export class MasterservicesService {
     let objBaseUrl = new WebAPIConfig();
     return this.httpclient.post(objBaseUrl.ApIUrl + "Toolkit/GetToolKitEditById", objToolkitModel);
   }
+
+  //By: Vishal, 17/03/2023
+
+
+AddUpdateReportMappingDetail(objReportModel: ReportItemMappingModel): Observable<any> {
+  let objBaseUrl = new WebAPIConfig();
+  return this.httpclient.post(objBaseUrl.ApIUrl + "ReportItemMapping/AddUpdateReportItemMappingDet", objReportModel, options);
+}
+
+GetReportItemMappedList(objReportModel: ReportItemMappingModel): Observable<any> {
+  let objBaseUrl = new WebAPIConfig();
+  return this.httpclient.post(objBaseUrl.ApIUrl + "ReportItemMapping/GetReportItemMappingDet", objReportModel);
+}
+
+EditReportAndItemMappingDetail(objReportModel: ReportItemMappingModel): Observable<any> {
+  let objBaseUrl = new WebAPIConfig();
+  return this.httpclient.post(objBaseUrl.ApIUrl + "ReportItemMapping/GetReportItemMappingDetEditById", objReportModel);
+}
 
 }

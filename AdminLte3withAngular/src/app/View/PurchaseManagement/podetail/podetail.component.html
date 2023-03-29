@@ -322,13 +322,23 @@
                 <div class="card card-success card-outline card-outline-tabs">
                   <div class="card-header p-0 border-bottom-0">
                     <ul class="nav nav-tabs" id="custom-tabs-three-tab" role="tablist">
-                      <li>
+                      <!-- <li>
                         <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false">
                           <button title="page slide back" style="margin-left:5px" (click)="PageSlideBack()"><i
                               class="fa fa-align-left" style="height: 05px;width: 10px;" aria-hidden="true"></i>
                           </button>
                           &nbsp;<button title="page slide next" (click)="PageSlideNext()"><i class="fa fa-align-right"
                               style="height: 05px;width: 10px;" aria-hidden="true"></i> </button>
+                        </a>
+                      </li> -->
+                      <li>
+                        <a class="nav-link" data-toggle="pill" role="tab" aria-selected="false" style="height:38px; margin-bottom: 2px;">
+                          <button [hidden]="IsMinimizeBtnHide" title="maximize page size" style="margin-left:5px; border: none;" (click)="PageSlideBack()"><i
+                              class="fa fa-window-maximize fa-xs"  aria-hidden="true"></i>
+                          </button>
+                          &nbsp;
+                          <button title="minimize page size" [hidden]="IsMaximizeBtnHide"  style="border:none" (click)="PageSlideNext()"><i class="fa fa-window-restore fa-xs"
+                               aria-hidden="true"></i> </button>
                         </a>
                       </li>
                       <li class="nav-item">

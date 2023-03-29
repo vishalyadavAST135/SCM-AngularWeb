@@ -36,6 +36,8 @@ import { MaterialMovementService } from 'src/app/Service/material-movement.servi
 import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
 import { SendmailService } from 'src/app/Service/sendmail.service';
 import { map } from 'jquery';
+import { ReportItemNameMappingService } from 'src/app/Service/report-item-mapping.service';
+import { ReportItemMappingModel } from 'src/app/_Model/MastersModel';
 
 type AOA = any[][];
 declare var jQuery: any;
@@ -160,7 +162,7 @@ export class PodetailComponent implements OnInit {
   //VoucherTypeId: number;
   //WHDataDetail1: any;
   ItemNameDetailData: any;
-  FilterItemNameDetailData: any;
+  FilterItemNameDetailData: any[]=[];
   rowdatalength: number = 0;
   rowdatacurrentindex: number = 0;
   IsDisableNext: boolean;
@@ -292,6 +294,8 @@ export class PodetailComponent implements OnInit {
   ObjUserPageRight = new UserPageRight();
   Save: any;
   PoConfigList: any[] = [];
+  IsMaximizeBtnHide: boolean //vishal, 09/03/2023
+  IsMinimizeBtnHide: boolean //vishal, 09/03/2023
 
   constructor(private router: Router, private modalService: NgbModal, private _PurchaseOrderService: PurchaseOrderService,
     private _Commonservices: CommonService, private sanitizer: DomSanitizer,
@@ -299,7 +303,10 @@ export class PodetailComponent implements OnInit {
     private Loader: NgxSpinnerService, private _BOQService: BOQRequestequestService,
     private _CommonpdfService: CommonpdfService, private _GrncrnService: GrncrnService,
     private httpclient: HttpClient, private _MaterialMovementService: MaterialMovementService,
-    private _objSendMailService: SendmailService) {
+    private _objSendMailService: SendmailService,
+    private _objRptItemMappingService: ReportItemNameMappingService
+
+  ) {
     this.tooltipShowDelay = 0;
     this.frameworkComponents = {
       buttonRenderer: ButtonRendererComponent, fileRenderer: FileRendererComponent,
@@ -319,6 +326,7 @@ export class PodetailComponent implements OnInit {
   ngOnInit() {
     this.isShownPOList = true;
     this.isShownPOEdit = false;
+    this.IsMinimizeBtnHide = true; //vishal, 09/03/2023
 
     this.model.CustomerId = "0";
     this.model.CurrencyType = "1";
@@ -1227,6 +1235,8 @@ export class PodetailComponent implements OnInit {
       this.model.ExpenseTypeId = NextPrevoiusData[0].ExpenseTypeListId;
       await this.onChangeExpenseType(this.model.EMITypeId, this.model.ExpenseTypeId);
       this.model.PoCategoryId = NextPrevoiusData[0].POCategoryListId;
+      this.model.ReportNameId=NextPrevoiusData[0].ReportNameId;
+
 
       this.PoNo = NextPrevoiusData[0].PoNo;
       this.EditPoId = NextPrevoiusData[0].PoId;
@@ -1234,17 +1244,18 @@ export class PodetailComponent implements OnInit {
       this.model.Podate = { year: parseInt(PODate[2]), month: parseInt(PODate[1]), day: parseInt(PODate[0]) };
       //#endregion
 
-      if (NextPrevoiusData[0].ClientListId == 60 && NextPrevoiusData[0].EMIListId == 1476) {
-        this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id == 1 || m.id == 2 || m.id == 4
-          || m.id == 11 || m.id == 12 || m.id == 25 || m.id == 29);
-      }
-      else if (NextPrevoiusData[0].ClientListId == 60 && NextPrevoiusData[0].EMIListId == 1477) {
-        this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id != 1 && m.id != 2 && m.id != 4
-          && m.id != 11 && m.id != 12 && m.id != 25 && m.id != 29);
-      }
-      else {
-        this.FilterItemNameDetailData = this.ItemNameDetailData;
-      }
+      // if (NextPrevoiusData[0].ClientListId == 60 && NextPrevoiusData[0].EMIListId == 1476) {
+      //   this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id == 1 || m.id == 2 || m.id == 4
+      //     || m.id == 11 || m.id == 12 || m.id == 25 || m.id == 29);
+      // }
+      // else if (NextPrevoiusData[0].ClientListId == 60 && NextPrevoiusData[0].EMIListId == 1477) {
+      //   this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id != 1 && m.id != 2 && m.id != 4
+      //     && m.id != 11 && m.id != 12 && m.id != 25 && m.id != 29);
+      // }
+      // else {
+      //   this.FilterItemNameDetailData = this.ItemNameDetailData;
+      // }
+
       this.IsVoucherDisabled = true;
       this.HideShowSaveButton();
 
@@ -1362,6 +1373,7 @@ export class PodetailComponent implements OnInit {
 
 
       //#region Item detail
+      this.fnGetItemNameMapwithReportName(this.model.ReportNameId,this.model.PoCategoryId);
       this.model.CurrencyType = NextPrevoiusData[0].CurrencyType;
       this.model.CurrencyValue = NextPrevoiusData[0].CurrencyValue;
       this.model.AmountChargeable = NextPrevoiusData[0].AmountChargeable;
@@ -3034,6 +3046,7 @@ export class PodetailComponent implements OnInit {
     this.ClearPODetail();
     this.ClearPoItem();
     this.HideShowSaveButton();
+    this.PageSlideNext();
     //this.addRow();
     // add by hemant Tyagi
     this.IsDisableNext = true;
@@ -3103,6 +3116,7 @@ export class PodetailComponent implements OnInit {
         objPoBasicDetail.PurchaseTypeListId = 0;// this.model.PurchaseTypeId;
         objPoBasicDetail.ExpenseTypeListId = this.model.ExpenseTypeId;
         objPoBasicDetail.POCategoryListId = this.model.PoCategoryId;
+        objPoBasicDetail.ReportNameId = this.model.ReportNameId;
 
         objPoBasicDetail.PoNo = this.PoNo;
         var SDate = this._Commonservices.checkUndefined(this.model.Podate);
@@ -3130,13 +3144,14 @@ export class PodetailComponent implements OnInit {
         // objPoBasicDetail.IsAmended = this.model.IsAmended;
 
         // brahamjot kaur 09/07/2022
-        if (objPoBasicDetail.ClientListId == 60 && objPoBasicDetail.EMIListId == 1476) {
-          this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id == 1 || m.id == 2 || m.id == 4 || m.id == 11 || m.id == 12 || m.id == 25 || m.id == 29);
-        } else if (objPoBasicDetail.ClientListId == 60 && objPoBasicDetail.EMIListId == 1477) {
-          this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id != 1 && m.id != 2 && m.id != 4 && m.id != 11 && m.id != 12 && m.id != 25 && m.id != 29);
-        } else {
-          this.FilterItemNameDetailData = this.ItemNameDetailData;
-        }
+        // if (objPoBasicDetail.ClientListId == 60 && objPoBasicDetail.EMIListId == 1476) {
+        //   this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id == 1 || m.id == 2 || m.id == 4 || m.id == 11 || m.id == 12 || m.id == 25 || m.id == 29);
+        // } else if (objPoBasicDetail.ClientListId == 60 && objPoBasicDetail.EMIListId == 1477) {
+        //   this.FilterItemNameDetailData = this.ItemNameDetailData.filter(m => m.id != 1 && m.id != 2 && m.id != 4 && m.id != 11 && m.id != 12 && m.id != 25 && m.id != 29);
+        // } else {
+        //   this.FilterItemNameDetailData = this.ItemNameDetailData;
+        // }
+        this.fnGetItemNameMapwithReportName(this.model.ReportNameId,this.model.PoCategoryId);
 
         var formdata = new FormData();
         formdata.append('jsonDetail', JSON.stringify(objPoBasicDetail));
@@ -3593,9 +3608,9 @@ export class PodetailComponent implements OnInit {
     if (this.PoId != null || this.PoId != undefined && this.Pdfurl != '') {
       if (confirm("Do you want Amend the Purchase Order?") == true) {
         this.POAmendedDetail();
-      }else{
-        this.model.IsAmended=0;
-      } 
+      } else {
+        this.model.IsAmended = 0;
+      }
     }
   }
 
@@ -3890,11 +3905,15 @@ export class PodetailComponent implements OnInit {
   }
 
   PageSlideNext() {
+    this.IsMaximizeBtnHide = true;
+    this.IsMinimizeBtnHide = false;
     $('#pdf').attr('class', 'col-12 col-sm-6 col-md-6');
     $('#Basic').attr('class', 'col-12 col-sm-6 col-md-6')
   }
 
   PageSlideBack() {
+    this.IsMaximizeBtnHide = false;
+    this.IsMinimizeBtnHide = true;
     $('#pdf').attr('class', 'col-12 col-sm-1 col-md-1');
     $('#Basic').attr('class', 'col-12 col-sm-11 col-md-11')
   }
@@ -4333,8 +4352,39 @@ export class PodetailComponent implements OnInit {
         .filter((ftr: any) => ftr.EMITypeId == emiId && ftr.ExpenseTypeId == expenseTypeId
           && ftr.CategoryId == categoryId)
         .map((xx: any) => {
+          debugger
           this.PoNo = xx.PoSeries;
+          debugger
+          this.model.ReportNameId = xx.ReportNameId;
         });
+    }
+  }
+
+
+
+  fnGetItemNameMapwithReportName(rptId: number, poCategId: number) {
+    try {
+      this.FilterItemNameDetailData=[];
+      let _objRptModel = new ReportItemMappingModel();
+      _objRptModel.CompanyId = this.CompanyId;
+      _objRptModel.UserId = this.UserId;
+      _objRptModel.ReportNameId = rptId;
+      _objRptModel.PoCategoryId = poCategId;
+
+      this._objRptItemMappingService.GetItemNameMapwithReportName(_objRptModel).subscribe(data => {
+        if (data.Status == 1 && data.Data != null) {
+          debugger
+          this.FilterItemNameDetailData=data.Data;
+        }
+      });
+
+    } catch (Error) {
+      var objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "fnGetItemNameMapwithReportName";
+      objWebErrorLogModel.ErrorPage = "Podetail";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
     }
   }
   //#endregion

@@ -255,6 +255,8 @@ export class PoBasicDetial {
     ExpenseTypeListId:number;
     BOQRequestId:number;
     ProjectTypeId:number;
+    ReportNameId:number;
+
 }
 
 export class PoOtherDetial{     
@@ -422,3 +424,18 @@ export class DynamicStockPdfGrid{
 //     Unit_Id: number;
  
 // }
+
+//by: vishal, 02/03/2023
+
+export class PoSeriesDetailModel {
+    Id: number;
+    UserId: number;
+    CompanyId: number;
+    CustomerId: number;
+    EMITypeId: number;
+    PoCategoryId: number;
+    ExpenseTypeId: number;
+    ReportNameId: number;
+    MakePOSeries: string;
+    Flag: string;
+}

@@ -102,3 +102,12 @@ fieldset {
 .modal-backdrop {
     z-index: -1 !important;
   }
+
+  .badge {
+    padding: 0.15em 0.3em !important; /*vishal, 09/03/2023*/
+}
+
+body.swal2-height-auto {
+    height: auto!important;
+    padding-right: 0px !important;
+}

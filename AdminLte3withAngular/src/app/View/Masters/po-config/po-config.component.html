@@ -1,0 +1,259 @@
+<style>
+    .table th,
+    .table td {
+        padding: 4px 4px 4px 4px;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        border-bottom: 2px solid #dee2e6;
+        text-align: center;
+        font-size: smaller;
+    }
+
+    .Mandatoryfield {
+        font-size: 15px
+    }
+
+    .ng-star-inserted {
+        z-index: 999 !important;
+    }
+
+    .box {
+        border: 1px solid red;
+
+    }
+</style>
+
+<!--modal for create new PO Series-->
+<div class="modal fade" id="ConfirmSaveUpdate" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">{{modalTitle}}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="col-md-12">
+                    <div class="card-outline">
+                        <div class="card-body">
+                            <div>
+                                <label>Customer<span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                                <select class="form-control form-control-sm" id="ddlCustmerId"
+                                    [(ngModel)]="model.CustomerId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.ClientList" [value]="item.Id">
+                                        {{item.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>EMI Type<span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                                <select class="form-control form-control-sm" id="ddlEMIType"
+                                    [(ngModel)]="model.EMITypeId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.EMIList" [value]="item.Id">
+                                        {{item.Name}}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Expense Type<span style="color: red;"
+                                        class="Mandatoryfield"><b>*</b></span></label>
+                                <select class="form-control form-control-sm" id="ddlExpenseType"
+                                    [(ngModel)]="model.ExpenseTypeId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.ExpenseTypeList" [value]="item.Id">
+                                        {{item.Name}}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Category<span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                                <select class="form-control form-control-sm" id="ddlPoCategory"
+                                    [(ngModel)]="model.PoCategoryId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.POCategoryList" [value]="item.Id">
+                                        {{item.Name}}</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Report Name<span style="color: red;"
+                                        class="Mandatoryfield"><b>*</b></span></label>
+                                <select class="form-control form-control-sm" id="ddlReportName"
+                                    [(ngModel)]="model.ReportNameId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of StockReportNameList" [value]="item.Id">
+                                        {{item.StockName}}</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label>PO Series<span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                                <input type="text" id="txtPoSeries" appAutofocus autocomplete="off"
+                                    [(ngModel)]="model.MakePOSeries" placeholder="Please enter PO series "
+                                    class="form-control form-control-sm" />
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+            <div class="modal-footer center ">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-success" (click)="addUpdatePoSeriesDetail()">{{btnName}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--//end-modal-->
+
+<!--modal--for--confirmation-->
+<div class="modal fade" id="ConfirmDelete" data-backdrop="static" tabindex="-1" role="dialog"
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm !</h4>
+            </div>
+            <div class="modal-body">
+                Please confirm do you want to delete PO Series Config.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button type="submit" class="btn btn-success" data-dismiss="modal"
+                    (click)="deletePoSeriesConfigDetail('deleteId')">Yes</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!---end-modal-->
+
+<div class="wrapper">
+    <app-main-header></app-main-header>
+    <!-- Main Sidebar Container -->
+    <app-main-sidebar></app-main-sidebar>
+    <ngx-spinner bdColor="rgba(51, 51, 51, 0.8)" size="default" type="ball-spin-clockwise">
+        <p style="color: white">Please Wait. </p>
+    </ngx-spinner>
+    <div class="content-wrapper" style="min-height: 54.0312px; background-color: white;">
+        <!-- Content Header (Page header) -->
+        <div class="content-header bg-light">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="/dashboard">Home</a></li>
+                                <li class="breadcrumb-item active">Masters / PoConfig</li>
+                            </ol>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /.content-header -->
+        <section class="content" style="padding-top:2px;">
+            <div class="container-fluid">
+                <div class="row" *ngIf="isShownList">
+                    <div class="col-sm-12">
+                        <div class="row mb-1" style="margin-left:3px">
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Customer</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.SearchCustomerId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let sItem of PODropDownClass.ClientList" [value]="sItem.Id">
+                                        {{sItem.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">EMI Type</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.SearchEMITypeId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.EMIList" [value]="item.Id">
+                                        {{item.Name}}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Expense Type</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.SearchExpenseTypeId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.ExpenseTypeList" [value]="item.Id">
+                                        {{item.Name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Category Type</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" [(ngModel)]="model.SearchPoCategoryId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of PODropDownClass.POCategoryList" [value]="item.Id">
+                                        {{item.Name}}</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">Report Name</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <select class="form-control form-control-sm" id="ddlReportName"
+                                    [(ngModel)]="model.SearchReportNameId">
+                                    <option class="dropdown-item" [value]="0">Select</option>
+                                    <option *ngFor="let item of StockReportNameList" [value]="item.Id">
+                                        {{item.StockName}}</option>
+                                </select>
+                            </div>
+
+                            <div class="col-sm-1">
+                                <label class="col-form-label-xs">PO Series</label>
+                            </div>
+                            <div class="col-sm-2">
+                                <input type="text" appAutofocus autocomplete="off"
+                                    [(ngModel)]="model.SearchMakePOSeries" placeholder="Please enter PO series "
+                                    class="form-control form-control-sm" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12" style="background-color:#28a745;">
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-success"
+                                        (click)="getPoSeriesConfigList('search')"> <i class="fa fa-search"
+                                            aria-hidden="true"></i>
+                                        Search</button>
+                                    <button type="button" class="btn btn-success"
+                                        (click)="getPoSeriesConfigList('export')"> <i class="fa fa-download"
+                                            aria-hidden="true"></i>
+                                        Export</button>
+                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
+                                            class="fa fa-plus"></i> New
+                                        PO Series</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12">
+                        <div class="row">
+                            <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-alpine"
+                                [enableSorting]="true" [enableFilter]="true" [pagination]="true" paginationPageSize="20"
+                                [columnDefs]="columnDefs" [multiSortKey]="multiSortKey"
+                                [tooltipShowDelay]="tooltipShowDelay" [rowData]="rowData"
+                                [frameworkComponents]="frameworkComponents" (gridReady)="onGridReady($event)"
+                                [enableCellTextSelection]="true">
+                            </ag-grid-angular>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+</div>

@@ -166,6 +166,29 @@ export class EmpToolkitItemModel {
     Qty: number;
 }
 
+//by: vishal, 13/03/2023
+
+export class StockMasterModel{  
+    Id:number; 
+    UserId:number;
+    CompanyId:number;
+    StockName: string;
+    Flag:string;
+}
+
+//by: vishal, 17/03/2023
+
+export class ReportItemMappingModel {
+    Id: number;
+    UserId: number;
+    CompanyId: number;
+    PoCategoryId: number;
+    ReportNameId: number;
+    ItemClassId: number;
+    ItemNameId: string;
+    Flag: string;
+}
+
 
 
 

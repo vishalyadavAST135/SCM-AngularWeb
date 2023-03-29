@@ -88,6 +88,11 @@ import { SendMailComponent } from './View/Common/send-mail/send-mail.component';
 import { MaterialAtSiteComponent } from './View/Dispatch/material-at-site/material-at-site.component';
 import { PoDocumentComponent } from './View/PurchaseManagement/po-document/po-document.component';
 import { MailHistoryComponent } from './View/Common/mail-history/mail-history.component';
+import { PoConfigComponent } from './View/Masters/po-config/po-config.component';
+import { StockMasterComponent } from './View/Masters/stock-master/stock-master.component';
+import { ReportItemMappingComponent } from './View/Masters/report-item-mapping/report-item-mapping.component';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
+
 
 
 
@@ -114,7 +119,8 @@ import { MailHistoryComponent } from './View/Common/mail-history/mail-history.co
     AgingreportComponent, UserManagementComponent, CompanyMappingComponent,
     NewUserComponent, RoleMappingComponent, WHMappingComponent,MatchPasswordDirective, 
     PageMappingComponent, EmployeesAccessoriesComponent, ToolkitMasterComponent,
-    SendMailComponent, MaterialAtSiteComponent, PoDocumentComponent, MailHistoryComponent
+    SendMailComponent, MaterialAtSiteComponent, PoDocumentComponent, MailHistoryComponent, PoConfigComponent, StockMasterComponent,
+    ReportItemMappingComponent
   ],
   imports: [
     BrowserModule,
@@ -134,8 +140,10 @@ import { MailHistoryComponent } from './View/Common/mail-history/mail-history.co
     AngularMultiSelectModule,
     AutocompleteLibModule,
     NgxSpinnerModule,
-    Ng2SearchPipeModule
+    Ng2SearchPipeModule,
     //SearchFilterPipe
+    
+    SweetAlert2Module.forRoot()
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
