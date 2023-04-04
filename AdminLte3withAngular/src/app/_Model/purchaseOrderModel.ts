@@ -255,8 +255,7 @@ export class PoBasicDetial {
     ExpenseTypeListId:number;
     BOQRequestId:number;
     ProjectTypeId:number;
-    ReportNameId:number;
-
+    ReportMasterId:number;
 }
 
 export class PoOtherDetial{     

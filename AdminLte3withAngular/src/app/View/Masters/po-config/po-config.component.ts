@@ -97,7 +97,6 @@ export class PoConfigComponent implements OnInit {
     objPOSModel.CompanyId = this.CompanyId;
     objPOSModel.UserId = this.UserId;
     this._PurchaseOrderService.GetPOSeriesRelatedMasterData(objPOSModel).subscribe(st => {
-
       if (st.Status == 1) {
         let objPO = new PODropDownModel();
         objPO.ClientList = st.ClientList;

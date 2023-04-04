@@ -1226,7 +1226,7 @@ export class PodetailComponent implements OnInit {
       this.PoId = NextPrevoiusData[0].PoId;
       this.model.hiddenPoId = NextPrevoiusData[0].PoId;
       this.GetUserPageRight(this.PoId);
-
+      debugger
       //#region  Customer & Category Detail
       this.model.POClientId = NextPrevoiusData[0].ClientListId;
       await this.onChangeCustomer(this.model.POClientId);
@@ -1235,7 +1235,8 @@ export class PodetailComponent implements OnInit {
       this.model.ExpenseTypeId = NextPrevoiusData[0].ExpenseTypeListId;
       await this.onChangeExpenseType(this.model.EMITypeId, this.model.ExpenseTypeId);
       this.model.PoCategoryId = NextPrevoiusData[0].POCategoryListId;
-      this.model.ReportNameId=NextPrevoiusData[0].ReportNameId;
+      debugger
+      this.model.ReportMasterId=NextPrevoiusData[0].ReportMasterId;
 
 
       this.PoNo = NextPrevoiusData[0].PoNo;
@@ -1373,7 +1374,7 @@ export class PodetailComponent implements OnInit {
 
 
       //#region Item detail
-      this.fnGetItemNameMapwithReportName(this.model.ReportNameId,this.model.PoCategoryId);
+      this.fnGetItemNameMapwithReportName(this.model.ReportMasterId,this.model.PoCategoryId);
       this.model.CurrencyType = NextPrevoiusData[0].CurrencyType;
       this.model.CurrencyValue = NextPrevoiusData[0].CurrencyValue;
       this.model.AmountChargeable = NextPrevoiusData[0].AmountChargeable;
@@ -3116,7 +3117,7 @@ export class PodetailComponent implements OnInit {
         objPoBasicDetail.PurchaseTypeListId = 0;// this.model.PurchaseTypeId;
         objPoBasicDetail.ExpenseTypeListId = this.model.ExpenseTypeId;
         objPoBasicDetail.POCategoryListId = this.model.PoCategoryId;
-        objPoBasicDetail.ReportNameId = this.model.ReportNameId;
+        objPoBasicDetail.ReportMasterId = this.model.ReportMasterId;
 
         objPoBasicDetail.PoNo = this.PoNo;
         var SDate = this._Commonservices.checkUndefined(this.model.Podate);
@@ -3151,7 +3152,7 @@ export class PodetailComponent implements OnInit {
         // } else {
         //   this.FilterItemNameDetailData = this.ItemNameDetailData;
         // }
-        this.fnGetItemNameMapwithReportName(this.model.ReportNameId,this.model.PoCategoryId);
+        this.fnGetItemNameMapwithReportName(this.model.ReportMasterId,this.model.PoCategoryId);
 
         var formdata = new FormData();
         formdata.append('jsonDetail', JSON.stringify(objPoBasicDetail));
@@ -4333,7 +4334,6 @@ export class PodetailComponent implements OnInit {
     this.model.PoCategoryId = 0;
     this.PODropDownClass.POCategoryList = [];
     this.PoNo = "";
-
     if ((emiId != null && emiId > 0) && (expenseTypeId != null && expenseTypeId > 0)) {
       this.PoConfigList
         .filter((ftr: any) => ftr.EMITypeId == emiId && ftr.ExpenseTypeId == expenseTypeId)
@@ -4352,15 +4352,12 @@ export class PodetailComponent implements OnInit {
         .filter((ftr: any) => ftr.EMITypeId == emiId && ftr.ExpenseTypeId == expenseTypeId
           && ftr.CategoryId == categoryId)
         .map((xx: any) => {
-          debugger
           this.PoNo = xx.PoSeries;
           debugger
-          this.model.ReportNameId = xx.ReportNameId;
+          this.model.ReportMasterId = xx.ReportMasterId;
         });
     }
   }
-
-
 
   fnGetItemNameMapwithReportName(rptId: number, poCategId: number) {
     try {
@@ -4370,14 +4367,11 @@ export class PodetailComponent implements OnInit {
       _objRptModel.UserId = this.UserId;
       _objRptModel.ReportNameId = rptId;
       _objRptModel.PoCategoryId = poCategId;
-
       this._objRptItemMappingService.GetItemNameMapwithReportName(_objRptModel).subscribe(data => {
-        if (data.Status == 1 && data.Data != null) {
-          debugger
+        if (data.Status == 1 && data.Data != null) {          
           this.FilterItemNameDetailData=data.Data;
         }
       });
-
     } catch (Error) {
       var objWebErrorLogModel = new WebErrorLogModel();
       objWebErrorLogModel.ErrorBy = this.UserId;
