@@ -7,6 +7,7 @@ import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { ApprovelStatusModel, DocumentUploadModel, DropdownModel, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { PoOtherDetial, VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 declare var require: any
 const FileSaver = require('file-saver');
@@ -125,7 +126,8 @@ export class PoDocumentComponent implements OnInit {
   uploadDocumentFile() {
     try {
       if (this.PoId == 0 || this.PoId == null) {
-        alert('Please Save, First PO Basic Information');
+       // alert('Please Save, First PO Basic Information');
+       Swal.fire('','Please Save, First PO Basic Information', 'warning' )
         return false;
       }
       if (this.validateFileUploadModel() == 1) {
@@ -140,7 +142,8 @@ export class PoDocumentComponent implements OnInit {
 
       var formdata = new FormData();
       if (this.DocumentFile == null) {
-        alert('Please attach document file');
+        //alert('Please attach document file');
+        Swal.fire('','Please attach document file', 'warning')
         return false;
         //formdata.append('file', this.DocumentFile);
       } else {
@@ -151,7 +154,8 @@ export class PoDocumentComponent implements OnInit {
 
       this._PurchaseOrderService.PostUpdateDocumentDetail(formdata).subscribe(data => {
         if (data.Status == 1) {
-          alert('your data has been save successfully')
+          //alert('your data has been save successfully')
+          Swal.fire('', 'your data has been save successfully', 'success')
           this.clearDocumentType();
           this.GetAllDocumentTypeByPoId(this.PoId);
         }
@@ -187,7 +191,8 @@ export class PoDocumentComponent implements OnInit {
       objApprovelStatusModel.Flag = "PODocumentType";
       this._MaterialMovementService.UpadateCancelDispatch(objApprovelStatusModel).subscribe(data => {
         if (data.Status == 1) {
-          alert('Your SuccessFully Delete')
+          //alert('Your SuccessFully Delete')
+          Swal.fire('','Your SuccessFully Delete', 'success')
           this.GetAllDocumentTypeByPoId(this.PoId);
         }
       });

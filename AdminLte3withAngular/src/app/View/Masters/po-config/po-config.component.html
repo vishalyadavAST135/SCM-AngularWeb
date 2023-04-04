@@ -100,8 +100,10 @@
                 </div>
             </div>
             <div class="modal-footer center ">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-success" (click)="addUpdatePoSeriesDetail()">{{btnName}}</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>
+                    Cancel</button>
+                <button type="submit" *ngIf="Save" class="btn btn-success" (click)="addUpdatePoSeriesDetail()">
+                    <i class="fa fa-save"></i> {{btnName}}</button>
             </div>
         </div>
     </div>
@@ -121,7 +123,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                <button type="submit" class="btn btn-success" data-dismiss="modal"
+                <button type="submit" class="btn btn-success" data-dismiss="modal" *ngIf="ObjUserPageRight.IsDelete"
                     (click)="deletePoSeriesConfigDetail('deleteId')">Yes</button>
             </div>
         </div>
@@ -224,16 +226,16 @@
                         <div class="row">
                             <div class="col-sm-12" style="background-color:#28a745;">
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-success"
+                                    <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"
                                         (click)="getPoSeriesConfigList('search')"> <i class="fa fa-search"
                                             aria-hidden="true"></i>
                                         Search</button>
-                                    <button type="button" class="btn btn-success"
+                                    <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success"
                                         (click)="getPoSeriesConfigList('export')"> <i class="fa fa-download"
                                             aria-hidden="true"></i>
                                         Export</button>
-                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
-                                            class="fa fa-plus"></i> New
+                                    <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success"
+                                        (click)="createNew()"><i class="fa fa-plus"></i> New
                                         PO Series</button>
 
                                 </div>

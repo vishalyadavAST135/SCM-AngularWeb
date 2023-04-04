@@ -70,6 +70,9 @@ export class MenuName {
     public static Transactions = 23
     public static StockRegister = 24;
     public static MaterialReconciliation = 25;
+    public static ReportMaster = 42; //vishal, 01/04/2023 ReportItemMapping
+    public static PoConfig = 44;
+    public static ReportItemMapping = 43;
 
 }
 

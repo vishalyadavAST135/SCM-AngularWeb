@@ -12,9 +12,10 @@ import { MasterservicesService } from 'src/app/Service/masterservices.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { ReportItemNameMappingService } from 'src/app/Service/report-item-mapping.service';
 import { StockMasterService } from 'src/app/Service/stock-master.service';
-import { CompanyStateVendorItemModel, DropdownModel, WebErrorLogModel } from 'src/app/_Model/commonModel';
+import { CompanyStateVendorItemModel, DropdownModel, MenuName, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { ReportItemMappingModel, StockMasterModel } from 'src/app/_Model/MastersModel';
 import { CompanyModel, UserModel } from 'src/app/_Model/userModel';
+import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 declare var jQuery: any;
@@ -50,6 +51,11 @@ export class ReportItemMappingComponent implements OnInit {
   gridApi: any;
   public isEditable: boolean;
   delId: any;
+  ObjUserPageRight = new UserPageRight();
+  Save: any;
+  RptMapId: number = 0;
+  btnName: string = "Save";
+ 
 
   constructor(private modalService: NgbModal, private _StockMasterService: StockMasterService,
     private _Commonservices: CommonService, private _PurchaseOrderService: PurchaseOrderService,
@@ -78,6 +84,7 @@ export class ReportItemMappingComponent implements OnInit {
     this.fnBindGrid();
     this.isShownList = false;
     this.isShownEdit = true;
+    this.GetUserPageRight(this.RptMapId)
 
     this.MultidropdownSettings = {
       singleSelection: false,
@@ -104,6 +111,26 @@ export class ReportItemMappingComponent implements OnInit {
     let objUserModel = new UserModel();
     objUserModel = this._Commonservices.GetUserSession();
     this.UserId = objUserModel.User_Id;
+  }
+
+  async GetUserPageRight(id: number) {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.ReportItemMapping).subscribe(data => {
+      if (data.Status == 1) {
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
+        if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
+        }
+      }
+    })
   }
 
   fnBindStockReportNameDropDown() {
@@ -155,7 +182,7 @@ export class ReportItemMappingComponent implements OnInit {
       { headerName: 'Report Name', field: 'ReportName', width: 180, sortable: true, filter: true, },
       { headerName: 'Category Name', field: 'CategoryName', width: 180, sortable: true, filter: true, },
       { headerName: 'Item Class', field: 'ItemClass', width: 180, sortable: true, filter: true, },
-      { headerName: 'Item Name', field: 'ItemName', width: 180, sortable: true, filter: true, },
+      { headerName: 'Item Name', field: 'ItemName', width: 180, sortable: true, resizable: true, filter: true, },
       { headerName: 'Created By', field: 'CreatedBy', width: 180, sortable: true, filter: true, },
       { headerName: 'Created On', field: 'CreatedOn', width: 180, sortable: true, filter: true, },
 
@@ -175,7 +202,6 @@ export class ReportItemMappingComponent implements OnInit {
       objParameter.Company_Id = this.CompanyId;
       objParameter.Flag = "POCategorybyreptId";
       await this._Commonservices.getdropdown2(objParameter).then((data: any) => {
-        debugger
         if (data.Status == 1) {
           if (data.Data != null && data.Data != '') {
             this.POCategoryList = data.Data;
@@ -203,7 +229,6 @@ export class ReportItemMappingComponent implements OnInit {
       objParameter.Company_Id = this.CompanyId;
       objParameter.Flag = "POCategorybyreptId";
       this._Commonservices.getdropdown(objParameter).subscribe(data => {
-        debugger
         if (data.Status == 1) {
           if (data.Data != null && data.Data != '') {
             this.SearchPOCategoryList = data.Data;
@@ -231,7 +256,6 @@ export class ReportItemMappingComponent implements OnInit {
     objdropdownmodel.Company_Id = this.CompanyId;
     objdropdownmodel.Flag = 'ItemName';
     await this._Commonservices.getdropdown2(objdropdownmodel).then((item: any) => {
-      debugger
       this.ItemNameList = item.Data;
     });
   }
@@ -242,6 +266,7 @@ export class ReportItemMappingComponent implements OnInit {
     this.cancelValidation()
     this.isShownEdit = false;
     this.isShownList = true;
+    this.btnName = "Save"
   }
 
   BackPage() {
@@ -281,13 +306,14 @@ export class ReportItemMappingComponent implements OnInit {
       objReportModel.ItemNameId = this.SelectedItemNameList.map(function (val) {
         return val.id;
       }).join(',');
-      // if (objReportModel.Id > 0) {
-      //   objReportModel.Flag = "update";
-      // } else {
-      //   objReportModel.Flag = "new";
-      // }
-      // let jsonstr = JSON.stringify(objReportModel);
-      // console.log(jsonstr);
+      if (objReportModel.Id > 0) {
+        objReportModel.Flag = "update";
+      } else {
+        objReportModel.Flag = "new";
+      }
+
+       //let jsonstr = JSON.stringify(objReportModel);
+       //console.log(jsonstr);
 
       this._ReportItemService.AddUpdateReportMappingDetail(objReportModel).subscribe(data => {
         if (data.Status == 1) {
@@ -299,7 +325,8 @@ export class ReportItemMappingComponent implements OnInit {
           this.clearNewMappingForm()
 
         } else {
-          Swal.fire(data.Remarks);
+          Swal.fire('', data.Remarks, 'warning');
+          this.loader.hide()
         }
       });
     } catch (Error) {
@@ -325,15 +352,15 @@ export class ReportItemMappingComponent implements OnInit {
       objSearchPara.Flag = "search";
 
       this._ReportItemService.GetReportItemMappedList(objSearchPara).subscribe(data => {
-        debugger
-        this.loader.hide();
+           this.loader.hide();
         if (data.Status == 1) {
 
           if (para == "search") {
             if (data.Data != null) {
               this.rowData = data.Data;
             } else {
-              this.rowData = []
+              this.rowData = [];
+             
             }
           } else if (para == "export") {
             if (data.Data != null) {
@@ -353,9 +380,14 @@ export class ReportItemMappingComponent implements OnInit {
   }
 
   openEditForm(e) {
+    this.RptMapId = e.rowData.Id;
+    this.GetUserPageRight(this.RptMapId)
     this.editReportAndItemMappingDetail(e.rowData.Id);
     this.isShownList = true;
     this.isShownEdit = false;
+    if (this.RptMapId !=0 || this.RptMapId!= null) {
+      this.btnName = "Update"
+    }
   }
 
   editReportAndItemMappingDetail(Id: any) {
@@ -396,15 +428,17 @@ export class ReportItemMappingComponent implements OnInit {
     jQuery('#ConfirmDelete').modal('hide');
     let objModel = new ReportItemMappingModel();
     objModel.Id = Id;
-    objModel.Flag = "delete";
+     objModel.Flag = 'delete';
     this._ReportItemService.AddUpdateReportMappingDetail(objModel).subscribe(data => {
       if (data.Status == 1) {
         Swal.fire('Deleted', data.Remarks, 'success')
-
         setTimeout(() => {
           this.loader.hide()
         }, 500);
         this.getReportAndItemMappingList('search')
+      }else{
+        Swal.fire(data.Remarks);
+        this.loader.hide()
       }
     });
   }
@@ -440,7 +474,7 @@ export class ReportItemMappingComponent implements OnInit {
       $('#ddlItemName').css('border-color', 'red')
       $('#ddlItemName').focus();
       flag = 1;
-      alert("Please entry mandatory field.");
+      Swal.fire("Please entr mandatory field.");
     } else {
       $("#ddlItemName").css('border-color', '')
     }

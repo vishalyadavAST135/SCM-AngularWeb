@@ -48,8 +48,9 @@
                             <div>
                                 <label>Report Name<span style="color: red;"
                                         class="Mandatoryfield"><b>*</b></span></label>
-                                <input type="text" id="txtStockName" appAutofocus autocomplete="off" [(ngModel)]="model.StockName"
-                                    placeholder="Please enter report name" class="form-control form-control-sm" />
+                                <input type="text" id="txtStockName" appAutofocus autocomplete="off"
+                                    [(ngModel)]="model.StockName" placeholder="Please enter report name"
+                                    class="form-control form-control-sm" />
                             </div>
 
                         </div>
@@ -58,8 +59,11 @@
                 </div>
             </div>
             <div class="modal-footer center ">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                <button type="submit" class="btn btn-success" (click)="addUpdateStockName()">{{btnName}}</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal"><i class="fa fa-times-circle"></i>
+                    Cancel</button>
+                <button type="submit" class="btn btn-success" *ngIf="Save" (click)="addUpdateStockName()">
+                    <i class="fa fa-save"></i>
+                    {{btnName}}</button>
             </div>
         </div>
     </div>
@@ -67,22 +71,22 @@
 
 <!--modal--for--confirmation-->
 <div class="modal fade" id="ConfirmDelete" data-backdrop="static" tabindex="-1" role="dialog"
-  aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-sm">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h4 class="modal-title">Confirm !</h4>
-      </div>
-      <div class="modal-body">
-        Please confirm do you want to delete Stock Report Name.
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-        <button type="submit" class="btn btn-success" data-dismiss="modal" 
-        (click)="deleteStockReportDetail('deleteId')">Yes</button>
-      </div>
+    aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm !</h4>
+            </div>
+            <div class="modal-body">
+                Please confirm do you want to delete Stock Report Name.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+                <button type="submit" class="btn btn-success" data-dismiss="modal" *ngIf="ObjUserPageRight.IsDelete"
+                    (click)="deleteStockReportDetail('deleteId')">Yes</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 <!---end-modal-->
 
@@ -120,21 +124,24 @@
                                 <label class="col-form-label-xs">Report Name</label>
                             </div>
                             <div class="col-sm-2">
-                                <input type="text" appAutofocus autocomplete="off" placeholder="Please enter report name"
-                                [(ngModel)]="model.SearchStockName" class="form-control form-control-sm" />
+                                <input type="text" appAutofocus autocomplete="off"
+                                    placeholder="Please enter report name" [(ngModel)]="model.SearchStockName"
+                                    class="form-control form-control-sm" />
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-sm-12" style="background-color:#28a745;">
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-success" (click)="getStockReportList('search')"> <i class="fa fa-search"
-                                            aria-hidden="true" ></i>
+                                    <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"
+                                        (click)="getStockReportList('search')"> <i class="fa fa-search"
+                                            aria-hidden="true"></i>
                                         Search</button>
-                                    <button type="button" class="btn btn-success" (click)="getStockReportList('export')"> <i class="fa fa-download"
+                                    <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success"
+                                        (click)="getStockReportList('export')"> <i class="fa fa-download"
                                             aria-hidden="true"></i>
                                         Export</button>
-                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
-                                            class="fa fa-plus"></i> 
+                                    <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success"
+                                        (click)="createNew()"><i class="fa fa-plus"></i>
                                         Report Name</button>
 
                                 </div>
