@@ -14,10 +14,11 @@ import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-h
 import { PoConfigSeriesService } from 'src/app/Service/po-config-service.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { StockMasterService } from 'src/app/Service/stock-master.service';
-import { WebErrorLogModel } from 'src/app/_Model/commonModel';
+import { MenuName, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { StockMasterModel } from 'src/app/_Model/MastersModel';
 import { PODropDownModel, PoSearchModel, PoSeriesDetailModel } from 'src/app/_Model/purchaseOrderModel';
 import { CompanyModel, UserModel } from 'src/app/_Model/userModel';
+import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 declare var jQuery: any;
 @Component({
@@ -47,6 +48,10 @@ export class PoConfigComponent implements OnInit {
   StockReportNameList: [];
   modalTitle: string = " Create New";
   btnName: string = "Save"
+  ObjUserPageRight = new UserPageRight();
+  Save: any;
+  PoConfigId: number = 0;
+ 
 
   constructor(private modalService: NgbModal, private _PurchaseOrderService: PurchaseOrderService,
     private _Commonservices: CommonService, private loader: NgxSpinnerService,
@@ -68,7 +73,8 @@ export class PoConfigComponent implements OnInit {
     this.getUserDetail();
     this.fnBindCustomerEMIExpenseAndCategoryDropDown();
     this.fnBindGrid();
-    this.fnBindStockReportNameDropDown()
+    this.fnBindStockReportNameDropDown();
+    this.GetUserPageRight(this.PoConfigId)
   }
 
   clearSearchFilter() {
@@ -90,6 +96,27 @@ export class PoConfigComponent implements OnInit {
     let objUserModel = new UserModel();
     objUserModel = this._Commonservices.GetUserSession();
     this.UserId = objUserModel.User_Id;
+  }
+  async GetUserPageRight(id: number) {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.PoConfig).subscribe(data => {
+      if (data.Status == 1) {
+        console.log(data);
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
+        
+        if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
+        }
+       
+      }
+    })
   }
 
   fnBindCustomerEMIExpenseAndCategoryDropDown() {
@@ -216,7 +243,8 @@ export class PoConfigComponent implements OnInit {
           }, 500);
           this.getPoSeriesConfigList('search')
         } else {
-          Swal.fire(data.Remarks);
+          Swal.fire('', data.Remarks, 'error');
+          this.loader.hide()
         }
       });
     } catch (Error) {
@@ -279,8 +307,10 @@ export class PoConfigComponent implements OnInit {
   openEditPopupForm(e) {
     this.cancelValidation();
     this.openSaveModelPopUp();
-    this.editPoSeriesConfigDetail(e.rowData.Id);
-    if (e.rowData.Id !=0 || e.rowData.Id!= null) {
+    this.PoConfigId = e.rowData.Id;
+    this.GetUserPageRight(this.PoConfigId);
+    this.editPoSeriesConfigDetail(this.PoConfigId);
+    if (this.PoConfigId !=0 || this.PoConfigId!= null) {
       this.modalTitle = "Edit PO Config";
       this.btnName = "Update"
     } 

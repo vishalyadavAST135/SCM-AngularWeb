@@ -38,6 +38,7 @@ import { SendmailService } from 'src/app/Service/sendmail.service';
 import { map } from 'jquery';
 import { ReportItemNameMappingService } from 'src/app/Service/report-item-mapping.service';
 import { ReportItemMappingModel } from 'src/app/_Model/MastersModel';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 type AOA = any[][];
 declare var jQuery: any;
@@ -303,8 +304,8 @@ export class PodetailComponent implements OnInit {
     private Loader: NgxSpinnerService, private _BOQService: BOQRequestequestService,
     private _CommonpdfService: CommonpdfService, private _GrncrnService: GrncrnService,
     private httpclient: HttpClient, private _MaterialMovementService: MaterialMovementService,
-    private _objSendMailService: SendmailService,
-    private _objRptItemMappingService: ReportItemNameMappingService
+    private _objSendMailService: SendmailService, 
+    private _objRptItemMappingService: ReportItemNameMappingService,private loader: NgxSpinnerService,
 
   ) {
     this.tooltipShowDelay = 0;
@@ -986,8 +987,8 @@ export class PodetailComponent implements OnInit {
   //#region  Search PoList On Click detail and Get Item  and next Previous
   SearchPOList() {
     try {
-      //this.Loader.show();
-      this.gridApi.showLoadingOverlay();
+      this.Loader.show();
+      //this.gridApi.showLoadingOverlay();
       var objPoSearchModel = new PoSearchModel();
       objPoSearchModel.CompanyId = this.CompanyId;
       objPoSearchModel.VendorId = this.CommonSearchPanelData.VendorId;
@@ -1039,10 +1040,12 @@ export class PodetailComponent implements OnInit {
 
       this._PurchaseOrderService.GetPurchaseOrderList(objPoSearchModel).subscribe(data => {
         if (data.Status == 1) {
-          this.gridApi.hideOverlay();
+          this.loader.hide();
+          //this.gridApi.hideOverlay();
           this.rowData = data.Data;
         } else if (data.Status == 2) {
-          this.gridApi.hideOverlay();
+          this.loader.hide();
+          //this.gridApi.hideOverlay();
           this.rowData = [];
         }
       });
@@ -1119,7 +1122,8 @@ export class PodetailComponent implements OnInit {
             var CurrentDate = this.datePipe.transform(Date(), "dd/MM/yyyy");
             this._PurchaseOrderService.exportAsExcelFile(this.ExcelData, 'PODetail' + CurrentDate);
           } else {
-            alert('Not Data Found');
+            //alert('Not Data Found');
+            Swal.fire('','Not Data Found', 'warning')
           }
         }
       });
@@ -1187,7 +1191,9 @@ export class PodetailComponent implements OnInit {
   copyPoID(id: any) {
     try {
       if (this.model.hiddenPoId == 0) {
-        alert('Please Open PO.');
+        //alert('Please Open PO.');
+        Swal.fire('','Please Open PO.', 'info')
+
         return false;
       }
       var objPoOtherDetial = new PoOtherDetial();
@@ -1196,12 +1202,14 @@ export class PodetailComponent implements OnInit {
       this._PurchaseOrderService.CopyPOID(objPoOtherDetial).subscribe(data => {
         if (data.Status == 1) {
           setTimeout(() => {
-            alert('your data has been save successfully with PO No-' + data.Remarks)
+            //alert('your data has been save successfully with PO No-' + data.Remarks)
+            Swal.fire('your data has been save successfully with PO No-', data.Remarks, 'success')
           }, 300);
           this.ClearPODetail();
         } else if (data.Status == 0) {
           setTimeout(() => {
-            alert("Contact to IT.")
+            //alert("Contact to IT.")
+            Swal.fire('', 'Contact to IT.', 'error')
           }, 300);
         }
       });
@@ -1496,7 +1504,8 @@ export class PodetailComponent implements OnInit {
         this.ItemPdfEditData = this.PurchaseOrderPdfData.ItemData;
         this.PdfAnnexureItemData = this.PurchaseOrderPdfData.AnnexureItemData;
         if (this.PurchaseOrderPdfData.ItemData == null) {
-          alert('Please fill item  detail');
+          //alert('Please fill item  detail');
+          Swal.fire('','Please fill item  detail', 'warning')
           return false;
         }
         if (this.ItemPdfEditData.length == 1) {
@@ -2862,9 +2871,12 @@ export class PodetailComponent implements OnInit {
       objPOPdfModel.POPdf = PDFdata;
       this._PurchaseOrderService.SavePoPDF(objPOPdfModel).subscribe(data => {
         if (data.Status == 1) {
-          alert('PO has been generated');
+          //alert('PO has been generated');
+          Swal.fire('', 'PO has been generated', 'success')
+
         } else if (data.Status == 2) {
-          alert('PO does not generated');
+          //alert('PO does not generated');
+          Swal.fire('', 'PO does not generated', 'error')
         }
       });
     } catch (Error) {
@@ -3104,7 +3116,9 @@ export class PodetailComponent implements OnInit {
   //#region only Podetail Save Code Hemant
   PoBasicdetailSave() {
     try {
+      
       if (this.ValidationBasic() == 0) {
+        this.loader.show();
         this.model.HidePoNo = this.PoNo;
         var objPoBasicDetail = new PoBasicDetial();
         objPoBasicDetail.PoId = this.model.hiddenPoId;
@@ -3159,18 +3173,27 @@ export class PodetailComponent implements OnInit {
           if (data.Status == 1) {
             this.model.hiddenPoId = data.Value;
             this.PoNo = data.Remarks;
+            // setTimeout(() => {
+            //   alert('your data has been save successfully with PO No-' + data.Remarks)
+            // }, 300);
+            Swal.fire('your data has been save successfully with PO No', data.Remarks, 'success')
             setTimeout(() => {
-              alert('your data has been save successfully with PO No-' + data.Remarks)
-            }, 300);
+              this.loader.hide()
+            }, 500);
             this.IsVoucherDisabled = true;
           } else if (data.Status == 2) {
             setTimeout(() => {
-              alert(data.Remarks)
+              this.loader.hide()
+              //alert(data.Remarks)
+              Swal.fire('', data.Remarks, 'success')
             }, 300);
           } else if (data.Status == 3) {
             setTimeout(() => {
-              alert(data.Remarks)
+              this.loader.hide()
+              Swal.fire(data.Remarks)
             }, 300);
+          }else {
+            this.loader.hide()
           }
         });
       }
@@ -3187,7 +3210,8 @@ export class PodetailComponent implements OnInit {
   uploadPoSignedPo() {
     var objPoBasicDetail = new PoBasicDetial();
     if (this.model.hiddenPoId == 0 || this.model.hiddenPoId == null || this.model.hiddenPoId == undefined) {
-      alert('Please Save, First PO Basic Information');
+      //alert('Please Save, First PO Basic Information');
+      Swal('', 'Please Save, First PO Basic Information', 'warning')
       return false;
     } else {
       objPoBasicDetail.PoId = this.model.hiddenPoId;
@@ -3196,7 +3220,8 @@ export class PodetailComponent implements OnInit {
 
     var formdata = new FormData();
     if (this.uplodfile == null) {
-      alert('Please attach signed po.');
+      //alert('Please attach signed po.');
+      Swal.fire('', 'Please attach signed po.', 'warning')
       return false;
     } else {
       formdata.append('file', this.uplodfile, this.uplodfile.name);
@@ -3206,11 +3231,13 @@ export class PodetailComponent implements OnInit {
       if (data.Status == 2) {
         this.uplodfile = null;
         setTimeout(() => {
-          alert(data.Remarks)
+          //alert(data.Remarks)
+          Swal.fire('',data.Remarks, '')
         }, 300);
       } else if (data.Status == 3) {
         setTimeout(() => {
-          alert(data.Remarks)
+          //alert(data.Remarks)
+          Swal.fire('',data.Remarks,'' )
         }, 300);
       }
     });
@@ -3219,7 +3246,8 @@ export class PodetailComponent implements OnInit {
   POAmendedDetail() {
     try {
       if (this.model.hiddenPoId == 0) {
-        alert('Please Fill First PO Basic Information');
+        //alert('Please Fill First PO Basic Information');
+        Swal.fire('', 'Please Fill First PO Basic Information', 'warning')
         return false;
       }
       // if (this.ValidationPOOther() == 0) {
@@ -3231,16 +3259,19 @@ export class PodetailComponent implements OnInit {
       this._PurchaseOrderService.POAmended(objDetial).subscribe(data => {
         if (data.Status == 1) {
           setTimeout(() => {
-            alert(data.Remarks)
+            //alert(data.Remarks)
+            Swal.fire('',data.Remarks, 'success')
           }, 300);
           this.ClearPODetail();
         } else if (data.Status == 2) {
           setTimeout(() => {
-            alert(data.Remarks)
+           // alert(data.Remarks)
+           Swal.fire('',data.Remarks, '')
           }, 300);
         } else if (data.Status == 3) {
           setTimeout(() => {
-            alert(data.Remarks)
+            //alert(data.Remarks)
+            Swal.fire('',data.Remarks, '' )
           }, 300);
         }
       });
@@ -3258,7 +3289,8 @@ export class PodetailComponent implements OnInit {
   PoOtherDetialSave() {
     try {
       if (this.model.hiddenPoId == 0) {
-        alert('Please Fill First PO Basic Information');
+        //alert('Please Fill First PO Basic Information');
+        Swal.fire('','Please Fill First PO Basic Information', 'warning')
         return false;
       }
       if (this.ValidationPOOther() == 0) {
@@ -3276,16 +3308,19 @@ export class PodetailComponent implements OnInit {
         this._PurchaseOrderService.PoOtherDetial(objPoOtherDetial).subscribe(data => {
           if (data.Status == 1) {
             setTimeout(() => {
-              alert(data.Remarks)
+              //alert(data.Remarks)
+              Swal.fire('', data.Remarks, 'success')
             }, 300);
             this.ClearPODetail();
           } else if (data.Status == 2) {
             setTimeout(() => {
-              alert(data.Remarks)
+              //alert(data.Remarks)
+              Swal.fire('',data.Remarks, 'success')
             }, 300);
           } else if (data.Status == 3) {
             setTimeout(() => {
-              alert(data.Remarks)
+              //alert(data.Remarks)
+              Swal.fire('', data.Remarks, '' )
             }, 300);
           }
         });
@@ -3303,7 +3338,7 @@ export class PodetailComponent implements OnInit {
   PoItemDetialSave() {
     try {
       if (this.model.hiddenPoId == 0) {
-        alert('Please Fill First PO Basic Information');
+        Swal.fire('','Please Fill First PO Basic Information', 'warning');
         return false;
       } else {
         this.objExeclPoItemDetialList = []
@@ -3361,7 +3396,7 @@ export class PodetailComponent implements OnInit {
             // this.model.AmountChargeable="";
             this.IsCreatePOPdf = false;
             setTimeout(() => {
-              alert(data.Remarks)
+              Swal.fire('',data.Remarks, 'success')
             }, 300);
             //this.ClearPoItem();
           }
@@ -3369,11 +3404,11 @@ export class PodetailComponent implements OnInit {
             //this.model.AmountChargeable="";
             this.IsCreatePOPdf = false;
             setTimeout(() => {
-              alert(data.Remarks)
+              Swal.fire('',data.Remarks,'success')
             }, 300);
           } else if (data.Status == 3) {
             setTimeout(() => {
-              alert(data.Remarks)
+              Swal.fire(data.Remarks)
             }, 300);
           }
         });
@@ -3432,7 +3467,9 @@ export class PodetailComponent implements OnInit {
             } else if (ColuName == "OverHeadExpenses") {
               hdr = ColuName
             } else {
-              alert("Invalid Column Name _" + ColuName);
+              //alert("Invalid Column Name _" + ColuName);
+              Swal.fire('', "Invalid Column Name _" + ColuName, 'warning')
+
               this.myInputVariable.nativeElement.value = '';
               return false;
             }
@@ -3492,13 +3529,15 @@ export class PodetailComponent implements OnInit {
   SavePoItemDetialByExcel() {
     try {
       if (this.model.hiddenPoId == 0) {
-        alert('Please Fill First PO Basic Information');
+       // alert('Please Fill First PO Basic Information');
+       Swal.fire('','Please Fill First PO Basic Information', 'warning' )
         return false;
       } else {
         this.objPoItemDetialList = [];
         this.ErrorMessage = [];
         if (this.objExeclPoItemDetialList.length == 0 || this.objExeclPoItemDetialList.length == null) {
-          alert('Please Attach Annexure Excel');
+          //alert('Please Attach Annexure Excel');
+          Swal.fire('', 'Please Attach Annexure Excel', 'warning' )
           return false;
         }
         else {
@@ -3509,7 +3548,9 @@ export class PodetailComponent implements OnInit {
             if (data.Data[0].result == 1) {
               this.IsExcelMsgHideShow = true;
               this.IsExcelSaveDataTaleHideShow = false;
-              alert('ItemCode does not match from database.');
+              //alert('ItemCode does not match from database.');
+              Swal.fire('','ItemCode does not match from database.', 'error')
+
               this.myInputVariable.nativeElement.value = '';
               this.ErrorMessage = data.Message;
               this.objExeclPoItemDetialList = [];
@@ -3519,13 +3560,15 @@ export class PodetailComponent implements OnInit {
               this.IsPoItemDetialSave = false;
               this.IsCreatePOPdf = false;
               this.objExeclPoItemDetialList = [];
-              alert('your data has been save successfully')
+              //alert('your data has been save successfully')
+              Swal.fire('','your data has been save successfully', 'success')
               this.myInputVariable.nativeElement.value = '';
               this.GetItemSaveExcelData();
             } else if (data.Data[0].result == 2) {
               this.objExeclPoItemDetialList = [];
               this.myInputVariable.nativeElement.value = '';
-              alert('DataBase Error')
+              //alert('DataBase Error')
+              Swal.fire('','DataBase Error', 'error')
             }
           });
         }
@@ -3648,10 +3691,13 @@ export class PodetailComponent implements OnInit {
           if (data.Status == 1) {
             this.loading = false;
             // $('#custom-tabs-three-outbox-tab').css('background-color', '#2196f3')
-            alert('your email has been successfully send')
+            //alert('your email has been successfully send')
+            Swal.fire('','your email has been successfully send', 'success')
+
           } else if (data.Status == 0) {
             this.loading = false;
-            alert('your email Id not correct format')
+            //alert('your email Id not correct format')
+            Swal.fire('','your email Id not correct format', 'error' )
           }
         });
       }
@@ -3671,7 +3717,8 @@ export class PodetailComponent implements OnInit {
     for (var i = 0, len = event.target.files.length; i < len; i++) {
       var Size = parseInt(event.target.files[i].size);
       if (Size > 200000) {
-        alert("your file size > 2mb ");
+        //alert("your file size > 2mb ");
+        Swal.fire('','your file size > 2mb', 'warning')
         return false;
       } else {
         this.urls.push(event.target.files[i]);
@@ -3914,8 +3961,8 @@ export class PodetailComponent implements OnInit {
   PageSlideBack() {
     this.IsMaximizeBtnHide = false;
     this.IsMinimizeBtnHide = true;
-    $('#pdf').attr('class', 'col-12 col-sm-1 col-md-1');
-    $('#Basic').attr('class', 'col-12 col-sm-11 col-md-11')
+    $('#pdf').attr('class', 'col-0 col-sm-0 col-md-0');
+    $('#Basic').attr('class', 'col-12 col-sm-12 col-md-12')
   }
 
   ValidationBasic() {
@@ -3953,13 +4000,16 @@ export class PodetailComponent implements OnInit {
     }
 
     if (this.model.POStatusId == 3 && this.model.VendorId != 635 && this.CompanyId == 4) {
-      alert('please select valid vendor name');
+      //alert('please select valid vendor name');
+      Swal.fire('','please select valid vendor name', 'warning')
       flag = 1;
     } else if (this.model.POStatusId == 3 && this.model.VendorId != 654 && this.CompanyId == 1) {
-      alert('please select valid vendor name');
+      //alert('please select valid vendor name');
+      Swal.fire('', 'please select valid vendor name', 'warning')
       flag = 1;
     } else if (this.model.POStatusId == 3 && this.model.VendorId != 1702 && this.CompanyId == 14) {
-      alert('please select valid vendor name');
+      //alert('please select valid vendor name');
+      Swal.fire('', 'please select valid vendor name', 'warning')
       flag = 1;
     }
     else {
@@ -3980,15 +4030,18 @@ export class PodetailComponent implements OnInit {
     }
 
     if (this.model.POStatusId != 3 && this.model.VendorId == 635 && this.CompanyId == 4) {
-      alert('please select valid PO status ');
+      //alert('please select valid PO status ');
+      Swal.fire('','please select valid PO status', 'warning')
       flag = 1;
     }
     else if (this.model.POStatusId != 3 && this.model.VendorId == 654 && this.CompanyId == 1) {
-      alert('please select valid PO status ');
+      //alert('please select valid PO status ');
+      Swal.fire('', 'please select valid PO status', 'warning')
       flag = 1;
     }
     else if (this.model.POStatusId != 3 && this.model.VendorId == 1702 && this.CompanyId == 14) {
-      alert('please select valid PO status ');
+      //alert('please select valid PO status ');
+      Swal.fire('', 'please select valid PO status', 'warning')
       flag = 1;
     }
     else {
@@ -4180,7 +4233,8 @@ export class PodetailComponent implements OnInit {
 
       if (this.dynamicArray[i].IsWarrantyReq == 1) {
         if (this.dynamicArray[i].IsWarranty != "1") {
-          alert('please Select Warranty Type Yes');
+          //alert('please Select Warranty Type Yes');
+          Swal.fire('', 'please Select Warranty Type Yes', 'warning')
           return flag = 1;
         }
       }
@@ -4373,7 +4427,6 @@ export class PodetailComponent implements OnInit {
 
       this._objRptItemMappingService.GetItemNameMapwithReportName(_objRptModel).subscribe(data => {
         if (data.Status == 1 && data.Data != null) {
-          debugger
           this.FilterItemNameDetailData=data.Data;
         }
       });

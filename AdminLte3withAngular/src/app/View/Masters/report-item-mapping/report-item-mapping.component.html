@@ -37,7 +37,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-                <button type="submit" class="btn btn-success" data-dismiss="modal"
+                <button type="submit" class="btn btn-success" data-dismiss="modal" *ngIf="ObjUserPageRight.IsDelete"
                     (click)="deleteReportItemMappingDetail('deleteId')">Yes</button>
             </div>
         </div>
@@ -103,14 +103,16 @@
                         <div class="row">
                             <div class="col-sm-12" style="background-color:#28a745;">
                                 <div class="btn-group btn-group-sm">
-                                    <button type="button" class="btn btn-success" (click)="getReportAndItemMappingList('search')"> <i class="fa fa-search"
+                                    <button type="button"  class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch"
+                                        (click)="getReportAndItemMappingList('search')"> <i class="fa fa-search"
                                             aria-hidden="true"></i>
                                         Search</button>
-                                    <button type="button" class="btn btn-success" (click)="getReportAndItemMappingList('export')"> <i class="fa fa-download"
+                                    <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsExport"
+                                        (click)="getReportAndItemMappingList('export')"> <i class="fa fa-download"
                                             aria-hidden="true"></i>
                                         Export</button>
-                                    <button type="button" class="btn btn-success" (click)="createNew()"><i
-                                            class="fa fa-plus"></i> New
+                                    <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success"
+                                        (click)="createNew()"><i class="fa fa-plus"></i> New
                                         Mapping</button>
                                 </div>
                             </div>
@@ -166,7 +168,7 @@
                                                 class="Mandatoryfield"><b>*</b></span></label>
                                         <div class="col-sm-3">
                                             <select class="form-control form-control-sm" id="ddlPoCategory"
-                                                [(ngModel)]="model.PoCategoryId" >
+                                                [(ngModel)]="model.PoCategoryId">
                                                 <option class="dropdown-item" [value]="0">Select</option>
                                                 <option *ngFor="let item of POCategoryList" [value]="item.categoryId">
                                                     {{item.categoryName}}</option>
@@ -189,15 +191,16 @@
                                                 class="Mandatoryfield"><b>*</b></span></label>
                                         <div class="col-sm-3">
                                             <angular2-multiselect [data]="ItemNameList" id="ddlItemName"
-                                                [(ngModel)]="SelectedItemNameList" [settings]="MultidropdownSettings" >
+                                                [(ngModel)]="SelectedItemNameList" [settings]="MultidropdownSettings">
                                             </angular2-multiselect>
                                         </div>
 
                                     </div>
                                     <hr>
-                                    <div class="col-sm-1 float-right" style="margin-bottom: 15px; margin-right: 2px;">
-                                        &nbsp;<button type="button" class="btn btn-sm btn-success float-right" (click)="addUpdateReportMappingDetail()"><i
-                                                class="fa fa-save"></i> Save</button>
+                                    <div class="col-sm-2 float-right" style="margin-bottom: 15px; margin-right: 2px;">
+                                        &nbsp;<button type="button"class="btn btn-sm btn-success float-right" *ngIf="Save" 
+                                            (click)="addUpdateReportMappingDetail()"><i class="fa fa-save"></i>
+                                            {{btnName}}</button>
                                     </div>
 
                                 </fieldset>

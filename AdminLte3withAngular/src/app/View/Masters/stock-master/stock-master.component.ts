@@ -10,9 +10,10 @@ import { CommonService } from 'src/app/Service/common.service';
 import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-handler-service.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { StockMasterService } from 'src/app/Service/stock-master.service';
-import { WebErrorLogModel } from 'src/app/_Model/commonModel';
+import { MenuName, WebErrorLogModel } from 'src/app/_Model/commonModel';
 import { StockMasterModel } from 'src/app/_Model/MastersModel';
 import { CompanyModel, UserModel } from 'src/app/_Model/userModel';
+import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
 import Swal from 'sweetalert2/dist/sweetalert2.js';
 declare var jQuery: any;
 
@@ -36,9 +37,13 @@ export class StockMasterComponent implements OnInit {
   UserName: any;
   frameworkComponents: any;
   tooltipShowDelay: any;
-  delId: any;
+  delId: number = 0;
   modalTitle: string = " Create New";
-  btnName: string = "Save"
+  btnName: string = "Save";
+  ObjUserPageRight = new UserPageRight();
+  Save: any;
+  ReportNameId: number = 0;
+  
  
 
   constructor(private modalService: NgbModal, private _Commonservices: CommonService,
@@ -60,6 +65,7 @@ export class StockMasterComponent implements OnInit {
     this.getCompanydetail();
     this.getUserDetail();
     this.fnBindGrid();
+   this.GetUserPageRight(this.ReportNameId)
     
   }
   getCompanydetail() {
@@ -110,6 +116,26 @@ export class StockMasterComponent implements OnInit {
     this.rowData = this.rowData;
   }
 
+  async GetUserPageRight(id: number) {
+    this._Commonservices.GetUserPageRight(this.UserId, MenuName.ReportMaster).subscribe(data => {
+      if (data.Status == 1) {
+        this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
+        this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
+        this.ObjUserPageRight.IsCreate = data.Data[0].IsCreate;
+        this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
+        if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
+          this.Save = 1;
+        } else if (this.ObjUserPageRight.IsEdit == 1 && id != 0) {
+          this.Save = 1;
+        } else {
+          this.Save = 0
+        }
+      
+      }
+    })
+  }
+
   //by: vishal function for open popup model
   openSaveModelPopUp() {
     jQuery('#ConfirmSaveUpdate').modal('show');
@@ -150,7 +176,8 @@ export class StockMasterComponent implements OnInit {
           }, 500);
           this.getStockReportList('search')
         } else {
-          Swal.fire(data.Remarks);
+          Swal.fire('', data.Remarks, 'error');
+          this.loader.hide()
         }
       });
     } catch (Error) {
@@ -202,12 +229,12 @@ export class StockMasterComponent implements OnInit {
     }
   }
   openEditPopupForm(e) {
-    // this.modalTitle = '';
     this.cancelValidation();
     this.openSaveModelPopUp();
-    this.editStockReportDetail(e.rowData.Id);
-    
-    if (e.rowData.Id !=0 || e.rowData.Id!= null) {
+    this.ReportNameId = e.rowData.Id;
+    this.GetUserPageRight(this.ReportNameId);
+    this.editStockReportDetail(this.ReportNameId);
+    if (this.ReportNameId !=0 || this.ReportNameId!= null) {
       this.modalTitle = "Edit Report Name";
       this.btnName = "Update"
     } 
