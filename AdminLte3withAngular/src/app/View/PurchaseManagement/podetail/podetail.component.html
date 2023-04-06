@@ -1053,7 +1053,7 @@
                                     <i class="fa fa-plus"></i>
                                   </td>
                                   <td colspan="15">
-                                    <button (click)="inputFile.click()" title="Attach Annexure (Excel) File"><i
+                                    <button (click)="inputFile.click()"  title="Attach Annexure (Excel) File"><i
                                         class="fa fa-paperclip"></i>
                                     </button>&nbsp;
                                     <button type="submit" title="Upload Annexure Excel" *ngIf="Save"
@@ -1062,7 +1062,7 @@
                                     <button type="submit" class="btn btn-sm btn-default"
                                       title="download sample excel sheet" (click)="UploadSampleExcel()">
                                       <i class="fa fa-download"></i> Annexure Sample</button>&nbsp;
-                                    <button type="submit" title="download error excel sheet"
+                                    <button type="submit" *ngIf="IsExcelMsgHideShow" title="download error excel sheet"
                                       class="btn btn-sm btn-default" (click)="DownloadMessageData()"> <i
                                         class="fa fa-download"></i> Error
                                       Execl</button>
