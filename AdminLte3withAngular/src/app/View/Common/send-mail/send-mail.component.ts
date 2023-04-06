@@ -26,10 +26,10 @@ export class SendMailComponent implements OnInit {
   uplodfile: File = null;
   AttchMent: File = null;
   @Input() pdfPath: string;
-  //EmailData: any [];
-  EditPoId: any;
-   @ViewChild('modal') modal: ElementRef;
-   DispatchTrackingId: any;
+  @ViewChild('modal') modal: ElementRef;
+  @Input() referenceId: number;
+  @Input() MailFor: string;
+  
   
   constructor(private _objSendMailService: SendmailService, private modalService: NgbModal,
     private _Commonservices: CommonService,
@@ -43,10 +43,10 @@ export class SendMailComponent implements OnInit {
     this.model.MailCc = "";
     this.model.MailBcc = "";
     this.model.MailSubject = "";
-    this.model.MailMessage = " Hi, As per attachment pls provide tax invoice against the challan no." ;
+    this.model.MailMessage = " Hi, As per attachment pls provide tax invoice against the challan no.";
   }
 
-  SendMail() {    
+  SendMail() {  
     try {
       if (this.ValidationEmailSend() == 0) {
         this.loading = true;
@@ -60,6 +60,8 @@ export class SendMailComponent implements OnInit {
         var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
         objEmailModel.UserId = objUserModel.User_Id;
         objEmailModel.DocumentFile = this.pdfPath;
+        objEmailModel.PoId = this.referenceId;
+        objEmailModel.MailFor = this.MailFor;
         
 
         var formdata = new FormData();

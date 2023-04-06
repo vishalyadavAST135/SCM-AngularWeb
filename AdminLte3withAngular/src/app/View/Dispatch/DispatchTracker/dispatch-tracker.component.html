@@ -54,7 +54,9 @@
   }
 </style>
 <!--Send Mail model popup-->
-<app-send-mail #child [hidden]="IsModelShow" [EmailData]="EmailData" [pdfPath]="pdfPath"></app-send-mail>
+<app-send-mail #child [hidden]="IsModelShow" 
+[EmailData]="EmailData" [pdfPath]="pdfPath"  [referenceId]='model.DisatchTrackeringId'
+MailFor='DT'></app-send-mail>
 
 <!--end-Send Mail model popup-->
 

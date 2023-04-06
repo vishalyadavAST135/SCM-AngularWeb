@@ -298,6 +298,7 @@ export class PodetailComponent implements OnInit {
   IsMaximizeBtnHide: boolean //vishal, 09/03/2023
   IsMinimizeBtnHide: boolean //vishal, 09/03/2023
 
+
   constructor(private router: Router, private modalService: NgbModal, private _PurchaseOrderService: PurchaseOrderService,
     private _Commonservices: CommonService, private sanitizer: DomSanitizer,
     private datePipe: DatePipe, private _objSearchpanelService: SearchpanelService, private _GlobalErrorHandlerService: GlobalErrorHandlerServiceService,
@@ -3240,7 +3241,7 @@ export class PodetailComponent implements OnInit {
         this.uplodfile = null;
         setTimeout(() => {
           //alert(data.Remarks)
-          Swal.fire('', data.Remarks, '')
+          Swal.fire('',data.Remarks, 'success')
         }, 300);
       } else if (data.Status == 3) {
         setTimeout(() => {
@@ -3273,13 +3274,13 @@ export class PodetailComponent implements OnInit {
           this.ClearPODetail();
         } else if (data.Status == 2) {
           setTimeout(() => {
-            // alert(data.Remarks)
-            Swal.fire('', data.Remarks, '')
+           // alert(data.Remarks)
+           Swal.fire('',data.Remarks, 'success')
           }, 300);
         } else if (data.Status == 3) {
           setTimeout(() => {
             //alert(data.Remarks)
-            Swal.fire('', data.Remarks, '')
+            Swal.fire('',data.Remarks, 'success')
           }, 300);
         }
       });
@@ -3534,11 +3535,13 @@ export class PodetailComponent implements OnInit {
     this.totalSumAmount = this._Commonservices.thousands_separators(this.totalAmount.toFixed(2));
   }
 
-  SavePoItemDetialByExcel() {
+  SavePoItemDetialByExcel() { 
+    debugger
+
     try {
       if (this.model.hiddenPoId == 0) {
-        // alert('Please Fill First PO Basic Information');
-        Swal.fire('', 'Please Fill First PO Basic Information', 'warning')
+        //alert('Please Fill First PO Basic Information');
+       Swal.fire('','Please Fill First PO Basic Information', 'warning' )
         return false;
       } else {
         this.objPoItemDetialList = [];
@@ -3548,11 +3551,13 @@ export class PodetailComponent implements OnInit {
           Swal.fire('', 'Please Attach Annexure Excel', 'warning')
           return false;
         }
-        else {          
+        else {
+          debugger
           var objUpdatePoItemDetial = new UpdatePoItemDetial();
           objUpdatePoItemDetial.PoItemDetialList = this.objExeclPoItemDetialList;
           objUpdatePoItemDetial.AmountInWord = this.model.AmountChargeable;
           this._PurchaseOrderService.SavePoItemByExcel(JSON.stringify(objUpdatePoItemDetial)).subscribe(data => {
+            debugger
             if (data.Data[0].result == 1) {
               this.IsExcelMsgHideShow = true;
               this.IsExcelSaveDataTaleHideShow = false;
@@ -3656,7 +3661,8 @@ export class PodetailComponent implements OnInit {
     }
 
     if (this.PoId != null || this.PoId != undefined && this.Pdfurl != '') {
-      if (confirm("Do you want Amend the Purchase Order?") == true) {
+      //if (confirm("Do you want Amend the Purchase Order?") == true) {
+        if (Swal.fire('',"Do you want Amend the Purchase Order?", 'question') == true) {
         this.POAmendedDetail();
       } else {
         this.model.IsAmended = 0;
@@ -3689,6 +3695,9 @@ export class PodetailComponent implements OnInit {
         objEmailModel.UserId = objUserModel.User_Id;
         objEmailModel.PdfUrl = this.PdfEmailurl;
         objEmailModel.PoId = this.PoId;
+        objEmailModel.MailFor = 'PO';
+        
+
         var formdata = new FormData();
         for (var i = 0; i < this.MailFile.length; i++) {
           formdata.append("fileUpload", this.MailFile[i]);
@@ -3968,8 +3977,8 @@ export class PodetailComponent implements OnInit {
   PageSlideBack() {
     this.IsMaximizeBtnHide = false;
     this.IsMinimizeBtnHide = true;
-    $('#pdf').attr('class', 'col-0 col-sm-0 col-md-0');
-    $('#Basic').attr('class', 'col-12 col-sm-12 col-md-12')
+    $('#pdf').attr('class', 'col-12 col-sm-1 col-md-1');
+    $('#Basic').attr('class', 'col-12 col-sm-11 col-md-11')
   }
 
   ValidationBasic() {
