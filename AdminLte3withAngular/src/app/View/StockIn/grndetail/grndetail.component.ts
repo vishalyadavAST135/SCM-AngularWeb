@@ -411,7 +411,7 @@ export class GRNDetailComponent implements OnInit {
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-        this.ObjUserPageRight.IsEdit=data.Data[0].IsEdit;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
         debugger
         if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
           this.Save = 1;
@@ -2661,7 +2661,7 @@ export class GRNDetailComponent implements OnInit {
   }
 
 
-  ChangeEditVendor(event): void {
+  ChangeEditVendor(event: any): void {
     $('#TxtVendorEdit .selected-list .c-btn').attr('style', 'border-color: ');
     var objVendormodel = new VendorOrWhModel();
     objVendormodel.Id = this.selectedEditVendorItems[0].id;

@@ -57,7 +57,8 @@ export class AgingreportComponent implements OnInit {
     await this._Commonservices.getCompanyStateVendorItem(objCSVTdata).
       then(data => {
         if (data.Status == 1) {
-          this.ClientList = data.ClientArray;
+          //this.ClientList = data.ClientArray;
+          this.ClientList = data.ReportMasterArray;
           //console.log(this.ClientList);
         }
       });

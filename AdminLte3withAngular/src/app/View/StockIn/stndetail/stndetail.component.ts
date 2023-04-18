@@ -129,7 +129,6 @@ export class StndetailComponent implements OnInit {
   constructor(private _GrncrnService: GrncrnService, private modalService: NgbModal, private datePipe: DatePipe,
     private _Commonservices: CommonService, private _MaterialMovementService: MaterialMovementService,
     private _PurchaseOrderService: PurchaseOrderService) {
-
   }
 
   ngOnInit(): void {
@@ -185,7 +184,7 @@ export class StndetailComponent implements OnInit {
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-        this.ObjUserPageRight.IsEdit=data.Data[0].IsEdit;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
         if (this.ObjUserPageRight.IsCreate == 1) {
           this.Save = 1;
         } else if (this.ObjUserPageRight.IsEdit == 1) {
@@ -895,7 +894,9 @@ export class StndetailComponent implements OnInit {
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
       this.SearchStateList = objCSVTdata.StateArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      // client change into ReportMaster by hemant Tyagi
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       //this.WHStateList=objCSVTdata.StateArray;
       this.SearchItemNameList = objCSVTdata.ItemArray;
       this.EquipmentTypeList = objCSVTdata.EquipmentArray;
@@ -1240,6 +1241,7 @@ export class StndetailComponent implements OnInit {
         } else {
           objdynamic.EqTypeId = "0";
         }
+
         if (GRNCRNRowData[i].ClientId != "" && GRNCRNRowData[i].ClientId != null) {
           objdynamic.ClientId = GRNCRNRowData[i].ClientId;
         } else {
@@ -1421,16 +1423,22 @@ export class StndetailComponent implements OnInit {
         objdynamic.ItemDescription = ItemEditDataArr[i].ItemDescription;
         objdynamic.SubDescription = ItemEditDataArr[i].SubDescription;
         objdynamic.EqpType = ItemEditDataArr[i].EqpType;
+
+        // client replaced by hemant Tyagi
         if (ItemEditDataArr[i].ClientId != "" && ItemEditDataArr[i].ClientId != null) {
           objdynamic.ClientId = ItemEditDataArr[i].ClientId;
         } else {
           objdynamic.ClientId = "0";
         }
-        if (ItemEditDataArr[i].ClientId == 60) {
-          objdynamic.CustomerCode = "Ascend";
-        } else {
-          objdynamic.CustomerCode = "General";
-        }
+
+        objdynamic.CustomerCode = ItemEditDataArr[i].CustomerCode;
+
+        // if (ItemEditDataArr[i].ClientId == 60) {
+        //   objdynamic.CustomerCode = "Ascend";
+        // } else {
+        //   objdynamic.CustomerCode = "General";
+        // }
+
         objdynamic.Qty = parseFloat(ItemEditDataArr[i].Qty).toFixed(2);
         objdynamic.ReceivedQty = ItemEditDataArr[i].Qty.toFixed(2);
         objdynamic.AcceptedQty = ItemEditDataArr[i].Qty.toFixed(2);
@@ -2778,6 +2786,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   CancelValidation() {
     var flag = 0;
     if (this.model.InCaseReason == "0") {
@@ -2789,15 +2798,21 @@ export class StndetailComponent implements OnInit {
     }
     return flag;
   }
+
   changeCaseReason() {
     $("#txtInCaseReason").css('border-color', '');
   }
+
   ChangeClient(ItemId: any, index: any) {
-    if (ItemId == 60) {
-      this.dynamicArray[index].CustomerCode = "Ascend";
-    } else {
-      this.dynamicArray[index].CustomerCode = "General";
-    }
+    //Client Replace by Hemant
+    // if (ItemId == 60) {
+    //   this.dynamicArray[index].CustomerCode = "Ascend";
+    // } else {
+    //   this.dynamicArray[index].CustomerCode = "General";
+    // }    
+    this.dynamicArray[index].CustomerCode = this.ClientList.filter((yy:any) => yy.Id == ItemId)
+    .map((xx: any) => {return xx.Name});
+
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Client').val();
       if (valueItem != '0') {
@@ -2805,6 +2820,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   SerialNoKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.SerialNo').val();
@@ -2813,6 +2829,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   QtyKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Qty').val();
@@ -2821,6 +2838,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   RateKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Rate').val();
@@ -2829,6 +2847,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   HSNKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.HSN').val();
@@ -2837,6 +2856,7 @@ export class StndetailComponent implements OnInit {
       }
     });
   }
+
   OnblurConversionValue() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueReceivedQty = $(this).find('.ConversionValue').val();
@@ -2862,6 +2882,7 @@ export class StndetailComponent implements OnInit {
       console.log(Error.message)
     }
   }
+
   DiscountKeyPress() {
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Discount').val();
@@ -2901,11 +2922,16 @@ export class StndetailComponent implements OnInit {
     objNewItemGrid.IGSTValue = "0";
     objNewItemGrid.ConversionUnit = "";
     objNewItemGrid.ConversionValue = "";
-    objNewItemGrid.ClientId = "99999";
-    objNewItemGrid.CustomerCode = "General";
-    if (objNewItemGrid.ClientId = "99999") {
-      objNewItemGrid.CustomerCode = "General";
-    }
+
+    // change Client process by Hemant Tyagi 
+
+    // objNewItemGrid.ClientId = "99999";
+    // objNewItemGrid.CustomerCode = "General";
+    // if (objNewItemGrid.ClientId = "99999") {
+    //   objNewItemGrid.CustomerCode = "General";
+    // }
+    objNewItemGrid.ClientId = 0;
+
     objNewItemGrid.IsCorrectionEntryReason = "0";
     objNewItemGrid.IsCorrectionCodeId = "0";
     if (this.GrnEditId != null && this.RoleCorrectionEntry == true) {

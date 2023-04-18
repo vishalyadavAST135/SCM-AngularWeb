@@ -4421,8 +4421,7 @@ export class PodetailComponent implements OnInit {
         .filter((ftr: any) => ftr.EMITypeId == emiId && ftr.ExpenseTypeId == expenseTypeId
           && ftr.CategoryId == categoryId)
         .map((xx: any) => {
-          this.PoNo = xx.PoSeries;
-          debugger
+          this.PoNo = xx.PoSeries;          
           this.model.ReportMasterId = xx.ReportMasterId;
         });
     }

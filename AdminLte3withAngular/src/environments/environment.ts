@@ -4,11 +4,11 @@
 
 export const environment = {
   production: false,
-  //  host: "https://devapi.astnoc.com/SCMWebAPI/api/",
-  // ImagePath: "https://api.astnoc.com/"
+   host: "https://devapi.astnoc.com/SCMWebAPI/api/",
+   ImagePath: "https://devapi.astnoc.com/"
 
-  host: "http://localhost:61980/api/",
-  ImagePath: "http://localhost:61980/"
+  // host: "http://localhost:61980/api/",
+  // ImagePath: "http://localhost:61980/"
 
   // host: "https://api.astnoc.com/SCMWebAPI/api/",
   // ImagePath: "https://api.astnoc.com/"

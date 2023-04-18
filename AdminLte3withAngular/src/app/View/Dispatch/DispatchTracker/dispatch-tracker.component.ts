@@ -1582,7 +1582,9 @@ export class DispatchTrackerComponent implements OnInit {
       objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      // client change into ReportMaster by hemant Tyagi
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       objCSVTdata.DispatchTypeArray = this.apiCSVIData.DispatchTypeArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.CompanyData = objCSVTdata.CompanyArray;
@@ -1945,9 +1947,12 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ChangeEqupmnet(ItemId: any, index: any) {
-    var FilterData = this.EquipmentTypeList.filter(
-      m => m.id === parseInt(ItemId));
-    this.dynamicArray[index].EqpType = FilterData[0].itemName;
+    // var FilterData = this.EquipmentTypeList.filter(
+    //   m => m.id === parseInt(ItemId));
+    // this.dynamicArray[index].EqpType = FilterData[0].itemName;
+    this.dynamicArray[index].EqpType=this.EquipmentTypeList
+    .filter(m => m.id === parseInt(ItemId))
+    .map(xx=>{return xx.itemName});
     try {
       $('#tblOne > tbody  > tr').each(function () {
         var valueItem = $(this).find('.EqType').val();
@@ -1971,8 +1976,12 @@ export class DispatchTrackerComponent implements OnInit {
         $(this).find('.Client').css('border-color', '');
       }
     });
-    var FilterDate = this.ClientList.filter(m => m.Id === parseInt(ClientId));
-    this.dynamicArray[index].ClientName = FilterDate[0].Name;
+    // var FilterDate = this.ClientList.filter(m => m.Id === parseInt(ClientId));
+    // this.dynamicArray[index].ClientName = FilterDate[0].Name;
+    this.dynamicArray[index].ClientName = this.ClientList
+      .filter((yy: any) => yy.Id == parseInt(ClientId))
+      .map((xx: any) => { return xx.Name });
+
     //abhi eska koi use nhi h future m hoga 2/3/2022
     //brahamjot kaur 06/06/2022
     try {
@@ -4214,7 +4223,7 @@ export class DispatchTrackerComponent implements OnInit {
         objdynamic.CorrectionEntryRemarks = ItemEditDataArr[i].CorrectionEntryRemarks;
         objdynamic.IsCorrectionEntryReason = ItemEditDataArr[i].IsCorrectionEntryReason;
         objdynamic.IsCorrectionCodeId = ItemEditDataArr[i].IsCorrectionCodeId;
-        debugger
+
         if (ItemEditDataArr[i].SerialNoList != null) {
           objdynamic.GSerialNumbers = JSON.parse(ItemEditDataArr[i].SerialNoList);
         } else {
@@ -5662,11 +5671,12 @@ export class DispatchTrackerComponent implements OnInit {
     objNewItemGrid.SaleUnitName = "0";
     objNewItemGrid.SaleQty = "";
     objNewItemGrid.DispatchTypeId = "0";
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.IsCorrectionEntryReason = "0";
     objNewItemGrid.IsCorrectionCodeId = "0";
     if (this.model.DisatchTrackeringId != 0 && this.model.IsApproved == 1 && this.RoleCorrectionEntry == true) {

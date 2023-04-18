@@ -124,7 +124,7 @@ export class CompanyStateVendorItemModel {
     DispatchedStatus: string;
     DispatchedStatusArray: any;
     CircleId: any;
-
+    ReportMasterArray:any;
 }
 
 export class EmailSendTotalDataModel {

@@ -288,7 +288,8 @@ export class CustomerToCustomerComponent implements OnInit {
       objCSVTdata.StateArray = this.apiCSVIData.StateArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.SearchItemNameList = objCSVTdata.ItemArray;
@@ -454,33 +455,33 @@ export class CustomerToCustomerComponent implements OnInit {
   }
 
   newChangeClient(ClientId: any, index: any) {
-    console.log(ClientId, index);
+    //console.log(ClientId, index);
     this.SerialNoList = null;
     this.SerialNoTableShowhide = false;
     var FilterData = this.ClientList.filter(m => m.Id === parseInt(ClientId));
     console.log(FilterData);
     this.dynamicArray[index].NewCustomerName = FilterData[0].Name;
-    if (this.dynamicArray[index].NewCustomerName == "General") {
-      this.dynamicArray[index].ClientId = 60;
-    }
-    else if (this.dynamicArray[index].NewCustomerName == "Ascend") {
-      this.dynamicArray[index].ClientId = 99999;
-    }
+    // if (this.dynamicArray[index].NewCustomerName == "General") {
+    //   this.dynamicArray[index].ClientId = 60;
+    // }
+    // else if (this.dynamicArray[index].NewCustomerName == "Ascend") {
+    //   this.dynamicArray[index].ClientId = 99999;
+    // }
   }
 
   ChangeClient(ClientId: any, index: any) {
-    console.log(ClientId, index);
+    //console.log(ClientId, index);
     this.SerialNoList = null;
     this.SerialNoTableShowhide = false;
     var FilterData = this.ClientList.filter(m => m.Id === parseInt(ClientId));
     console.log(FilterData);
     this.dynamicArray[index].OldCustomerName = FilterData[0].Name;
-    if (this.dynamicArray[index].OldCustomerName == "General") {
-      this.dynamicArray[index].newClientId = 60;
-    }
-    else if (this.dynamicArray[index].OldCustomerName == "Ascend") {
-      this.dynamicArray[index].newClientId = 99999;
-    }
+    // if (this.dynamicArray[index].OldCustomerName == "General") {
+    //   this.dynamicArray[index].newClientId = 60;
+    // }
+    // else if (this.dynamicArray[index].OldCustomerName == "Ascend") {
+    //   this.dynamicArray[index].newClientId = 99999;
+    // }
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Client').val();
       if (valueItem != '0') {
@@ -856,11 +857,12 @@ export class CustomerToCustomerComponent implements OnInit {
     objNewItemGrid.SerialNo = "";
     // objNewItemGrid.Scrap = 0;
     // objNewItemGrid.Repaired = 0;
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.newClientId = "0";
     objNewItemGrid.ChangeQty = "";
     // objNewItemGrid.TypeFaultyId = "0";
@@ -1221,13 +1223,13 @@ export class CustomerToCustomerComponent implements OnInit {
         objCustomerToCustomerItemList.ChangeQty = this.dynamicArray[i].ChangeQty;
         this.CustomerItemList.push(objCustomerToCustomerItemList)
       }
-   
+
       objSaveUpdateCustomerToCustomerTransfer.CustomerItemList = this.CustomerItemList;
-     
+
       var formdata = new FormData();
       formdata.append('jsonDetail', JSON.stringify(objSaveUpdateCustomerToCustomerTransfer));
       // console.log(objSaveUpdateCustomerToCustomerTransfer)
-     
+
       this._CTCServices.SaveUpDateCustomerToCustomerTransfer(objSaveUpdateCustomerToCustomerTransfer).pipe(first()).subscribe(data => {
         if (data.Status == 1) {
           jQuery('#confirm').modal('hide');
@@ -1871,7 +1873,7 @@ export class CustomerToCustomerComponent implements OnInit {
 
   Validation() {
     var flag = 0;
-   
+
     // this.submitted = true;
     // //validation for wh state Id
     // if(this.model.WHStateId == "" && this.model.WHStateId == '0'){
@@ -2001,7 +2003,8 @@ export class CustomerToCustomerComponent implements OnInit {
       //   }
       // }
 
-      if (this.dynamicArray[icount].Class == "1519" && this.dynamicArray[icount].ClientId != "99999") {
+      // if (this.dynamicArray[icount].Class == "1519" && this.dynamicArray[icount].ClientId != "99999") {
+      if (this.dynamicArray[icount].Class == "1519") {
         if (this.dynamicArray[icount].SerialNo == "") {
           $('#txtSerialNo_' + icount).css('border-color', 'red');
           $('#txtSerialNo_' + icount).focus();
@@ -2045,7 +2048,7 @@ export class CustomerToCustomerComponent implements OnInit {
     for (var i = 0; i < this.dynamicArray.length; i++) {
       let FQty = (this.dynamicArray[i].FQty ?? 0);
       let Qty = (this.dynamicArray[i].ChangeQty ?? 0);
-   
+
       var ItemNameId = this.dynamicArray[i].ItemNameId
       const resultItemList = this.SearchItemNameList.filter(element => {
         return element.id === parseInt(ItemNameId);

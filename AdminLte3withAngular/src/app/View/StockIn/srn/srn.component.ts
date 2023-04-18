@@ -1066,7 +1066,8 @@ export class SrnComponent implements OnInit {
       objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.CompanyData = objCSVTdata.CompanyArray;
       this.SearchStateList = objCSVTdata.StateArray;
@@ -4546,11 +4547,14 @@ export class SrnComponent implements OnInit {
     objNewItemGrid.ReasonId = "0";
     objNewItemGrid.UnitName = "0";
     objNewItemGrid.Remarks = "";
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.DIList_Id = 0;
     this.dynamicArray.push(objNewItemGrid);
     return true;
@@ -4608,11 +4612,13 @@ export class SrnComponent implements OnInit {
       this.ItemAddrowhideshow = false;
       this.Correctioncolumnhideandshow = false;
     }
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.DIList_Id = 0;
     this.ReceiveddynamicArray.push(objNewItemGrid);
     return true;
