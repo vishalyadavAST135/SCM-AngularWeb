@@ -6,7 +6,7 @@ import { VendorOrWhModel } from '../_Model/purchaseOrderModel';
 import { WebAPIConfig, DropdownModel, CompanyStateVendorItemModel, EmailSendTotalDataModel, ApprovelStatusModel, WebErrorLogModel, MRNOAutoModel, MailSenderModel, SearchItemLineTypeModel } from '../_Model/commonModel';
 import { GlobalErrorHandlerServiceService } from './global-error-handler-service.service';
 import { map, mergeMap } from 'rxjs/operators';
-import { SearchMaterialRequisitionModel } from '../_Model/DispatchModel';
+import { DispatchTrackingModel, SearchMaterialRequisitionModel } from '../_Model/DispatchModel';
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json',
@@ -286,5 +286,10 @@ export class CommonService {
     let objUserModel = new UserModel();
     objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     return objUserModel;
+  }
+
+  UpdateSingleItemEntrybyId(objdata: DispatchTrackingModel): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "Dispatch/UpdateSingleItemEntrybyId", objdata, options);
   }
 }

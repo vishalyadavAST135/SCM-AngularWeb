@@ -42,6 +42,8 @@ import { debug } from 'console';
 import { SendmailService } from 'src/app/Service/sendmail.service';
 import { Modal } from 'bootstrap'
 import { SendMailComponent } from '../../Common/send-mail/send-mail.component';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 var PDFdata = null;
@@ -368,7 +370,9 @@ export class DispatchTrackerComponent implements OnInit {
       if (this.ArrayRoleId[i] == UserRole.SCMLead || this.ArrayRoleId[i] == UserRole.SCMHo) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == UserRole.DispatchCorrectionEntryRole) {
-        this.RoleCorrectionEntry = true;
+        // change by Hemant Tyagi True to false.
+        //this.RoleCorrectionEntry = true;
+        this.RoleCorrectionEntry = false;
       }
     }
 
@@ -693,9 +697,11 @@ export class DispatchTrackerComponent implements OnInit {
       objModel.WHId = whId;
       objModel.DTId = dtId;
       objModel.Flag = 7;
+      debugger
       this.DispatchInstructionList = [];
       this._BOQService.GetBOQNoORBOQRequestNo(objModel).subscribe((data) => {
         if (data.Data != "") {
+          debugger
           this.DispatchInstructionList = data.Data;
           let selDIArr = [];
           if (strDI != '0') {
@@ -1950,9 +1956,9 @@ export class DispatchTrackerComponent implements OnInit {
     // var FilterData = this.EquipmentTypeList.filter(
     //   m => m.id === parseInt(ItemId));
     // this.dynamicArray[index].EqpType = FilterData[0].itemName;
-    this.dynamicArray[index].EqpType=this.EquipmentTypeList
-    .filter(m => m.id === parseInt(ItemId))
-    .map(xx=>{return xx.itemName});
+    this.dynamicArray[index].EqpType = this.EquipmentTypeList
+      .filter(m => m.id === parseInt(ItemId))
+      .map(xx => { return xx.itemName });
     try {
       $('#tblOne > tbody  > tr').each(function () {
         var valueItem = $(this).find('.EqType').val();
@@ -2523,7 +2529,7 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
       this.AutoFillDispatchDetailByDIId(this.CreateDispatchForDIId);
     }
-    //this.ClearAllUploadFile();
+    this.ClearAllUploadFile();
   }
 
 
@@ -2557,10 +2563,12 @@ export class DispatchTrackerComponent implements OnInit {
       setTimeout(function () { this.IsError = false; }, 3000);
       return false;
       // validation on qty with stock qty.
-    } else if (this.validateStockQty() == 1) {
-      setTimeout(function () { this.IsError = false; }, 3000);
-      return false;
-    } else if (this.dynamicArray.length < 1) {
+    }
+    //  else if (this.validateStockQty() == 1) {
+    //   setTimeout(function () { this.IsError = false; }, 3000);
+    //   return false;
+    // } 
+    else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
     } else if (this.validationDICustomerSiteId() == 1) {
@@ -2775,7 +2783,9 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingItemDetialModel.Discount = this.dynamicArray[i].Discount;
         objDispatchTrackingItemDetialModel.HSN_SAC = this.dynamicArray[i].HSN;
         objDispatchTrackingItemDetialModel.EqpType_Id = this.dynamicArray[i].EqTypeId;
-        if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
+        if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+          || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState
+          || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
           objDispatchTrackingItemDetialModel.DispatchType_Id = this.dynamicArray[i].DispatchTypeId;
         } else {
           objDispatchTrackingItemDetialModel.DispatchType_Id = 0
@@ -2818,6 +2828,7 @@ export class DispatchTrackerComponent implements OnInit {
           objDispatchTrackingItemDetialModel.SaleQty = 0.00;
           objDispatchTrackingItemDetialModel.SaleUnit = 0;
         }
+
         var conver = this._Commonservices.checkUndefined(this.dynamicArray[i].ConversionUnit);
         if (conver == "") {
           objDispatchTrackingItemDetialModel.Qty = this.dynamicArray[i].Qty;
@@ -2882,17 +2893,17 @@ export class DispatchTrackerComponent implements OnInit {
         if (data.Status == 1) {
           this.model.DisatchTrackeringId = data.Value;
           this.IsDisabledPreviewGenratebutton = false;
-
+          this.ClearAllUploadFile();
           this.clearEditForm();
           alert('your data has been Succesfully with Document No-' + data.Remarks);
           this.GenerateDispatchPdfbyDispatchId(1)
           this.IsSaveButtonDisable = true;
-          this.ClearAllUploadFile();
         } else if (data.Status == 2) {
           jQuery('#confirm').modal('hide');
           alert('your data update successfully');
           this.IsDisabledPreviewGenratebutton = false;
           this.IsSaveButtonDisable = false;
+          this.ClearAllUploadFile();
         } else if (data.Status == 3) {
           alert('your documentNo already exists');
         } else if (data.Status == 0) {
@@ -3147,10 +3158,16 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ClearAllUploadFile() {
-    this.myInputVariable.nativeElement.value = '';
+
+    if (this.model.TrasporationMode == 1438) {
+      this.myInputVariable.nativeElement.value = '';
+    }
+
     this.myBillFileVariable.nativeElement.value = '';
     this.myTaxFileVariable.nativeElement.value = '';
-    this.myDocFileVariable.nativeElement.value = '';
+    if (this.IsReceivedHideShow == true) {
+      this.myDocFileVariable.nativeElement.value = '';
+    }
   }
 
   onTaxInvoiceFileChange(event) {
@@ -3237,6 +3254,9 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         objpara.DINo = this.model.DINo;
       }
+
+      objpara.ApprovalLevelId = this.model.IsHOLead;
+
       if (para == "Export") {
         this.Exportloading = true;
         this.gridApi.hideOverlay();
@@ -3361,7 +3381,7 @@ export class DispatchTrackerComponent implements OnInit {
               this.IsHideShowCancelBtn = true;
             }
 
-            if (this.CompanyId == 4) {
+            if (this.CompanyId == 4 || this.CompanyId == 1) {
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
                 this.IsSaveButtonDisable = true;
                 this.IsPartialUpDateDispatchRequest = true;
@@ -3379,45 +3399,44 @@ export class DispatchTrackerComponent implements OnInit {
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
               }
-
-
-
-            } else if (this.CompanyId == 1) {
-              if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
-                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
-                  || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
-                  || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
-                  || this.model.TransferTypeId == PageActivity.Dis_Vendor
-                  || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
-                  || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
-              ) {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = false;
-              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
-                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
-                  || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
-                  || this.model.TransferTypeId == PageActivity.Dis_VendorSale
-                  || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
-                ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
-              ) {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = false;
-              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = true;
-              } else {
-                this.IsSaveButtonDisable = false;
-                this.IsPartialUpDateDispatchRequest = false;
-                this.IsReceivedHideShow = false;
-                this.IsRecivedButtonDisable = true;
-              }
             }
+
+            // else if (this.CompanyId == 1) {
+            //   if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
+            //       || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_Vendor
+            //       || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
+            //       || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+            //     ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = true;
+            //   } else {
+            //     this.IsSaveButtonDisable = false;
+            //     this.IsPartialUpDateDispatchRequest = false;
+            //     this.IsReceivedHideShow = false;
+            //     this.IsRecivedButtonDisable = true;
+            //   }
+            // }
 
             if (this.model.TrasporationMode == TransPortModeType.ByRoad) {
               this.model.TransporterId = data.Data[0].Transporter_Id;
@@ -3465,9 +3484,19 @@ export class DispatchTrackerComponent implements OnInit {
                 }
               }
             }
-            if (data.Data[0].IsApproved == 1) {
+
+
+            // if (data.Data[0].IsApproved == 1) {
+            //   this.IsApprovalstatusbtnhideShow = false;
+            // }
+
+            //vishal, 20/04/2023
+            if ((this.UserRoleId == UserRole.SCMLead && data.Data[0].ApprovalLevelId == 1)
+              || data.Data[0].IsApproved == 1) {
               this.IsApprovalstatusbtnhideShow = false;
             }
+            //end -vishal
+
             if (this.ApprovalList != null) {
               this.ApproveStatusDataList = this.ApprovalList;
             } else {
@@ -4340,7 +4369,7 @@ export class DispatchTrackerComponent implements OnInit {
           }
 
         }
-
+        debugger
         objdynamic.HSN = parseInt(ItemEditDataArr[i].HSN_SAC);
         objdynamic.TotalAmount = ItemEditDataArr[i].TotalAmount;
         objdynamic.Discount = ItemEditDataArr[i].Discount;
@@ -4395,11 +4424,12 @@ export class DispatchTrackerComponent implements OnInit {
       totalpoqty += poqty;
       this.totalamount += ((poqty * Rate) - DiscountAmt);
       this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators(poqty * Rate);
+      debugger
       this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators((poqty * Rate) - DiscountAmt);
     }
+    debugger
     this.totalSumPOQuantity = totalpoqty.toFixed(2);
     this.totalSumQuantity = totalqty.toFixed(2);
-    //this.totalSumAmount=totalamount.toFixed(2);
     this.model.AmountChargeable = this._Commonservices.valueInWords(this.totalamount.toFixed(2));
     this.totalSumAmount = this._Commonservices.thousands_separators(this.totalamount);
   }
@@ -4415,6 +4445,8 @@ export class DispatchTrackerComponent implements OnInit {
     var Rate = 0.0;
     this.totalSumQuantity = 0.0;
     var HideConValue = 0.0;
+    var DiscountAmt = 0.0;
+
     for (var i = 0, len = this.dynamicArray.length; i < len; i++) {
       if (this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
         poqty = parseFloat(this.dynamicArray[i].SaleQty == "" ? 0.0 : this.dynamicArray[i].SaleQty);
@@ -4422,6 +4454,8 @@ export class DispatchTrackerComponent implements OnInit {
       else {
         poqty = parseFloat(this.dynamicArray[i].Qty == "" ? 0.0 : this.dynamicArray[i].Qty);
       }
+      DiscountAmt = parseFloat(this.dynamicArray[i].Discount == "" ? 0.0 : this.dynamicArray[i].Discount);
+
       Rate = parseFloat(this.dynamicArray[i].Rate == "" ? 0.0 : this.dynamicArray[i].Rate);
       IGSTval = parseFloat(this.dynamicArray[i].IGSTValue == "" ? 0.0 : this.dynamicArray[i].IGSTValue);
       if (this._Commonservices.checkUndefined(this.dynamicArray[i].HideConversionValue) != "") {
@@ -4430,9 +4464,10 @@ export class DispatchTrackerComponent implements OnInit {
       }
       totalpoqty += poqty;
       //totalamount+=((poqty*Rate)-DiscountAmt);
-      this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators(poqty * Rate);
+      this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators((poqty * Rate));
       this.dynamicArray[i].IGST = (((poqty * Rate) * IGSTval) / 100);
-      this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators((poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
+      this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators(
+        (poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
       IGSTAmount = ((poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
       this.totalamount += IGSTAmount;
     }
@@ -4444,7 +4479,9 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ItemRateOnblur() {
-    if (this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+    if (this.model.TransferTypeId == PageActivity.Dis_Vendor 
+      || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale 
+      || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
       this.fnBindItemGrossToatlTax();
     } else {
       this.fnBindItemGrossToatl();
@@ -4659,7 +4696,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.PhoneNo = "";
     this.IsVendorTax = false;
     this.HideDispatchTo();
-    //this.ClearAllUploadFile();
+    this.ClearAllUploadFile();
   }
 
   HideDispatchTo() {
@@ -5681,7 +5718,7 @@ export class DispatchTrackerComponent implements OnInit {
     objNewItemGrid.IsCorrectionCodeId = "0";
     if (this.model.DisatchTrackeringId != 0 && this.model.IsApproved == 1 && this.RoleCorrectionEntry == true) {
       objNewItemGrid.IsCorrection = true;
-      this.Correctioncolumnhideandshow = true;
+      this.Correctioncolumnhideandshow = false;
       objNewItemGrid.IsCorrectionDisabled;
     } else {
       objNewItemGrid.IsCorrection = false;
@@ -7214,5 +7251,71 @@ export class DispatchTrackerComponent implements OnInit {
       objWebErrorLogModel.ErrorPage = "Podetail";
       this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
     }
+  }
+
+  UpdateDispatchItemEntry(index: number) {
+    var objDTModel = new DispatchTrackingModel();
+    objDTModel.DispatchTracker_Id = this.DispatchTracker_Id;
+    objDTModel.UserId = this.UserId;
+    objDTModel.Company_Id = this.CompanyId;
+    objDTModel.Pageflag = this.model.TransferTypeId;
+    objDTModel.Flag = "DT";
+    this.DispatchTrackingItem = [];
+    let objItem = new DispatchTrackingItemDetialModel();
+    {
+      objItem.Id = this.dynamicArray[index].Id;
+      objItem.HSN_SAC = this.dynamicArray[index].HSN;
+      objItem.DispatchType_Id = this.dynamicArray[index].DispatchTypeId;
+      objItem.SubDescription = this.dynamicArray[index].SubDescription;
+      objItem.Rate = this.dynamicArray[index].Rate;
+      objItem.Discount = this.dynamicArray[index].Discount;
+
+      objItem.IGST = this.dynamicArray[index].IGST;
+      objItem.IGSTValue = this.dynamicArray[index].IGSTValue;
+      objItem.CGSTRate = this.dynamicArray[index].CGSTRate;
+      objItem.CGST = this.dynamicArray[index].CGST;
+      objItem.SGSTRate = this.dynamicArray[index].SGSTRate;
+      objItem.SGST = this.dynamicArray[index].SGST;
+      objItem.TCSRate = this.dynamicArray[index].TCSRate;
+      objItem.TCS = this.dynamicArray[index].TCS;
+      objItem.TotalInvoiceValue = this.dynamicArray[index].TotalInvoiceValue;
+      objItem.FreightCharge = this.dynamicArray[index].FreightCharge;
+      objItem.TotalAmountWithFreightCharge = this.dynamicArray[index].TotalAmountWithFreightCharge;
+
+      objItem.ReceivedQty = this.dynamicArray[index].ReceivedQty;
+      objItem.ReasonId = this.dynamicArray[index].ReasonId;
+      objItem.Remarks = this.dynamicArray[index].Remarks;
+
+      objItem.ManufacturerDate = this.dynamicArray[index].ManufDate;
+      objItem.ManufacturerSerialNo = "";
+      objItem.InvoiceTaxDate = this.dynamicArray[index].InvoiceTaxDate;
+      objItem.InvoiceTaxNo = this.dynamicArray[index].InvoiceTaxNo
+    };
+    this.DispatchTrackingItem.push(objItem);
+    objDTModel.DispatchTrackerItemList = this.DispatchTrackingItem;
+    this.UpdateEntryConfirmBox(objDTModel);
+  }
+
+
+  UpdateEntryConfirmBox(objmodel: DispatchTrackingModel) {
+    Swal.fire({
+      title: 'Are you sure want to update?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      confirmButtonColor: '#28a745',
+      cancelButtonText: 'No',
+      cancelButtonColor: '#d33'
+    }).then((result) => {
+      if (result.value) {
+        this._Commonservices.UpdateSingleItemEntrybyId(objmodel).subscribe(data => {
+          if (data.Status == 1) {
+            Swal.fire('', data.Remarks, 'success')           
+          } else {
+            Swal.fire('', data.Remarks, 'success')            
+          }
+        })
+      }
+    })
   }
 }

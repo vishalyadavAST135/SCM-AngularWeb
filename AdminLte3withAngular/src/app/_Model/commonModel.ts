@@ -143,8 +143,7 @@ export class EmailModel {
     PoId: number;
     //vishal
     DocumentFile: string;
-    MailFor: string;
- 
+    MailFor: string; 
 }
 
 export class ChangePasswordModel {

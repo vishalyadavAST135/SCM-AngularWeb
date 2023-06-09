@@ -1194,10 +1194,12 @@ export class FaultytorepairComponent implements OnInit {
     } else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
-    } else if (this.validateStockQty() == 1) {
-      setTimeout(function () { this.IsError = false; }, 3000);
-      return false;
-    } else {
+    }
+    // else if (this.validateStockQty() == 1) {
+    //   setTimeout(function () { this.IsError = false; }, 3000);
+    //   return false;
+    // }
+    else {
       jQuery('#confirm').modal('show');
     }
   }

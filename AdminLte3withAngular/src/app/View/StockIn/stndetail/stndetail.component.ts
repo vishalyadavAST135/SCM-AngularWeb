@@ -1122,14 +1122,14 @@ export class StndetailComponent implements OnInit {
             this.model.ddlDespatchby = data.Data[0].IsDespatch;
             this.ChangeDespatchby(this.model.ddlDespatchby);
             if (this.model.ddlDespatchby == 1) {
-              this.model.Transporter = data.Data[0].TranspoterName;;
+              this.model.Transporter = data.Data[0].TranspoterName;
               this.model.TransporterGSTNo = data.Data[0].TransporterGSTNO;
             } else if (this.model.ddlDespatchby == 2) {
-              this.model.SenderName = data.Data[0].TranspoterName;;
+              this.model.SenderName = data.Data[0].TranspoterName;
               this.model.SenderNo = data.Data[0].TransporterGSTNO;
               this.model.SenderAddress = data.Data[0].SenderAddress;
             } else {
-              this.model.CourierCompanyName = data.Data[0].TranspoterName;;
+              this.model.CourierCompanyName = data.Data[0].TranspoterName;
               this.model.CourierPhoneNo = data.Data[0].TransporterGSTNO;
               this.model.DocketNo = data.Data[0].DocketNo;
             }
@@ -1327,11 +1327,11 @@ export class StndetailComponent implements OnInit {
 
             //vishal, 05/12/2022
             if (this.model.ddlDespatchby == 1) {
-              this.model.TranspoterName = data.Data[0].TrasporationName ?? "";
+              this.model.Transporter = data.Data[0].TrasporationName ?? "";
               this.model.TransporterGSTNo = data.Data[0].TrasporationGSTNO ?? "";
               this.model.VehicleNo = data.Data[0].VehicleNumber;
             } else {
-              this.model.TranspoterName = "";
+              this.model.Transporter = "";
               this.model.TransporterGSTNo = "";
               this.model.VehicleNo = "";
             }
@@ -2810,8 +2810,8 @@ export class StndetailComponent implements OnInit {
     // } else {
     //   this.dynamicArray[index].CustomerCode = "General";
     // }    
-    this.dynamicArray[index].CustomerCode = this.ClientList.filter((yy:any) => yy.Id == ItemId)
-    .map((xx: any) => {return xx.Name});
+    this.dynamicArray[index].CustomerCode = this.ClientList.filter((yy: any) => yy.Id == ItemId)
+      .map((xx: any) => { return xx.Name });
 
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Client').val();
@@ -3063,6 +3063,7 @@ export class StndetailComponent implements OnInit {
     } else {
       $("#txtGateEntryDate").css('border-color', '');
     }
+
     if (this.model.ddlDespatchby == "1") {
       if ($('#txtTransporter').val() == "" || $('#txtTransporter').val() == undefined) {
         $('#txtTransporter').css('border-color', 'red');
@@ -3071,6 +3072,7 @@ export class StndetailComponent implements OnInit {
       } else {
         $("#txtTransporter").css('border-color', '');
       }
+
       if (this.model.TransporterGSTNo == "" || this.model.TransporterGSTNo == null) {
         $('#txtTransporterGSTNo').css('border-color', 'red');
         $('#txtTransporterGSTNo').focus();
@@ -3078,6 +3080,7 @@ export class StndetailComponent implements OnInit {
       } else {
         $("#txtTransporterGSTNo").css('border-color', '');
       }
+
       if ($('#txtVehicleNo').val() == "" || $('#txtTransporter').val() == undefined) {
         $('#txtVehicleNo').css('border-color', 'red');
         $('#txtVehicleNo').focus();
@@ -3093,6 +3096,7 @@ export class StndetailComponent implements OnInit {
       } else {
         $("#txtLRNo").css('border-color', '');
       }
+
       if (this.model.LRdate == "" || this.model.LRdate == null) {
         $('#txtLRdate').css('border-color', 'red');
         $('#txtLRdate').focus();

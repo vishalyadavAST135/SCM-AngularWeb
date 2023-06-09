@@ -133,7 +133,7 @@
                     (inputCleared)="clearedMRNO()" [(ngModel)]="model.CuUniqueSiteId" (selected)='selectMRNO($event)'
                     (inputChanged)='onChangeMRNOId($event)' (inputFocused)='onFocused($event)'
                     [itemTemplate]="MRNoTemplate" [notFoundTemplate]="MRNoTemplate" [debounceTime]="600"
-                    [minQueryLength]="2" placeHolder="Search Unique Site Id">
+                    [minQueryLength]="2" placeHolder="Search DI NO.">
                   </ng-autocomplete>
                   <ng-template #MRNoTemplate let-item>
                     <a [innerHTML]="item.Text"></a>

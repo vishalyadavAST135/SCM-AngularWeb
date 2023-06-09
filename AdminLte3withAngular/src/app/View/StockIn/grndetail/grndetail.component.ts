@@ -964,7 +964,8 @@ export class GRNDetailComponent implements OnInit {
             if (this.GRNPdfData.GRNById == 2 || this.GRNPdfData.GRNById == 3) {
               this.generateForJOBPDF('Open');
             } else {
-              this.generatePDF('Open');
+              //this.generatePDF('Open');
+              this.generatePDF('print');
             }
           }
         });
@@ -1363,8 +1364,8 @@ export class GRNDetailComponent implements OnInit {
         },
       },
       images: {
-        snow: `${this.GRNPdfData.Logo}`,
-        //snow: 'http://localhost:4200/assets/logo.jpg',
+        //snow: `${this.GRNPdfData.Logo}`,
+         snow: 'http://localhost:4200/assets/logo.jpg',
         //snow: 'http://scm.astnoc.com/assets/logo.jpg'
       },
     }

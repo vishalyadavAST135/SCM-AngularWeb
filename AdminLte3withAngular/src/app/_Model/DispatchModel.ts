@@ -182,6 +182,7 @@ export class SearchDispatchTrackerModel extends CommonSearchPanelModel
     CustomerSiteId:string;
     WHStateId: number; //vishal
     DispatchNoId:number
+    ApprovalLevelId:number
 }
 
 // Brahamjot kaur 22/6/2022

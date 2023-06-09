@@ -353,9 +353,9 @@ export class PodetailComponent implements OnInit {
       this.SearchPOCancelOpenCloseHistoryCountList();
     }, 300);
 
-    // setTimeout(() => {
-    //   this.SearchPOList();
-    // }, 700);
+    setTimeout(() => {
+      this.SearchPOList();
+    }, 700);
 
     // get missedPo detail. commit by Hemant tyagi
     //this.GetMissedPo();
@@ -3241,7 +3241,7 @@ export class PodetailComponent implements OnInit {
         this.uplodfile = null;
         setTimeout(() => {
           //alert(data.Remarks)
-          Swal.fire('',data.Remarks, 'success')
+          Swal.fire('', data.Remarks, 'success')
         }, 300);
       } else if (data.Status == 3) {
         setTimeout(() => {
@@ -3274,13 +3274,13 @@ export class PodetailComponent implements OnInit {
           this.ClearPODetail();
         } else if (data.Status == 2) {
           setTimeout(() => {
-           // alert(data.Remarks)
-           Swal.fire('',data.Remarks, 'success')
+            // alert(data.Remarks)
+            Swal.fire('', data.Remarks, 'success')
           }, 300);
         } else if (data.Status == 3) {
           setTimeout(() => {
             //alert(data.Remarks)
-            Swal.fire('',data.Remarks, 'success')
+            Swal.fire('', data.Remarks, 'success')
           }, 300);
         }
       });
@@ -3535,13 +3535,13 @@ export class PodetailComponent implements OnInit {
     this.totalSumAmount = this._Commonservices.thousands_separators(this.totalAmount.toFixed(2));
   }
 
-  SavePoItemDetialByExcel() { 
+  SavePoItemDetialByExcel() {
     debugger
 
     try {
       if (this.model.hiddenPoId == 0) {
         //alert('Please Fill First PO Basic Information');
-       Swal.fire('','Please Fill First PO Basic Information', 'warning' )
+        Swal.fire('', 'Please Fill First PO Basic Information', 'warning')
         return false;
       } else {
         this.objPoItemDetialList = [];
@@ -3662,11 +3662,28 @@ export class PodetailComponent implements OnInit {
 
     if (this.PoId != null || this.PoId != undefined && this.Pdfurl != '') {
       //if (confirm("Do you want Amend the Purchase Order?") == true) {
-        if (Swal.fire('',"Do you want Amend the Purchase Order?", 'question') == true) {
-        this.POAmendedDetail();
-      } else {
-        this.model.IsAmended = 0;
-      }
+      //   if (Swal.fire('Are you sure?',"Do you want Amend the Purchase Order?", 'question') == true) {
+      //   debugger
+      //   this.POAmendedDetail();
+      // } else {
+      //   this.model.IsAmended = 0;
+      // }
+
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want Amend the Purchase Order?",
+        type: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "Yes",
+        closeOnConfirm: false
+      }).then((result: any) => {        
+        if (result.value) {
+          this.POAmendedDetail();
+        } else {          
+          this.model.IsAmended = 0;
+        }
+      });
     }
   }
 
@@ -3696,7 +3713,7 @@ export class PodetailComponent implements OnInit {
         objEmailModel.PdfUrl = this.PdfEmailurl;
         objEmailModel.PoId = this.PoId;
         objEmailModel.MailFor = 'PO';
-        
+
 
         var formdata = new FormData();
         for (var i = 0; i < this.MailFile.length; i++) {
@@ -4421,7 +4438,7 @@ export class PodetailComponent implements OnInit {
         .filter((ftr: any) => ftr.EMITypeId == emiId && ftr.ExpenseTypeId == expenseTypeId
           && ftr.CategoryId == categoryId)
         .map((xx: any) => {
-          this.PoNo = xx.PoSeries;          
+          this.PoNo = xx.PoSeries;
           this.model.ReportMasterId = xx.ReportMasterId;
         });
     }

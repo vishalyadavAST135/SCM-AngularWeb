@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { MaterialMovementModel, SearchMaterialModel } from '../_Model/MaterialMovementTracker';
 import { ApprovelStatusModel, DropdownModel, WebAPIConfig } from '../_Model/commonModel'
 import { PoSearchModel, VendorOrWhModel } from '../_Model/purchaseOrderModel';
-import { DISearchModel, DispatchTrackingModel, SearchDispatchTrackerModel, SearchMaterialInstallationModel, SearchMaterialRequisitionModel, SearchSRNUsesModel, SRNInstructionSearchModel } from '../_Model/DispatchModel';
+import { DISearchModel, DispatchTrackingItemDetialModel, DispatchTrackingModel, SearchDispatchTrackerModel, SearchMaterialInstallationModel, SearchMaterialRequisitionModel, SearchSRNUsesModel, SRNInstructionSearchModel } from '../_Model/DispatchModel';
 import { ItemEquipmentDetail } from '../_Model/MastersModel';
 
 const headers = new HttpHeaders({
@@ -50,7 +50,7 @@ export class MaterialMovementService {
     return this.httpclient.post(objBaseUrl.ApIUrl + "MaterialMovement/AddUpdate", formdata);
   }
 
-    GetWHAddressAndWHListByStId(objParameter: DropdownModel): Observable<any> {
+  GetWHAddressAndWHListByStId(objParameter: DropdownModel): Observable<any> {
     objParameter.User_Id = this.UserId;
     let Para = JSON.stringify(objParameter);
     let params = new HttpParams().set("para", Para);
@@ -233,5 +233,6 @@ export class MaterialMovementService {
   GetSRNInstructionListByDIId(objdata: SRNInstructionSearchModel): Observable<any> {
     var objBaseUrl = new WebAPIConfig();
     return this.httpclient.post(objBaseUrl.ApIUrl + "SRN/GetSRNInstructionListByDIId", objdata, options);
-  }  
+  }
+ 
 }
