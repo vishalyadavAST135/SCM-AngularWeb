@@ -21,7 +21,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
 import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-handler-service.service';
-import { approvalTooltipComponent } from 'src/app/renderer/Approvaltooltip.component';
+import { approvalTooltipComponent } from 'src/app/renderer/approvaltooltip.component';
 import { ApprovalrendererComponent } from 'src/app/renderer/approvalrenderer/approvalrenderer.component';
 import { debug } from 'console';
 import { MaterialMovementService } from 'src/app/Service/material-movement.service';

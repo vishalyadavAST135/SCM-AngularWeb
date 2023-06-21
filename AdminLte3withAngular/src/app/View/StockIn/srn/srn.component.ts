@@ -22,7 +22,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { ModalDismissReasons, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { IfStmt } from '@angular/compiler';
 import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-handler-service.service';
-import { approvalTooltipComponent } from 'src/app/renderer/Approvaltooltip.component';
+import { approvalTooltipComponent } from 'src/app/renderer/approvaltooltip.component';
 import { ApprovalrendererComponent } from 'src/app/renderer/approvalrenderer/approvalrenderer.component';
 import { first } from 'rxjs/operators';
 import { SrnPdfServiceService } from 'src/app/Service/srn-pdf-service.service';

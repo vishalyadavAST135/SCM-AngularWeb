@@ -24,7 +24,7 @@ import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-h
 import * as JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
 import { ApprovalrendererComponent } from 'src/app/renderer/approvalrenderer/approvalrenderer.component';
-import { approvalTooltipComponent } from 'src/app/renderer/Approvaltooltip.component';
+import { approvalTooltipComponent } from 'src/app/renderer/approvaltooltip.component';
 import { first } from 'rxjs/operators';
 import { SiteServiceService } from 'src/app/Service/site-service.service';
 import { DispatchPdfServiceService } from 'src/app/Service/dispatch-pdf-service.service';
