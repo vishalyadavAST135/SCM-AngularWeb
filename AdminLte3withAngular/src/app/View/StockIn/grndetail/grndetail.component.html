@@ -540,6 +540,8 @@
                             class="Mandatoryfield"><b>*</b></span></th> -->
                         <th *ngIf="EquipmentTypeHideShow">Equipment Type<span style="color:red;"
                             class="Mandatoryfield"><b>*</b></span></th>
+                        <th *ngIf="EquipmentTypeHideShow">Stock Type<span style="color:red;"
+                            class="Mandatoryfield"><b>*</b></span></th>
                         <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
                             class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                         <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span
@@ -636,12 +638,18 @@
                           </select>
                         </td>
                         <!-- <td style="width:80px;" *ngIf="ItemAddrowhideshow"> -->
-                        <td style="width:80px;" *ngIf="EquipmentTypeHideShow">
-                          <select class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}"
-                            [(ngModel)]="dynamicArray[i].EqTypeId" (change)="ChangeEqupmnet(dynamicArray[i].EqTypeId,i)"
-                            readonly>
+                        <td style="width:100px;" *ngIf="EquipmentTypeHideShow">
+                          <select style="width:100px;" class="form-control form-control-sm EqType" id="ddlEqTypeId_{{i}}"
+                            [(ngModel)]="dynamicArray[i].EqTypeId" (change)="ChangeEqupmnet(dynamicArray[i].EqTypeId,i)">
                             <option class="dropdown-item" [value]="0">Select</option>
                             <option *ngFor="let item of EquipmentTypeList" [value]="item.id">{{item.itemName}}</option>
+                          </select>
+                        </td>
+                        <td style="width:100px;" *ngIf="EquipmentTypeHideShow">
+                          <select style="width:100px;" class="form-control form-control-sm EqType" id="ddlStockTypeId_{{i}}"
+                            [(ngModel)]="dynamicArray[i].ClientId">
+                            <option class="dropdown-item" [value]="0">Select</option>
+                            <option *ngFor="let item of ClientList" [value]="item.Id">{{item.Name}}</option>
                           </select>
                         </td>
                         <td style="width:180px;">
@@ -850,7 +858,6 @@
                             style="width: 120px;" multiple #filePicker (change)="FaultyImageFileChange($event,i)"
                             accept="application/pdf, image/jpeg" />
                         </td> -->
-
                         <td *ngIf="Correctioncolumnhideandshow">
                           <select style="width:120px;" (change)="ChangeCorrectionEntryReason(i)"
                             class="form-control form-control-sm TaxWith" id="ddlCentryReason_{{i}}"
@@ -877,17 +884,18 @@
                         <td *ngIf="Correctioncolumnhideandshow"></td>
                         <td>Total Gross</td>
                         <td colspan="3"></td>
+                        <td *ngIf="EquipmentTypeHideShow"></td>
+                        <td *ngIf="EquipmentTypeHideShow"></td>
                         <td *ngIf="ItemAddrowhideshow"></td>
-                        <td *ngIf="IsHideQty"></td>
-                        <td *ngIf="IsHideQty"></td>
+                        <td></td>
+                        <td></td>
                         <td style="text-align:center;">{{totalSumAcceptedQty}} </td>
                         <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-
+                        <td *ngIf="IsHideQty"></td>
+                        <td *ngIf="IsHideQty"></td>
                         <td style="text-align:center;">{{totalSumAmount}} </td>
                         <td></td>
                         <td></td>
@@ -898,16 +906,13 @@
                         <td></td>
                         <td></td>
                         <td></td>
-
                         <td *ngIf="IsHideQty"></td>
                         <td *ngIf="IsHideQty"></td>
                         <td style="text-align:center;">{{GrandAllSumtotalInvoiceValue}}</td>
                         <td></td>
-
                         <td *ngIf="Correctioncolumnhideandshow"></td>
                         <td *ngIf="Correctioncolumnhideandshow"></td>
                         <td *ngIf="Correctioncolumnhideandshow"></td>
-
                       </tr>
                       <tr *ngIf="Addrowhideandshow">
                         <td (click)="addRow()">
@@ -917,20 +922,19 @@
                     </tbody>
                   </table>
                 </div>
-
-                <br>             
-                  <div class="row mb-1">
-                    <label class="col-form-label-xs col-sm-1">Dispatch by <span style="color:red;"
-                        class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2">
-                      <select class="form-control form-control-sm" [(ngModel)]="model.ddlDespatchby"
-                        (change)="ChangeDespatchby(model.ddlDespatchby)">
-                        <option class="dropdown-item" value="1">By Transport</option>
-                        <option class="dropdown-item" value="2">By Hand</option>
-                        <option class="dropdown-item" value="3">By Courier</option>
-                      </select>
-                    </div>
-                    <!-- <label class="col-form-label-xs col-sm-1">Select Transporter<span style="color: red;"
+                <br>
+                <div class="row mb-1">
+                  <label class="col-form-label-xs col-sm-1">Dispatch by <span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <select class="form-control form-control-sm" [(ngModel)]="model.ddlDespatchby"
+                      (change)="ChangeDespatchby(model.ddlDespatchby)">
+                      <option class="dropdown-item" value="1">By Transport</option>
+                      <option class="dropdown-item" value="2">By Hand</option>
+                      <option class="dropdown-item" value="3">By Courier</option>
+                    </select>
+                  </div>
+                  <!-- <label class="col-form-label-xs col-sm-1">Select Transporter<span style="color: red;"
         class="Mandatoryfield"><b>*</b></span></label>
     <div class="col-sm-2">
       <select class="form-control form-control-sm" id="txtTransporterId" [(ngModel)]="model.TransporterId"
@@ -940,111 +944,111 @@
         </option>
       </select>
     </div> -->
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter Name<span
-                        style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <input type="text" id="txtTransporterName" rows="2" autocomplete="off"
-                        [(ngModel)]="model.TransporterName" placeholder="" (keypress)="TransporterNameKeyPress()"
-                        class="form-control form-control-sm" />
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter GST No<span
-                        style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <input type="text" id="txtTransporterGSTNo" autocomplete="off" maxlength="15"
-                        [(ngModel)]="model.TransporterGSTNo" placeholder="" (keypress)="TransporteGSTNoKeyPress()"
-                        class="form-control form-control-sm" />
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Name<span style="color: red;"
-                        class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsByHand">
-                      <input type="text" id="txtSenderName" autocomplete="off" [(ngModel)]="model.SenderName"
-                        placeholder="" (keypress)="SenderNameKeyPress()" class="form-control form-control-sm" />
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Phone No<span style="color: red;"
-                        class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsByHand">
-                      <input type="text" id="txtSenderNo" autocomplete="off" maxlength="12" [(ngModel)]="model.SenderNo"
-                        placeholder="" (keypress)="senderNoKeyPress()" class="form-control form-control-sm" />
-                    </div>
-
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Address<span style="color: red;"
-                        class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsByHand">
-                      <textarea type="text" id="IsByHand" autocomplete="off" id="txtSenderAddress"
-                        [(ngModel)]="model.SenderAddress" placeholder="" (keypress)="SenderAddressKeyPress()"
-                        class="form-control form-control-sm"></textarea>
-                    </div>
-
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Courier Company Name<span
-                        style="color: red;" class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsCourier">
-                      <input type="text" id="txtCourierCompanyName" autocomplete="off"
-                        [(ngModel)]="model.CourierCompanyName" placeholder="" class="form-control form-control-sm" />
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Courier Phone No<span
-                        style="color: red;" class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsCourier">
-                      <input type="text" id="txtCourierPhoneNo" autocomplete="off" maxlength="12"
-                        [(ngModel)]="model.CourierPhoneNo" placeholder="" class="form-control form-control-sm" />
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Docket No<span style="color: red;"
-                        class="Mandatoryfield"><b></b></span></label>
-                    <div class="col-sm-2" *ngIf="IsCourier">
-                      <input type="text" id="txtDocketNo" autocomplete="off" [(ngModel)]="model.DocketNo" placeholder=""
-                        class="form-control form-control-sm" />
-                    </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter Name<span
+                      style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <input type="text" id="txtTransporterName" rows="2" autocomplete="off"
+                      [(ngModel)]="model.TransporterName" placeholder="" (keypress)="TransporterNameKeyPress()"
+                      class="form-control form-control-sm" />
                   </div>
-                  <div class="row mb-1">
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Vehicle No<span style="color:red;"
-                        class="Mandatoryfield" *ngIf="IsVehicleValidation"><b>*</b></span></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <input type="text" id="txtVehicleNo" autocomplete="off" (keypress)="keyPressVehicleNo()"
-                        [(ngModel)]="model.VehicleNo" class="form-control form-control-sm" placeholder="">
-                    </div>
-                    <label class="col-form-label-xs col-sm-1">Material received by<span style="color:red;"
-                        class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2">
-                      <input type="text" id="txtIndentorName" autocomplete="off" (keypress)="keyPressIndentorName()"
-                        [(ngModel)]="model.IndentorName" class="form-control form-control-sm" placeholder="">
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty No<span style="color:red;"
-                        class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <input type="text" id="txtLRNo" autocomplete="off" (keypress)="keyPressLRNo()"
-                        [(ngModel)]="model.LRNo" class="form-control form-control-sm" placeholder="">
-                    </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty Date <span style="color:red;"
-                        class="Mandatoryfield"><b>*</b></span></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <div class="input-group" (mouseenter)="onKeypressLRdate($event)">
-                        <input class="form-control form-control-sm" id="txtLRdate" readonly name="dpLRDate"
-                          [(ngModel)]="model.LRdate" autocomplete="off" ngbDatepicker #dLRDate="ngbDatepicker">
-                        <div class="input-group-append">
-                          <span class="input-group-text" (click)="dLRDate.toggle()"><i
-                              class="far fa-calendar-alt"></i></span>
-                        </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Transporter GST No<span
+                      style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <input type="text" id="txtTransporterGSTNo" autocomplete="off" maxlength="15"
+                      [(ngModel)]="model.TransporterGSTNo" placeholder="" (keypress)="TransporteGSTNoKeyPress()"
+                      class="form-control form-control-sm" />
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Name<span style="color: red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsByHand">
+                    <input type="text" id="txtSenderName" autocomplete="off" [(ngModel)]="model.SenderName"
+                      placeholder="" (keypress)="SenderNameKeyPress()" class="form-control form-control-sm" />
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Phone No<span style="color: red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsByHand">
+                    <input type="text" id="txtSenderNo" autocomplete="off" maxlength="12" [(ngModel)]="model.SenderNo"
+                      placeholder="" (keypress)="senderNoKeyPress()" class="form-control form-control-sm" />
+                  </div>
+
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsByHand">Sender Address<span style="color: red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsByHand">
+                    <textarea type="text" id="IsByHand" autocomplete="off" id="txtSenderAddress"
+                      [(ngModel)]="model.SenderAddress" placeholder="" (keypress)="SenderAddressKeyPress()"
+                      class="form-control form-control-sm"></textarea>
+                  </div>
+
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Courier Company Name<span
+                      style="color: red;" class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsCourier">
+                    <input type="text" id="txtCourierCompanyName" autocomplete="off"
+                      [(ngModel)]="model.CourierCompanyName" placeholder="" class="form-control form-control-sm" />
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Courier Phone No<span style="color: red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsCourier">
+                    <input type="text" id="txtCourierPhoneNo" autocomplete="off" maxlength="12"
+                      [(ngModel)]="model.CourierPhoneNo" placeholder="" class="form-control form-control-sm" />
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsCourier">Docket No<span style="color: red;"
+                      class="Mandatoryfield"><b></b></span></label>
+                  <div class="col-sm-2" *ngIf="IsCourier">
+                    <input type="text" id="txtDocketNo" autocomplete="off" [(ngModel)]="model.DocketNo" placeholder=""
+                      class="form-control form-control-sm" />
+                  </div>
+                </div>
+                <div class="row mb-1">
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Vehicle No<span style="color:red;"
+                      class="Mandatoryfield" *ngIf="IsVehicleValidation"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <input type="text" id="txtVehicleNo" autocomplete="off" (keypress)="keyPressVehicleNo()"
+                      [(ngModel)]="model.VehicleNo" class="form-control form-control-sm" placeholder="">
+                  </div>
+                  <label class="col-form-label-xs col-sm-1">Material received by<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2">
+                    <input type="text" id="txtIndentorName" autocomplete="off" (keypress)="keyPressIndentorName()"
+                      [(ngModel)]="model.IndentorName" class="form-control form-control-sm" placeholder="">
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty No<span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <input type="text" id="txtLRNo" autocomplete="off" (keypress)="keyPressLRNo()"
+                      [(ngModel)]="model.LRNo" class="form-control form-control-sm" placeholder="">
+                  </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty Date <span style="color:red;"
+                      class="Mandatoryfield"><b>*</b></span></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <div class="input-group" (mouseenter)="onKeypressLRdate($event)">
+                      <input class="form-control form-control-sm" id="txtLRdate" readonly name="dpLRDate"
+                        [(ngModel)]="model.LRdate" autocomplete="off" ngbDatepicker #dLRDate="ngbDatepicker">
+                      <div class="input-group-append">
+                        <span class="input-group-text" (click)="dLRDate.toggle()"><i
+                            class="far fa-calendar-alt"></i></span>
                       </div>
                     </div>
-
                   </div>
-                  <div class="row mb-1">
+
+                </div>
+                <div class="row mb-1">
 
 
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty Pdf/Image<span
-                        style="color:red;" class="Mandatoryfield"><b>*</b></span><a *ngIf="IsLRFile"
-                        (click)="LRPdfViewfileClick()" title="File View" style="color:green"><i
-                          class="fa fa-eye"></i></a></label>
-                    <div class="col-sm-2" *ngIf="IsTransporter">
-                      <input type="file" id="LRPdfFileimage" autocomplete="off" #LRfilePicker
-                        (change)="onLRPdfFileChange($event)" class="form-control form-control-sm"
-                        accept="application/pdf, image/jpeg" placeholder="Choose file">
-                    </div>
-                    <label class="col-form-label-xs col-sm-1">Remarks</label>
-                    <div class="col-sm-2">
-                      <textarea type="text" id="txtRemarks" autocomplete="off" [(ngModel)]="model.Remarks"
-                        class="form-control form-control-sm" placeholder=""></textarea>
-                    </div>
+                  <label class="col-form-label-xs col-sm-1" *ngIf="IsTransporter">Bilty Pdf/Image<span
+                      style="color:red;" class="Mandatoryfield"><b>*</b></span><a *ngIf="IsLRFile"
+                      (click)="LRPdfViewfileClick()" title="File View" style="color:green"><i
+                        class="fa fa-eye"></i></a></label>
+                  <div class="col-sm-2" *ngIf="IsTransporter">
+                    <input type="file" id="LRPdfFileimage" autocomplete="off" #LRfilePicker
+                      (change)="onLRPdfFileChange($event)" class="form-control form-control-sm"
+                      accept="application/pdf, image/jpeg" placeholder="Choose file">
                   </div>
+                  <label class="col-form-label-xs col-sm-1">Remarks</label>
+                  <div class="col-sm-2">
+                    <textarea type="text" id="txtRemarks" autocomplete="off" [(ngModel)]="model.Remarks"
+                      class="form-control form-control-sm" placeholder=""></textarea>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
