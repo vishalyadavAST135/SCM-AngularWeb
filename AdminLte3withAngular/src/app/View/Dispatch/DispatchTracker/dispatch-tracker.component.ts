@@ -8694,4 +8694,70 @@ export class DispatchTrackerComponent implements OnInit {
     }
   }
 
+  UpdateDispatchItemEntry(index: number) {
+    var objDTModel = new DispatchTrackingModel();
+    objDTModel.DispatchTracker_Id = this.DispatchTracker_Id;
+    objDTModel.UserId = this.UserId;
+    objDTModel.Company_Id = this.CompanyId;
+    objDTModel.Pageflag = this.model.TransferTypeId;
+    objDTModel.Flag = "DT";
+    this.DispatchTrackingItem = [];
+    let objItem = new DispatchTrackingItemDetialModel();
+    {
+      objItem.Id = this.dynamicArray[index].Id;
+      objItem.HSN_SAC = this.dynamicArray[index].HSN;
+      objItem.DispatchType_Id = this.dynamicArray[index].DispatchTypeId;
+      objItem.SubDescription = this.dynamicArray[index].SubDescription;
+      objItem.Rate = this.dynamicArray[index].Rate;
+      objItem.Discount = this.dynamicArray[index].Discount;
+
+      objItem.IGST = this.dynamicArray[index].IGST;
+      objItem.IGSTValue = this.dynamicArray[index].IGSTValue;
+      objItem.CGSTRate = this.dynamicArray[index].CGSTRate;
+      objItem.CGST = this.dynamicArray[index].CGST;
+      objItem.SGSTRate = this.dynamicArray[index].SGSTRate;
+      objItem.SGST = this.dynamicArray[index].SGST;
+      objItem.TCSRate = this.dynamicArray[index].TCSRate;
+      objItem.TCS = this.dynamicArray[index].TCS;
+      objItem.TotalInvoiceValue = this.dynamicArray[index].TotalInvoiceValue;
+      objItem.FreightCharge = this.dynamicArray[index].FreightCharge;
+      objItem.TotalAmountWithFreightCharge = this.dynamicArray[index].TotalAmountWithFreightCharge;
+
+      objItem.ReceivedQty = this.dynamicArray[index].ReceivedQty;
+      objItem.ReasonId = this.dynamicArray[index].ReasonId;
+      objItem.Remarks = this.dynamicArray[index].Remarks;
+
+      objItem.ManufacturerDate = this.dynamicArray[index].ManufDate;
+      objItem.ManufacturerSerialNo = "";
+      objItem.InvoiceTaxDate = this.dynamicArray[index].InvoiceTaxDate;
+      objItem.InvoiceTaxNo = this.dynamicArray[index].InvoiceTaxNo
+    };
+    this.DispatchTrackingItem.push(objItem);
+    objDTModel.DispatchTrackerItemList = this.DispatchTrackingItem;
+    this.UpdateEntryConfirmBox(objDTModel);
+  }
+
+
+  UpdateEntryConfirmBox(objmodel: DispatchTrackingModel) {
+    Swal.fire({
+      title: 'Are you sure want to update?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes',
+      confirmButtonColor: '#28a745',
+      cancelButtonText: 'No',
+      cancelButtonColor: '#d33'
+    }).then((result) => {
+      if (result.value) {
+        this._Commonservices.UpdateSingleItemEntrybyId(objmodel).subscribe(data => {
+          if (data.Status == 1) {
+            Swal.fire('', data.Remarks, 'success')           
+          } else {
+            Swal.fire('', data.Remarks, 'success')            
+          }
+        })
+      }
+    })
+  }
+
 }
