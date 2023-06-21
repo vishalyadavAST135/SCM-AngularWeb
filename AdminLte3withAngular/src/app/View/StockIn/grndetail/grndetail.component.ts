@@ -245,6 +245,7 @@ export class GRNDetailComponent implements OnInit {
   ChangeLabelSupplierAddress: string;
   ObjUserPageRight = new UserPageRight();
   Save: any;
+  ClientList: any;
   constructor(private router: Router, private _Commonservices: CommonService, private _objSearchpanelService: SearchpanelService,
     private _PurchaseOrderService: PurchaseOrderService, private datePipe: DatePipe, private sanitizer: DomSanitizer,
     private _GrncrnService: GrncrnService, private Loader: NgxSpinnerService,
@@ -411,7 +412,7 @@ export class GRNDetailComponent implements OnInit {
         this.ObjUserPageRight.IsGenPdf = data.Data[0].IsGenPdf;
         this.ObjUserPageRight.IsPdfView = data.Data[0].IsPdfView;
         this.ObjUserPageRight.IsDelete = data.Data[0].IsDelete;
-        this.ObjUserPageRight.IsEdit=data.Data[0].IsEdit;
+        this.ObjUserPageRight.IsEdit = data.Data[0].IsEdit;
         debugger
         if (this.ObjUserPageRight.IsCreate == 1 && id == 0) {
           this.Save = 1;
@@ -423,8 +424,6 @@ export class GRNDetailComponent implements OnInit {
       }
     })
   }
-
-
 
   BindTransporterTypeDetail() {
     try {
@@ -750,8 +749,16 @@ export class GRNDetailComponent implements OnInit {
         } else {
           $("#ddlEqTypeId_" + i).css('border-color', '');
         }
+        if (this.dynamicArray[i].ClientId == "" || this.dynamicArray[i].ClientId == "null" || this.dynamicArray[i].ClientId == "0") {
+          $('#ddlStockTypeId_' + i).css('border-color', 'red');
+          $('#ddlStockTypeId_' + i).focus();
+          returnValue = 1;
+        } else {
+          $("#ddlStockTypeId_" + i).css('border-color', '');
+        }
       } else {
         $("#ddlEqTypeId_" + i).css('border-color', '');
+        $("#ddlStockTypeId_" + i).css('border-color', '');
       }
       var itmName = result[0].itemName;
       if (this.IsMandatory(i) == true) {
@@ -965,6 +972,7 @@ export class GRNDetailComponent implements OnInit {
               this.generateForJOBPDF('Open');
             } else {
               this.generatePDF('Open');
+              //this.generatePDF('print');
             }
           }
         });
@@ -1363,8 +1371,8 @@ export class GRNDetailComponent implements OnInit {
         },
       },
       images: {
-        snow: `${this.GRNPdfData.Logo}`,
-        //snow: 'http://localhost:4200/assets/logo.jpg',
+        //snow: `${this.GRNPdfData.Logo}`,
+         snow: 'http://localhost:4200/assets/logo.jpg',
         //snow: 'http://scm.astnoc.com/assets/logo.jpg'
       },
     }
@@ -1882,6 +1890,8 @@ export class GRNDetailComponent implements OnInit {
         objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
         objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
         objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
+        //objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
+        objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
         this.WareHouseId = this.apiCSVIData.WHId;
         this.CompanyData = objCSVTdata.CompanyArray;
         this.SearchStateList = objCSVTdata.StateArray;
@@ -1889,6 +1899,7 @@ export class GRNDetailComponent implements OnInit {
         this.SearchItemNameList = objCSVTdata.ItemArray;
         this.ItemNameDetailData = objCSVTdata.ItemArray;
         this.EquipmentTypeList = objCSVTdata.EquipmentArray; // brahamjot kaur 20/6/2022
+        this.ClientList = objCSVTdata.ClientArray;
         // sessionStorage.setItem("CompStatVenItmSession", JSON.stringify(objCSVTdata));
       }
     } catch (Error) {
@@ -2224,11 +2235,19 @@ export class GRNDetailComponent implements OnInit {
         } else {
           objdynamic.GSerialNumbers = [];
         }
+
         if (ItemEditDataArr[i].EqpType_Id != null && this.model.GRNById == "3") {
           objdynamic.EqTypeId = ItemEditDataArr[i].EqpType_Id;
         } else {
           objdynamic.EqTypeId = "0";
         }
+
+        if (ItemEditDataArr[i].ClientId != null && this.model.GRNById == "3") {
+          objdynamic.ClientId = "0";
+        } else {
+          objdynamic.ClientId = "0";
+        }
+
         if (ItemEditDataArr[i].UnitMaster_Id != null) {
           objdynamic.UnitName = ItemEditDataArr[i].UnitMaster_Id;
         } else {
@@ -2661,7 +2680,7 @@ export class GRNDetailComponent implements OnInit {
   }
 
 
-  ChangeEditVendor(event): void {
+  ChangeEditVendor(event: any): void {
     $('#TxtVendorEdit .selected-list .c-btn').attr('style', 'border-color: ');
     var objVendormodel = new VendorOrWhModel();
     objVendormodel.Id = this.selectedEditVendorItems[0].id;
@@ -3368,11 +3387,19 @@ export class GRNDetailComponent implements OnInit {
         } else {
           objdynamic.UnitName = "0";
         }
+
         if (GRNCRNRowData[i].EqTypeId != null && GRNCRNRowData[i].EqTypeId != "") {
           objdynamic.EqTypeId = GRNCRNRowData[i].EqTypeId;
         } else {
           objdynamic.EqTypeId = "0";
         }
+
+        if (GRNCRNRowData[i].ClientId != null && GRNCRNRowData[i].ClientId != "") {
+          objdynamic.ClientId = GRNCRNRowData[i].ClientId;
+        } else {
+          objdynamic.ClientId = "0";
+        }
+
         objdynamic.ValueSiteName = GRNCRNRowData[i].SiteName;
         objdynamic.ValueCustomerSite = GRNCRNRowData[i].CustomerSiteId;
         if (GRNCRNRowData[i].IsConversion == 1) {
@@ -4066,6 +4093,7 @@ export class GRNDetailComponent implements OnInit {
           // brahamjot Kaur 20/6/2022
           if (this.model.GRNById == 1 || this.model.GRNById == 2 || this.model.GRNById == 4) {
             objGRNDynamicItemGrid.EqTypeId = null;
+            objGRNDynamicItemGrid.ClientId = null;
 
             console.log(this.model.GRNById);
             if (this.dynamicArray[i].ExcessShort == "" || this.dynamicArray[i].ExcessShort == null) {
@@ -4084,6 +4112,7 @@ export class GRNDetailComponent implements OnInit {
             }
           } else {
             objGRNDynamicItemGrid.EqTypeId = this.dynamicArray[i].EqTypeId;
+            objGRNDynamicItemGrid.ClientId = this.dynamicArray[i].ClientId;
             console.log(objGRNDynamicItemGrid.ExcessShort);
             console.log(this.dynamicArray[i].RejectedQty);
             objGRNDynamicItemGrid.RejectedQty = "0";
@@ -4572,6 +4601,7 @@ export class GRNDetailComponent implements OnInit {
     if (this.model.JobId != 0) {
       this.IsChallanQtyJobQty = false;
     }
+    objNewItemGrid.ClientId = "0";
     this.dynamicArray.push(objNewItemGrid);
     return true;
   }
@@ -4911,26 +4941,7 @@ export class GRNDetailComponent implements OnInit {
     } else {
       $("#ddlItemId_" + index).css('border-color', '');
     }
-    // brahamjot kaur 20/6/2022
-    //   if(this.model.GRNById == 3){
-    //   if (this.dynamicArray[index].EqTypeId == "" || this.dynamicArray[index].EqTypeId == "null" || this.dynamicArray[index].EqTypeId == "0") {
-    //     $('#ddlEqTypeId_' + index).css('border-color', 'red');
-    //     $('#ddlEqTypeId_' + index).focus();
-    //     flag = 1;
-    //   } else {
-    //     $("#ddlEqTypeId_" + index).css('border-color', '');
-    //   }
-    // }else{
-    //   $("#ddlEqTypeId_" + index).css('border-color', '');
-    // }
-
-    // if (this.dynamicArray[index].UnitName == "" || this.dynamicArray[index].UnitName == "0") {
-    //   $('#ddlUnitName_' + index).css('border-color', 'red');
-    //   $('#ddlUnitName_' + index).focus();
-    //   flag = 1;
-    // } else {
-    //   $("#ddlUnitName_" + index).css('border-color', '');
-    // }
+        
     if (this.dynamicArray[index].Rate == "" || this.dynamicArray[index].Rate == "0") {
       $('#txtRate_' + index).css('border-color', 'red');
       $('#txtRate_' + index).focus();

@@ -377,8 +377,8 @@ export class CellNo
 
 
 export class PODropDownModel{
-    ClientList:[];
-    SearchClientList:[];
+    ClientList:any[]=[];
+    SearchClientList:any[]=[];
     EMIList:any[]=[];
     POCategoryList:any[]=[];
     PurchaseTypeList:any[]=[];

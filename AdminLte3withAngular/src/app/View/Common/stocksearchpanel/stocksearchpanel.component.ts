@@ -105,7 +105,8 @@ export class StocksearchpanelComponent implements OnInit {
       objCSVTdata.StateArray = this.apiCSVIData.StateArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       objCSVTdata.ItemClassArray = this.apiCSVIData.ItemClassArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.SearchStateList = objCSVTdata.StateArray;

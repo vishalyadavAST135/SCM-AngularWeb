@@ -755,29 +755,30 @@
                         <fieldset class="scheduler-border">
                           <legend class="scheduler-border">Po-Signed & Amended & Status</legend>
                           <div class="row mb-1">
-                            <div class="col-sm-6">
+                            <div class="col-sm-9">
                               <div class="row">
-                                <label class="col-form-label-xs col-sm-4">Signed PO</label>
-                                <div class="col-sm-6">
-                                  <input type="file" id="fileimage" #filePicker style="display: none"
+                                <label class="col-form-label-xs col-sm-2">Signed PO</label>
+                                <div class="col-sm-10">
+                                  <!-- style="display: none" -->
+                                  <input type="file" id="fileimage" #filePicker class="col-sm-8" 
                                     (change)="onFileChange($event)" accept="application/pdf, image/jpeg" />
-                                  <button (click)="filePicker.click()" title="Attach Signed PO"><i
-                                      class="fa fa-paperclip"></i></button>&nbsp;
-                                  <button (click)="uploadPoSignedPo()" title="Upload Signed PO"><i
+                                  <!-- <button (click)="filePicker.click()" title="Attach Signed PO"><i
+                                      class="fa fa-paperclip"></i></button>&nbsp; -->
+                                  <button (click)="uploadPoSignedPo()" title="Upload Signed PO" class="col-sm-4"><i
                                       class="fa fa-upload"></i> Upload</button>
                                 </div>
                               </div>
                             </div>
 
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                               <div class="row">
-                                <label class="col-form-label-xs col-sm-4"></label>
-                                <div class="col-sm-6" *ngIf="IsSignedPoTrueFile">
+                                <label class="col-form-label-xs col-sm-1"></label>
+                                <div class="col-sm-9" *ngIf="IsSignedPoTrueFile">
                                   <a style="margin-left: 50px;" (click)="SignedPOClick()" title="File View"
                                     style="color:green"><span>Signed PO </span><i class="fa fa-eye"></i></a>
                                 </div>
-                                <div class="col-sm-6" *ngIf="IsSignedPoFalseFile">
-                                  <label class="col-form-label-xs"><span>No Signed PO Uploaded</span> </label>
+                                <div class="col-sm-9" *ngIf="IsSignedPoFalseFile">
+                                  <label class="col-form-label-xs"><span>Not Uploaded</span> </label>
                                 </div>
                               </div>
                             </div>
@@ -833,7 +834,7 @@
 
                                 <!-- <label class="col-form-label-xs">Annexure (Excel)</label> -->
                                 <div class="col-sm-4" style="display: none">
-                                  <input type="file" #inputFile (change)="ExeclFileChange($event)" multiple="false" />
+                                  <!-- <input type="file" #inputFile (change)="ExeclFileChange($event)" multiple="false" /> -->
                                   <!-- <button (click)="inputFile.click()" title="Select Annexure (Excel) File"><i
                                       class="fa fa-paperclip"></i>
                                   </button>&nbsp;
@@ -1053,9 +1054,12 @@
                                     <i class="fa fa-plus"></i>
                                   </td>
                                   <td colspan="15">
-                                    <button (click)="inputFile.click()"  title="Attach Annexure (Excel) File"><i
+                                    <input type="file" #inputFile (change)="ExeclFileChange($event)" multiple="false" 
+                                    title="Attach Annexure (Excel) File" />
+                                    <!-- <button (click)="inputFile.click()"  title="Attach Annexure (Excel) File"><i
                                         class="fa fa-paperclip"></i>
-                                    </button>&nbsp;
+                                    </button>&nbsp; -->
+                                    
                                     <button type="submit" title="Upload Annexure Excel" *ngIf="Save"
                                       class="btn btn-sm btn-default" (click)="SavePoItemDetialByExcel()"><i
                                         class="fa fa-upload"></i> Annexure</button>&nbsp;
@@ -1063,7 +1067,7 @@
                                       title="download sample excel sheet" (click)="UploadSampleExcel()">
                                       <i class="fa fa-download"></i> Annexure Sample</button>&nbsp;
                                     <button type="submit" *ngIf="IsExcelMsgHideShow" title="download error excel sheet"
-                                      class="btn btn-sm btn-default" (click)="DownloadMessageData()"> <i
+                                      class="btn btn-sm btn-danger" (click)="DownloadMessageData()"> <i
                                         class="fa fa-download"></i> Error
                                       Execl</button>
                                   </td>

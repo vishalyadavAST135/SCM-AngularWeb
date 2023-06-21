@@ -304,7 +304,9 @@ export class FaultytorepairComponent implements OnInit {
       objCSVTdata.StateArray = this.apiCSVIData.StateArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      // client change into ReportMaster by hemant Tyagi
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.SearchItemNameList = objCSVTdata.ItemArray;
@@ -488,11 +490,11 @@ export class FaultytorepairComponent implements OnInit {
   }
 
   ChangeClient(ClientId: any, index: any) {
-    console.log(ClientId, index);
+    //console.log(ClientId, index);
     this.SerialNoList = null;
     this.SerialNoTableShowhide = false;
     var FilterData = this.ClientList.filter(m => m.Id === parseInt(ClientId));
-    console.log(FilterData);
+    //console.log(FilterData);
     this.dynamicArray[index].CustomerName = FilterData[0].Name;
     $('#tblOne > tbody  > tr').each(function () {
       var valueItem = $(this).find('.Client').val();
@@ -830,11 +832,11 @@ export class FaultytorepairComponent implements OnInit {
     this.model.InvoiceValue = "0.00";
     this.model.InvoiceDate = "";
     //this.model.RepairDate = "";
-//vishal, 20/02/2023
+    //vishal, 20/02/2023
     var toDate = "";
     toDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
     this.model.RepairDate = { day: parseInt(toDate.split('/')[2]), month: parseInt(toDate.split('/')[1]), year: parseInt(toDate.split('/')[0]) };
-    this.setDateRange(); 
+    this.setDateRange();
 
     this.FaultuRep_Id = 0;
     this.model.VendorName = "0";
@@ -864,11 +866,12 @@ export class FaultytorepairComponent implements OnInit {
     objNewItemGrid.Scrap = 0;
     objNewItemGrid.Repaired = 0;
     objNewItemGrid.FaultyQty = 0;
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.TypeFaultyId = "0";
     objNewItemGrid.TestingTime = "";
     objNewItemGrid.MaterialUsed = "";
@@ -1191,11 +1194,12 @@ export class FaultytorepairComponent implements OnInit {
     } else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
-    } else if (this.validateStockQty() == 1) {
-      setTimeout(function () { this.IsError = false; }, 3000);
-      return false;
-    } else {
-
+    }
+    // else if (this.validateStockQty() == 1) {
+    //   setTimeout(function () { this.IsError = false; }, 3000);
+    //   return false;
+    // }
+    else {
       jQuery('#confirm').modal('show');
     }
   }
@@ -2151,17 +2155,18 @@ export class FaultytorepairComponent implements OnInit {
         }
       }
 
-      if (this.dynamicArray[icount].ClientId != "99999") {
-        if (this.dynamicArray[icount].Qty == "" || this.dynamicArray[icount].Qty == "0") {
-          $('#txtQty_' + icount).css('border-color', 'red');
-          $('#txtQty_' + icount).focus();
-          flag = 1;
-        } else {
-          $("#txtQty_" + icount).css('border-color', '');
-        }
+      // if (this.dynamicArray[icount].ClientId != "99999") {
+      if (this.dynamicArray[icount].Qty == "" || this.dynamicArray[icount].Qty == "0") {
+        $('#txtQty_' + icount).css('border-color', 'red');
+        $('#txtQty_' + icount).focus();
+        flag = 1;
+      } else {
+        $("#txtQty_" + icount).css('border-color', '');
       }
+      //}
 
-      if (this.dynamicArray[icount].Class == "1519" && this.dynamicArray[icount].ClientId != "99999") {
+      // if (this.dynamicArray[icount].Class == "1519" && this.dynamicArray[icount].ClientId != "99999") {
+      if (this.dynamicArray[icount].Class == "1519") {
         if (this.dynamicArray[icount].SerialNo == "") {
           $('#txtSerialNo_' + icount).css('border-color', 'red');
           $('#txtSerialNo_' + icount).focus();
@@ -2226,8 +2231,6 @@ export class FaultytorepairComponent implements OnInit {
         this.errorMessage = "Dispatch(" + itmName + ") Qty can not be greater then stock Qty(" + this.dynamicArray[i].FQty + ")."
         returnValue = 1;
       }
-
-
     }
 
     return returnValue;

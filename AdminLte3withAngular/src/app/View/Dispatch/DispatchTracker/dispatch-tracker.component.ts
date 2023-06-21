@@ -42,9 +42,10 @@ import { debug } from 'console';
 import { SendmailService } from 'src/app/Service/sendmail.service';
 import { Modal } from 'bootstrap'
 import { SendMailComponent } from '../../Common/send-mail/send-mail.component';
-import Swal from 'sweetalert2';
 import { async } from 'rxjs/internal/scheduler/async';
 import { promise } from 'protractor';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
+
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 var PDFdata = null;
@@ -418,7 +419,9 @@ export class DispatchTrackerComponent implements OnInit {
       if (this.ArrayRoleId[i] == UserRole.SCMLead || this.ArrayRoleId[i] == UserRole.SCMHo) {
         this.UserRoleId = this.ArrayRoleId[i];
       } else if (this.ArrayRoleId[i] == UserRole.DispatchCorrectionEntryRole) {
-        this.RoleCorrectionEntry = true;
+        // change by Hemant Tyagi True to false.
+        //this.RoleCorrectionEntry = true;
+        this.RoleCorrectionEntry = false;
       }
     }
 
@@ -770,9 +773,11 @@ export class DispatchTrackerComponent implements OnInit {
       objModel.WHId = whId;
       objModel.DTId = dtId;
       objModel.Flag = 7;
+      debugger
       this.DispatchInstructionList = [];
       this._BOQService.GetBOQNoORBOQRequestNo(objModel).subscribe((data) => {
         if (data.Data != "") {
+          debugger
           this.DispatchInstructionList = data.Data;
           let selDIArr = [];
           if (strDI != '0') {
@@ -1658,7 +1663,9 @@ export class DispatchTrackerComponent implements OnInit {
       objCSVTdata.VendorArray = this.apiCSVIData.VendorArray;
       objCSVTdata.ItemArray = this.apiCSVIData.ItemArray;
       objCSVTdata.EquipmentArray = this.apiCSVIData.EquipmentArray;
-      objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      // client change into ReportMaster by hemant Tyagi
+      //objCSVTdata.ClientArray = this.apiCSVIData.ClientArray;
+      objCSVTdata.ClientArray = this.apiCSVIData.ReportMasterArray;
       objCSVTdata.DispatchTypeArray = this.apiCSVIData.DispatchTypeArray;
       this.WareHouseId = this.apiCSVIData.WHId;
       this.CompanyData = objCSVTdata.CompanyArray;
@@ -2021,9 +2028,12 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ChangeEqupmnet(ItemId: any, index: any) {
-    var FilterData = this.EquipmentTypeList.filter(
-      m => m.id === parseInt(ItemId));
-    this.dynamicArray[index].EqpType = FilterData[0].itemName;
+    // var FilterData = this.EquipmentTypeList.filter(
+    //   m => m.id === parseInt(ItemId));
+    // this.dynamicArray[index].EqpType = FilterData[0].itemName;
+    this.dynamicArray[index].EqpType = this.EquipmentTypeList
+      .filter(m => m.id === parseInt(ItemId))
+      .map(xx => { return xx.itemName });
     try {
       $('#tblOne > tbody  > tr').each(function () {
         var valueItem = $(this).find('.EqType').val();
@@ -2047,8 +2057,12 @@ export class DispatchTrackerComponent implements OnInit {
         $(this).find('.Client').css('border-color', '');
       }
     });
-    var FilterDate = this.ClientList.filter(m => m.Id === parseInt(ClientId));
-    this.dynamicArray[index].ClientName = FilterDate[0].Name;
+    // var FilterDate = this.ClientList.filter(m => m.Id === parseInt(ClientId));
+    // this.dynamicArray[index].ClientName = FilterDate[0].Name;
+    this.dynamicArray[index].ClientName = this.ClientList
+      .filter((yy: any) => yy.Id == parseInt(ClientId))
+      .map((xx: any) => { return xx.Name });
+
     //abhi eska koi use nhi h future m hoga 2/3/2022
     //brahamjot kaur 06/06/2022
     try {
@@ -2737,7 +2751,7 @@ export class DispatchTrackerComponent implements OnInit {
     if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
       this.AutoFillDispatchDetailByDIId(this.CreateDispatchForDIId);
     }
-    //this.ClearAllUploadFile();
+    this.ClearAllUploadFile();
   }
 
 
@@ -2772,11 +2786,10 @@ export class DispatchTrackerComponent implements OnInit {
       return false;
       // validation on qty with stock qty.
     }
-    // else if (this.validateStockQty() == 1) {
+    //  else if (this.validateStockQty() == 1) {
     //   setTimeout(function () { this.IsError = false; }, 3000);
     //   return false;
-    // }
-
+    // } 
     else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
@@ -3001,7 +3014,9 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingItemDetialModel.Discount = this.dynamicArray[i].Discount;
         objDispatchTrackingItemDetialModel.HSN_SAC = this.dynamicArray[i].HSN;
         objDispatchTrackingItemDetialModel.EqpType_Id = this.dynamicArray[i].EqTypeId;
-        if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
+        if (this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+          || this.model.TransferTypeId == PageActivity.Dis_SiteOtherState
+          || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
           objDispatchTrackingItemDetialModel.DispatchType_Id = this.dynamicArray[i].DispatchTypeId;
         } else {
           objDispatchTrackingItemDetialModel.DispatchType_Id = 0
@@ -3044,6 +3059,7 @@ export class DispatchTrackerComponent implements OnInit {
           objDispatchTrackingItemDetialModel.SaleQty = 0.00;
           objDispatchTrackingItemDetialModel.SaleUnit = 0;
         }
+
         var conver = this._Commonservices.checkUndefined(this.dynamicArray[i].ConversionUnit);
         if (conver == "") {
           objDispatchTrackingItemDetialModel.Qty = this.dynamicArray[i].Qty;
@@ -3107,17 +3123,17 @@ export class DispatchTrackerComponent implements OnInit {
         if (data.Status == 1) {
           this.model.DisatchTrackeringId = data.Value;
           this.IsDisabledPreviewGenratebutton = false;
-
+          this.ClearAllUploadFile();
           this.clearEditForm();
           alert('your data has been Succesfully with Document No-' + data.Remarks);
           this.GenerateDispatchPdfbyDispatchId(1)
           this.IsSaveButtonDisable = true;
-          this.ClearAllUploadFile();
         } else if (data.Status == 2) {
           jQuery('#confirm').modal('hide');
           alert('your data update successfully');
           this.IsDisabledPreviewGenratebutton = false;
           this.IsSaveButtonDisable = false;
+          this.ClearAllUploadFile();
         } else if (data.Status == 3) {
           alert('your documentNo already exists');
         } else if (data.Status == 0) {
@@ -3371,10 +3387,16 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ClearAllUploadFile() {
-    this.myInputVariable.nativeElement.value = '';
+
+    if (this.model.TrasporationMode == 1438) {
+      this.myInputVariable.nativeElement.value = '';
+    }
+
     this.myBillFileVariable.nativeElement.value = '';
     this.myTaxFileVariable.nativeElement.value = '';
-    this.myDocFileVariable.nativeElement.value = '';
+    if (this.IsReceivedHideShow == true) {
+      this.myDocFileVariable.nativeElement.value = '';
+    }
   }
 
   onTaxInvoiceFileChange(event) {
@@ -3616,12 +3638,47 @@ export class DispatchTrackerComponent implements OnInit {
                 this.IsReceivedHideShow = false;
                 this.IsRecivedButtonDisable = true;
               }
-
-
             }
             // commnented by: 17/04/2023 by:vishal
             // else if (this.CompanyId == 1) {
 
+            //   if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
+            //       || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_Vendor
+            //       || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
+            //       || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+            //     ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = true;
+            //   } else {
+            //     this.IsSaveButtonDisable = false;
+            //     this.IsPartialUpDateDispatchRequest = false;
+            //     this.IsReceivedHideShow = false;
+            //     this.IsRecivedButtonDisable = true;
+            //   }
+            // }
+
+            // else if (this.CompanyId == 1) {
             //   if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
             //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
             //       || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
@@ -3706,14 +3763,13 @@ export class DispatchTrackerComponent implements OnInit {
               }
             }
 
-            //vishal, 20/04/2023
-            if (
-              (this.UserRoleId == UserRole.SCMLead
-                && data.Data[0].ApprovalLevelId == 1)
-              || (this.UserRoleId == UserRole.SCMHo
-                && data.Data[0].ApprovalLevelId != 1)
-              || data.Data[0].IsApproved == 1) {
+            // if (data.Data[0].IsApproved == 1) {
+            //   this.IsApprovalstatusbtnhideShow = false;
+            // }
 
+            //vishal, 20/04/2023
+            if ((this.UserRoleId == UserRole.SCMLead && data.Data[0].ApprovalLevelId == 1)
+              || data.Data[0].IsApproved == 1) {
               this.IsApprovalstatusbtnhideShow = false;
             }
             //end -vishal
@@ -4651,7 +4707,7 @@ export class DispatchTrackerComponent implements OnInit {
           }
 
         }
-
+        debugger
         objdynamic.HSN = parseInt(ItemEditDataArr[i].HSN_SAC);
         objdynamic.TotalAmount = ItemEditDataArr[i].TotalAmount;
         objdynamic.Discount = ItemEditDataArr[i].Discount;
@@ -4706,11 +4762,12 @@ export class DispatchTrackerComponent implements OnInit {
       totalpoqty += poqty;
       this.totalamount += ((poqty * Rate) - DiscountAmt);
       this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators(poqty * Rate);
+      debugger
       this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators((poqty * Rate) - DiscountAmt);
     }
+    debugger
     this.totalSumPOQuantity = totalpoqty.toFixed(2);
     this.totalSumQuantity = totalqty.toFixed(2);
-    //this.totalSumAmount=totalamount.toFixed(2);
     this.model.AmountChargeable = this._Commonservices.valueInWords(this.totalamount.toFixed(2));
     this.totalSumAmount = this._Commonservices.thousands_separators(this.totalamount);
   }
@@ -4726,6 +4783,8 @@ export class DispatchTrackerComponent implements OnInit {
     var Rate = 0.0;
     this.totalSumQuantity = 0.0;
     var HideConValue = 0.0;
+    var DiscountAmt = 0.0;
+
     for (var i = 0, len = this.dynamicArray.length; i < len; i++) {
       if (this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale) {
         poqty = parseFloat(this.dynamicArray[i].SaleQty == "" ? 0.0 : this.dynamicArray[i].SaleQty);
@@ -4733,6 +4792,8 @@ export class DispatchTrackerComponent implements OnInit {
       else {
         poqty = parseFloat(this.dynamicArray[i].Qty == "" ? 0.0 : this.dynamicArray[i].Qty);
       }
+      DiscountAmt = parseFloat(this.dynamicArray[i].Discount == "" ? 0.0 : this.dynamicArray[i].Discount);
+
       Rate = parseFloat(this.dynamicArray[i].Rate == "" ? 0.0 : this.dynamicArray[i].Rate);
       IGSTval = parseFloat(this.dynamicArray[i].IGSTValue == "" ? 0.0 : this.dynamicArray[i].IGSTValue);
       if (this._Commonservices.checkUndefined(this.dynamicArray[i].HideConversionValue) != "") {
@@ -4741,9 +4802,10 @@ export class DispatchTrackerComponent implements OnInit {
       }
       totalpoqty += poqty;
       //totalamount+=((poqty*Rate)-DiscountAmt);
-      this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators(poqty * Rate);
+      this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators((poqty * Rate));
       this.dynamicArray[i].IGST = (((poqty * Rate) * IGSTval) / 100);
-      this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators((poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
+      this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators(
+        (poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
       IGSTAmount = ((poqty * Rate) + (((poqty * Rate) * IGSTval) / 100));
       this.totalamount += IGSTAmount;
     }
@@ -4755,7 +4817,9 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ItemRateOnblur() {
-    if (this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+    if (this.model.TransferTypeId == PageActivity.Dis_Vendor 
+      || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale 
+      || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
       this.fnBindItemGrossToatlTax();
     } else {
       this.fnBindItemGrossToatl();
@@ -4970,7 +5034,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.PhoneNo = "";
     this.IsVendorTax = false;
     this.HideDispatchTo();
-    //this.ClearAllUploadFile();
+    this.ClearAllUploadFile();
   }
 
   HideDispatchTo() {
@@ -6001,16 +6065,17 @@ export class DispatchTrackerComponent implements OnInit {
     objNewItemGrid.SaleUnitName = "0";
     objNewItemGrid.SaleQty = "";
     objNewItemGrid.DispatchTypeId = "0";
-    if (this.CompanyId == 4) {
-      objNewItemGrid.ClientId = "0";
-    } else {
-      objNewItemGrid.ClientId = "99999";
-    }
+    // if (this.CompanyId == 4) {
+    //   objNewItemGrid.ClientId = "0";
+    // } else {
+    //   objNewItemGrid.ClientId = "99999";
+    // }
+    objNewItemGrid.ClientId = "0";
     objNewItemGrid.IsCorrectionEntryReason = "0";
     objNewItemGrid.IsCorrectionCodeId = "0";
     if (this.model.DisatchTrackeringId != 0 && this.model.IsApproved == 1 && this.RoleCorrectionEntry == true) {
       objNewItemGrid.IsCorrection = true;
-      this.Correctioncolumnhideandshow = true;
+      this.Correctioncolumnhideandshow = false;
       objNewItemGrid.IsCorrectionDisabled;
     } else {
       objNewItemGrid.IsCorrection = false;

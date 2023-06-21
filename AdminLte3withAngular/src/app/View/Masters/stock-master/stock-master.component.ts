@@ -297,8 +297,4 @@ export class StockMasterComponent implements OnInit {
     $("#txtStockName").css('border-color', '');
 
   }
-
-  
-
-  
 }

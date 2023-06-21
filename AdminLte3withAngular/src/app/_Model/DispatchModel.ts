@@ -192,8 +192,7 @@ export class SearchDispatchTrackerModel extends CommonSearchPanelModel
     DispatchNoId:number
     ApprovalLevelId:number; //vishal 13/04/2023 
     CusDispatchTracker_Id: number //vishal 
-    CustomerFlag:number //vishal
-  
+    CustomerFlag:number //vishal  
 }
 
 // Brahamjot kaur 22/6/2022

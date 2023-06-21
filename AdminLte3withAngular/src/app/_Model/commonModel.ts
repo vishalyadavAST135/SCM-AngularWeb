@@ -124,7 +124,7 @@ export class CompanyStateVendorItemModel {
     DispatchedStatus: string;
     DispatchedStatusArray: any;
     CircleId: any;
-
+    ReportMasterArray:any;
 }
 
 export class EmailSendTotalDataModel {
@@ -143,8 +143,7 @@ export class EmailModel {
     PoId: number;
     //vishal
     DocumentFile: string;
-    MailFor: string;
- 
+    MailFor: string; 
 }
 
 export class ChangePasswordModel {

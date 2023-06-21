@@ -191,8 +191,6 @@
             <!--/end-vishal-->
 
             <!-- /.Ravider -->
-
-
             <div class="row">
               <div class="col-sm-12" style="background-color:#28a745;">
                 <div class="btn-group btn-group-sm">
@@ -1644,7 +1642,6 @@
                   </div>
 
                   <div class="row mb-1">
-
                     <label class="col-form-label-xs col-sm-1">Document Sent</label>
                     <div class="col-sm-2">
                       <input type="checkbox" id="txtIsdispatch" [(ngModel)]="model.IsDispatch" placeholder="" />
@@ -1709,7 +1706,7 @@
                 </fieldset>
 
                 <!-- <span></span>-->
-                <span></span>
+                <!-- <span></span>  -->
 
                 <fieldset class="scheduler-border">
                   <legend class="scheduler-border">Item Details</legend>
@@ -1719,8 +1716,10 @@
                       <thead>
                         <tr>
                           <th></th>
-                          <th *ngIf="Correctioncolumnhideandshow">Correction Code<span style="color:red;"
-                              class="Mandatoryfield"><b>*</b></span></th>
+
+                          <!-- <th *ngIf="Correctioncolumnhideandshow">Correction Code<span style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span></th> -->
+                          <th>Edit</th>
                           <th>History</th>
                           <th>Item Name<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
                           <th>Item Make<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
@@ -1776,19 +1775,20 @@
                               style="color:red;"
                               class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                           </th>
-                          <th *ngIf="Correctioncolumnhideandshow">Reason<span style="color:red;"
+                          <!-- <th *ngIf="Correctioncolumnhideandshow">Reason<span style="color:red;"
                               class="Mandatoryfield"><b>*</b></span></th>
                           <th *ngIf="Correctioncolumnhideandshow">Remarks<span class="Mandatoryfield"><b></b></span>
                           </th>
                           <th *ngIf="Correctioncolumnhideandshow"></th>
+                           -->
                         </tr>
                       </thead>
                       <tbody>
                         <tr *ngFor="let dynamic of dynamicArray; let i = index">
                           <td (click)="deleteRow(i)" style="width:20px;">
-                            <i class="fa fa-trash" title="Delete"></i>
+                            <i class="fa fa-trash text-danger" title="Delete"></i>
                           </td>
-                          <td *ngIf="Correctioncolumnhideandshow">
+                          <!-- <td *ngIf="Correctioncolumnhideandshow">
                             <select style="width:80px;" class="form-control form-control-sm ItemCode"
                               (change)="ChangeCorrectionCode(i,dynamicArray[i].IsCorrectionCodeId)"
                               id="ddlCorrectionCodeId_{{i}}" [(ngModel)]="dynamicArray[i].IsCorrectionCodeId"
@@ -1798,10 +1798,13 @@
                                 Item
                                 {{itemC.RowId+'-'+itemC.itemName}}</option>
                             </select>
+                          </td> -->
+                          <td (click)="UpdateDispatchItemEntry(i)" style="width:40px; text-align: center;">
+                            <i class="fa fa-edit text-success" title="edit"></i>
                           </td>
                           <td style="width:100px;text-align: center;">
                             <a (click)="ClickHistory(dynamicArray[i].ItemNameId, i)">
-                              <i _ngcontent-dpu-c137="" class="fa fa-eye" title="View History" style="color:green"></i>
+                              <i _ngcontent-dpu-c137="" class="fa fa-eye text-primary" title="View History"></i>
                             </a>
                           </td>
                           <td style="width:80px;">
@@ -1833,7 +1836,6 @@
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of dynamicArray[i].EditItemCode" [value]="item.id">
                                 {{item.itemName}}</option>
-
                             </select>
                           </td>
 
@@ -1857,8 +1859,7 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)"
-                              [disabled]="IsItemListDisabled">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -1869,15 +1870,12 @@
                               class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea>
                           </td>
                           <td style="width:280px;">
-                            <!-- <textarea [(ngModel)]="dynamicArray[i].SubDescription"
-                              class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea> -->
                             <textarea class="form-control form-control-sm SubDescription" id="txtSubDesc_{{i}}"
                               autocomplete="off" [(ngModel)]="dynamicArray[i].SubDescription" (blur)="subDescKeyPress()"
-                              [disabled]="IsItemListDisabled" type="text" style="text-align:center;"></textarea>
+                              type="text" style="text-align:center;"></textarea>
                           </td>
 
                           <td style="width:50px;">
-                            <!-- <input style="width:50px;" class="form-control form-control-sm"  [(ngModel)]="dynamicArray[i].UnitName" readonly type="text" />     -->
                             <select class="form-control form-control-sm UnitName" id="ddlUnitName_{{i}}"
                               [(ngModel)]="dynamicArray[i].UnitName" [disabled]="IsItemListDisabled"
                               (change)="ChangeUnit(dynamicArray[i].UnitName,i)">
@@ -1885,15 +1883,11 @@
                               <option *ngFor="let item of dynamicArray[i].UnitList" [value]="item.Id">{{item.UnitName}}
                               </option>
                             </select>
-                            <!-- <label *ngIf="dynamicArray[i].HideShowConValue">S-UOM</label>
-                                  <input style="width:50px;" class="form-control form-control-sm"  *ngIf="dynamicArray[i].HideShowConValue" readonly [(ngModel)]="dynamicArray[i].ConversionUnit"  type="text"/> 
-                                 -->
                           </td>
                           <td style="width:80px;">
                             <input class="form-control form-control-sm HSN" maxlength="4" id="txtHSN_{{i}}"
                               maxlength="4" autocomplete="off" [(ngModel)]="dynamicArray[i].HSN" (blur)="HSNKeyPress()"
-                              appCopyPastNumFloatValue type="text" style="text-align:center;"
-                              [disabled]="IsItemListDisabled" />
+                              appCopyPastNumFloatValue type="text" style="text-align:center;" />
                           </td>
                           <input class="form-control form-control-sm " type="hidden" autocomplete="off"
                             [(ngModel)]="dynamicArray[i].HideConversionValue" />
@@ -1938,8 +1932,8 @@
                           <td style="width:50px;">
                             <input class="form-control form-control-sm Rate" id="txtRate_{{i}}" autocomplete="off"
                               (blur)="RateKeyPress()" [(ngModel)]="dynamicArray[i].Rate"
-                              (keyup)="fnBindItemGrossToatl()" [disabled]="IsItemListDisabled" appCopyPastNumFloatValue
-                              type="text" style="text-align:center;" />
+                              (keyup)="fnBindItemGrossToatl()" appCopyPastNumFloatValue type="text"
+                              style="text-align:center;" />
                           </td>
                           <td style="width:120px;">
                             <input class="form-control form-control-sm itmsTotalAmount" readonly
@@ -1948,8 +1942,8 @@
                           <td style="width:60px;">
                             <input class="form-control form-control-sm Discount" id="txtDiscount_{{i}}"
                               autocomplete="off" (blur)="DiscountKeyPress()" [(ngModel)]="dynamicArray[i].Discount"
-                              [disabled]="IsItemListDisabled" (keyup)="fnBindItemGrossToatl()" appCopyPastNumFloatValue
-                              type="text" style="text-align:center;" />
+                              (keyup)="fnBindItemGrossToatl()" appCopyPastNumFloatValue type="text"
+                              style="text-align:center;" />
                           </td>
 
                           <td style="width:60px;">
@@ -1959,9 +1953,8 @@
 
                           <td style="width:60px;">
                             <div class="input-group">
-                              <input class="form-control form-control-sm" placeholder="dd/mm/yyyy"
-                                [disabled]="IsItemListDisabled" autocomplete="off" name="dp"
-                                [(ngModel)]="dynamicArray[i].ManufDate" ngbDatepicker #m="ngbDatepicker">
+                              <input class="form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off"
+                                name="dp" [(ngModel)]="dynamicArray[i].ManufDate" ngbDatepicker #m="ngbDatepicker">
                               <div class="input-group-addon" (click)="m.open()">
                                 <span class="input-group-text">
                                   <i class="far fa-calendar-alt"></i>
@@ -1969,15 +1962,13 @@
                               </div>
                             </div>
                           </td>
-
                           <!-- <td style="width:140px;">    
                               <input class="form-control form-control-sm SerialNo"  id="txtSerialNo_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" (blur)="SerialNoKeyPress()"   type="text" style="text-align:center;"/>   
                             </td>  -->
                           <td style="width:60px;">
                             <div class="input-group">
-                              <input class="form-control form-control-sm" placeholder="dd/mm/yyyy"
-                                [disabled]="IsItemListDisabled" autocomplete="off" name="dp"
-                                [(ngModel)]="dynamicArray[i].InvoiceTaxDate" ngbDatepicker #d="ngbDatepicker">
+                              <input class="form-control form-control-sm" placeholder="dd/mm/yyyy" autocomplete="off"
+                                name="dp" [(ngModel)]="dynamicArray[i].InvoiceTaxDate" ngbDatepicker #d="ngbDatepicker">
                               <div class="input-group-addon" (click)="d.open()">
                                 <span class="input-group-text">
                                   <i class="far fa-calendar-alt"></i>
@@ -1988,12 +1979,12 @@
 
                           <td style="width:140px;">
                             <input class="form-control form-control-sm InvoiceTaxNo" id="txtInvoiceTaxNo_{{i}}"
-                              autocomplete="off" [(ngModel)]="dynamicArray[i].InvoiceTaxNo"
-                              [disabled]="IsItemListDisabled" type="text" style="text-align:center;" />
+                              autocomplete="off" [(ngModel)]="dynamicArray[i].InvoiceTaxNo" type="text"
+                              style="text-align:center;" />
                           </td>
                           <td>{{dynamic.CustomerSiteId}}</td>
 
-                          <td *ngIf="Correctioncolumnhideandshow">
+                          <!-- <td *ngIf="Correctioncolumnhideandshow">
                             <select style="width:120px;" (change)="ChangeCorrectionEntryReason(i)"
                               class="form-control form-control-sm TaxWith" id="ddlCentryReason_{{i}}"
                               [(ngModel)]="dynamicArray[i].IsCorrectionEntryReason"
@@ -2013,11 +2004,11 @@
                             <button type="submit" [disabled]="dynamicArray[i].IsCorrectionDisabled"
                               class="btn btn-sm btn-success" *ngIf="Save && dynamicArray[i].IsCorrection"
                               (click)="ConfirmCorrectionPopup(i)">Update </button>
-                          </td>
+                          </td> -->
                         </tr>
                         <tr>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td colspan="12">Gross Total</td>
+                          <!-- <td *ngIf="Correctioncolumnhideandshow"></td> -->
+                          <td colspan="13">Gross Total</td>
                           <td style="text-align:center;">{{totalSumPOQuantity}}</td>
                           <td></td>
                           <td></td>
@@ -2033,9 +2024,10 @@
                           <td></td>
                           <td></td>
                           <td></td>
+                          <!-- <td *ngIf="Correctioncolumnhideandshow"></td>
                           <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
+                          <td *ngIf="Correctioncolumnhideandshow"></td> -->
+                          <!-- <td></td> -->
                         </tr>
                         <tr *ngIf="ItemAddrowhideshow">
                           <td (click)="addRow()">
@@ -2049,8 +2041,9 @@
                       <thead>
                         <tr>
                           <th></th>
-                          <th *ngIf="Correctioncolumnhideandshow">Correction Code<span style="color:red;"
-                              class="Mandatoryfield"><b>*</b></span></th>
+                          <!-- <th *ngIf="Correctioncolumnhideandshow">Correction Code<span style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span></th> -->
+                            <th>Edit</th>  
                           <th>History<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
                           <th>Item Name<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
 
@@ -2061,8 +2054,7 @@
                           <th>&nbsp;&nbsp;&nbsp;Stock&nbsp;Type<span style="color:red"
                               class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;</th>
                           <th *ngIf="DispatchTypeHideShow">&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type<span style="color:red"
-                              class="Mandatoryfield"><b>*</b></span>&nbsp;&
-                            nbsp;&nbsp;</th>
+                              class="Mandatoryfield"><b>*</b></span></th>
                           <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
                               class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
                           <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span
@@ -2110,19 +2102,19 @@
                           </th>
                           <!-- end -->
 
-                          <th *ngIf="Correctioncolumnhideandshow">Reason<span style="color:red;"
+                          <!-- <th *ngIf="Correctioncolumnhideandshow">Reason<span style="color:red;"
                               class="Mandatoryfield"><b>*</b></span></th>
                           <th *ngIf="Correctioncolumnhideandshow">Remarks<span class="Mandatoryfield"><b></b></span>
                           </th>
-                          <th *ngIf="Correctioncolumnhideandshow"></th>
+                          <th *ngIf="Correctioncolumnhideandshow"></th> -->
                         </tr>
                       </thead>
                       <tbody>
                         <tr *ngFor="let dynamic of dynamicArray; let i = index">
                           <td (click)="deleteRow(i)" style="width:20px;">
-                            <i class="fa fa-trash" title="Delete"></i>
+                            <i class="fa fa-trash text-danger" title="Delete"></i>
                           </td>
-                          <td *ngIf="Correctioncolumnhideandshow">
+                          <!-- <td *ngIf="Correctioncolumnhideandshow">
                             <select style="width:80px;" class="form-control form-control-sm ItemCode"
                               (change)="ChangeCorrectionCode(i,dynamicArray[i].IsCorrectionCodeId)"
                               id="ddlCorrectionCodeId_{{i}}" [(ngModel)]="dynamicArray[i].IsCorrectionCodeId"
@@ -2132,10 +2124,13 @@
                                 Item
                                 {{itemC.RowId+'-'+itemC.itemName}}</option>
                             </select>
+                          </td> -->
+                          <td (click)="UpdateDispatchItemEntry(i)" style="width:40px; text-align: center;">
+                            <i class="fa fa-edit text-success" title="edit"></i>
                           </td>
                           <td style="width:100px;text-align: center;">
                             <a (click)="ClickHistory(dynamicArray[i].ItemNameId, i)">
-                              <i _ngcontent-dpu-c137="" class="fa fa-eye" title="View History" style="color:green"></i>
+                              <i _ngcontent-dpu-c137="" class="fa fa-eye text-primary" title="View History" style="color:green"></i>
                             </a>
                           </td>
                           <td style="width:80px;">
@@ -2190,8 +2185,7 @@
                           <td *ngIf="DispatchTypeHideShow" style="width:120px;">
                             <select class="form-control form-control-sm DispatchType" id="ddlDispatchType_{{i}}"
                               [(ngModel)]="dynamicArray[i].DispatchTypeId"
-                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)"
-                              [disabled]="IsItemListDisabled">
+                              (change)="ChangeDipatch(dynamicArray[i].DispatchTypeId,i)">
                               <option class="dropdown-item" [value]="0">Select</option>
                               <option *ngFor="let item of DispatchTypeList" [value]="item.Id">{{item.DispatchType}}
                               </option>
@@ -2207,12 +2201,12 @@
                               class="form-control form-control-sm" type="text" style="text-align:center;"> </textarea> -->
                             <textarea class="form-control form-control-sm SubDescription" id="txtSubDesc_{{i}}"
                               autocomplete="off" [(ngModel)]="dynamicArray[i].SubDescription" (blur)="subDescKeyPress()"
-                              [disabled]="IsItemListDisabled" type="text" style="text-align:center;"></textarea>
+                              type="text" style="text-align:center;"></textarea>
                           </td>
                           <td style="width:80px;">
                             <input class="form-control form-control-sm HSN" id="txtHSN_{{i}}" maxlength="4"
                               autocomplete="off" [(ngModel)]="dynamicArray[i].HSN" (blur)="HSNKeyPress()"
-                              [disabled]="IsItemListDisabled" appCopyPastNumFloatValue type="text"
+                              appCopyPastNumFloatValue type="text"
                               style="text-align:center;" />
                           </td>
                           <td style="width:50px;">
@@ -2271,7 +2265,7 @@
                             <input class="form-control form-control-sm Rate" id="txtRate_{{i}}" autocomplete="off"
                               (blur)="RateKeyPress()" [(ngModel)]="dynamicArray[i].Rate"
                               (keyup)="fnBindIGSTValueItemGrossToatal()" appCopyPastNumFloatValue type="text"
-                              style="text-align:center;" [disabled]="IsItemListDisabled" />
+                              style="text-align:center;" />
                           </td>
                           <td style="width:120px;">
                             <input class="form-control form-control-sm itmsTotalAmount" readonly
@@ -2281,11 +2275,12 @@
                             <input class="form-control form-control-sm IGSTValue" id="txtIGSTValue_{{i}}"
                               autocomplete="off" (blur)="IGSTKeyPress()" [(ngModel)]="dynamicArray[i].IGSTValue"
                               appCopyPastNumFloatValue (keyup)="fnBindIGSTValueItemGrossToatal()"
-                              [disabled]="IsItemListDisabled" type="text" style="text-align:center;" />
+                              type="text" style="text-align:center;" />
                           </td>
                           <td style="width:60px;">
                             <input class="form-control form-control-sm IGST" readonly id="txtIGST_{{i}}"
-                              autocomplete="off" (blur)="IGSTKeyPress()" [(ngModel)]="dynamicArray[i].IGST" type="text"
+                              autocomplete="off" (blur)="IGSTKeyPress()" 
+                              [(ngModel)]="dynamicArray[i].IGST" type="text"
                               style="text-align:center;" />
                           </td>
 
@@ -2297,7 +2292,7 @@
                           <td style="width:60px;">
                             <div class="input-group">
                               <input class="form-control form-control-sm" placeholder="dd/mm/yyyy"
-                                [disabled]="IsItemListDisabled" autocomplete="off" name="dp"
+                                 autocomplete="off" name="dp"
                                 [(ngModel)]="dynamicArray[i].ManufDate" ngbDatepicker #m="ngbDatepicker">
                               <div class="input-group-addon" (click)="m.open()">
                                 <span class="input-group-text">
@@ -2313,7 +2308,7 @@
                           <td style="width:60px;">
                             <div class="input-group">
                               <input class="form-control form-control-sm" placeholder="dd/mm/yyyy"
-                                [disabled]="IsItemListDisabled" autocomplete="off" name="dp"
+                                 autocomplete="off" name="dp"
                                 [(ngModel)]="dynamicArray[i].InvoiceTaxDate" ngbDatepicker #d="ngbDatepicker">
                               <div class="input-group-addon" (click)="d.open()">
                                 <span class="input-group-text">
@@ -2326,10 +2321,10 @@
                           <td style="width:140px;">
                             <input class="form-control form-control-sm InvoiceTaxNo" id="txtInvoiceTaxNo_{{i}}"
                               autocomplete="off" [(ngModel)]="dynamicArray[i].InvoiceTaxNo" type="text"
-                              style="text-align:center;" [disabled]="IsItemListDisabled" />
+                              style="text-align:center;" />
                           </td>
                           <td>{{dynamic.CustomerSiteId}}</td>
-                          <td *ngIf="Correctioncolumnhideandshow">
+                          <!-- <td *ngIf="Correctioncolumnhideandshow">
                             <select style="width:120px;" (change)="ChangeCorrectionEntryReason(i)"
                               class="form-control form-control-sm TaxWith" id="ddlCentryReason_{{i}}"
                               [(ngModel)]="dynamicArray[i].IsCorrectionEntryReason"
@@ -2349,11 +2344,11 @@
                             <button type="submit" [disabled]="dynamicArray[i].IsCorrectionDisabled"
                               class="btn btn-sm btn-success" *ngIf="Save && dynamicArray[i].IsCorrection"
                               (click)="ConfirmCorrectionPopup(i)">Update </button>
-                          </td>
+                          </td> -->
                         </tr>
                         <tr>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td colspan="12">Gross Total</td>
+                          <!-- <td *ngIf="Correctioncolumnhideandshow"></td> -->
+                          <td colspan="13">Gross Total</td>
                           <td style="text-align:center;">{{totalSumPOQuantity}}</td>
                           <td></td>
                           <td></td>
@@ -2368,10 +2363,10 @@
                           <td></td>
                           <td></td>
                           <td></td>
+                          <!-- <td *ngIf="Correctioncolumnhideandshow"></td>
                           <td *ngIf="Correctioncolumnhideandshow"></td>
                           <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
-                          <td *ngIf="Correctioncolumnhideandshow"></td>
+                          <td *ngIf="Correctioncolumnhideandshow"></td> -->
                         </tr>
                         <tr *ngIf="ItemAddrowhideshow">
                           <td (click)="addRow()">
@@ -2733,10 +2728,6 @@
                               [(ngModel)]="dynamicArray[i].TotalInvoiceValue" type="text"
                               style="text-align:center;width: 120px;" />
                           </td>
-
-
-
-
                           <!-- <td style="width:60px;">    
                             <input class="form-control form-control-sm" readonly id="txtGetTotalAmount" [(ngModel)]="dynamicArray[i].GetTotalAmount"   type="text" style="text-align:center;"/>   
                           </td> -->
@@ -2834,7 +2825,6 @@
                         </tr>
                       </tbody>
                     </table>
-
                   </div>
                 </fieldset>
 
