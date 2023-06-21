@@ -7296,6 +7296,7 @@ export class DispatchTrackerComponent implements OnInit {
         $("#txtRate_" + icount).css('border-color', '');
       }
 
+      
       if (this.dynamicArray[icount].DispatchTypeId == ""
         || this.dynamicArray[icount].DispatchTypeId == "0") {
 
