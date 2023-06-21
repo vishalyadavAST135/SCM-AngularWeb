@@ -28,7 +28,7 @@ import { GlobalErrorHandlerServiceService } from 'src/app/Service/global-error-h
 import { ApprovalrendererComponent } from 'src/app/renderer/approvalrenderer/approvalrenderer.component';
 import { CheckBoxRendererComponent } from 'src/app/renderer/CheckBoxrenderer.component';
 import * as JSZip from 'jszip';
-import { approvalTooltipComponent } from 'src/app/renderer/pprovaltooltip.component';
+import { approvalTooltipComponent } from 'src/app/renderer/approvaltooltip.component';
 import { BOQModel } from 'src/app/_Model/BOQRequestModel';
 import { BOQRequestequestService } from 'src/app/Service/boqrequestequest.service';
 import { CommonpdfService } from 'src/app/Service/commonpdf.service';

@@ -40,7 +40,7 @@ import { UnitMasterComponent } from './View/Masters/unit-master/unit-master.comp
 import { ItemEquipmentComponent } from './View/Masters/item-equipment/item-equipment.component';
 import { ApprovalrendererComponent } from './renderer/approvalrenderer/approvalrenderer.component';
 import { CheckBoxRendererComponent } from './renderer/CheckBoxrenderer.component';
-import { approvalTooltipComponent } from './renderer/Approvaltooltip.component';
+import { approvalTooltipComponent } from './renderer/approvaltooltip.component';
 import { ViewApprovalpageComponent } from './View/Common/view-approvalpage/view-approvalpage.component';
 import { MaterialInstallationComponent } from './View/Dispatch/material-installation/material-installation.component';
 import { TimePeriodComponent } from './View/Common/time-period/time-period.component';
