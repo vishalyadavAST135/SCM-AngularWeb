@@ -75,6 +75,14 @@ export class DispatchTrackingModel
     DIStatusId:any;
     TaxInvoiceDate: string //vishal, 03/12/2022
     DispatchNoId:number //vishal
+    
+    //vishal, 26/04/2023
+    BillToState_Id:number;
+    BillToVendor_Id:number;
+    BillToStateCode:string; 
+    BillToGSTNO:string;
+    BillToVenAddressId: number;
+    BillToStateName: string;//vishal
    
 
 }
@@ -182,6 +190,10 @@ export class SearchDispatchTrackerModel extends CommonSearchPanelModel
     CustomerSiteId:string;
     WHStateId: number; //vishal
     DispatchNoId:number
+    ApprovalLevelId:number; //vishal 13/04/2023 
+    CusDispatchTracker_Id: number //vishal 
+    CustomerFlag:number //vishal
+  
 }
 
 // Brahamjot kaur 22/6/2022
@@ -287,6 +299,7 @@ export class DISearchModel{
     Flag:any; 
     SiteId:any; 
     UserId:any; 
+    
 }
 
 export class SRNInstructionSearchModel{
@@ -295,4 +308,48 @@ export class SRNInstructionSearchModel{
     Flag:string;
     UserId:number;
     WHId:string;
+}
+
+//vishal, 23/05/2023
+
+export class CusDispatchTrackingModel
+{ 
+    CusDispatchTracker_Id:number;
+    Company_Id:number;
+    UserId:number;
+    State_Id:number;
+    SiteId:number;
+    CustomerSiteId:string;
+    ClientName:string;
+    SiteName:string;
+    TECHFE:number;
+    COHCI:number;
+    SiteAddress:string;
+    DocumentNo:string;
+    DocumentDate:string;
+    DeliveredDate:string;
+    ReceivedBy:string;
+    ReceivedNo:string;
+    ExpDeliveryDate:string;
+    DocumentFile:string;
+    ReceveingDocumentFile:string;
+    DispatchInstructionId:string;
+    DispatchForId:number;
+    Flag:string;
+    CustomerDispatchItemList:CustomerDispatchItemDetialModel[];
+
+
+}
+
+export class CustomerDispatchItemDetialModel
+{ 
+    Id:any;
+    Qty:any;
+    ItemMakeId:any;
+    ItemNameId: any;
+    ItemCapId:any;
+    UnitId:any;
+    SubDescription:any;
+    SiteId:number;
+    DIList_Id:number;
 }

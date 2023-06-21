@@ -177,6 +177,11 @@ export class DynamicItemGrid{
 
     // Hemant Tyagi
     FaultyQty:any;
+    EditItemCap:[]; //vishal
+    ItemCapId: string; //vishal
+    EditItemUnit:[] //vishal
+    CapacityName: string //vishal
+   
     
 }
 export class DynamicAnxHeaderItemGrid{  

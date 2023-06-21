@@ -6,6 +6,7 @@ import { ApprovelStatusModel, DropdownModel, WebAPIConfig } from '../_Model/comm
 import { PoSearchModel, VendorOrWhModel } from '../_Model/purchaseOrderModel';
 import { DISearchModel, DispatchTrackingModel, SearchDispatchTrackerModel, SearchMaterialInstallationModel, SearchMaterialRequisitionModel, SearchSRNUsesModel, SRNInstructionSearchModel } from '../_Model/DispatchModel';
 import { ItemEquipmentDetail } from '../_Model/MastersModel';
+import { promise } from 'protractor';
 
 const headers = new HttpHeaders({
   'Content-Type': 'application/json',
@@ -98,6 +99,14 @@ export class MaterialMovementService {
     var objBaseUrl = new WebAPIConfig();
     return this.httpclient.get(objBaseUrl.ApIUrl + "GetAllState", { params: params });
   }
+
+  async GetAllStateV2(objVendorOrWh: VendorOrWhModel) {
+    let Para = JSON.stringify(objVendorOrWh);
+    let params = new HttpParams().set("para", Para);
+    var objBaseUrl = new WebAPIConfig();
+    return await this.httpclient.get(objBaseUrl.ApIUrl + "GetAllState", { params: params }).toPromise();
+  }
+  
   GetVechileTypeAndTransPortMode(): Observable<any> {
     var objBaseUrl = new WebAPIConfig();
     return this.httpclient.get(objBaseUrl.ApIUrl + "GetVechileTypeAndTransPortMode", options);
@@ -234,4 +243,23 @@ export class MaterialMovementService {
     var objBaseUrl = new WebAPIConfig();
     return this.httpclient.post(objBaseUrl.ApIUrl + "SRN/GetSRNInstructionListByDIId", objdata, options);
   }  
+
+  //vishal, 23/05/2023
+  
+  SaveUpdateCustomerDispatch(formdata: FormData): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "CDispatch/SaveUpdateCustomerDispatch", formdata);
+  }
+
+ 
+  GetCustomerDispatchEditListById(objdata: SearchDispatchTrackerModel): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "CDispatch/GetCustomerDispatchEditListById", objdata, options);
+  }
+
+  UpdateReceiveDetailsCustomerDispatch(formdata: FormData): Observable<any> {
+    var objBaseUrl = new WebAPIConfig();
+    return this.httpclient.post(objBaseUrl.ApIUrl + "CDispatch/UpdateReceiveDetailsCustomerDispatch", formdata);
+  }
+  
 }

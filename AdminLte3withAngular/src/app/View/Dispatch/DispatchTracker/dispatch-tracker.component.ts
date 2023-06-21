@@ -1,6 +1,6 @@
 import { DatePipe } from '@angular/common';
 import { Component, ElementRef, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as $ from 'jquery';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { ButtonRendererComponent } from 'src/app/renderer/button-renderer.component';
@@ -11,8 +11,8 @@ import { GrncrnService } from 'src/app/Service/grncrn.service';
 import { MaterialMovementService } from 'src/app/Service/material-movement.service';
 import { PurchaseOrderService } from 'src/app/Service/purchase-order.service';
 import { SearchpanelService } from 'src/app/Service/searchpanel.service';
-import { AmountActivity, ApprovelStatusModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, EmailDetailReqModel, EmailModel, EmailSendTotalDataModel, MenuName, PageActivity, ReasonActivity, TransPortModeType, UserRole, WebErrorLogModel } from 'src/app/_Model/commonModel';
-import { DISearchModel, DispatchTrackingItemDetialModel, DispatchTrackingModel, SearchDispatchTrackerModel } from 'src/app/_Model/DispatchModel';
+import { AmountActivity, ApprovelStatusModel, CommonSiteSearchPanelModel, CommonStaticClass, CompanyStateVendorItemModel, DropdownModel, EmailDetailReqModel, EmailModel, EmailSendTotalDataModel, MenuName, PageActivity, ReasonActivity, TransPortModeType, UserRole, WebErrorLogModel } from 'src/app/_Model/commonModel';
+import { CusDispatchTrackingModel, CustomerDispatchItemDetialModel, DISearchModel, DispatchTrackingItemDetialModel, DispatchTrackingModel, SearchDispatchTrackerModel } from 'src/app/_Model/DispatchModel';
 import { SaveGRNCRNModelDetail, SiteCustomerAutoModel } from 'src/app/_Model/grncrnModel';
 import { CellNo, DownLoadZipFileDetial, DynamicItemGrid, DynamicWHAddress, GSerialNumber, VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { CompanyModel } from 'src/app/_Model/userModel';
@@ -42,6 +42,9 @@ import { debug } from 'console';
 import { SendmailService } from 'src/app/Service/sendmail.service';
 import { Modal } from 'bootstrap'
 import { SendMailComponent } from '../../Common/send-mail/send-mail.component';
+import Swal from 'sweetalert2';
+import { async } from 'rxjs/internal/scheduler/async';
+import { promise } from 'protractor';
 
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 var PDFdata = null;
@@ -56,6 +59,7 @@ export class DispatchTrackerComponent implements OnInit {
   model: any = {};
   apiCSVIData: any = {};
   dynamicArray: Array<DynamicItemGrid> = [];
+  cusdynamicArray: Array<DynamicItemGrid> = []; //vishal
   dynamicArrayDispatchPdf: Array<DynamicItemGrid> = [];
   objDynamicWHAddress: Array<DynamicWHAddress> = [];
 
@@ -73,6 +77,7 @@ export class DispatchTrackerComponent implements OnInit {
   CompanyData = [];
   SearchStateList = [];
   SearchVendorList = [];
+  // SearchBillToVendorList = []; //vishal, 28/04/2023
   SearchItemNameList = [];
   WHStateList = [];
   SiteStateList = [];
@@ -85,6 +90,7 @@ export class DispatchTrackerComponent implements OnInit {
   totalamount: any;
   EditWHList = [];
   SelectedEditVendorList = [];
+  SelectedBillToVendorList = []; //vishal
   keyword = 'SiteName';
   AutoCompleteSiteCustomerList = [];
   CustomerSitekeyword = 'CustomerSiteId';
@@ -116,6 +122,7 @@ export class DispatchTrackerComponent implements OnInit {
   frameworkComponents: any;
   ShippedINWHList: any[];
   SearchVendorListById: any[];
+  BillToSearchVendorListById: any[]; //vishal
   Address: string;
   WHAddress: any;
 
@@ -135,10 +142,13 @@ export class DispatchTrackerComponent implements OnInit {
   GRfileDocumentFile: any;
   DispatchFromList: any;
   OtherSiteStateList: any;
+
   @ViewChild('inputFile') myInputVariable: ElementRef;
   @ViewChild('BillFile') myBillFileVariable: ElementRef;
   @ViewChild('TaxFile') myTaxFileVariable: ElementRef;
   @ViewChild('DocumentFile') myDocFileVariable: ElementRef;
+
+
   IsTaxInvoiceNoSameState: boolean;
   IsDisabledDocumentDownload: boolean;
   IsDisabledTaxInvoiceDownload: boolean;
@@ -240,8 +250,6 @@ export class DispatchTrackerComponent implements OnInit {
   @ViewChild('inputExcelBB', { static: false })
   inputExcelBB: ElementRef;
 
-
-
   public MultidropdownSettings = {};
   Exportloading: boolean;
   IsDispatchFor: boolean;
@@ -318,6 +326,40 @@ export class DispatchTrackerComponent implements OnInit {
   minDeleveredDt: { year: any; month: any; day: number; };
   maxDeleveredDt: { year: any; month: any; day: number; };
 
+  //for customer dispatch
+  minCusDispatchDt: { year: any; month: any; day: number; };
+  maxCusDispatchDt: { year: any; month: any; day: number; };
+
+  isChecked: boolean; //vishal
+  IsCustomerDispatchhideandShow: boolean;
+  IsEditCustomerDispatch: boolean;
+  objCommonSiteSearchPanelModel: CommonSiteSearchPanelModel = {
+    SiteId: 0, PageFlag: '0', Site_Id: 0
+
+  };
+  BillToVenderFilterAddress: any; //vishal
+  BillToMultiVenAddressList: any; //vishal
+  CustomerFlag: number = 0; //vishal
+  SearchSiteId: any;
+  cusItemAddrowhideshow: boolean;
+  selectedCusDIArr: any[] = []; //vishal
+  CapacityList: any; //vishal
+  UnitList = []; //vishal
+  CusRecDocumentFile: any; //vishal
+  CusChalanFile: any; //vishal
+  CusDispatchTrackingItem = []; //vishal
+  StateList: any; //vishal
+  CuSearchStateList = []; //vishal
+  CusCOHDataList: any; //vishal
+  CusTechDataList: any; //vishal
+  IsPartialUpdateCusDispatch: boolean; //vishal, 03/06/2023
+  IsSaveDisable: boolean = false; //vishal, 03/06/2023
+  CusDispatchInstructionList: any[] = []; //vishal
+  IsChallanFile: boolean;
+  IsRecvFile: boolean;
+  HideShowCusDisbtn: boolean = false;
+  HideShowASTDisbtn: boolean = false;
+
   constructor(private router: Router, private _Commonservices: CommonService,
     private _GrncrnService: GrncrnService,
     private _MaterialMovementService: MaterialMovementService,
@@ -328,7 +370,7 @@ export class DispatchTrackerComponent implements OnInit {
     private datePipe: DatePipe, private modalService: NgbModal,
     private _DispatchPdfServiceService: DispatchPdfServiceService,
     private _StockserviceService: StockserviceService, private _MasterService: MasterservicesService,
-    private _BOQService: BOQRequestequestService, private _objSendMailService: SendmailService) {
+    private _BOQService: BOQRequestequestService, private _objSendMailService: SendmailService, private route: ActivatedRoute) {
     this.tooltipShowDelay = 0;
     this.frameworkComponents = {
       buttonRenderer: ButtonRendererComponent,
@@ -336,6 +378,7 @@ export class DispatchTrackerComponent implements OnInit {
       customtooltip: CustomTooltipComponent,
       approvalTooltip: approvalTooltipComponent,
       AgGridCheckboxRenderer: AgGridCheckboxComponent,
+
     }
 
     this._objSearchpanelService.SearchPanelSubject.subscribe(data => {
@@ -348,17 +391,24 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
+    this.model.cusStateId = "0";
+    this.isChecked = false; //vishal
+    this.IsEditCustomerDispatch = true //vishal
     this.GettAllVechTransModeTransfertypeDispatch();
     this.model.TransporterId = "0";
     this.model.DispatchTo = "0";
     this.model.IsActiveCancel = 2;
     this.model.CustomerId = "0";
+    this.model.IsHOLead = 0; //vishal
+    this.model.CusTECHFE = "0";//vishal, 10/05/2023
+    this.model.CusCOHCI = "0"; // vishal, 10/05/2023
+    this.getCutomerAllState(); //vishal, 02/06/2023
     //this.MetrailInstallationGrid();
     this.isShownList = false;
     this.IsModelShow = false;
     this.isShownEdit = true;
     this.IsDispatchPreview = true;
+    this.IsEditCustomerDispatch = true;
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.UserId = objUserModel.User_Id;
     this.UserName = objUserModel.User_Id;
@@ -380,8 +430,17 @@ export class DispatchTrackerComponent implements OnInit {
     objCompanyModel = JSON.parse(sessionStorage.getItem("CompanyIdSession"));
     this.CompanyId = objCompanyModel.Company_Id;
     this.model.PreviewCompanyName = objCompanyModel.FullName;
-
     this.BindCompanyStateVendorItem();
+
+    this.model.IsAST = "2642"; //vishal
+    //by:vishal, for: Hide Show Create New Customer Dispatch & Search Button. 
+    // if (this.CompanyId == 4) {
+    //   this.HideShowCusDisbtn = true
+    // } else {
+    //   this.HideShowCusDisbtn = false
+    // }
+    this.changeDispatchSearch();
+
 
     this.columnDefs = [
       {
@@ -391,7 +450,7 @@ export class DispatchTrackerComponent implements OnInit {
           onClick: this.ShowDispatcTrackerDetail.bind(this),
           label: 'edit'
         }, pinned: 'left',
-        width: 35,
+        width: 49,
         filter: false
       },
       {
@@ -586,16 +645,33 @@ export class DispatchTrackerComponent implements OnInit {
     this.BindCorrectionentryReason();
     this.VendorSaleUnit();
     this.BindDispatchInstructionStatus();
-    this.CreateDispatchForDIId = "0";
-    this.CreateDispatchForDIId = localStorage.getItem('DIRequestId');
-    if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
-      setTimeout(() => {
-        this.CreateNew();
-        localStorage.removeItem('DIRequestId');
-      }, 1000);
-    }
+    // this.CreateDispatchForDIId = "0";
+    // this.CreateDispatchForDIId = localStorage.getItem('DIRequestId');
+    // if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
+    //   setTimeout(() => {
+    //     //this.CreateNew();
+    //     localStorage.removeItem('DIRequestId');
+    //   }, 1000);
+    // }
     //brahamjot kaur 31/10/2022
     this.GetUserPageRight(this.DispatchTracker_Id);
+
+    //vishal, 13/06/2023
+    this.route.queryParams.subscribe(params => {
+      this.CreateDispatchForDIId = "0";
+      this.CreateDispatchForDIId = params['id']
+
+      if (params['Responsibility'] == "AST") {
+        setTimeout(() => {
+          this.CreateNew();
+        }, 1000);
+      } else if (params['Responsibility'] == "Customer") {
+        this.createNewCusDispatch();
+        if (this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null) {
+          this.cusAutoFillDispatchDetailByDIId(this.CreateDispatchForDIId)
+        }
+      }
+    });
   }
 
 
@@ -660,6 +736,7 @@ export class DispatchTrackerComponent implements OnInit {
   // change by Hemant Tyagi 01/08/2022 
   // add multi selete drop down
   GetAllDispatchInstructionNo(whId: any) {
+
     try {
       var objModel = new BOQNOListModel();
       objModel.circleId = null;
@@ -976,9 +1053,7 @@ export class DispatchTrackerComponent implements OnInit {
       for (var j = 0; j < value; j++) {
         var oc = new CellNo();
         oc.Sequance = i.toString();
-        debugger
         var celllength = this.dynamicArray[this.indexv].GSerialNumbers.length;
-        debugger
         if (celllength > i) {
           // Error Comming
           oc.CellValue = this.dynamicArray[this.indexv].GSerialNumbers[i].CellNos[j].CellValue;
@@ -1346,7 +1421,6 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ChangeSite(index: number) {
-    debugger
     try {
       let siteId = 0;
       if (this.dynamicArray[index].SiteId == 0 || this.dynamicArray[index].SiteId == null) {
@@ -1361,7 +1435,6 @@ export class DispatchTrackerComponent implements OnInit {
       objdropdownmodel.Other_Id = this.model.ShippedfromWHId;
       objdropdownmodel.Company_Id = this.CompanyId;
       objdropdownmodel.Flag = 'Dispatch';
-      debugger
       this._MaterialMovementService.GetAllPreviousDataBySiteId(objdropdownmodel).pipe(first()).subscribe(data => {
         if (data.Data != null && data.Data != '') {
           this.PreviousDataHistoryData = data.Data;
@@ -1498,7 +1571,10 @@ export class DispatchTrackerComponent implements OnInit {
   BackPage() {
     this.isShownList = false;
     this.isShownEdit = true;
+    this.isChecked = false; //vishal
+    this.IsEditCustomerDispatch = true //vishal
   }
+
 
   //#region  Preview Pdf Dispatch
   PreviewDispatch() {
@@ -2136,6 +2212,29 @@ export class DispatchTrackerComponent implements OnInit {
   onSelectAll(items: any) {
     //console.log(items);
   }
+
+  //vishal
+  OnBillToVenItemDeSelect(item: any) {
+    this.model.BillToVenStateCode = "";
+    this.SelectedBillToVendorList = [];
+    this.model.BillToVendorName = "";
+    this.model.BillToVenGSTIN = "";
+    this.model.BillToVendorAddress = "";
+    this.model.BillToVendorCode = "";
+  }
+  onBillToVenDeSelectAll(items: any) {
+    this.model.BillToVenStateCode = "";
+    this.SelectedBillToVendorList = [];
+    this.model.BillToVendorName = "";
+    this.model.BillToVenGSTIN = "";
+    this.model.BillToVendorAddress = "";
+    this.model.BillToVendorCode = "";
+  }
+  onBillToSelectAll(items: any) {
+    //console.log(items);
+  }
+  //end-vihal
+
   onItemSelect(item: any) {
     //console.log(item);
     // if(this.model.TransferTypeId == PageActivity.Dis_VendorSale){
@@ -2174,7 +2273,7 @@ export class DispatchTrackerComponent implements OnInit {
     $("#txtVendorAddress").css('border-color', '');
     $("#txtVenGSTIN").css('border-color', '');
     $("#txtVenStateCode").css('border-color', '');
-    var objVendormodel = new VendorOrWhModel();
+    let objVendormodel = new VendorOrWhModel();
     objVendormodel.Id = this.SelectedEditVendorList[0].id;
     objVendormodel.flag = 'vendor';
     objVendormodel.StateId = this.model.VenOtherStateId;
@@ -2182,11 +2281,12 @@ export class DispatchTrackerComponent implements OnInit {
     this._Commonservices.getVendorOrWh(objVendormodel).subscribe(vendata => {
 
       if (vendata.Data != null && vendata.Data != "") {
-        //this.model.VendorName = data.Data[0].VendorName;
+        this.model.VendorName = vendata.Data[0].VendorName;
         this.model.VendorCode = vendata.Data[0].VendorCode;
         this.model.VenStateName = vendata.Data[0].StateName;
         this.model.Destination = vendata.Data[0].StateName;
         this.model.VenStateCode = vendata.Data[0].VenStateCode;
+
 
         //change by brahamjot 18/6/2022
 
@@ -2223,16 +2323,117 @@ export class DispatchTrackerComponent implements OnInit {
 
     });
   }
-
   ChangeVendorAddress(Id: any) {
     $("#txtVendorAddress").css('border-color', '');
     $("#txtVenGSTIN").css('border-color', '');
-    var VenderFilterAddressData = this.VenderFilterAddress.filter(
+    let VenderFilterAddressData = this.VenderFilterAddress.filter(
       m => m.Id === parseInt(Id));
     this.model.VendorAddress = VenderFilterAddressData[0].VendorAddress;
     this.model.VendorAddressId = VenderFilterAddressData[0].Id;
     this.model.VenGSTIN = VenderFilterAddressData[0].GSTINNo;
   }
+
+  //vishal, 19/04/2023
+
+  ngModelChangeBillToVendor(event): void {
+    $('#TxtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: ');
+    $("#txtBillToVendorAddress").css('border-color', '');
+    $("#txtBillToVenGSTIN").css('border-color', '');
+    $("#txtBillToVenStateCode").css('border-color', '');
+    let objVendormodel = new VendorOrWhModel();
+    objVendormodel.Id = this.SelectedBillToVendorList[0].id;
+    objVendormodel.flag = 'vendor';
+    objVendormodel.StateId = this.model.BillToVenOtherStateId;
+    this.model.BillToPreviewVendorNmae = this.SelectedBillToVendorList[0].itemName;
+    this._Commonservices.getVendorOrWh(objVendormodel).subscribe(vendata => {
+
+      if (vendata.Data != null && vendata.Data != "") {
+        this.model.BillToVendorName = vendata.Data[0].VendorName;
+        this.model.BillToVendorCode = vendata.Data[0].VendorCode;
+        this.model.BillToVenStateName = vendata.Data[0].StateName;
+        this.model.BillToDestination = vendata.Data[0].StateName;
+        this.model.BillToVenStateCode = vendata.Data[0].VenStateCode;
+
+        if (this.model.TransferTypeId == PageActivity.Dis_VendorSale
+          && vendata.Data[0].VendorTypeFlag == '2') {
+          try {
+            this.VendorScaleVissible = true;
+            this.BindVendorWh(vendata.Data[0].VendorCompany_Id, this.model.BillToVenOtherStateId);
+          } catch (Error) {
+            this._Commonservices.ErrorFunction(this.UserName, Error.message, "ngModelChangeBillToVendor", "Vendor(Sale)");
+          }
+        } else {
+          this.VendorScaleVissible = false;
+          this.ShippedTOVendorWHList = [];
+        }
+
+        this.BillToMultiVenAddressList = vendata.Data[0].VenAddressList;
+        if (this.BillToMultiVenAddressList.length == 1) {
+          this.BillToVenderFilterAddress = [];
+          this.model.BillToVendorAddress = null;
+          this.model.BillToVenGSTIN = null;
+          this.model.BillToVendorAddress = this.BillToMultiVenAddressList[0].VendorAddress;
+          this.model.BillToVenGSTIN = this.BillToMultiVenAddressList[0].GSTINNo;
+          this.BillToVenderFilterAddress = this.BillToMultiVenAddressList
+          this.model.BillToRadioId = this.BillToMultiVenAddressList[0].Id;
+        } else {
+          this.BillToVenderFilterAddress = [];
+          this.model.BillToVendorAddress = null;
+          this.model.BillToVenGSTIN = null;
+          this.BillToVenderFilterAddress = this.BillToMultiVenAddressList
+        }
+
+      }
+
+    });
+  }
+
+  //end-vishal
+
+  //vishal, 19/04/2023
+  ChangeBillToVendorAddress(Id: any) {
+    $("#txtBillToVendorAddress").css('border-color', '');
+    $("#txtBillToVenGSTIN").css('border-color', '');
+    let VenderFilterAddressData = this.BillToVenderFilterAddress.filter(
+      m => m.Id === parseInt(Id));
+    this.model.BillToVendorAddress = VenderFilterAddressData[0].VendorAddress;
+    this.model.BillToVendorAddressId = VenderFilterAddressData[0].Id;
+    this.model.BillToVenGSTIN = VenderFilterAddressData[0].GSTINNo;
+  }
+  //end-vishal
+
+  //By: vishal, 18/04/2023, desc : for check bill to address same as vendor address
+  checkBillToAdd() {
+    if (this.isChecked) {
+      this.ChangeBillToVendorState(1);
+      this.model.BillToVenOtherStateId = this.model.VenOtherStateId;
+      this.model.BillToVenStateCode = this.model.VenStateCode;
+      //this.model.BillToPreviewVendorState = this.model.PreviewVendorState;
+      this.SelectedBillToVendorList = this.SelectedEditVendorList;
+      this.model.BillToPreviewVendorNmae = this.model.PreviewVendorNmae;
+      this.model.BillToVendorCode = this.model.VendorCode;
+      this.model.BillToVenGSTIN = this.model.VenGSTIN;
+      this.model.BillToVendorAddress = this.model.VendorAddress;
+      this.model.BillToRadioId = this.model.RadioId;
+
+    }
+    else {
+      this.model.BillToVenOtherStateId = 0;
+      //this.model.BillToPreviewVendorState = '';
+      this.model.BillToVenStateCode = '';
+      this.SelectedBillToVendorList = [];
+      this.model.BillToPreviewVendorNmae = '';
+      this.model.BillToVendorCode = '';
+      this.model.BillToVenGSTIN = '';
+      this.model.BillToVendorAddress = '';
+      this.model.BillToRadioId = '';
+      this.model.BillToVendorName = '';
+
+
+    }
+
+  }
+  //end-vishal
 
   BindStateCodeWHAdd(StateId: any) {
     this.ChangeTransporter(1)
@@ -2289,6 +2490,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.ShippedWHAddress = ShippedWhAddess[0].WHAddress;
     this.model.PreviewWHName = ShippedWhAddess[0].WHName;
     this.GetAllDispatchInstructionNo(whId);
+
   }
 
   ChangeVendorState(StId: any) {
@@ -2300,10 +2502,27 @@ export class DispatchTrackerComponent implements OnInit {
     $("#txtTOVenderStateId").css('border-color', '');
     this.SearchVendorListById = this.SearchVendorList.filter(
       m => m.State_Id === parseInt(StId));
-    var PreviewVendorState = this.OtherSiteStateList.filter(
+    let PreviewVendorState = this.OtherSiteStateList.filter(
       m => m.id === parseInt(StId));
     this.model.PreviewVendorState = PreviewVendorState[0].itemName;
   }
+
+  //vishal, 19/04/2023
+
+  ChangeBillToVendorState(StId: any) {
+    this.SelectedBillToVendorList = [];
+    this.model.BillToVendorName = "";
+    this.model.BillToVenGSTIN = "";
+    this.model.BillToVendorAddress = "";
+    this.BillToVenderFilterAddress = [];
+    $("#txtBillToVenderStateId").css('border-color', '');
+    this.BillToSearchVendorListById = this.SearchVendorList.filter(
+      m => m.State_Id === parseInt(StId));
+    let PreviewVendorState = this.OtherSiteStateList.filter(
+      m => m.id === parseInt(StId));
+    this.model.BillToPreviewVendorState = PreviewVendorState[0].itemName;
+  }
+  //end-vishal
 
   onFocused(e) {
   }
@@ -2466,6 +2685,8 @@ export class DispatchTrackerComponent implements OnInit {
 
   CreateNew() {
     //this.name = this.ViewApprovalpageComponent.name;
+    this.IsEditCustomerDispatch = true //vishal
+    this.IsCustomerDispatchhideandShow = true;
     this.IsPreviewhideandShow = true;
     this.IsMetrailInstallationGrid = false;
     this.IsBiltyValidationShowandhide = false;
@@ -2496,7 +2717,9 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsHideShowCancelBtn = false;
     this.IsReceivedDetail = false;
     this.model.DisatchTrackeringId = 0;
+    this.model.CusDisatchId = 0; //vishal
     this.model.IsApproved = 0;
+    //this.model.IsHOApproved = 0; //vishal, 11-04-2023
     this.TableId = 0;
     this.ManueId = null;
     this.ApprovalList = null
@@ -2548,10 +2771,13 @@ export class DispatchTrackerComponent implements OnInit {
       setTimeout(function () { this.IsError = false; }, 3000);
       return false;
       // validation on qty with stock qty.
-    } else if (this.validateStockQty() == 1) {
-      setTimeout(function () { this.IsError = false; }, 3000);
-      return false;
-    } else if (this.dynamicArray.length < 1) {
+    }
+    // else if (this.validateStockQty() == 1) {
+    //   setTimeout(function () { this.IsError = false; }, 3000);
+    //   return false;
+    // }
+
+    else if (this.dynamicArray.length < 1) {
       alert('please fill atleast one item');
       return false;
     } else if (this.validationDICustomerSiteId() == 1) {
@@ -2565,7 +2791,6 @@ export class DispatchTrackerComponent implements OnInit {
   //#region This Fuction Used to Add Update Dispatch Request
   SaveUpDateDispatchRequest() {
     try {
-
       // this.IsSaveButtonDisable = true;
       jQuery('#confirm').modal('hide');
       var objDispatchTrackingModel = new DispatchTrackingModel();
@@ -2743,6 +2968,16 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingModel.ShippedToStateCode = this.model.VenStateCode;
         objDispatchTrackingModel.ShippedToGSTNO = this.model.VenGSTIN;
         objDispatchTrackingModel.VenAddressId = this.model.RadioId;
+
+        //vishal, 26/04/2023
+        objDispatchTrackingModel.BillToState_Id = this.model.BillToVenOtherStateId;
+        objDispatchTrackingModel.BillToVendor_Id = this.SelectedBillToVendorList[0].id;
+        objDispatchTrackingModel.BillToStateName = this.model.BillToVenStateName;
+        objDispatchTrackingModel.BillToStateCode = this.model.BillToVenStateCode;
+        objDispatchTrackingModel.BillToGSTNO = this.model.BillToVenGSTIN;
+        objDispatchTrackingModel.BillToVenAddressId = this.model.BillToRadioId;
+
+
         if (this.VendorScaleVissible == true && this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
           // this.IsModelShow = false;//vishal, 05/12/2022
           objDispatchTrackingModel.ShippedToWHId = this.model.ShippedToVendorWHId;
@@ -2869,7 +3104,6 @@ export class DispatchTrackerComponent implements OnInit {
 
       formdata.append('jsonDetail', JSON.stringify(objDispatchTrackingModel));
       this._MaterialMovementService.SaveUpadteDispatchTracking(formdata).pipe(first()).subscribe(data => {
-
         if (data.Status == 1) {
           this.model.DisatchTrackeringId = data.Value;
           this.IsDisabledPreviewGenratebutton = false;
@@ -2916,7 +3150,6 @@ export class DispatchTrackerComponent implements OnInit {
 
   SaveUpDateDispatchReceived() {
     try {
-
       var objDispatchTrackingModel = new DispatchTrackingModel();
       objDispatchTrackingModel.DispatchTracker_Id = this.model.DisatchTrackeringId;
       objDispatchTrackingModel.ReceivedBy = this.model.ReceivedBy;
@@ -3173,7 +3406,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   SearchDispatchTrackerList(para: string) {
-
+    this.CustomerFlag = 0;
     this.gridApi.showLoadingOverlay();
     try {
       var objpara = new SearchDispatchTrackerModel();
@@ -3220,20 +3453,22 @@ export class DispatchTrackerComponent implements OnInit {
         objpara.CustomerId = this.model.CustomerId;
 
       }
-
-
       // brahamjot kaur 23/6/2022
       if (this._Commonservices.checkUndefined(this.model.DINo) == '') {
         objpara.DINo = '0';
       } else {
         objpara.DINo = this.model.DINo;
       }
+      objpara.CustomerFlag = 0; //vishal
+      objpara.ApprovalLevelId = this.model.IsHOLead; //vishal, 14-04-2023
+
       if (para == "Export") {
         this.Exportloading = true;
         this.gridApi.hideOverlay();
       }
 
       this._MaterialMovementService.GetDispatchTrackerList(objpara).pipe(first()).subscribe(data => {
+        this.rowData = null;
         this.gridApi.hideOverlay();
         this.Exportloading = false;
         if (data.Status == 1) {
@@ -3243,6 +3478,7 @@ export class DispatchTrackerComponent implements OnInit {
             } else {
               this.rowData = null;
             }
+
           } else if (para == "Export") {
             if (data.Data != null) {
               var CurrentDate = this.datePipe.transform(Date(), "dd/MM/yyyy");
@@ -3259,6 +3495,7 @@ export class DispatchTrackerComponent implements OnInit {
       this._Commonservices.ErrorFunction(this.UserName, Error.message, "SearchDispatchTrackerList", "WHTOSite");
     }
   }
+
   //#region this function used edit Dispatch detail by Dispatch Id
 
   ShowDispatcTrackerDetail(e) {
@@ -3266,17 +3503,26 @@ export class DispatchTrackerComponent implements OnInit {
     this.rowdatacurrentindex = this.rowData.findIndex(function (item, i) {
       return item.Id === e.rowData.DisatchTrackeringId;
     });
-    this.CreateNew();
-    this.isEdit = true;
-    this.IsEditDisabled = true;
+
     this.DispatchTracker_Id = e.rowData.DisatchTrackeringId;
     this.GetUserPageRight(this.DispatchTracker_Id);
-    this.SearchDispatchTrackerEditListByDispatchId(e.rowData.DisatchTrackeringId);
+    this.IsEditDisabled = true;
+
+    if (this.CustomerFlag == 0) {
+      this.CreateNew();
+      this.isEdit = true;
+      this.SearchDispatchTrackerEditListByDispatchId(e.rowData.DisatchTrackeringId);
+    } else {
+      this.createNewCusDispatch();
+      // //this.isEdit = true;
+      this.SearchCustomerDispatchEditListById(e.rowData.DisatchTrackeringId);
+    }
     this.model.InCaseReason = "0";
   }
 
   SearchDispatchTrackerEditListByDispatchId(Id: any) {
     try {
+
       this.GetUserPageRight(Id);
       this.DispatchTypeHideShow = false;
       this.IsReceivedHideShow = true;
@@ -3328,10 +3574,10 @@ export class DispatchTrackerComponent implements OnInit {
             } else {
               this.model.TrasporationMode = 0;
             }
-
             this.model.DateDiffHour = data.Data[0].DateDiffHour;
             this.ApprovalStatus = data.Data[0].ApprovalStatus;
             this.model.IsApproved = data.Data[0].IsApproved;
+
 
             this.IsPartialUpDateDispatchRequest = false;
             this.IsApprovalstatusbtnhideShow = false;
@@ -3352,7 +3598,7 @@ export class DispatchTrackerComponent implements OnInit {
               this.IsHideShowCancelBtn = true;
             }
 
-            if (this.CompanyId == 4) {
+            if (this.CompanyId == 4 || this.CompanyId == 1) {
               if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "") {
                 this.IsSaveButtonDisable = true;
                 this.IsPartialUpDateDispatchRequest = true;
@@ -3372,43 +3618,45 @@ export class DispatchTrackerComponent implements OnInit {
               }
 
 
-
-            } else if (this.CompanyId == 1) {
-              if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
-                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
-                  || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
-                  || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
-                  || this.model.TransferTypeId == PageActivity.Dis_Vendor
-                  || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
-                  || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
-              ) {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = false;
-              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
-                ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
-                  || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
-                  || this.model.TransferTypeId == PageActivity.Dis_VendorSale
-                  || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
-                ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
-              ) {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = false;
-              } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
-                this.IsSaveButtonDisable = true;
-                this.IsPartialUpDateDispatchRequest = true;
-                this.IsReceivedHideShow = true;
-                this.IsRecivedButtonDisable = true;
-              } else {
-                this.IsSaveButtonDisable = false;
-                this.IsPartialUpDateDispatchRequest = false;
-                this.IsReceivedHideShow = false;
-                this.IsRecivedButtonDisable = true;
-              }
             }
+            // commnented by: 17/04/2023 by:vishal
+            // else if (this.CompanyId == 1) {
+
+            //   if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '2')
+            //       || this.model.TransferTypeId == PageActivity.Dis_SiteWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHWithinState
+            //       || this.model.TransferTypeId == PageActivity.Dis_Vendor
+            //       || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter
+            //       || this.model.TransferTypeId == PageActivity.Dis_CustomerReturn)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy == "" &&
+            //     ((this.model.TransferTypeId == PageActivity.Dis_SiteOtherState && data.Data[0].GSTTypeId == '1')
+            //       || this.model.TransferTypeId == PageActivity.Dis_WHOtherState
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorSale
+            //       || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+            //     ) && (data.Data[0].TaxInvoiceNO != '' && data.Data[0].TaxInvoiceNO != null)
+            //   ) {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = false;
+            //   } else if (data.Data[0].IsApproved == 1 && this.model.ReceivedBy != "") {
+            //     this.IsSaveButtonDisable = true;
+            //     this.IsPartialUpDateDispatchRequest = true;
+            //     this.IsReceivedHideShow = true;
+            //     this.IsRecivedButtonDisable = true;
+            //   } else {
+            //     this.IsSaveButtonDisable = false;
+            //     this.IsPartialUpDateDispatchRequest = false;
+            //     this.IsReceivedHideShow = false;
+            //     this.IsRecivedButtonDisable = true;
+            //   }
+            // }
 
             if (this.model.TrasporationMode == TransPortModeType.ByRoad) {
               this.model.TransporterId = data.Data[0].Transporter_Id;
@@ -3446,6 +3694,7 @@ export class DispatchTrackerComponent implements OnInit {
             this.model.InCaseReason = data.Data[0].CancelReasonId;
             this.ApprovalList = null;
             this.ApprovalList = JSON.parse(data.Data[0].ApprovalStatusList);
+
             for (let i = 0; i < this.ArrayRoleId?.length; i++) {
               for (let j = 0; j < this.ApprovalList?.length; j++) {
                 this.arry = this.ApprovalList[j].RoleId.split(',');
@@ -3456,13 +3705,24 @@ export class DispatchTrackerComponent implements OnInit {
                 }
               }
             }
-            if (data.Data[0].IsApproved == 1) {
+
+            //vishal, 20/04/2023
+            if (
+              (this.UserRoleId == UserRole.SCMLead
+                && data.Data[0].ApprovalLevelId == 1)
+              || (this.UserRoleId == UserRole.SCMHo
+                && data.Data[0].ApprovalLevelId != 1)
+              || data.Data[0].IsApproved == 1) {
+
               this.IsApprovalstatusbtnhideShow = false;
             }
+            //end -vishal
+
             if (this.ApprovalList != null) {
               this.ApproveStatusDataList = this.ApprovalList;
             } else {
               this.ApproveStatusDataList = null;
+
             }
 
             // this.model.TransferTypeId = data.Data[0].IstransferTypeId;
@@ -3642,6 +3902,7 @@ export class DispatchTrackerComponent implements OnInit {
                   if (data1.Status == 1) {
                     if (data1.Data != null && data1.Data != "") {
                       this.OtherSiteStateList = data1.Data;
+                      this.model.ToSiteStateId = data.Data[0].ToState_Id;
                       FilterStateCode = null;
                       var FilterStateCode = this.OtherSiteStateList.filter(
                         m => m.id === parseInt(data.Data[0].ToState_Id));
@@ -3660,7 +3921,7 @@ export class DispatchTrackerComponent implements OnInit {
                 });
                 this.GetAllTechCOHbySiteId(data.Data[0].Site_Id);
 
-                this.model.ToSiteStateId = '' + data.Data[0].ToState_Id + '';
+                //this.model.ToSiteStateId = '' + data.Data[0].ToState_Id + '';
                 this.model.ToSiteStateCode = data.Data[0].ShippedToStateCode;
                 this.model.SiteId = data.Data[0].Site_Id;
                 this.model.SiteName = data.Data[0].SiteName;
@@ -3762,49 +4023,78 @@ export class DispatchTrackerComponent implements OnInit {
                 // }
 
 
-                this.EditDispatchToTransferType(this.model.TransferTypeId);
+                //this.EditDispatchToTransferType(this.model.TransferTypeId);
               }
               else if (this.model.TransferTypeId == PageActivity.Dis_WHOtherState || this.model.TransferTypeId == PageActivity.Dis_RepairingCenter) {
-                this.EditDispatchToTransferType(this.model.TransferTypeId);
-                this.ShippedTOWHList = JSON.parse(data.Data[0].ToOtherWHAddressList)
-                this.model.ShippedToOtherWHId = '' + data.Data[0].ShippedToWHId + '';
-                this.model.EditStateId = '' + data.Data[0].ToState_Id + '';
-                this.model.WHAddress = data.Data[0].ToWhAddress;
-                this.model.WHGSTIN = data.Data[0].ToWHGSTIN_UIN;
-                this.model.WHStateCode = data.Data[0].ShippedToStateCode;
+                //08/06
+                let promiseWHST = new Promise(async (resolve, reject) => {
+                  this.EditDispatchToTransferType(this.model.TransferTypeId);
+                  resolve("done");
+                });
+
+                promiseWHST.then(() => {
+                  this.ShippedTOWHList = JSON.parse(data.Data[0].ToOtherWHAddressList)
+                  this.model.ShippedToOtherWHId = data.Data[0].ShippedToWHId;
+                  this.model.EditStateId = data.Data[0].ToState_Id;
+                  this.model.WHAddress = data.Data[0].ToWhAddress;
+                  this.model.WHGSTIN = data.Data[0].ToWHGSTIN_UIN;
+                  this.model.WHStateCode = data.Data[0].ShippedToStateCode;
+                });
+
               }
+
               else if (this.model.TransferTypeId == PageActivity.Dis_CustomerReturn) {
-                this.EditDispatchToTransferType(this.model.TransferTypeId);
-                this.GettAllCRNNoList = JSON.parse(data.Data[0].CRNList)
-                // this.model.ShippedToOtherWHId = '' + data.Data[0].ShippedToWHId + '';
-                this.model.CustomerId = '' + data.Data[0].CustomerId + '';
-                this.model.CRNId = '' + data.Data[0].CRN_Id + '';
-                this.model.EditStateId = '' + data.Data[0].ToState_Id + '';
-                this.model.CustomerAddress = data.Data[0].CustomerAddress;
-                this.model.CustomerGSTIN = data.Data[0].ShippedToGSTNO;
-                this.model.OtherStateCode = data.Data[0].ShippedToStateCode;
+                this.WHStateList = [];
+                let promiseCuRt = new Promise(async (resolve, reject) => {
+                  this.EditDispatchToTransferType(this.model.TransferTypeId);
+                  resolve("done");
+                });
+                promiseCuRt.then(() => {
+                  this.GettAllCRNNoList = JSON.parse(data.Data[0].CRNList)
+                  // this.model.ShippedToOtherWHId = '' + data.Data[0].ShippedToWHId + '';
+                  this.model.CustomerId = '' + data.Data[0].CustomerId + '';
+                  this.model.CRNId = '' + data.Data[0].CRN_Id + '';
+                  this.model.EditStateId = data.Data[0].ToState_Id;
+                  this.model.CustomerAddress = data.Data[0].CustomerAddress;
+                  this.model.CustomerGSTIN = data.Data[0].ShippedToGSTNO;
+                  this.model.OtherStateCode = data.Data[0].ShippedToStateCode;
+                });
+
               }
               else if (this.model.TransferTypeId == PageActivity.Dis_Vendor
-                || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
-                //this.OtherSiteStateList = JSON.parse(data.Data[0].ToOtherStateList);
+                || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+                || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+                this.OtherSiteStateList = [];
+                this.EditDispatchToTransferType(this.model.TransferTypeId);
                 var objVendorOrWh = new VendorOrWhModel();
                 objVendorOrWh.Id = this.CompanyId;
-                this._MaterialMovementService.GetAllState(objVendorOrWh).subscribe(Vendata => {
-                  if (Vendata.Status == 1) {
-                    if (Vendata.Data != null && Vendata.Data != "") {
-                      this.OtherSiteStateList = Vendata.Data.filter(m => m.id != 0).reduce(
-                        (accumulator, current) => {
-                          if (!accumulator.some(x => x.id === current.id)) {
-                            accumulator.push(current)
-                          }
-                          return accumulator;
-                        }, []
-                      )
-                    }
-                    // this.VendorStateList=this.OtherSiteStateList
-                  }
+
+                let promiseVST = new Promise(async (resolve, reject) => {
+                  this.OtherSiteStateList = await this.GetAllState(objVendorOrWh);
+                  resolve("done");
                 });
-                this.model.VenOtherStateId = data.Data[0].ToState_Id;
+                promiseVST.then(async () => {
+                  this.model.VenOtherStateId = data.Data[0].ToState_Id;
+                })
+
+
+                // this._MaterialMovementService.GetAllStateV2(objVendorOrWh).then(async (Vendata:any) => {
+                //   if (Vendata.Status == 1) {
+                //     if (Vendata.Data != null && Vendata.Data != "") {
+                //       debugger
+                //      this.OtherSiteStateList = Vendata.Data.filter(m => m.id != 0).reduce(
+                //         (accumulator:any, current:any) => {
+                //           if (!accumulator.some(x => x.id === current.id)) {
+                //             accumulator.push(current)
+                //           }
+                //           return accumulator;
+                //         }, []);
+                //this.model.VenOtherStateId = data.Data[0].ToState_Id;
+                //       debugger
+                //     }
+                //   }
+                // });
+                // this.model.VenOtherStateId = data.Data[0].ToState_Id;
                 this.SearchVendorListById = JSON.parse(data.Data[0].ToOtherVendorList);
                 this.SelectedEditVendorList = [];
                 this.MultiVenAddressList = [];
@@ -3822,12 +4112,42 @@ export class DispatchTrackerComponent implements OnInit {
                 this.model.VenGSTIN = data.Data[0].VenderGSTINNo;
                 this.model.VendorAddress = data.Data[0].VenderAddress;
                 this.model.VenStateCode = data.Data[0].ShippedToStateCode;
+
+                //vishal, 26/04/2023
+                this.model.BillToVenOtherStateId = data.Data[0].BillToState_Id;
+                this.BillToSearchVendorListById = JSON.parse(data.Data[0].BillToOtherVendorList);
+                this.SelectedBillToVendorList = [];
+                this.BillToMultiVenAddressList = [];
+
+                this.BillToMultiVenAddressList = JSON.parse(data.Data[0].BillToVenAddressList);
+                if (this.BillToMultiVenAddressList.length == 1) {
+                  this.BillToVenderFilterAddress = [];
+                  this.BillToVenderFilterAddress = this.BillToMultiVenAddressList
+                  this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
+                }
+                else {
+                  this.BillToVenderFilterAddress = this.BillToMultiVenAddressList;
+                  this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
+                }
+                this.model.BillToVendorAddress = data.Data[0].BillToVenAddress;
+                this.model.BillToVenGSTIN = data.Data[0].BillToGSTNO;
+                this.model.BillToVenStateCode = data.Data[0].BillToStateCode;
+                this.model.BillToVendorCode = data.Data[0].BillToVendorCode;
+
+
                 if (data.Data[0].Vendor_Id != null && data.Data[0].Vendor_Id > 0) {
                   this.SelectedEditVendorList = [{ "id": '' + data.Data[0].Vendor_Id + '', "itemName": '' + data.Data[0].VendorName + '' }]
                 } else {
                   this.SelectedEditVendorList = [];
                 }
-                this.EditDispatchToTransferType(this.model.TransferTypeId);
+                //vishal, 28/04/2023
+                if (data.Data[0].BillToVendor_Id != null && data.Data[0].BillToVendor_Id > 0) {
+                  this.SelectedBillToVendorList = [{ "id": '' + data.Data[0].BillToVendor_Id + '', "itemName": '' + data.Data[0].BillToVendorName + '' }]
+                } else {
+                  this.SelectedBillToVendorList = [];
+                }
+
+
 
                 //change by bramjot 18/6/20222
                 if (data.Data[0].VendorTypeFlag == 2 && this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
@@ -3846,7 +4166,8 @@ export class DispatchTrackerComponent implements OnInit {
           if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
             this.BindItemArray(data.ItemData);
           }
-          if (this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+          if (this.model.TransferTypeId == PageActivity.Dis_Vendor
+            || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
             this.IsVendorTax = true;
             this.IsTransferTypeSameState = false;
             this.IsTransferTypeOtherSite = false;
@@ -3873,7 +4194,7 @@ export class DispatchTrackerComponent implements OnInit {
         } else {
 
           this.IsMailButtonHide = true;
-        } //end-vishal
+        }  //end-vishal
 
       }, error => {
         this._Commonservices.ErrorFunction(this.UserName, error.message, "SearchDispatchTrackerEditListByDispatchId", "WHTOSite");
@@ -4214,7 +4535,6 @@ export class DispatchTrackerComponent implements OnInit {
         objdynamic.CorrectionEntryRemarks = ItemEditDataArr[i].CorrectionEntryRemarks;
         objdynamic.IsCorrectionEntryReason = ItemEditDataArr[i].IsCorrectionEntryReason;
         objdynamic.IsCorrectionCodeId = ItemEditDataArr[i].IsCorrectionCodeId;
-        debugger
         if (ItemEditDataArr[i].SerialNoList != null) {
           objdynamic.GSerialNumbers = JSON.parse(ItemEditDataArr[i].SerialNoList);
         } else {
@@ -4664,7 +4984,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsTransferTypeCenterRepaired = false;
   }
   // change by Hemant Tyagi
-  EditDispatchToTransferType(TransfId: any) {
+  async EditDispatchToTransferType(TransfId: any) {
     this.IsDispatchInstraction = false;
     this.DispatchTypeHideShow = false;
     if (TransfId == 0) {
@@ -4743,10 +5063,11 @@ export class DispatchTrackerComponent implements OnInit {
       this.ChangeEditEquipment(TransfId);
       this.DispatchDateformat(1);
 
-    } else if (TransfId == PageActivity.Dis_WHOtherState || TransfId == PageActivity.Dis_RepairingCenter) {
+    } else if (TransfId == PageActivity.Dis_WHOtherState
+      || TransfId == PageActivity.Dis_RepairingCenter) {
       var objVendorOrWh = new VendorOrWhModel();
       objVendorOrWh.Id = this.CompanyId;
-      this._MaterialMovementService.GetAllState(objVendorOrWh).pipe(first()).subscribe(data => {
+      await this._MaterialMovementService.GetAllStateV2(objVendorOrWh).then(async (data: any) => {
         if (data.Status == 1) {
           if (data.Data != null && data.Data != "") {
             this.WHStateList = data.Data.filter(m => m.id != 0).reduce(
@@ -5086,6 +5407,7 @@ export class DispatchTrackerComponent implements OnInit {
       // this.IsRecivedbyandNoOther = true;
       this.IsTransferTypeCenterRepaired = false;
       this.model.VenOtherStateId = 0;
+      this.model.BillToVenOtherStateId = 0; //vishal, 19/04/2023
       this.model.ReceivedBy = "";
       this.model.ReceivedNo = "";
       this.model.Destination = "";
@@ -5096,6 +5418,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.model.VendorCode = "";
 
       this.ClearDispatchToVendor();
+      this.clearBillToDispatchToVendor() //vishal/25/04/2023
       var objVendorOrWh = new VendorOrWhModel();
       objVendorOrWh.Id = this.CompanyId;
       this._MaterialMovementService.GetAllState(objVendorOrWh).subscribe(data => {
@@ -5137,6 +5460,7 @@ export class DispatchTrackerComponent implements OnInit {
       // this.IsRecivedbyandNoOther = true;
 
       this.model.VenOtherStateId = 0;
+      this.model.BillToVenOtherStateId = 0; //vishal, 19/04/2023
       this.model.ReceivedBy = "";
       this.model.ReceivedNo = "";
       this.model.Destination = "";
@@ -5147,6 +5471,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.DispatchTypeHideShow = true;
       this.dynamicArray = [];
       this.ClearDispatchToVendor();
+      this.clearBillToDispatchToVendor() //vishal, 25/04/2023
       var objVendorOrWh = new VendorOrWhModel();
       objVendorOrWh.Id = this.CompanyId;
       this._MaterialMovementService.GetAllState(objVendorOrWh).subscribe(data => {
@@ -5183,6 +5508,7 @@ export class DispatchTrackerComponent implements OnInit {
       // this.IsRecivedbyandNo = false;
       // this.IsRecivedbyandNoOther = true;
       this.model.VenOtherStateId = 0;
+      this.model.BillToVenOtherStateId = 0; //vishal, 19/04/2023
       this.model.ReceivedBy = "";
       this.model.ReceivedNo = "";
       this.model.Destination = "";
@@ -5192,6 +5518,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsTransferTypeOtherState = true;
       this.dynamicArray = [];
       this.ClearDispatchToVendor();
+      this.clearBillToDispatchToVendor() //vishal, 25/04/2023
       var objVendorOrWh = new VendorOrWhModel();
       objVendorOrWh.Id = this.CompanyId;
       this._MaterialMovementService.GetAllState(objVendorOrWh).subscribe(data => {
@@ -5529,6 +5856,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ClearDispatchToVendor() {
+
     this.model.VenOtherStateId = "0";
     this.model.VenStateCode = "";
     this.SelectedEditVendorList = [];
@@ -5537,6 +5865,17 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.VendorAddress = "";
     this.totalSumPOQuantity = 0.00;
     this.totalSumAmount = 0.00;
+  }
+
+  //vishal, 25/04/2023
+  clearBillToDispatchToVendor() {
+    this.model.BillToVenOtherStateId = "0";
+    this.model.BillToVenStateCode = "";
+    this.SelectedBillToVendorList = [];
+    this.model.BillToVendorName = "";
+    this.model.BillToVendorCode = "";
+    this.model.BillToVenGSTIN = "";
+    this.model.BillToVendorAddress = "";
   }
 
   //#region Download Dispatch Doument in Zip
@@ -5723,6 +6062,11 @@ export class DispatchTrackerComponent implements OnInit {
   VendorAddressKeyPress() {
     $("#txtVendorAddress").css('border-color', '');
   }
+
+  BillToVendorAddressKeyPress() {
+    $("#txtBillToVendorAddress").css('border-color', '');
+  }
+
   VenGSTINKeyPress() {
     $("#txtVenGSTIN").css('border-color', '');
   }
@@ -6525,6 +6869,49 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         $("#txtVendorAddress").css('border-color', '');
       }
+
+      //validation for BillTo by: vishal, 19/04/2023
+      if (this.model.BillToVenOtherStateId == "0" || this.model.BillToVenOtherStateId == "") {
+        $('#txtBillToVenderStateId').css('border-color', 'red');
+        $('#txtBillToVenderStateId').focus();
+        flag = 1;
+      } else {
+        $("#txtBillToVenderStateId").css('border-color', '');
+      }
+
+      if (this.model.BillToVenStateCode == "0" || this.model.BillToVenStateCode == "") {
+        $('#txtBillToVenStateCode').css('border-color', 'red');
+        $('#txtBillToVenStateCode').focus();
+        flag = 1;
+      } else {
+        $("#txtBillToVenStateCode").css('border-color', '');
+      }
+
+      if (this.SelectedBillToVendorList.length == 0 || this.SelectedBillToVendorList.length == 0) {
+        $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: red');
+        $('#txtBillToVendorCode').focus();
+        flag = 1;
+      } else {
+        $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: ');
+      }
+
+      if (this.model.BillToVenGSTIN == "") {
+        $('#txtBillToVenGSTIN').css('border-color', 'red');
+        $('#txtBillToVenGSTIN').focus();
+        flag = 1;
+      } else {
+        $("#txtBillToVenGSTIN").css('border-color', '');
+      }
+
+      if (this.model.BillToVendorAddress == "") {
+        $('#txtBillToVendorAddress').css('border-color', 'red');
+        $('#txtBillToVendorAddress').focus();
+        flag = 1;
+      } else {
+        $("#txtBillToVendorAddress").css('border-color', '');
+      }
+      //end-vishal, BillTo 
+
     }
     // Hemant Tyagi
 
@@ -6787,6 +7174,8 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         $("#ddlClient_" + icount).css('border-color', '');
       }
+     
+
 
       //vishal
 
@@ -7183,6 +7572,7 @@ export class DispatchTrackerComponent implements OnInit {
     //#endregion
   }
 
+
   GetSendMailDetail() {
     try {
       this.EmailData = [];
@@ -7205,4 +7595,1037 @@ export class DispatchTrackerComponent implements OnInit {
       this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
     }
   }
+
+  ////Customer Dispatch functionallity area, By:Vishal, 10/05/2023
+
+  addRowCus() {
+    var objNewItemGrid = new DynamicItemGrid();
+    objNewItemGrid.Id = 0;
+    objNewItemGrid.ItemNameId = "0";
+    objNewItemGrid.ItemMakeId = "0";
+    objNewItemGrid.ItemName = "0";
+    objNewItemGrid.Qty = "";
+    objNewItemGrid.SubDescription = "";
+    objNewItemGrid.SiteId = 0;
+    objNewItemGrid.ItemCapId = "0";
+    objNewItemGrid.UnitId = "0";
+    this.cusdynamicArray.push(objNewItemGrid);
+    return true;
+  }
+  cusdeleteRow(index) {
+    if (this.cusdynamicArray.length == 1) {
+      return false;
+    } else {
+      this.cusdynamicArray.splice(index, 1);
+      return true;
+    }
+
+  }
+  setCusDateRange() {
+    //#region mindate, maxdate formula of Customer DocumentDate 
+    this.minCusDispatchDt = this.model.CusDisDocumentDate;
+    this.maxCusDispatchDt = this.model.CusDisDocumentDate;
+    //#endregion
+  }
+
+  createNewCusDispatch() {
+    this.IsPartialUpdateCusDispatch = false;
+    this.IsSaveButtonDisable = false;
+    this.IsHideShowCancelBtn = false;
+    this.IsEditDisabled = false;
+    this.cusItemAddrowhideshow = false
+    this.IsEditCustomerDispatch = false
+    this.isShownList = true;
+    this.model.CusDispatchTracker_Id = 0;
+    this.IsItemListDisabled = false;
+    this.IsChallanFile = false;
+    this.IsRecvFile = false;
+    let cusDate = "";
+    this.model.CusDispatchFor = "0"
+    cusDate = this.datePipe.transform(Date(), "yyyy/MM/dd");
+    this.model.CusDisDocumentDate = { day: parseInt(cusDate.split('/')[2]), month: parseInt(cusDate.split('/')[1]), year: parseInt(cusDate.split('/')[0]) };
+    this.setCusDateRange();
+    this.clearCusEditForm();
+    //  if(this.CreateDispatchForDIId != "0" && this.CreateDispatchForDIId != null){
+    //   this.cusAutoFillDispatchDetailByDIId(this.CreateDispatchForDIId)
+    // }
+  }
+
+  clearCusEditForm() {
+    this.cusdynamicArray = [];
+    this.AutoCompleteCustomerSiteIdList = [];
+    this.AutoCompleteUniqueSiteIdList = [];
+    this.model.CusSiteName = "";
+    this.model.CusClientName = "";
+    this.model.CusSiteAddress = "";
+    this.model.CusTECHFE = "0";
+    this.model.CusCOHCI = "0";
+    this.CusCOHDataList = null;
+    this.CusTechDataList = null;
+    this.model.CusValueSiteId = "";
+    this.model.CusUniqueSiteId = "";
+    this.model.cusSiteId = 0;
+    this.model.CusSiteAddress = "";
+    this.SearchSiteId = 0;
+    this.model.CusDisDocumentNo = "";
+    this.model.CusExpDelDate = "";
+    this.model.cusStateId = 0;
+    this.selectedCusDIArr = [];
+    this.model.CusReceivedBy = "";
+    this.model.CusReceivedNo = "";
+    this.model.CusDeliveredDate = "";
+    this.model.cusDI = 0;
+    this.CusDispatchInstructionList = [];
+    this.model.cusChalan = "";
+    this.model.CusRecDocumentFile = ""
+
+  }
+
+  onChangeSearchUniqueSiteIdForCusDispatch(val: string) {
+    try {
+      this.clearedCustomerDispatchSiteId(1);
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      objSiteCustomerAutoModel.SCNo = val;
+      objSiteCustomerAutoModel.CompanyId = this.CompanyId;
+      objSiteCustomerAutoModel.flag = "UniqueSiteId";
+      objSiteCustomerAutoModel.StateId = this.model.cusStateId;
+      this._GrncrnService.GetAutoCompleteSiteAndCustomer(objSiteCustomerAutoModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.AutoCompleteUniqueSiteIdList = data.Data;
+        }
+      })
+    } catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "onChangeSearchUniqueSiteIdForCusDispatch";
+      objWebErrorLogModel.ErrorPage = "SitePanel";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
+  }
+  onCusFocused(e) {
+  }
+
+  onChangeSearchCustomerSiteIdForCusDispatch(val: string) {
+    try {
+      this.clearedCustomerDispatchSiteId(2);
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      objSiteCustomerAutoModel.SCNo = val;
+      objSiteCustomerAutoModel.CompanyId = this.CompanyId;
+      objSiteCustomerAutoModel.flag = "CustomerSiteId";
+      objSiteCustomerAutoModel.StateId = this.model.cusStateId;
+      this._GrncrnService.GetAutoCompleteSiteAndCustomer(objSiteCustomerAutoModel).subscribe((data) => {
+        this.AutoCompleteCustomerSiteIdList = data.Data;
+      })
+    }
+    catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "onChangeSearchCustomerSiteId";
+      objWebErrorLogModel.ErrorPage = "SitePanel";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
+  }
+
+  selectCustomerDispatchSiteId(items: any) {
+    this.model.CusUniqueSiteId = items.Id;
+    this.model.CusSiteId = items.Id;
+    this.model.CusValueSiteId = items.CustomerSiteId;
+    this.model.CusHideCustomerId = items.CustomerSiteId;
+    this.model.CusSiteName = items.SiteName;
+    this.model.CusClientName = items.ClientName;
+    this.model.CusSiteAddress = items.Address;
+
+    var promise = new Promise(async (resolve, reject) => {
+      this.GetAllTechCOHbySiteIdForCusDispatch(this.model.CusSiteId);
+      resolve("done");
+    });
+
+    promise.then(async () => {
+      this.cusGetAllDispatchInstructionNo(this.model.CusSiteId);
+    });
+  }
+
+  clearedCustomerDispatchSiteId(val: any) {
+    this.AutoCompleteCustomerSiteIdList = [];
+    this.AutoCompleteUniqueSiteIdList = [];
+    this.model.CusSiteName = "";
+    this.model.CusClientName = "";
+    this.model.CusSiteAddress = "";
+    this.model.CusTECHFE = "0";
+    this.model.CusCOHCI = "0";
+    this.CusCOHDataList = null;
+    this.CusTechDataList = null;
+    if (val == 1) {
+      this.model.CusValueSiteId = "";
+    } else if (val == 2) {
+      this.model.CusUniqueSiteId = "";
+    }
+    else {
+      this.model.CusValueSiteId = "";
+      this.model.CusUniqueSiteId = "";
+    }
+    this.model.SiteId = 0;
+    this.model.CusSiteName = "";
+    this.model.CusClientName = "";
+    this.model.CusSiteAddress = "";
+    this.SearchSiteId = 0;
+    this.model.CusTECHFE = "0";
+    this.model.CusCOHCI = "0";
+    this.CusDispatchInstructionList = [];
+    this.model.cusDI = 0;
+    //this._SiteServiceService.SearchSitesChanges(this.SearchSiteId);
+  }
+
+  SelectCusSiteName(item) {
+    this.model.CusSiteAddress = item.Address
+    this.objCommonSiteSearchPanelModel.SiteId = item.Id;
+    this._SiteServiceService.SearchSitesChanges(this.objCommonSiteSearchPanelModel);
+    this.model.CustomerSiteId = item.CustomerSiteId;
+    //this.CusGetAllDispatchInstructionNo(this.model.CusSiteId);
+  }
+
+  //#region  Gett all tech and Coh Detail by Site Id for Customer Dispatch
+  GetAllTechCOHbySiteIdForCusDispatch(SiteId: any) {
+    try {
+
+      var objdropdownmodel = new DropdownModel();
+      objdropdownmodel.Other_Id = SiteId;
+      objdropdownmodel.Company_Id = this.CompanyId;
+      this._MaterialMovementService.GetAllEmployeeNameListBySiteId(objdropdownmodel).pipe(first()).subscribe(Emp => {
+        if (Emp.TECHFEData != '') {
+          this.CusTechDataList = Emp.TECHFEData;
+        }
+        if (Emp.COHCIData != '') {
+          this.CusCOHDataList = Emp.COHCIData;
+        }
+
+        if (this.model.CusDispatchTracker_Id == 0) {
+          if (Emp.DefaultTechIdData != '') {
+            if (Emp.DefaultTechIdData[0].TechId != '' && Emp.DefaultTechIdData[0].TechId != null) {
+              this.model.CusTECHFE = Emp.DefaultTechIdData[0].TechId;
+            } else {
+              this.model.CusTECHFE = "0";
+            }
+            if (Emp.DefaultTechIdData[0].CIId != '' && Emp.DefaultTechIdData[0].CIId != null) {
+              this.model.CusCOHCI = Emp.DefaultTechIdData[0].CIId;
+            } else {
+              this.model.CusCOHCI = "0";
+            }
+          }
+        }
+
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "GetAllTechCOHbySiteId", "WHTOSite");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAllTechCOHbySiteId", "WHTOSite");
+    }
+  }
+  //#endregion
+
+
+  //**region  this are all function used for make, code,item etc change by id
+  //by:vishal, 12/05/2023
+  cusChangeEditItemName(ItemNameId: any, index: any) {
+    try {
+      $('#tblOne > tbody  > tr').each(function () {
+        let valueItem = $(this).find('.cusItemName').val();
+        if (valueItem != '0') {
+          $(this).find('.cusItemName').css('border-color', '');
+        }
+      });
+      let FilterData = this.SearchItemNameList.filter(
+        m => m.id === parseInt(ItemNameId));
+      this.cusdynamicArray[index].ItemName = FilterData[0].itemName;
+      this.cusdynamicArray[index].EditItemMake = [];
+      this.cusdynamicArray[index].EditItemCap = [];
+
+      let objdropdownmodel = new DropdownModel();
+      objdropdownmodel.User_Id = 0;
+      objdropdownmodel.Parent_Id = ItemNameId;
+      objdropdownmodel.Company_Id = this.CompanyId;
+      objdropdownmodel.Other_Id = "0";
+      objdropdownmodel.Flag = 'CommonSearchCapacity';
+      this._Commonservices.getdropdown(objdropdownmodel).pipe(first()).subscribe(item => {
+        this.cusdynamicArray[index].EditItemCap = item.Data
+        this.cusdynamicArray[index].ItemCapId = "0"
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "cusChangeEditItemName", "DispatchTracker");
+      });
+
+
+
+      //search makes item
+      objdropdownmodel.Parent_Id = ItemNameId;
+      objdropdownmodel.Company_Id = this.CompanyId;
+      objdropdownmodel.Other_Id = "0";
+      objdropdownmodel.Flag = 'ItemMake';
+      this._Commonservices.getdropdown(objdropdownmodel).pipe(first()).subscribe(item => {
+        this.cusdynamicArray[index].EditItemMake = item.Data
+        this.cusdynamicArray[index].ItemMakeId = "0"
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "cusChangeEditItemName", "DispatchTracker");
+      });
+
+      //unit
+      this.cusdynamicArray[index].EditItemUnit = [];
+      objdropdownmodel.Parent_Id = ItemNameId;
+      objdropdownmodel.Company_Id = this.CompanyId;
+      objdropdownmodel.Other_Id = "0";
+      objdropdownmodel.Flag = 'UnitByItemName';
+      this._Commonservices.getdropdown(objdropdownmodel).pipe(first()).subscribe(item => {
+
+        this.cusdynamicArray[index].EditItemUnit = item.Data
+        this.cusdynamicArray[index].UnitId = "0";
+
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "cusChangeEditItemName", "DispatchTracker");
+      });
+
+
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "cusChangeEditItemName", "DispatchTracker");
+    }
+
+  }
+
+
+  getCutomerAllState() {
+    let objParameter = new DropdownModel();
+    objParameter.User_Id = this.UserId;
+    objParameter.Parent_Id = "";
+    objParameter.Other_Id = "";
+    objParameter.Company_Id = this.CompanyId;
+    objParameter.Flag = "StateMaster";
+    this._Commonservices.getdropdown(objParameter).subscribe(data => {
+      if (data.Status == 1) {
+        if (data.Data != null && data.Data != "") {
+          this.StateList = data.Data;
+        }
+      }
+    });
+  }
+
+  cusGetAllDispatchInstructionNo(SiteId: any) {
+    try {
+      let objModel = new BOQNOListModel();
+      objModel.CompanyId = this.CompanyId;
+      objModel.SiteId = SiteId;
+      objModel.Flag = 9;
+      this.CusDispatchInstructionList = [];
+      this._BOQService.GetBOQNoORBOQRequestNo(objModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.CusDispatchInstructionList = data.Data;
+        } else {
+          this.CusDispatchInstructionList = [];
+
+        }
+      })
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "cusGetAllDispatchInstructionNo", "dispatch");
+    }
+  }
+  cusAutoFillDispatchDetailByDIId(DIId: any) {
+    try {
+      var objModel = new DISearchModel();
+      objModel.DispatchInstruction_Id = DIId;
+      this.DispatchEditInstructionId = DIId
+      objModel.UserId = this.UserId;
+      objModel.Flag = null;
+      this._MaterialMovementService.AutoFillDispatchDetailByDIId(objModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.model.cusStateId = data.Data[0].ToStateId;
+          this.model.CusDispatchFor = data.Data2[0].DispatchForId
+          this.selectCustomerDispatchSiteId(data.SiteData[0]);
+
+          setTimeout(() => {
+            this.model.cusDI = DIId;
+            this.changeCusDispatchInstruction(DIId);
+          }, 1500);
+
+        } else {
+          alert('Already Done Customer Dispatch  Respect This DI No');
+          this.CreateDispatchForDIId = null;
+        }
+      })
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAutoCompleteMRNO", "ApprovalStatus");
+    }
+  }
+
+
+
+
+  getCusAllDispatchInstructionNoEdit(siteId: number, dtId: number, strDI: string) {
+    try {
+      let objModel = new BOQNOListModel();
+      objModel.CompanyId = this.CompanyId;
+      objModel.SiteId = siteId;
+      objModel.DTId = dtId;
+      objModel.Flag = 10;
+      this.CusDispatchInstructionList = [];
+      this._BOQService.GetBOQNoORBOQRequestNo(objModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.CusDispatchInstructionList = data.Data;
+
+            if (strDI != '0') {
+              this.model.cusDI = strDI;
+            }else{
+              this.model.cusDI == "0"
+            }
+         
+          //console.log(data)
+
+          // let selDIArr = [];
+          // if (strDI != '0') {
+          //   selDIArr = strDI.split(',');
+          // }
+
+          // for (var icount = 0; selDIArr.length > icount; icount++) {
+          //   var res = this.DispatchInstructionList.filter(xx => xx.id == parseInt(selDIArr[icount]));
+          //   this.selectedCusDIArr.push(res[0]);
+          // }
+
+        } else {
+          this.CusDispatchInstructionList = [];
+        }
+      })
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAutoCompleteMRNO", "ApprovalStatus");
+    }
+  }
+
+  changeCusDispatchInstruction(DIId: string) {
+    //let singleSelectDI = "0";
+    // if (para == "DelAll") {
+    //   this.selectedCusDIArr = [];
+    // } else if (this.selectedCusDIArr.length > 0) {
+    //   singleSelectDI = this.selectedCusDIArr.map(xx => xx.id).join(',');
+    // }
+
+    if (DIId == "0" || DIId == undefined) {
+      alert('Please Select DI No.?');
+      return false;
+    }
+
+    try {
+      let objModel = new DISearchModel();
+      objModel.DispatchInstruction_Id = DIId;
+      objModel.Flag = "CDT";
+
+      this._MaterialMovementService.SearchDispatchInstructionListByDIId(objModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.bindCusItemArray(data.Data)
+        } else {
+          alert('Please Select DI No.?');
+        }
+      })
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "changeCusDispatchInstruction", "Dispatch Tracker");
+    }
+  }
+
+
+  bindCusItemArray(ItemEditDataArr: any) {
+    this.cusdynamicArray = [];
+    if (ItemEditDataArr != null && ItemEditDataArr != "") {
+      for (var i = 0, len = ItemEditDataArr.length; i < len; i++) {
+        var objdynamic = new DynamicItemGrid();
+        objdynamic.Id = ItemEditDataArr[i].Id;
+        objdynamic.ItemNameId = ItemEditDataArr[i].ItemNameId;
+        objdynamic.EditItemMake = JSON.parse(ItemEditDataArr[i].ItemMakeList);
+        objdynamic.ItemMakeId = ItemEditDataArr[i].MakeMaster_Id;
+
+        objdynamic.EditItemCap = JSON.parse(ItemEditDataArr[i].CapacityList);//vishal
+        objdynamic.ItemCapId = ItemEditDataArr[i].CapacityMaster_Id;//vishal
+
+        objdynamic.EditItemUnit = JSON.parse(ItemEditDataArr[i].UnitList);
+        objdynamic.UnitId = JSON.parse(ItemEditDataArr[i].UnitMaster_Id); //viahal
+
+        objdynamic.SubDescription = ItemEditDataArr[i].SubDescription;
+        objdynamic.Qty = parseFloat(ItemEditDataArr[i].Qty).toFixed(2);
+        objdynamic.SiteId = ItemEditDataArr[i].SiteId;
+        objdynamic.DIList_Id = ItemEditDataArr[i].DIList_Id;
+        this.cusdynamicArray.push(objdynamic);
+      }
+    }
+  }
+
+  onCusRecDocumentFileChange(event) {
+    let reader = new FileReader();
+    if (event.target.files && event.target.files.length > 0) {
+
+      this.CusRecDocumentFile = event.target.files[0];
+    }
+  }
+  cusReceivingViewfileClick() {
+    window.open(this.ReceivingFile);
+  }
+
+
+  onChalanDocumentChange(event) {
+    let reader = new FileReader();
+    if (event.target.files && event.target.files.length > 0) {
+      this.CusChalanFile = event.target.files[0];
+    }
+  }
+
+  ChalanViewfileClick() {
+    window.open(this.DocumentFile);
+  }
+
+  //by: vishal, 23/05/2023, validation for cusr=tomer dispatch
+  validationCusDispatch() {
+    let flag = 0;
+
+    if (this._Commonservices.checkUndefined(this.model.cusStateId) == 0) {
+      $('#txtddlCusStateId').css('border-color', 'red')
+      $('#txtddlCusStateId').focus();
+      flag = 1;
+    } else {
+      $("#txtddlCusStateId").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusHideCustomerId == "0" || this.model.CusHideCustomerId == null)) {
+      alert("Please select Site Id");
+      flag = 1;
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusTECHFE) == 0) {
+      $('#txtCusTECHFE').css('border-color', 'red')
+      $('#txtCusTECHFE').focus();
+      flag = 1;
+    } else {
+      $("#txtCusTECHFE").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusCOHCI) == 0) {
+      $('#txtCusCOHCI').css('border-color', 'red')
+      $('#txtCusCOHCI').focus();
+      flag = 1;
+    } else {
+      $("#txtCusCOHCI").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusSiteAddress) == "") {
+      $('#txtCusSiteAddress').css('border-color', 'red')
+      $('#txtCusSiteAddress').focus();
+      flag = 1;
+    } else {
+      $("#txtCusSiteAddress").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusDisDocumentDate) == 0) {
+      $('#txtCusDocDate').css('border-color', 'red')
+      $('#txtCusDocDate').focus();
+      flag = 1;
+    } else {
+      $("#txtCusDocDate").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusExpDelDate) == 0) {
+      $('#txtCusExpDocDate').css('border-color', 'red')
+      $('#txtCusExpDocDate').focus();
+      flag = 1;
+    } else {
+      $("#txtCusExpDocDate").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.cusDI) == 0) {
+      $('#txtCusDI').css('border-color', 'red')
+      $('#txtCusDI').focus();
+      flag = 1;
+    } else {
+      $("#txtCusDI").css('border-color', '')
+    }
+
+    if (this.model.CusDispatchFor == null || this.model.CusDispatchFor == 0) {
+      $('#txtCusDispatchFor').css('border-color', 'red');
+      $('#txtCusDispatchFor').focus();
+      flag = 1;
+    } else {
+      $("#txtCusDispatchFor").css('border-color', '');
+    }
+
+
+    ///validation for itemlist
+    for (var i = 0, len = this.cusdynamicArray.length; i < len; i++) {
+      if (this.cusdynamicArray[i].ItemNameId == ""
+        || this.cusdynamicArray[i].ItemNameId == "null"
+        || this.cusdynamicArray[i].ItemNameId == "0") {
+
+        alert('Please insert atleast one item')
+        $('#ddlCusItemName').css('border-color', 'red');
+        $('#ddlCusItemName').focus();
+        flag = 1;
+      } else {
+        $("#ddlCusItemName").css('border-color', '');
+      }
+      if (this.cusdynamicArray[i].ItemCapId == ""
+        || this.cusdynamicArray[i].ItemCapId == "null"
+        || this.cusdynamicArray[i].ItemCapId == "0") {
+
+        //alert('Please insert item capacity')
+        $('#ddlCusItemCap').css('border-color', 'red');
+        $('#ddlCusItemCap').focus();
+        flag = 1;
+      } else {
+        $("#ddlCusItemCap").css('border-color', '');
+      }
+
+      if (this.cusdynamicArray[i].UnitId == ""
+        || this.cusdynamicArray[i].UnitId == "null"
+        || this.cusdynamicArray[i].UnitId == "0") {
+
+        $('#ddlCusUnitName').css('border-color', 'red');
+        $('#ddlCusUnitName').focus();
+        flag = 1;
+      } else {
+        $("#ddlCusUnitName").css('border-color', '');
+      }
+
+      if (this.cusdynamicArray[i].SubDescription == ""
+        || this.cusdynamicArray[i].SubDescription == "null"
+        || this.cusdynamicArray[i].SubDescription == "0") {
+
+        //alert('Please insert item capacity')
+        $('#txtCusSubDesc').css('border-color', 'red');
+        $('#txtCusSubDesc').focus();
+        flag = 1;
+      } else {
+        $("#txtCusSubDesc").css('border-color', '');
+      }
+
+
+      if (this.cusdynamicArray[i].Qty == ""
+        || this.cusdynamicArray[i].Qty == "null"
+        || this.cusdynamicArray[i].Qty == "0") {
+
+        //alert('Please insert item capacity')
+        $('#txtCusQty').css('border-color', 'red');
+        $('#txtCusQty').focus();
+        flag = 1;
+      } else {
+        $("#txtCusQty").css('border-color', '');
+      }
+
+    }
+    //#endregion  validation On Item Detail
+
+
+    return flag;
+  }
+
+  //keypress area for validation//
+
+  clientKeyPress() {
+    $("#txtCusClientName").css('border-color', '');
+  }
+  cusStateKeyPress() {
+    $("#txtddlCusStateId").css('border-color', '');
+  }
+  cusSubDescKeyPress() {
+    $("#txtCusSiteAddress").css('border-color', '');
+  }
+
+  cusReceiveByKeyPress() {
+    $("#txtCusReceivedBy").css('border-color', '');
+  }
+  cusReceiverNoKeyPress() {
+    $("#txtCusReceivedNo").css('border-color', '');
+  }
+  cusDeliveredDateKeyPress() {
+    $("#txtCusDeliveredDate").css('border-color', '');
+  }
+
+
+  //end-region//
+
+  //Partial update validation
+  validationPartialUpdate() {
+    var flag = 0;
+
+    if (this._Commonservices.checkUndefined(this.model.CusReceivedBy) == "") {
+      $('#txtCusReceivedBy').css('border-color', 'red')
+      $('#txtCusReceivedBy').focus();
+      flag = 1;
+    } else {
+      $("#txtCusReceivedBy").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusReceivedNo) == 0) {
+      $('#txtCusReceivedNo').css('border-color', 'red')
+      $('#txtCusReceivedNo').focus();
+      flag = 1;
+    } else {
+      $("#txtCusReceivedNo").css('border-color', '')
+    }
+
+    if (this._Commonservices.checkUndefined(this.model.CusDeliveredDate) == 0) {
+      $('#txtCusDeliveredDate').css('border-color', 'red')
+      $('#txtCusDeliveredDate').focus();
+      flag = 1;
+    } else {
+      $("#txtCusDeliveredDate").css('border-color', '')
+    }
+    return flag;
+  }
+  //end-region
+
+
+  confirmCusDispatchPopup() {
+    if (this.validationCusDispatch() == 1) {
+      return false;
+    } else {
+      jQuery('#confirmCusDispatch').modal('show');
+    }
+  }
+  //#region This Fuction Used to Add Update Customer Dispatch Request
+  saveUpDateCusDispatchRequest() {
+
+    jQuery('#confirmCusDispatch').modal('hide');
+    try {
+      var objCustomerDispatchModel = new CusDispatchTrackingModel();
+      objCustomerDispatchModel.CusDispatchTracker_Id = this.model.CusDispatchTracker_Id;
+      objCustomerDispatchModel.UserId = this.UserId;
+      objCustomerDispatchModel.Company_Id = this.CompanyId;
+      objCustomerDispatchModel.State_Id = this.model.cusStateId;
+      objCustomerDispatchModel.SiteId = this.model.CusSiteId;
+      // objCustomerDispatchModel.CustomerSiteId = this.model.CusHideCustomerId;
+      // objCustomerDispatchModel.SiteName = this.model.CusSiteName;
+      // objCustomerDispatchModel.ClientName = this.model.CusClientName;
+      objCustomerDispatchModel.TECHFE = this.model.CusTECHFE;
+      objCustomerDispatchModel.COHCI = this.model.CusCOHCI;
+      // objCustomerDispatchModel.SiteAddress = this.model.CusSiteAddress;
+
+      //objCustomerDispatchModel.DocumentNo = this.model.CusDisDocumentNo;
+      let DocDate = this._Commonservices.checkUndefined(this.model.CusDisDocumentDate);
+      objCustomerDispatchModel.DocumentDate = DocDate.day + '/' + DocDate.month + '/' + DocDate.year;
+
+      let ExpDelDate = this._Commonservices.checkUndefined(this.model.CusExpDelDate);
+      objCustomerDispatchModel.ExpDeliveryDate = ExpDelDate.day + '/' + ExpDelDate.month + '/' + ExpDelDate.year;
+
+      objCustomerDispatchModel.ReceivedBy = this.model.CusReceivedBy;
+      objCustomerDispatchModel.ReceivedNo = this.model.CusReceivedNo;
+
+      // var DelDate = this._Commonservices.checkUndefined(this.model.CusDeliveredDate);
+      // objCustomerDispatchModel.DeliveredDate = DelDate.day + '/' + DelDate.month + '/' + DelDate.year;
+      let DelDate = this._Commonservices.checkUndefined(this.model.CusDeliveredDate);
+      if (DelDate != "") {
+        objCustomerDispatchModel.DeliveredDate = DelDate.day + '/' + DelDate.month + '/' + DelDate.year;
+      } else {
+        objCustomerDispatchModel.DeliveredDate = "";
+      }
+      objCustomerDispatchModel.DispatchForId = this.model.CusDispatchFor;
+      objCustomerDispatchModel.DispatchInstructionId = this.model.cusDI;
+      this.CusDispatchTrackingItem = [];
+      for (var i = 0, len = this.cusdynamicArray.length; i < len; i++) {
+        var objCusDispatchItemDetialModel = new CustomerDispatchItemDetialModel();
+        objCusDispatchItemDetialModel.Id = this.cusdynamicArray[i].Id;
+        objCusDispatchItemDetialModel.ItemNameId = this.cusdynamicArray[i].ItemNameId;
+        objCusDispatchItemDetialModel.ItemMakeId = this.cusdynamicArray[i].ItemMakeId;
+        objCusDispatchItemDetialModel.ItemCapId = this.cusdynamicArray[i].ItemCapId;
+        objCusDispatchItemDetialModel.SubDescription = this.cusdynamicArray[i].SubDescription;
+        objCusDispatchItemDetialModel.Qty = this.cusdynamicArray[i].Qty;
+        objCusDispatchItemDetialModel.UnitId = this.cusdynamicArray[i].UnitId;
+        objCusDispatchItemDetialModel.DIList_Id = this.cusdynamicArray[i].DIList_Id;
+        //objCusDispatchItemDetialModel.SiteId = this.cusdynamicArray[i].SiteId;
+        this.CusDispatchTrackingItem.push(objCusDispatchItemDetialModel)
+      }
+      objCustomerDispatchModel.CustomerDispatchItemList = this.CusDispatchTrackingItem;
+      var formdata = new FormData();
+      if (this.CusChalanFile == null) {
+        formdata.append('ChalanFile', this.CusChalanFile);
+      } else {
+        formdata.append('Chalanfile', this.CusChalanFile, this.CusChalanFile.name);
+      }
+
+      formdata.append('jsonDetail', JSON.stringify(objCustomerDispatchModel));
+      this._MaterialMovementService.SaveUpdateCustomerDispatch(formdata).pipe(first()).subscribe(data => {
+
+        this.model.CusDisatchTracker_Id = data.Value;
+        if (data.Status == 1) {
+          jQuery('#confirmCusDispatch').modal('hide');
+          Swal.fire('your data has been Succesfully', data.Remarks, 'success')
+          this.createNewCusDispatch();
+        } else if (data.Status == 2) {
+          alert('your data update successfully');
+          //this.IsSaveButtonDisable = false;
+
+        }
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "SaveUpDateDispatchTrackingWhTosite", "WHTOSite");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "SaveUpDateDispatchRequest", "WHTOSite");
+    }
+
+  }
+  //#endregion
+  searchCustomerDispatchList(para: string) {
+    this.CustomerFlag = 1;
+    this.gridApi.showLoadingOverlay();
+    try {
+      var objpara = new SearchDispatchTrackerModel();
+      objpara.CompanyId = this.CompanyId;
+      objpara.State_Id = this.CommonSearchPanelData.State_Id;
+
+      objpara.CapacityId = this.CommonSearchPanelData.CapacityId;
+      objpara.ItemId = this.CommonSearchPanelData.ItemId;
+
+      objpara.Startdate = this.CommonSearchPanelData.Startdate;
+      objpara.Enddate = this.CommonSearchPanelData.Enddate;
+
+      if (this._Commonservices.checkUndefined(this.model.DispatchNo) == '') {
+        objpara.DocumentNo = 0;
+      } else {
+        objpara.DocumentNo = this.model.DispatchNo;
+      }
+
+      if (this._Commonservices.checkUndefined(this.SearchSitesPanelData) == '') {
+        objpara.Site_Id = 0;
+      } else {
+        objpara.Site_Id = this.SearchSitesPanelData.SiteId;
+      }
+
+      objpara.Flag = para;
+
+      objpara.IsActiveCancel = this.model.IsActiveCancel;
+      if (this._Commonservices.checkUndefined(this.model.DINo) == '') {
+        objpara.DINo = '0';
+      } else {
+        objpara.DINo = this.model.DINo;
+      }
+
+      objpara.CustomerFlag = 1;
+
+      // if (para == "Export") {
+      //   this.Exportloading = true;
+      //   this.gridApi.hideOverlay();
+      // }
+
+      this._MaterialMovementService.GetDispatchTrackerList(objpara).pipe(first()).subscribe(data => {
+        this.rowData = null;
+        this.gridApi.hideOverlay();
+        this.Exportloading = false;
+        if (data.Status == 1) {
+          if (para == "List") {
+            if (data.Data != null) {
+              this.rowData = data.Data;
+            } else {
+              this.rowData = null;
+            }
+
+          } else if (para == "Export") {
+            if (data.Data != null) {
+              var CurrentDate = this.datePipe.transform(Date(), "dd/MM/yyyy");
+              this._PurchaseOrderService.exportAsExcelFile(data.Data, 'CustomerDispatch' + CurrentDate);
+            } else {
+              alert('No Data Available');
+            }
+          }
+        }
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "SearchDispatchTrackerList", "WHTOSite");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "SearchDispatchTrackerList", "WHTOSite");
+    }
+  }
+
+
+
+  async SearchCustomerDispatchEditListById(Id: any) {
+    this.IsEditDisabled = true;
+    this.IsItemListDisabled = true;
+    this.IsPartialUpdateCusDispatch = true;
+    this.IsSaveButtonDisable = true;
+    this.IsHideShowCancelBtn = true;
+    this.cusItemAddrowhideshow = false
+    try {
+      let objModel = new SearchDispatchTrackerModel();
+      objModel.CusDispatchTracker_Id = Id;
+
+      this._MaterialMovementService.GetCustomerDispatchEditListById(objModel).pipe(first()).subscribe(data => {
+        if (data.Status == 1) {
+          if (data.Data != null && data.Data != '') {
+            this.model.DisatchTrackeringId = data.Data[0].DisatchTrackeringId;
+            this.model.cusStateId = data.Data[0].State_Id;
+            this.model.CusSiteId = data.Data[0].Site_Id;
+            this.model.CusSiteName = data.Data[0].SiteName;
+            this.model.CusUniqueSiteId = data.Data[0].Site_Id;
+            this.model.CusValueSiteId = data.Data[0].CustomerSiteId;
+            this.model.CusHideCustomerId = data.Data[0].CustomerSiteId;
+            this.model.CusClientName = data.Data[0].ClientName;
+            this.model.CusSiteAddress = data.Data[0].SiteAddress;
+            this.model.CusDispatchFor = data.Data[0].DispatchForId;
+            this.getCusAllDispatchInstructionNoEdit(this.model.CusSiteId, Id, data.Data[0].DispatchInstructionId);
+            let promise = new Promise(async (resolve, reject) => {
+              this.GetAllTechCOHbySiteIdForCusDispatch(data.Data[0].Site_Id);
+              resolve("done");
+            });
+
+            promise.then(async () => {
+              if (data.Data[0].FE_Tech != null && data.Data[0].FE_Tech != "") {
+                this.model.CusTECHFE = data.Data[0].FE_Tech;
+              } else {
+                this.model.CusTECHFE = "0";
+              }
+              if (data.Data[0].COH_CI != null && data.Data[0].COH_CI != "") {
+                this.model.CusCOHCI = data.Data[0].COH_CI;
+              } else {
+                this.model.CusCOHCI = "0";
+              }
+            });
+
+            this.model.CusDisDocumentNo = data.Data[0].DocumentNo;
+            let DDate = data.Data[0].DocumentDate.split('/');
+            this.model.CusDisDocumentDate = { year: parseInt(DDate[2]), month: parseInt(DDate[1]), day: parseInt(DDate[0]) };
+
+            this.model.CusReceivedBy = data.Data[0].ReceivedBy;
+            this.model.CusReceivedNo = data.Data[0].ReceivedNo;
+
+            if (data.Data[0].DocumentFile != null && data.Data[0].DocumentFile != "") {
+              this.IsChallanFile = true;
+              this.DocumentFile = data.Data[0].DocumentFile;
+            } else {
+              this.IsChallanFile = false;
+            }
+
+            if (data.Data[0].ReceivingDocumentFile != null && data.Data[0].ReceivingDocumentFile != "") {
+              this.IsRecvFile = true;
+              this.ReceivingFile = data.Data[0].ReceivingDocumentFile;
+            } else {
+              this.IsRecvFile = false;
+            }
+
+            let ExpDate = data.Data[0].ExpDeliveryDate.split('/');
+            this.model.CusExpDelDate = { year: parseInt(ExpDate[2]), month: parseInt(ExpDate[1]), day: parseInt(ExpDate[0]) };
+
+          }
+
+          if (data.Data != null && data.ItemData != '') {
+            this.bindCusItemArray(data.ItemData)
+          }
+        }
+
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "SearchCustomerDispatchEditListById", "Dispatch");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "SearchCustomerDispatchEditListById", "Dispatch");
+    }
+  }
+
+  conformCusDisRecivedPopup() {
+    this.IsError = false;
+    if (this.validationPartialUpdate() == 1) {
+      return false;
+    } else {
+      jQuery('#receiveCusDispatch').modal('show');
+    }
+  }
+
+  updateCustomerDispatchReceivingDetails() {
+    jQuery('#receiveCusDispatch').modal('hide');
+    try {
+      var objCustomerDispatchModel = new DispatchTrackingModel();
+      objCustomerDispatchModel.DispatchTracker_Id = this.model.DisatchTrackeringId;
+
+      objCustomerDispatchModel.ReceivedBy = this.model.CusReceivedBy;
+      objCustomerDispatchModel.ReceivedNo = this.model.CusReceivedNo;
+      objCustomerDispatchModel.Flag = 'CDT';
+
+      var DelDate = this._Commonservices.checkUndefined(this.model.CusDeliveredDate);
+      objCustomerDispatchModel.DeliveredDate = DelDate.day + '/' + DelDate.month + '/' + DelDate.year;
+
+      var formdata = new FormData();
+
+      if (this.RecDocumentFile == null) {
+        formdata.append('RecDocumentfile', this.CusRecDocumentFile);
+      } else {
+        formdata.append('RecDocumentfile', this.CusRecDocumentFile, this.CusRecDocumentFile.name);
+      }
+
+      formdata.append('ReceivedjsonDetail', JSON.stringify(objCustomerDispatchModel));
+
+
+      this._MaterialMovementService.UpadteReceivedDispatch(formdata).pipe(first()).subscribe(data => {
+        this.model.CusDisatchTracker_Id = data.Value;
+        if (data.Status == 2) {
+          jQuery('#receiveCusDispatch').modal('hide');
+          Swal.fire('your data update has been Succesfully', data.Remarks, 'success')
+          this.createNewCusDispatch();
+        }
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "UpdateCustomerDispatchDetails", "WHTOSite");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "UpdateCustomerDispatchDetails", "WHTOSite");
+    }
+  }
+
+  //#region this function used To Cancel Dispatch by Dispatch Id
+  conformCusDispatchCancelPopup() {
+    this.IsError = false;
+    jQuery('#CancleCusDispatchConfirm').modal('show');
+  }
+
+  cancelCustomerDispatch() {
+    try {
+      var objApprovelStatusModel = new ApprovelStatusModel();
+      objApprovelStatusModel.User_Id = this.UserId;
+      //objApprovelStatusModel.ApprovalStatus_Id = this.model.DisatchTrackeringId;
+      //objApprovelStatusModel.Table_Id = this.model.InCaseReason;
+      objApprovelStatusModel.Flag = "CDT";
+      this._MaterialMovementService.UpadateCancelDispatch(objApprovelStatusModel).subscribe(data => {
+        if (data.Status == 1) {
+          this.IsHideShowCancelBtn = false;
+          jQuery('#CancleCusDispatchConfirm').modal('hide');
+          Swal.fire('Your Customer Dispatch SuccessFully Cancel', '', 'success')
+        }
+
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "UpadateCancelDispatch", "WHTOSite");
+    }
+  }
+  //#endregion
+
+  async GetAllState(objVendorOrWh: any) {
+    let stateArr: any[] = [];
+    await this._MaterialMovementService.GetAllStateV2(objVendorOrWh).then(async (Vendata: any) => {
+      if (Vendata.Status == 1) {
+        if (Vendata.Data != null && Vendata.Data != "") {
+          stateArr = Vendata.Data.filter((m: any) => m.id != 0).reduce(
+            (accumulator: any, current: any) => {
+              if (!accumulator.some((x: any) => x.id === current.id)) {
+                accumulator.push(current)
+              }
+              return accumulator;
+            }, []);
+        }
+      }
+    });
+    return stateArr;
+  }
+
+  //desc: for change AST/Customer grid data search buttons
+  changeDispatchSearch() {
+    if (this.CompanyId == 4) {
+      if (this.model.IsAST == 2642) {
+        this.HideShowCusDisbtn = false;
+        this.HideShowASTDisbtn = true
+      } else if (this.model.IsAST == 2643) {
+        this.HideShowCusDisbtn = true;
+        this.HideShowASTDisbtn = false;
+      }
+    } else if (this.CompanyId !== 4) {
+      this.HideShowCusDisbtn = false;
+      this.HideShowASTDisbtn = true
+    }
+  }
+
 }

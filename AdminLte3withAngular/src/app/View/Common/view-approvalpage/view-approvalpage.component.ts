@@ -64,6 +64,7 @@ export class ViewApprovalpageComponent implements OnInit {
   }
 
   open(content:any) {
+    debugger
     this.modalService.open(content, { size: <any>'lg', ariaLabelledBy: 'modal-basic-title' }).result.then((result) => {
       this.closeResult = `Closed with: ${result}`;
     }, (reason) => {

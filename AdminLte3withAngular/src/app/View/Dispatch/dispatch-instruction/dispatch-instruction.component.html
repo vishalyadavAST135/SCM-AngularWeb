@@ -133,7 +133,7 @@
                     (inputCleared)="clearedMRNO()" [(ngModel)]="model.CuUniqueSiteId" (selected)='selectMRNO($event)'
                     (inputChanged)='onChangeMRNOId($event)' (inputFocused)='onFocused($event)'
                     [itemTemplate]="MRNoTemplate" [notFoundTemplate]="MRNoTemplate" [debounceTime]="600"
-                    [minQueryLength]="2" placeHolder="Search Unique Site Id">
+                    [minQueryLength]="2" placeHolder="Search DI NO..">
                   </ng-autocomplete>
                   <ng-template #MRNoTemplate let-item>
                     <a [innerHTML]="item.Text"></a>
@@ -146,9 +146,9 @@
               <div class="col-sm-6">
                 <app-site-panel class="ChildCSS col-sm-12"></app-site-panel>
               </div>
-              
-              </div>
-             <div class="row mt-3" style="margin-left: 1px;">
+
+            </div>
+            <div class="row mt-3" style="margin-left: 1px;">
               <div class="col-sm-1">
                 <label class="col-form-label-xs">Indent Type</label>
               </div>
@@ -171,54 +171,80 @@
                 <label class="col-form-label-xs">Dispatched Status</label>
               </div>
               <div class="col-sm-2">
-                <select class="form-control form-control-sm" id="txtDispatchedStatus" [(ngModel)]="model.dispatchedStatus">
+                <select class="form-control form-control-sm" id="txtDispatchedStatus"
+                  [(ngModel)]="model.dispatchedStatus">
                   <option class="dropdown-item" value="0">Select</option>
                   <option *ngFor="let xx of DispatchedStatusList" [value]="xx.id">{{xx.itemName}}</option>
                 </select>
               </div>
-
-
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">AST/Customer DI</label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="" [(ngModel)]="model.IsASTDI"
+                  (change)="onChangeDIFor()">
+                  <option value="0">Select </option>
+                  <option value=2642>AST DI</option>
+                  <option value=2643>Customer DI</option>
+                </select>
+              </div>
             </div>
             <div class="row">
               <div class="col-sm-12" style="background-color:#28a745;">
                 <div class="btn-group btn-group-sm">
-                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch" (click)="searchApprovalMRStatus('LIST')"><i
-                      class="fa fa-search" aria-hidden="true"></i> Search</button>
-                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsExport" (click)="searchApprovalMRStatus('Export')"><i
-                      class="fa fa-download" aria-hidden="true"></i> Excel Export</button>
-                  <button [disabled]="isApprovalEnable" *ngIf="ObjUserPageRight.IsApprove" type="button" class="btn btn-success"
-                    (click)="approvedAllClick(requestedId)"><i class="fa fa-check-circle" aria-hidden="true"></i>
+                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsSearch"
+                    (click)="searchApprovalMRStatus('LIST')"><i class="fa fa-search" aria-hidden="true"></i>
+                    Search</button>
+                  <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsExport"
+                    (click)="searchApprovalMRStatus('Export')"><i class="fa fa-download" aria-hidden="true"></i> Excel
+                    Export</button>
+                  <button [disabled]="isApprovalEnable" *ngIf="ObjUserPageRight.IsApprove && astTabHideShow"
+                    type="button" class="btn btn-success" (click)="approvedAllClick(requestedId)"><i
+                      class="fa fa-check-circle" aria-hidden="true"></i>
                     Approval</button>
-                  <button (click)="rejectedAllClick(requestedId)" *ngIf="ObjUserPageRight.IsApprove" [disabled]="isRejectEnable" type="button"
-                    class="btn btn-success"><i class="fa fa-times-circle" aria-hidden="true"></i>Rejected</button>
+                  <button (click)="rejectedAllClick(requestedId)" *ngIf="ObjUserPageRight.IsApprove && astTabHideShow"
+                    [disabled]="isRejectEnable" type="button" class="btn btn-success"><i class="fa fa-times-circle"
+                      aria-hidden="true"></i>Rejected</button>
                 </div>
               </div>
               <div class="row" class="col-sm-12">
-
                 <div class="card-header p-0 border-bottom-0" *ngIf="isApprovalTab">
                   <ul class="nav nav-tabs" id="" role="tablist">
-                    <li class="nav-item col-sm-4" style=" cursor:pointer;">
+                    <li class="nav-item col-sm-4" style=" cursor:pointer;" *ngIf="astTabHideShow">
                       <a class="nav-link active" id="" (click)="searchTabTypeData(null)" data-toggle="pill" role="tab"
                         aria-controls="custom-tabs-three-home" aria-selected="true"><b>Pending for Approval -
                           {{scmPendingCount}}</b><span style="float:right;"></span></a>
-
                     </li>
 
-                    <li class="nav-item col-sm-4" style="margin-left: -11px; cursor:pointer;">
+
+                    <li class="nav-item col-sm-4" style="margin-left: -11px; cursor:pointer;" *ngIf="astTabHideShow">
                       <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="searchTabTypeData(1472)"
                         data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
                         aria-selected="false"><b>SCM Lead Approved - {{scmApprovedCount}}</b><span
                           style="float:right;"></span></a>
                     </li>
-                    <li class="nav-item col-sm-4" style="margin-left: -11px;cursor:pointer;">
+                    <li class="nav-item col-sm-4" style="margin-left: -11px;cursor:pointer;" *ngIf="astTabHideShow">
                       <a class="nav-link" id="custom-tabs-three-messages-tab" (click)="searchTabTypeData(1471)"
                         data-toggle="pill" role="tab" aria-controls="custom-tabs-three-messages"
                         aria-selected="false"><b> SCM Lead Rejected - {{scmRejectCount}}</b><span
                           style="float:right;"></span></a>
                     </li>
+
+                    <li class="nav-item col-sm-4" style=" cursor:pointer;" *ngIf="cusTabHideShow">
+                      <a class="nav-link active" id=""  data-toggle="pill" role="tab" (click)="searchTabTypeData(null)"
+                        aria-controls="custom-tabs-three-home" aria-selected="true"><b>Customer Dispatch Pending -
+                          {{cusDIPendingCount}}</b><span style="float:right;"></span></a>
+
+                    </li>
+                    <li class="nav-item col-sm-4" style=" cursor:pointer;" *ngIf="cusTabHideShow">
+                      <a class="nav-link" id=""  data-toggle="pill" role="tab" (click)="searchTabTypeData(2622)"
+                        aria-controls="custom-tabs-three-home" aria-selected="true"><b>Customer Complete Dispatch - {{cusDICompleteCount}}
+                       </b><span style="float:right;"></span></a>
+
+                    </li>
+
                   </ul>
                 </div>
-
               </div>
             </div>
             <div class="row">
@@ -265,7 +291,8 @@
                   <i class="fa fa-spinner fa-spin"*ngIf="loading" ></i>
                 </button> -->
           <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading" (click)="saveApprovalStatus(1471)">Submit
+          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading"
+            (click)="saveApprovalStatus(1471)">Submit
             <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
           </button>
         </div>
@@ -288,7 +315,8 @@
                   <i class="fa fa-spinner fa-spin" *ngIf="loading" ></i>
                 </button> -->
           <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading" (click)="saveApprovalStatus(1472)">Yes
+          <button type="button" class="btn btn-success" *ngIf="ObjUserPageRight.IsApprove" [disabled]="loading"
+            (click)="saveApprovalStatus(1472)">Yes
             <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
           </button>
         </div>

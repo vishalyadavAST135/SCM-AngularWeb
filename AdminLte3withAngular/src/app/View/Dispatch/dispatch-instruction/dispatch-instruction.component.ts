@@ -22,6 +22,9 @@ import { ApprovelStatusModel, CompanyStateVendorItemModel, DropdownModel, JsonMo
 import { VendorOrWhModel } from 'src/app/_Model/purchaseOrderModel';
 import { CompanyModel } from 'src/app/_Model/userModel';
 import { UserPageRight } from 'src/app/_Model/UserRoleButtonModel';
+import { CheckBoxRendererComponent } from 'src/app/renderer/CheckBoxrenderer.component';
+import { AgGridCheckboxComponent } from 'src/app/renderer/ag-grid-checkbox/ag-grid-checkbox.component';
+import { element } from 'protractor';
 declare var jQuery: any;
 
 @Component({
@@ -50,6 +53,8 @@ export class DispatchInstructionComponent implements OnInit {
   scmPendingCount: number;
   scmApprovedCount: number;
   scmRejectCount: number;
+  cusDIPendingCount: number; //vishal
+  cusDICompleteCount: number;
   arrayRoleId: any;
   userRoleId: any;
   isApprovalTab: boolean = false;
@@ -106,6 +111,8 @@ export class DispatchInstructionComponent implements OnInit {
   dispatchedStatus: string;
   ObjUserPageRight = new UserPageRight();
   Save: any;
+  cusTabHideShow: boolean = false//vishal, 12/06/2023
+  astTabHideShow: boolean = false//vishal, 12/06/2023
   constructor(private datePipe: DatePipe, private router: Router,
     private _objSearchpanelService: TimePeriodService,
     private _dispatchInstructionService: DispatchInstructionService,
@@ -124,6 +131,8 @@ export class DispatchInstructionComponent implements OnInit {
       customtooltip: CustomTooltipComponent,
       approvalTooltip: approvalTooltipComponent,
       CreateDispatchRenderer: CreateDispatchRendererComponent,
+
+
     }
     this._siteServiceService.SearchSitesPanelSubject.subscribe(data => {
       this.searchSitesPanelData = data;
@@ -135,9 +144,12 @@ export class DispatchInstructionComponent implements OnInit {
 
   ngOnInit(): void {
     this.model.indentType = "0";
+    this.model.IsASTDI = "2642"; //vishal
+    this.astTabHideShow = true;  //vishal
     this.model.dIType = "0";
     this.model.dIStatus = "0";
     this.model.dispatchedStatus = "1";
+
 
     var objUserModel = JSON.parse(sessionStorage.getItem("UserSession"));
     this.userId = objUserModel.User_Id;
@@ -172,7 +184,6 @@ export class DispatchInstructionComponent implements OnInit {
   async GetUserPageRight() {
     this._commonServices.GetUserPageRight(this.userId, MenuName.DispatchInstruction).subscribe(data => {
       if (data.Status == 1) {
-        console.log(data);
         this.ObjUserPageRight.IsSearch = data.Data[0].IsSearch;
         this.ObjUserPageRight.IsExport = data.Data[0].IsExport;
         this.ObjUserPageRight.IsApprove = data.Data[0].IsApprove;
@@ -196,7 +207,21 @@ export class DispatchInstructionComponent implements OnInit {
         checkboxSelection: true,
         pinned: 'left',
         width: 100,
-        filter: false
+        filter: false,
+        cellRendererSelector: function (params) {
+          var showFile = {
+            component: ''
+          };
+          var hideFile = {
+            component: ''
+          };
+          if (params.data.Responsibility == "Customer") {
+            return hideFile;
+          } else {
+            return showFile;
+          }
+        }
+
       },
       {
         headerName: 'Approved  Rejected',
@@ -207,7 +232,7 @@ export class DispatchInstructionComponent implements OnInit {
           var hideFile = {
             component: ''
           };
-          if (params.data.ApprovalRole == 0) {
+          if (params.data.ApprovalRole == 0 || params.data.Responsibility == "Customer") {
             return hideFile
           }
           else {
@@ -220,7 +245,8 @@ export class DispatchInstructionComponent implements OnInit {
           label: 'edit'
         }, pinned: 'left',
         width: 100,
-        filter: false
+        filter: false,
+
       },
 
       {
@@ -256,12 +282,16 @@ export class DispatchInstructionComponent implements OnInit {
           var hideFile = {
             component: ''
           };
-          if (params.data.SCMApprovalStatusId == null || params.data.SCMApprovalStatusId == '' || params.data.SCMApprovalStatusId != 1472) {
+          if (params.data.SCMApprovalStatusId == null || params.data.SCMApprovalStatusId == ''
+            || params.data.SCMApprovalStatusId != 1472) {
+            if (params.data.Responsibility == "Customer") {
+              return showFile;
+            }
             return hideFile
-          }
-          else {
+          } else {
             return showFile;
           }
+
         },
         cellRendererParams: {
           onClick: this.createDispatch.bind(this),
@@ -335,7 +365,9 @@ export class DispatchInstructionComponent implements OnInit {
     ];
     this.multiSortKey = 'ctrl';
     this.loadingTemplate = `<span class="ag-overlay-loading-center">loading...</span>`;
+
   }
+
 
 
   async bindCompanyStateVendorItem() {
@@ -445,7 +477,19 @@ export class DispatchInstructionComponent implements OnInit {
   }
 
   selectMRNO(items) {
+    debugger
     this.model.MRId = items.Id;
+    //vishal, desc: for change dropdown selection 
+    if (items.DIResponsibility == 2643) {
+      this.model.IsASTDI = "2643"
+     this.cusTabHideShow = true;
+     this.astTabHideShow = false;
+    }else{
+      this.model.IsASTDI = "2642"
+      this.cusTabHideShow = false;
+      this.astTabHideShow = true;
+    }
+    //vishal
   }
 
   clearedMRNO() {
@@ -456,7 +500,6 @@ export class DispatchInstructionComponent implements OnInit {
   searchApprovalMRStatus(para: string) {
     debugger
     try {
-
       this.gridApi.showLoadingOverlay();
       var objSearchDIRequestModel = new SearchDIRequestModel();
       objSearchDIRequestModel.UserId = this.userId;
@@ -500,7 +543,7 @@ export class DispatchInstructionComponent implements OnInit {
       objSearchDIRequestModel.IsSRN = this.model.indentType;
       objSearchDIRequestModel.DIType = this.model.dIType;
       objSearchDIRequestModel.DispatchStatus = this.model.dispatchedStatus;
-      //vishal 14/09/2022
+      objSearchDIRequestModel.Responsibility = this.model.IsASTDI; //vishal
       objSearchDIRequestModel.flag2 = para;
       this._dispatchInstructionService.GetDIRequestList(objSearchDIRequestModel).subscribe(data => {
         this.rowData = null;
@@ -513,27 +556,40 @@ export class DispatchInstructionComponent implements OnInit {
         if (data.Status == 1) {
           if (para == "LIST") {
             this.isApprovalTab = true;
-            // this.scmPendingCount = 0;
-            // this.scmApprovedCount = 0;
-            // this.scmRejectCount = 0;
             if (data.Data != null) {
               this.searchData = data.Data;
-              const filterValue = null;
-              const pending = this.searchData.filter(element => {
-                return element.SCMApprovalStatusId === filterValue;
-              });
-              this.scmPendingCount = pending.length;
-              this.rowData = pending;
+              // condition Customer and AST Tab Bind
+              const nullVar = null;
+              if (this.model.IsASTDI == 2642) {
+                const pending = this.searchData.filter(element => {
+                  return element.SCMApprovalStatusId === nullVar;
+                });
+                this.scmPendingCount = pending.length;
+                this.rowData = pending;
 
-              const scmApprove = this.searchData.filter(element => {
-                return element.SCMApprovalStatusId === 1472;
-              });
-              this.scmApprovedCount = scmApprove.length;
+                const scmApprove = this.searchData.filter(element => {
+                  return element.SCMApprovalStatusId === 1472;
+                });
+                this.scmApprovedCount = scmApprove.length;
 
-              const scmReject = this.searchData.filter(element => {
-                return element.SCMApprovalStatusId === 1471;
-              });
-              this.scmRejectCount = scmReject.length;
+                const scmReject = this.searchData.filter(element => {
+                  return element.SCMApprovalStatusId === 1471;
+                });
+                this.scmRejectCount = scmReject.length;
+              } else {
+                //vishal
+                const cusDIPending = this.searchData.filter(element => {
+                  return element.DispatchStatusId === nullVar;
+                });
+                this.cusDIPendingCount = cusDIPending.length;
+                this.rowData = cusDIPending;
+
+                const cusDIComplete = this.searchData.filter(element => {
+                  return element.DispatchStatusId != nullVar;
+                });
+                this.cusDICompleteCount = cusDIComplete.length;
+              }
+              //vishal
             } else {
               this.searchData = null;
               this.rowData = null;
@@ -555,26 +611,41 @@ export class DispatchInstructionComponent implements OnInit {
   }
 
   searchTabTypeData(Id: any) {
-    if (Id == null) {
-      var filterTabGridData = this.searchData.filter(
-        m => m.SCMApprovalStatusId === null);
-      this.rowData = filterTabGridData;
-    } else if (Id == 1471) {
-      var filterTabGridData = this.searchData.filter(
-        m => m.SCMApprovalStatusId === parseInt(Id));
-      this.rowData = filterTabGridData;
-    } else if (Id == 1472) {
-      var filterTabGridData = this.searchData.filter(
-        m => m.SCMApprovalStatusId === parseInt(Id));
-      this.rowData = filterTabGridData;
+    if (this.model.IsASTDI == 2642) {
+      if (Id == null) {
+        var filterTabGridData = this.searchData.filter(
+          m => m.SCMApprovalStatusId === null);
+        this.rowData = filterTabGridData;
+      } else {
+        var filterTabGridData = this.searchData.filter(
+          m => m.SCMApprovalStatusId === parseInt(Id));
+        this.rowData = filterTabGridData;
+      }
+    } else {
+      if (Id == null) {
+        var filterTabGridData = this.searchData.filter(
+          m => m.DispatchStatusId === null);
+        this.rowData = filterTabGridData;
+      } else {
+        var filterTabGridData = this.searchData.filter(
+          m => m.DispatchStatusId != null);
+        this.rowData = filterTabGridData;
+      }
     }
   }
 
+
+
   createDispatch(e) {
-    this.model.MRRequestId = e.rowData.RequestId;
-    localStorage.setItem('DIRequestId', this.model.MRRequestId);
-    window.location.href = "/WHToSite"
+    // this.model.MRRequestId = e.rowData.RequestId;
+    // localStorage.setItem('DIRequestId', this.model.MRRequestId);
+    // window.location.href = "/WHToSite"
+
+    let id = e.rowData.RequestId;
+    let Responsibility = e.rowData.Responsibility;
+    this.router.navigate(['/WHToSite'], { queryParams: { id: id, Responsibility: Responsibility } });
   }
+
 
   showMRPdfPreviewDetail(e) {
     this.model.MRRequestId = e.rowData.RequestId;
@@ -852,6 +923,17 @@ export class DispatchInstructionComponent implements OnInit {
     this.isRejectEnable = false;
     var selectedRows = this.gridApi.getSelectedRows();
     this.requestedId = selectedRows.map(x => x.MREqId).toString();
+
+  }
+
+  onChangeDIFor() {
+    if (this.model.IsASTDI == "2642") {
+      this.cusTabHideShow = false;
+      this.astTabHideShow = true;
+    } else if (this.model.IsASTDI == "2643") {
+      this.astTabHideShow = false;
+      this.cusTabHideShow = true;
+    }
 
   }
 }

@@ -54,9 +54,8 @@
   }
 </style>
 <!--Send Mail model popup-->
-<app-send-mail #child [hidden]="IsModelShow" 
-[EmailData]="EmailData" [pdfPath]="pdfPath"  [referenceId]='model.DisatchTrackeringId'
-MailFor='DT'></app-send-mail>
+<app-send-mail #child [hidden]="IsModelShow" [EmailData]="EmailData" [pdfPath]="pdfPath"
+  [referenceId]='model.DisatchTrackeringId' MailFor='DT'></app-send-mail>
 
 <!--end-Send Mail model popup-->
 
@@ -165,29 +164,66 @@ MailFor='DT'></app-send-mail>
               <div class="col-sm-2">
                 <input type="text" class="form-control form-control-sm" [(ngModel)]="model.DINo">
               </div>
+
+              <!--vishal 14/04/2023-->
+              <div class="col-sm-1">
+                <label class="col-form-label-xs"> HO/Lead Approved </label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="" [(ngModel)]="model.IsHOLead">
+                  <option value=0>Select </option>
+                  <option value=2> HO Approved</option>
+                  <option value=1>Lead Approved</option>
+                </select>
+              </div>
+              <div class="col-sm-1">
+                <label class="col-form-label-xs">Dispatch Search </label>
+              </div>
+              <div class="col-sm-2">
+                <select class="form-control form-control-sm" id="" [(ngModel)]="model.IsAST"
+                  (change)="changeDispatchSearch()">
+                  <option value=2642>Select </option>
+                  <option value=2642>AST</option>
+                  <option value=2643>Customer Dispatch</option>
+                </select>
+              </div>
             </div>
+            <!--/end-vishal-->
+
             <!-- /.Ravider -->
+
 
             <div class="row">
               <div class="col-sm-12" style="background-color:#28a745;">
                 <div class="btn-group btn-group-sm">
-                  <button type="button" *ngIf="ObjUserPageRight.IsSearch" class="btn btn-success"
+                  <button type="button" *ngIf="ObjUserPageRight.IsSearch && HideShowASTDisbtn" class="btn btn-success"
                     (click)="SearchDispatchTrackerList('List')"> <i class="fa fa-search" aria-hidden="true"></i>
                     Search</button>
-                  <button type="button" *ngIf="ObjUserPageRight.IsExport" class="btn btn-success"
+                  <button type="button" *ngIf="ObjUserPageRight.IsExport && HideShowASTDisbtn" class="btn btn-success"
                     (click)="SearchDispatchTrackerList('Export')"><i class="fa fa-download" aria-hidden="true"></i>
                     Excel Export<i class="fa fa-spinner fa-spin" *ngIf="Exportloading"></i></button>
-                  <button type="button" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-success"
+                  <button type="button" *ngIf="ObjUserPageRight.IsCreate && HideShowASTDisbtn" class="btn btn-success"
                     (click)="CreateNew()"><i class="fa fa-plus"></i> New
                     Dispatch</button>
-                  <button type="button" *ngIf="ObjUserPageRight.IsBulkPdfDwnload" class="btn btn-success"
-                    (click)="DownloadAllDispatchZip()"><i class="fa fa-download"></i> Dispatch File</button>
-                  <button type="button" *ngIf="ObjUserPageRight.IsBulkPdfDwnload" class="btn btn-success"
-                    (click)="DownloadAllBiltyZip()"><i class="fa fa-download"></i> Bilty File</button>
+
+                  <button type="button" *ngIf="ObjUserPageRight.IsBulkPdfDwnload && HideShowASTDisbtn"
+                    class="btn btn-success" (click)="DownloadAllDispatchZip()"><i class="fa fa-download"></i> Dispatch
+                    File</button>
+                  <button type="button" *ngIf="ObjUserPageRight.IsBulkPdfDwnload && HideShowASTDisbtn"
+                    class="btn btn-success" (click)="DownloadAllBiltyZip()"><i class="fa fa-download"></i> Bilty
+                    File</button>
+                  <button type="button" class="btn btn-success" *ngIf="HideShowCusDisbtn"
+                    (click)="searchCustomerDispatchList('List')"><i class="fa fa-search"></i> Search Customer
+                    Dispatch</button>
+                  <button type="button" class="btn btn-success" *ngIf="HideShowCusDisbtn"
+                    (click)="searchCustomerDispatchList('Export')"><i class="fa fa-download"></i> Export Customer
+                    Dispatch</button>
+                  <button type="button" class="btn btn-sm btn-success" (click)="createNewCusDispatch()"><i
+                      class="fa fa-plus"></i> New Customer
+                    Dispatch</button>
                 </div>
               </div>
             </div>
-
 
           </div>
           <div class="col-sm-12">
@@ -237,7 +273,9 @@ MailFor='DT'></app-send-mail>
                       &nbsp;<button type="button" class="btn btn-sm btn-success"
                         *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn" (click)="conformCancelPopup()">Cancel
                         Dispatch</button>
-                      &nbsp;
+                      <!-- &nbsp;<button type="button" class="btn btn-sm btn-success" *ngIf="IsCustomerDispatchhideandShow"
+                        (click)="cusDispatch()"><i class="fa fa-plus"></i> Customer
+                        Dispatch</button> -->
 
                       <button class="badge bg-primary" type="button" title="previous" style="margin-left:5px;"
                         [disabled]="IsDisablePrevious" (click)="fnPreviousList()"><i class="fa fa-backward"
@@ -257,7 +295,7 @@ MailFor='DT'></app-send-mail>
                         <a class="nav-link" data-toggle="pill" title="Send Mail" role="tab" aria-selected="false">
                           <i class="fa fa-envelope"></i>
                         </a>
-                      </button>                      
+                      </button>
                       <button class="badge bg-grey" [hidden]="IsMailButtonHide" type="button" data-toggle="modal"
                         data-target="#sendMailHistory" style="float: right;
                         margin-right: 12px; border-style:none" (click)="GetSendMailDetail()">
@@ -421,7 +459,8 @@ MailFor='DT'></app-send-mail>
                     </fieldset>
 
                     <fieldset class="scheduler-border">
-                      <legend class="scheduler-border"> SHIPPED TO</legend>
+                      <legend class="scheduler-border" *ngIf="IsTransferTypeVender"> BILL TO</legend>
+                      <legend class="scheduler-border" *ngIf=" !IsTransferTypeVender"> SHIPPED TO</legend>
                       <!-- <div class="" style="text-align: center;"><b> SHIPPED TO</b> </div> -->
                       <div class="row mb-1" *ngIf="IsTransferTypeSite">
                         <div class="col-sm-6">
@@ -570,16 +609,6 @@ MailFor='DT'></app-send-mail>
                             </div>
                           </div>
                         </div>
-                        <!-- <div class="col-sm-6">                        
-                                      <div class="row">
-                                        <label class="col-form-label-xs col-sm-4">GSTIN/Unique ID</label>
-                                         <div class="col-sm-8"> 
-                                      <div class="input-group"   >
-                                          <input type="text" id="txtToSiteWHGSTIN"  placeholder="" [(ngModel)]="model.ToSiteWHGSTIN" class="form-control form-control-sm" />
-                                      </div>
-                                    </div>
-                                      </div>
-                                    </div> -->
                       </div>
 
                       <div class="row mb-1" *ngIf="IsTransferTypeOtherSite">
@@ -970,8 +999,9 @@ MailFor='DT'></app-send-mail>
                                 class="Mandatoryfield"><b>*</b></span></label>
                             <div class="col-sm-8">
                               <div class="input-group">
-                                <input type="text" id="txtVenGSTIN" placeholder="" (keypress)="VenGSTINKeyPress()"
-                                  [(ngModel)]="model.VenGSTIN" class="form-control form-control-sm" />
+                                <input type="text" id="txtVenGSTIN" placeholder="" readonly
+                                  (keypress)="VenGSTINKeyPress()" [(ngModel)]="model.VenGSTIN"
+                                  class="form-control form-control-sm" />
                               </div>
                             </div>
                           </div>
@@ -1005,12 +1035,13 @@ MailFor='DT'></app-send-mail>
                             <div class="col-sm-10">
                               <textarea type="text" rows="2" name="txtVendorAddress" id="txtVendorAddress"
                                 [(ngModel)]="model.VendorAddress" autocomplete="off"
-                                class="form-control form-control-sm" placeholder=""
+                                class="form-control form-control-sm" placeholder="" readonly
                                 (keypress)="VendorAddressKeyPress()">
                                    </textarea>
                             </div>
                           </div>
                         </div>
+
                       </div>
 
                       <div class="row mb-1" *ngIf="IsTransferTypeCenterRepaired">
@@ -1166,10 +1197,129 @@ MailFor='DT'></app-send-mail>
                       </div>
                     </fieldset>
 
+                    <!--vishal, 19/04/2023, for ShipTo fieldset-->
+                    <fieldset class="scheduler-border" *ngIf="IsTransferTypeVender">
+                      <legend class="scheduler-border"> SHIPPED TO</legend>
+                      <span></span>
+
+                      <div class="row">
+                        <label class="col-form-label-xs col-sm-3">Same as Bill To address
+                        </label>
+                        <div class="col-form-label-xs col-sm-9">
+                          <input type="checkbox" value="" class="" [(ngModel)]="isChecked" (change)="checkBillToAdd()">
+                        </div>
+                      </div>
+
+                      <div class="row mb-1">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor State <span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <select class="form-control form-control-sm" id="txtBillToVenderStateId"
+                                [(ngModel)]="model.BillToVenOtherStateId"
+                                (change)="ChangeBillToVendorState(model.BillToVenOtherStateId)">
+                                <option class="dropdown-item" value="0">Select</option>
+                                <option *ngFor="let item of OtherSiteStateList" [value]="item.id">{{item.itemName}}
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State Code<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <input type="text" id="txtBillToVenStateCode" placeholder=""
+                                  [(ngModel)]="model.BillToVenStateCode" class="form-control form-control-sm" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Name<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <angular2-multiselect [data]="BillToSearchVendorListById"
+                                [(ngModel)]="SelectedBillToVendorList" [settings]="SingledropdownSettings"
+                                (onSelect)="onItemSelect($event)" (onDeSelect)="OnBillToVenItemDeSelect($event)"
+                                (onSelectAll)="onBillToSelectAll($event)"
+                                (onDeSelectAll)="onBillToVenDeSelectAll($event)"
+                                (ngModelChange)="ngModelChangeBillToVendor($event)" id="txtBillToVendorCode"
+                                class="my-class vcode">
+                              </angular2-multiselect>
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Code</label>
+                            <div class="col-sm-8">
+                              <input type="text" id="txtBillToVendorName" [(ngModel)]="model.BillToVendorCode"
+                                tabindex="4" readonly class="form-control form-control-sm" placeholder="">
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN Id<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <input type="text" id="txtBillToVenGSTIN" placeholder="" readonly
+                                  [(ngModel)]="model.BillToVenGSTIN" class="form-control form-control-sm" />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- <div class="col-sm-6" *ngIf="VendorScaleVissible">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH Name<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <select class="form-control form-control-sm" id="txtBillToVendorWHId"
+                                  [(ngModel)]="model.BillToVendorWHId">
+                                  <option class="dropdown-item" value="0">Select</option>
+                                  <option *ngFor="let item of ShippedTOVendorWHList" [value]="item.id">{{item.itemName}}
+                                  </option>
+                                </select>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div> -->
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-1">Vendor Add.<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <label class="col-form-label-xs col-sm-1"><input type="radio"
+                                *ngFor="let item of BillToVenderFilterAddress" [(ngModel)]="model.BillToRadioId"
+                                [value]="item.Id" name="optionsRadio"
+                                (change)="ChangeBillToVendorAddress(item.Id)"></label>
+                            <div class="col-sm-10">
+                              <textarea type="text" rows="2" name="txtBillToVendorAddress" id="txtBillToVendorAddress"
+                                [(ngModel)]="model.BillToVendorAddress" autocomplete="off" readonly
+                                class="form-control form-control-sm" placeholder=""
+                                (keypress)="BillToVendorAddressKeyPress()">
+                                 </textarea>
+                            </div>
+                          </div>
+                        </div>
+
+                      </div>
+                    </fieldset>
+                    <!--end-vishal-->
+
                   </div>
                 </div>
-
-
                 <!-- <hr> -->
                 <fieldset class="scheduler-border">
                   <legend class="scheduler-border">Dispatch Details</legend>
@@ -1499,8 +1649,8 @@ MailFor='DT'></app-send-mail>
                     <div class="col-sm-2">
                       <input type="checkbox" id="txtIsdispatch" [(ngModel)]="model.IsDispatch" placeholder="" />
                     </div>
-                    <label class="col-form-label-xs col-sm-1" *ngIf="IsDispatchInstraction">Dispatch Instruction<span
-                        style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+                    <label class="col-form-label-xs col-sm-1">Dispatch Instruction<span style="color: red;"
+                        class="Mandatoryfield"><b>*</b></span></label>
                     <div class="col-sm-2" *ngIf="IsDispatchInstraction">
 
                       <angular2-multiselect id="txtDispatchInstraction" [data]="DispatchInstructionList"
@@ -2734,8 +2884,9 @@ MailFor='DT'></app-send-mail>
                       <a *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View" style="color:green">
                         <i class="fa fa-eye"></i></a></label>
                     <div class="col-sm-2">
-                      <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
-                        accept="application/pdf, image/jpeg" placeholder="Choose file">
+                      <input type="file" id="fileimage" #TaxFile [(ngModel)]="model.taxInvoicefileimage"
+                        (change)="onTaxInvoiceFileChange($event)" accept="application/pdf, image/jpeg"
+                        placeholder="Choose file">
                     </div>
                   </div>
                 </fieldset>
@@ -2783,9 +2934,11 @@ MailFor='DT'></app-send-mail>
                         (click)="ReceivingViewfileClick()" title="File View" style="color:green"><i
                           class="fa fa-eye"></i></a></label>
                     <div class="col-sm-2">
-                      <input type="file" id="fileimage" #DocumentFile (change)="onRecDocumentFileChange($event)"
-                        [(ngModel)]="model.RecDocumentFile" accept="application/pdf, image/jpeg"
-                        placeholder="Choose file">
+                      <div class="input-group">
+                        <input type="file" id="fileimage" #DocumentFile (change)="onRecDocumentFileChange($event)"
+                          [(ngModel)]="model.RecDocumentFile" accept="application/pdf, image/jpeg"
+                          placeholder="Choose file">
+                      </div>
                     </div>
                   </div>
                   <div class="row mb-1">
@@ -2875,682 +3028,1156 @@ MailFor='DT'></app-send-mail>
           </div>
         </div>
         <!-- end -->
-      </div>
 
-
-      <!--Start Dispatch Preview-->
-      <div class="row" [hidden]="IsDispatchPreview">
-        <div class="col-sm-12 col-md-12">
-          <div class="card card-success">
-            <div class="card-body">
-              <div class="row mb-1">
-                <div class="col-sm-12 content-header bg-light">
-                  <div class="col-sm-12">
-                    <button type="button" class="btn btn-sm btn-success" (click)="BackPreviewDispatch()"><i
-                        class="fa fa-save"></i> Back Preview</button>
+        <!--By:vishal--desc: for Customer dispatch page-->
+        <div class="row" [hidden]="IsEditCustomerDispatch">
+          <div class="col-sm-12 col-md-12">
+            <div class="card card-success">
+              <div class="card-body">
+                <div class="alert alert-danger" *ngIf="IsError" role="alert">
+                  <strong>Error!</strong> {{errorMessage}}
+                </div>
+                <div class="alert alert-success" *ngIf="IsSuccess" role="alert">
+                  {{succesMessage}}
+                </div>
+                <div class="row mb-1">
+                  <div class="col-sm-12 content-header bg-light">
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-sm btn-success" (click)="BackPage()"><i
+                          class="fa fa-arrow-circle-left"></i> Back</button>
+                      &nbsp; <button type="submit" *ngIf="ObjUserPageRight.IsCreate" class="btn btn-sm btn-success"
+                        (click)="createNewCusDispatch()"><i class="fa fa-plus"></i>
+                        New </button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success" [disabled]="IsSaveButtonDisable"
+                        *ngIf="Save" (click)="confirmCusDispatchPopup()"><i class="fa fa-save"></i>
+                        Save</button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success"
+                        *ngIf="ObjUserPageRight.IsDelete && IsHideShowCancelBtn"
+                        (click)="conformCusDispatchCancelPopup()">Cancel
+                        Dispatch</button>
+                      &nbsp;<button type="button" class="btn btn-sm btn-success " (click)="BackDIPage()">Back For
+                        DI</button>
+                    </div>
                   </div>
                 </div>
-              </div>
+                <!--//menu-row-end-->
+                <!--start-main  details-->
+                <div class="row">
+                  <div class="col-12 col-sm-12 col-md-12">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border"> SHIPPED TO</legend>
+                      <div class="row mb-1">
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8" tabindex="0">
 
-
-              <div class="row">
-                <div class="col-12 col-sm-6 col-md-6 ">
-                  <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Company WH Details</legend>
-                    <span></span>
-                    <div class="row mb-1">
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2"></label>
-                          <div class="col-sm-8" tabindex="0">
-                            <label class="col-form-label-xs">
-                              <h4><b>{{model.PreviewCompanyName}}</b></h4>
-                            </label>
-                          </div>
-                          <label class="col-form-label-xs col-sm-4">State:</label>
-                          <div class="col-sm-8" tabindex="0">
-                            <label class="col-form-label-xs">{{model.PreviewStateName}}</label>
-                          </div>
-
-                          <label class="col-form-label-xs col-sm-4">State Code:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.StateCode}}</label>
-                          </div>
-                          <label class="col-form-label-xs col-sm-4">Dispatch To:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewDispatchToName}}</label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row mb-1">
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Regd.Office:</label>
-                          <div class="col-sm-10">
-                            <label class="col-form-label-xs">{{model.RegdOffice}}</label>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-                    <div class="row mb-1" *ngFor="let WhAd of StateCodeWhAd; let i=index">
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">WH Address {{i+1}}: </label>
-                          <div class="col-sm-10">
-                            <label class="col-form-label-xs">{{WhAd.WHAddress}}</label>
-                          </div>
-
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="row mb-1">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">GSTIN No:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.GSTINNo}}</label>
+                              <select class="form-control form-control-sm" id="txtddlCUStateId"
+                                [disabled]="IsEditDisabled" [(ngModel)]="model.cusStateId" autofocus>
+                                <option class="dropdown-item" value="0">Select</option>
+                                <option *ngFor="let itemState of StateList" [value]="itemState.id">
+                                  {{itemState.itemName}}</option>
+                              </select>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">CIN:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.CIN}}</label>
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Unique Site Id<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <div class="ng-autocomplete">
+                                <ng-autocomplete [data]="AutoCompleteUniqueSiteIdList" id="ddlUniqueId"
+                                  [searchKeyword]="UniqueSitekeyword" (inputCleared)="clearedCustomerDispatchSiteId(1)"
+                                  [(ngModel)]="model.CusUniqueSiteId" (selected)='selectCustomerDispatchSiteId($event)'
+                                  (inputChanged)='onChangeSearchUniqueSiteIdForCusDispatch($event)'
+                                  (inputFocused)='onCusFocused($event)' [itemTemplate]="UniqueiteIditemTemplate"
+                                  [notFoundTemplate]="UniqueiteIditemTemplate" [debounceTime]="600" [minQueryLength]="2"
+                                  placeHolder="Search Unique Site Id">
+                                </ng-autocomplete>
+                                <ng-template #UniqueiteIditemTemplate let-item>
+                                  <a [innerHTML]="item.SiteId"></a>
+                                </ng-template>
+                                <ng-template #UniqueiteIditemTemplate let-notFound>
+                                  <div [innerHTML]="notFound"></div>
+                                </ng-template>
+                              </div>
                             </div>
                           </div>
                         </div>
+
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Site Id<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <div class="ng-autocomplete">
+                                <ng-autocomplete [data]="AutoCompleteCustomerSiteIdList"
+                                  [searchKeyword]="CustomerSitekeyword"
+                                  (inputCleared)="clearedCustomerDispatchSiteId(2)" [(ngModel)]="model.CusValueSiteId"
+                                  (selected)='selectCustomerDispatchSiteId($event)'
+                                  (inputChanged)='onChangeSearchCustomerSiteIdForCusDispatch($event)'
+                                  (inputFocused)='onCusFocused($event)' [itemTemplate]="CuSiteIditemTemplate"
+                                  [notFoundTemplate]="CuSiteIdnotFoundTemplate" [debounceTime]="600"
+                                  [minQueryLength]="2" placeHolder="Search Site Id">
+                                </ng-autocomplete>
+                                <ng-template #CuSiteIditemTemplate let-item>
+                                  <a [innerHTML]="item.CustomerSiteId"></a>
+                                </ng-template>
+                                <ng-template #CuSiteIdnotFoundTemplate let-notFound>
+                                  <div [innerHTML]="notFound"></div>
+                                </ng-template>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Site Name </label>
+                            <div class="col-sm-8">
+                              <input type="text" id="txtCusSiteName" [(ngModel)]="model.CusSiteName" tabindex="4"
+                                readonly placeholder="" class="form-control form-control-sm" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Client Name </label>
+                            <div class="col-sm-8">
+                              <input type="text" id="txtCusClientName" [(ngModel)]="model.CusClientName" readonly
+                                placeholder="" class="form-control form-control-sm" />
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> FE/Tech<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <select class="form-control form-control-sm" id="txtCusTECHFE"
+                                [(ngModel)]="model.CusTECHFE">
+                                <option class="dropdown-item" value="0">Select</option>
+                                <option *ngFor="let itemTech of CusTechDataList" [value]="itemTech.Id">
+                                  {{itemTech.UserName}}</option>
+                              </select>
+
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-3">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">COH/CI<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-8">
+                              <select class="form-control form-control-sm" id="txtCusCOHCI"
+                                [(ngModel)]="model.CusCOHCI">
+                                <option class="dropdown-item" value=0>Select</option>
+                                <option *ngFor="let item of CusCOHDataList" [value]="item.Id">{{item.UserName}}</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-1">Site Address<span style="color: red;"
+                                class="Mandatoryfield"><b>*</b></span></label>
+                            <div class="col-sm-11">
+                              <div class="input-group">
+                                <textarea rows="1" placeholder="Site Address" id="txtCusSiteAddress" maxlength="100"
+                                  (keypress)="cusSubDescKeyPress()" [(ngModel)]="model.CusSiteAddress" readonly
+                                  class="form-control form-control-sm"></textarea>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
-                    </div>
-                  </fieldset>
+
+                    </fieldset>
+                  </div>
+                  <div class="col-12 col-sm-12 col-md-12">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border">Dispatch Details</legend>
+                      <span></span>
+                      <div class="row mb-1">
+                        <label class="col-form-label-xs col-sm-1">Document No<span style="color: red;"
+                            class="Mandatoryfield"><b></b></span></label>
+                        <div class="col-sm-2">
+                          <input type="text" id="txtCusDocumentNo" tabindex="4" [(ngModel)]="model.CusDisDocumentNo"
+                            placeholder="" readonly class="form-control form-control-sm" />
+                        </div>
+
+                        <label class="col-form-label-xs col-sm-1">Document Date<span style="color: red;"
+                            class="Mandatoryfield"><b>*</b></span></label>
+                        <div class="col-sm-2">
+                          <div class="input-group">
+                            <input class="form-control form-control-sm" placeholder="" id="txtCusDocDate"
+                              autocomplete="off" [(ngModel)]="model.CusDisDocumentDate" ngbDatepicker
+                              #cusDate="ngbDatepicker" [minDate]="minCusDispatchDt" [maxDate]="maxCusDispatchDt"
+                              readonly>
+                            <div class="input-group-append">
+                              <span class="input-group-text" (click)="cusDate.toggle()"><i
+                                  class="far fa-calendar-alt"></i></span>
+                            </div>
+                          </div>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Expected Delivery Date<span style="color: red;"
+                            class="Mandatoryfield"><b>*</b></span></label>
+                        <div class="col-sm-2">
+                          <div class="input-group">
+                            <input class="form-control form-control-sm" placeholder="" id="txtCusExpDocDate"
+                              autocomplete="off" ngbDatepicker #ExpDelDate="ngbDatepicker"
+                              [(ngModel)]="model.CusExpDelDate">
+                            <div class="input-group-append">
+                              <span class="input-group-text" (click)="ExpDelDate.toggle()"><i
+                                  class="far fa-calendar-alt"></i></span>
+                            </div>
+                          </div>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Dispatch For<span style="color: red;"
+                            class="Mandatoryfield"><b>*</b></span></label>
+                        <div class="col-sm-2">
+                          <select class="form-control form-control-sm" id="txtCusDispatchFor"
+                            [(ngModel)]="model.CusDispatchFor">
+                            <option class="dropdown-item" value="0">Select</option>
+                            <option *ngFor="let item of DispatchFromList" [value]="item.Id">{{item.Name}}</option>
+                          </select>
+                        </div>
+                        <label class="col-form-label-xs col-sm-1">Dispatch
+                          Instruction<span style="color: red;" class="Mandatoryfield"><b>*</b></span></label>
+
+                        <div class="col-sm-2">
+                          <!-- <angular2-multiselect id="txtCusDispatchInstraction" [data]="DispatchInstructionList"
+                            [(ngModel)]="selectedCusDIArr" [settings]="SingledropdownSettings"
+                            (onSelect)="ChangeCusDispatchInstruction('')"
+                            (onDeSelect)="ChangeCusDispatchInstruction('')"
+                            (onSelectAll)="ChangeCusDispatchInstruction('')"
+                            (onDeSelectAll)="ChangeCusDispatchInstruction('DelAll')">
+                          </angular2-multiselect> -->
+
+                          <select class="form-control form-control-sm" id="txtCusDI" [(ngModel)]="model.cusDI" autofocus
+                            (change)="changeCusDispatchInstruction(model.cusDI)">
+                            <option class="dropdown-item" value="0" selected>Select</option>
+                            <option *ngFor="let item of CusDispatchInstructionList" [value]="item.id">
+                              {{item.itemName}}</option>
+                          </select>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
                 </div>
+                <!--end-dispatch details-->
+                <!---.start-Item-details-->
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Item Details</legend>
+                  <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+                    <!--This table Used For Same State-->
+                    <table id="tblOne" class="table table-striped table-bordered">
+                      <thead>
+                        <tr>
+                          <!-- <th></th> -->
+                          <th>Item Name<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>Capacity<span style="color:red;" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;Sub Description<span style="color:red"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span style="color:red"
+                              class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;Site Id<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;
+                          </th>
 
-                <div class="col-12 col-sm-6 col-md-6 ">
-                  <fieldset class="scheduler-border">
-                    <legend class="scheduler-border">Dispatch Details</legend>
-                    <div class="row">
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of cusdynamicArray; let i = index">
+                          <!-- <td (click)="cusdeleteRow(i)" style="width:20px;">
+                            <i class="fa fa-trash" title="Delete"></i>
+                          </td> -->
+                          <td style="width:80px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemName"
+                              id="ddlCusItemName" [(ngModel)]="cusdynamicArray[i].ItemNameId"
+                              [disabled]="IsItemListDisabled"
+                              (change)="cusChangeEditItemName(cusdynamicArray[i].ItemNameId,i)">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of SearchItemNameList" [value]="item.id">{{item.itemName}}
+                              </option>
+                            </select>
+                          </td>
+                          <td style="width:80px;">
+                            <select class="form-control form-control-sm ItemCap" style="width:100px;" id="ddlCusItemCap"
+                              [(ngModel)]="cusdynamicArray[i].ItemCapId" [disabled]="IsItemListDisabled">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of cusdynamicArray[i].EditItemCap" [value]="item.id">
+                                {{item.itemName}}</option>
+                            </select>
+                          </td>
+                          <td style="width:80px;">
+                            <select style="width:100px;" class="form-control form-control-sm ItemCode"
+                              id="ddlCusItemMake" [(ngModel)]="cusdynamicArray[i].ItemMakeId"
+                              [disabled]="IsItemListDisabled">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of cusdynamicArray[i].EditItemMake" [value]="item.id">
+                                {{item.itemName}}</option>
+                            </select>
+                          </td>
 
-                      <label class="col-form-label-xs col-sm-2">Document No:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.DocumentNo}} </label>
+                          <td style="width:280px;">
+                            <textarea class="form-control form-control-sm SubDescription" style="width:350px;"
+                              id="txtCusSubDesc" autocomplete="off" [(ngModel)]="cusdynamicArray[i].SubDescription"
+                              [disabled]="IsItemListDisabled" type="text" style="text-align:center;"></textarea>
+                          </td>
+                          <td style="width:50px;">
+                            <select class="form-control form-control-sm UnitName" style="width:80px;"
+                              id="ddlCusUnitName" [(ngModel)]="cusdynamicArray[i].UnitId"
+                              [disabled]="IsItemListDisabled">
+                              <option class="dropdown-item" [value]="0">Select</option>
+                              <option *ngFor="let item of cusdynamicArray[i].EditItemUnit" [value]="item.Id">
+                                {{item.UnitName}}
+                              </option>
+                            </select>
+                          </td>
+                          <td style="width:30px;">
+                            <input class="form-control form-control-sm Qty" id="txtCusQty" autocomplete="off"
+                              [(ngModel)]="cusdynamicArray[i].Qty" appCopyPastNumFloatValue type="text"
+                              [disabled]="IsItemListDisabled" style="text-align:center;" />
+                          </td>
+                          <td style="width:100px;">{{dynamic.SiteId}}</td>
+                        </tr>
+                        <tr *ngIf="cusItemAddrowhideshow">
+                          <td (click)="addRowCus()">
+                            <i class="fa fa-plus"></i>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </fieldset>
+                <!--///end-Item-details//--->
+                <!--start upload doc-->
+
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Upload Document</legend>
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-2">Challan:<a *ngIf="IsChallanFile"
+                        (click)="ChalanViewfileClick()" title="File View" style="color:green"><i
+                          class="fa fa-eye"></i></a></label>
+                    <div class="col-sm-2">
+                      <input type="file" id="" [(ngModel)]="model.cusChalan" #inputFile
+                        (change)="onChalanDocumentChange($event)" accept="application/pdf, image/jpeg"
+                        placeholder="Choose file">
+                    </div>
+                  </div>
+                </fieldset>
+                <!--end upload doc-->
+                <!--start-receving details-->
+
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Receiving Details</legend>
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">Received By<span style="color: red;"
+                        class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <input type="text" id="txtCusReceivedBy" [(ngModel)]="model.CusReceivedBy" autocomplete="off"
+                        placeholder="" (keypress)="cusReceiveByKeyPress()" class="form-control form-control-sm" />
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Receiver Mobile No<span style="color: red;"
+                        class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <input type="text" id="txtCusReceivedNo" [(ngModel)]="model.CusReceivedNo" maxlength="12"
+                        autocomplete="off" placeholder="" appCopyPastNumFloatValue (keypress)="cusReceiverNoKeyPress()"
+                        class="form-control form-control-sm" />
+                    </div>
+
+                    <label class="col-form-label-xs col-sm-1">Delivered Date<span style="color: red;"
+                        class="Mandatoryfield"><b>*</b></span></label>
+                    <div class="col-sm-2">
+                      <div class="input-group">
+                        <input class="form-control form-control-sm" placeholder="" id="txtCusDeliveredDate"
+                          autocomplete="off" [(ngModel)]="model.CusDeliveredDate" ngbDatepicker
+                          (keypress)="cusDeliveredDateKeyPress()" #Delivered="ngbDatepicker">
+                        <div class="input-group-append">
+                          <span class="input-group-text" (click)="Delivered.toggle()"><i
+                              class="far fa-calendar-alt"></i></span>
+                        </div>
+                      </div>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Receiveing Document:<a *ngIf="IsRecvFile"
+                        (click)="cusReceivingViewfileClick()" title="File View" style="color:green"><i
+                          class="fa fa-eye"></i></a></label>
+                    <div class="col-sm-2">
+                      <div class="input-group">
+                        <input type="file" id="fileimage" #DocumentFile (change)="onCusRecDocumentFileChange($event)"
+                          [(ngModel)]="model.CusRecDocumentFile" accept="application/pdf, image/jpeg"
+                          placeholder="Choose file">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-1">
+                    <div class="col-sm-12">
+                      <div class="col-sm-2">
+                        <button type="button" style="float: left;" class="btn btn-sm btn-success"
+                          *ngIf="IsPartialUpdateCusDispatch" (click)="conformCusDisRecivedPopup()"><i
+                            class="fa fa-save"></i>
+                          Update Receiving Details</button>
+                      </div>
+                    </div>
+                  </div>
+                </fieldset>
+                <!--end-receiving details-->
+              </div>
+            </div>
+          </div>
+        </div>
+        <!--vishal-->
+        <!--Start Dispatch Preview-->
+        <div class="row" [hidden]="IsDispatchPreview">
+          <div class="col-sm-12 col-md-12">
+            <div class="card card-success">
+              <div class="card-body">
+                <div class="row mb-1">
+                  <div class="col-sm-12 content-header bg-light">
+                    <div class="col-sm-12">
+                      <button type="button" class="btn btn-sm btn-success" (click)="BackPreviewDispatch()"><i
+                          class="fa fa-save"></i> Back Preview</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border">Company WH Details</legend>
+                      <span></span>
+                      <div class="row mb-1">
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2"></label>
+                            <div class="col-sm-8" tabindex="0">
+                              <label class="col-form-label-xs">
+                                <h4><b>{{model.PreviewCompanyName}}</b></h4>
+                              </label>
+                            </div>
+                            <label class="col-form-label-xs col-sm-4">State:</label>
+                            <div class="col-sm-8" tabindex="0">
+                              <label class="col-form-label-xs">{{model.PreviewStateName}}</label>
+                            </div>
+
+                            <label class="col-form-label-xs col-sm-4">State Code:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.StateCode}}</label>
+                            </div>
+                            <label class="col-form-label-xs col-sm-4">Dispatch To:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewDispatchToName}}</label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-1">
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Regd.Office:</label>
+                            <div class="col-sm-10">
+                              <label class="col-form-label-xs">{{model.RegdOffice}}</label>
+                            </div>
+
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row mb-1" *ngFor="let WhAd of StateCodeWhAd; let i=index">
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">WH Address {{i+1}}: </label>
+                            <div class="col-sm-10">
+                              <label class="col-form-label-xs">{{WhAd.WHAddress}}</label>
+                            </div>
+
+                          </div>
+                        </div>
                       </div>
 
-                      <label class="col-form-label-xs col-sm-2">Dispatch Date:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.PreviewDispatchDate}} </label>
+                      <div class="row mb-1">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN No:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.GSTINNo}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">CIN:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.CIN}}</label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                      <label class="col-form-label-xs col-sm-2">Trasporation Mode:</label>
-                      <div class="col-sm-4">
-                        <!-- ? <input type="text" id="txtTrasporationMode" [(ngModel)]="model.TrasporationMode" (keypress)="TrasporationKeyPress()" placeholder=""  class="form-control form-control-sm" /> -->
-                        <label class="col-form-label-xs">{{model.PreviewTransModeName}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2">Select Transporter:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.TransporterName}} </label>
-                      </div>
+                    </fieldset>
+                  </div>
+
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border">Dispatch Details</legend>
+                      <div class="row">
+
+                        <label class="col-form-label-xs col-sm-2">Document No:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.DocumentNo}} </label>
+                        </div>
+
+                        <label class="col-form-label-xs col-sm-2">Dispatch Date:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.PreviewDispatchDate}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">Trasporation Mode:</label>
+                        <div class="col-sm-4">
+                          <!-- ? <input type="text" id="txtTrasporationMode" [(ngModel)]="model.TrasporationMode" (keypress)="TrasporationKeyPress()" placeholder=""  class="form-control form-control-sm" /> -->
+                          <label class="col-form-label-xs">{{model.PreviewTransModeName}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">Select Transporter:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.TransporterName}} </label>
+                        </div>
 
 
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporter">Transporter Name:</label>
-                      <div class="col-sm-4" *ngIf="IsTransporter">
-                        <label class="col-form-label-xs">{{model.TransporterName}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporter">Transporter GST No:</label>
-                      <div class="col-sm-4" *ngIf="IsTransporter">
-                        <label class="col-form-label-xs">{{model.TransporterGSTNo}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporterReadonly">Transporter Name:</label>
-                      <div class="col-sm-4" *ngIf="IsTransporterReadonly">
-                        <label class="col-form-label-xs">{{model.TransporterName}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporterReadonly">Transporter GST
-                        No:</label>
-                      <div class="col-sm-4" *ngIf="IsTransporterReadonly">
-                        <label class="col-form-label-xs">{{model.TransporterGSTNo}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporter">Transporter Name:</label>
+                        <div class="col-sm-4" *ngIf="IsTransporter">
+                          <label class="col-form-label-xs">{{model.TransporterName}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporter">Transporter GST No:</label>
+                        <div class="col-sm-4" *ngIf="IsTransporter">
+                          <label class="col-form-label-xs">{{model.TransporterGSTNo}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporterReadonly">Transporter
+                          Name:</label>
+                        <div class="col-sm-4" *ngIf="IsTransporterReadonly">
+                          <label class="col-form-label-xs">{{model.TransporterName}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTransporterReadonly">Transporter GST
+                          No:</label>
+                        <div class="col-sm-4" *ngIf="IsTransporterReadonly">
+                          <label class="col-form-label-xs">{{model.TransporterGSTNo}} </label>
+                        </div>
 
 
-                      <label class="col-form-label-xs col-sm-2">Destination:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.Destination}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2">G.R No:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.GRNo}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2">Destination:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.Destination}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">G.R No:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.GRNo}} </label>
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2">G.R Date:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.PreviewGRDate}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2">G.R Document:<a *ngIf="IsGRFile"
-                          (click)="GRViewfileClick()" title="File View" style="color:green"><i
-                            class="fa fa-eye"></i></a></label>
-                      <div class="col-sm-4">
-                        <!-- <input type="file" id="GRfile" [(ngModel)]="model.GRfileimage" #inputFile
+                        <label class="col-form-label-xs col-sm-2">G.R Date:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.PreviewGRDate}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">G.R Document:<a *ngIf="IsGRFile"
+                            (click)="GRViewfileClick()" title="File View" style="color:green"><i
+                              class="fa fa-eye"></i></a></label>
+                        <div class="col-sm-4">
+                          <!-- <input type="file" id="GRfile" [(ngModel)]="model.GRfileimage" #inputFile
                           (change)="onGRfileDocumentChange($event)" accept="application/pdf, image/jpeg"
                           placeholder="Choose file"> -->
-                      </div>
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2">Vehicle Type:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.PreviewVehicleType}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2">Vehicle Type:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.PreviewVehicleType}} </label>
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2">Vehicle No:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.VehicleNumber}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2">Vehicle No:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.VehicleNumber}} </label>
+                        </div>
 
 
-                      <label class="col-form-label-xs col-sm-2">Eway Bill No:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.EwayBillNo}} </label>
-                      </div>
-                      <label class="col-form-label-xs col-sm-2">Eway Bill Document:<a *ngIf="IsEwayBillfile"
-                          (click)="EwayBillViewfileClick()" title="File View" style="color:green"><i
-                            class="fa fa-eye"></i></a></label>
-                      <div class="col-sm-4">
-                      </div>
+                        <label class="col-form-label-xs col-sm-2">Eway Bill No:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.EwayBillNo}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">Eway Bill Document:<a *ngIf="IsEwayBillfile"
+                            (click)="EwayBillViewfileClick()" title="File View" style="color:green"><i
+                              class="fa fa-eye"></i></a></label>
+                        <div class="col-sm-4">
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice No:</label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceNoSameState">
-                        <label class="col-form-label-xs">{{model.TaxInvoiceNo}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice
+                          No:</label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceNoSameState">
+                          <label class="col-form-label-xs">{{model.TaxInvoiceNo}} </label>
+                        </div>
 
-                      <!--vishal 02/12/2022-->
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice
-                        Date:</label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceDateSameState">
-                        <label class="col-form-label-xs">{{model.TaxInvoiceDate}} </label>
-                      </div>
-                      <!--end-vishal-->
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice File:<a
-                          *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View"
-                          style="color:green"><i class="fa fa-eye"></i></a></label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceNoSameState">
-                        <!-- <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
+                        <!--vishal 02/12/2022-->
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice
+                          Date:</label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceDateSameState">
+                          <label class="col-form-label-xs">{{model.TaxInvoiceDate}} </label>
+                        </div>
+                        <!--end-vishal-->
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNoSameState">Tax Invoice File:<a
+                            *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View"
+                            style="color:green"><i class="fa fa-eye"></i></a></label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceNoSameState">
+                          <!-- <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
                           accept="application/pdf, image/jpeg" placeholder="Choose file"> -->
-                      </div>
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNo">Tax Invoice No:</label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceNo">
-                        <label class="col-form-label-xs">{{model.TaxInvoiceNo}} </label>
-                      </div>
-                      <!--vishal 02/12/2022-->
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceDate">Tax Invoice Date:</label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceDate">
-                        <label class="col-form-label-xs">{{model.PreviewTaxInvoiceDate}} </label>
-                      </div>
-                      <!--end-vishal-->
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNo">Tax Invoice File:<a
-                          *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View"
-                          style="color:green"><i class="fa fa-eye"></i></a></label>
-                      <div class="col-sm-4" *ngIf="IsTaxInvoiceNo">
-                        <!-- <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNo">Tax Invoice No:</label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceNo">
+                          <label class="col-form-label-xs">{{model.TaxInvoiceNo}} </label>
+                        </div>
+                        <!--vishal 02/12/2022-->
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceDate">Tax Invoice Date:</label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceDate">
+                          <label class="col-form-label-xs">{{model.PreviewTaxInvoiceDate}} </label>
+                        </div>
+                        <!--end-vishal-->
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsTaxInvoiceNo">Tax Invoice File:<a
+                            *ngIf="IsTaxInvoiceFile" (click)="TaxInvViewfileClick()" title="File View"
+                            style="color:green"><i class="fa fa-eye"></i></a></label>
+                        <div class="col-sm-4" *ngIf="IsTaxInvoiceNo">
+                          <!-- <input type="file" id="fileimage" #TaxFile (change)="onTaxInvoiceFileChange($event)"
                           accept="application/pdf, image/jpeg" placeholder="Choose file"> -->
-                      </div>
+                        </div>
 
 
-                      <label class="col-form-label-xs col-sm-2" *ngIf="IsDispatchFor">Dispatch For:</label>
-                      <div class="col-sm-4" *ngIf="IsDispatchFor">
-                        <label class="col-form-label-xs">{{model.PreviewDispatchFromName}} </label>
-                      </div>
+                        <label class="col-form-label-xs col-sm-2" *ngIf="IsDispatchFor">Dispatch For:</label>
+                        <div class="col-sm-4" *ngIf="IsDispatchFor">
+                          <label class="col-form-label-xs">{{model.PreviewDispatchFromName}} </label>
+                        </div>
 
-                      <label class="col-form-label-xs col-sm-2">Expected Delivery Date:</label>
-                      <div class="col-sm-4">
-                        <label class="col-form-label-xs">{{model.PreviewExpectedDate}} </label>
+                        <label class="col-form-label-xs col-sm-2">Expected Delivery Date:</label>
+                        <div class="col-sm-4">
+                          <label class="col-form-label-xs">{{model.PreviewExpectedDate}} </label>
+                        </div>
+                        <label class="col-form-label-xs col-sm-2">Document Sent:</label>
+                        <div class="col-sm-4">
+                          <input type="checkbox" id="txtIsdispatch" disabled [(ngModel)]="model.IsDispatch"
+                            placeholder="" />
+                        </div>
                       </div>
-                      <label class="col-form-label-xs col-sm-2">Document Sent:</label>
-                      <div class="col-sm-4">
-                        <input type="checkbox" id="txtIsdispatch" disabled [(ngModel)]="model.IsDispatch"
-                          placeholder="" />
-                      </div>
-                    </div>
-                  </fieldset>
+                    </fieldset>
+                  </div>
                 </div>
-              </div>
-              <span></span>
-              <!-- <hr> -->
-              <div class="row">
-                <div class="col-12 col-sm-6 col-md-6 ">
-                  <fieldset class="scheduler-border">
-                    <legend class="scheduler-border"> SHIPPED FROM</legend>
-                    <span></span>
-                    <div class="row mb-1">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">WH State:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.WHState}}</label>
+                <span></span>
+                <!-- <hr> -->
+                <!--start vishal-->
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border" *ngIf="IsTransferTypeVender"> BILLED TO</legend>
+                      <legend class="scheduler-border" *ngIf="!IsTransferTypeVender"> SHIPPED TO</legend>
+                      <!-- <div class="" style="text-align: center;"><b> SHIPPED TO</b> </div>   -->
+                      <div class="row mb-1" *ngIf="IsTransferTypeSite">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Unique Site Id:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.CuUniqueSiteId}} </label>
+                            </div>
                           </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Site Id:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.HideCustomerId}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Site Name: </label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.SiteName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Client Name: </label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.ClientName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Company Name:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.CompanyName}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> FE/Tech:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewTECHFEName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">COH/CI:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewCOHName}} </label>
+                            </div>
+                          </div>
+                        </div>
 
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Multi Site:</label>
+                            <div class="col-sm-8">
+                              <input type="checkbox" id="txtIsMultipleSite" name="checkbox" disabled
+                                [(ngModel)]="model.IsMultipleSite" placeholder=""
+                                (change)="ClickMultipleSite($event)" />
+                              Tick for multisite dispatch
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Loan To:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewLoanEmpName}} </label>
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Site Address:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.SiteAddress}} </label>
+                              </div>
+                            </div>
+                          </div>
                         </div>
                       </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">WH Name:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.PreviewWHName}}</label>
+                      <div class="row mb-1" *ngIf="IsTransferTypeOtherSite">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Site State:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewToStateName}} </label>
                             </div>
 
                           </div>
                         </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State Code:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.ToSiteStateCode}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Unique Site Id:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.CuUniqueSiteId}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Site Id:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.HideCustomerId}} </label>
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Site Name: </label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.SiteName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Client Name: </label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.ClientName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> GST Type:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.previewGStType}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.ToSiteWHGSTIN}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> FE/Tech:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewTECHFEName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">COH/CI:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewCOHName}} </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Multi Site:</label>
+                            <div class="col-sm-8">
+                              <input type="checkbox" id="txtIsMultipleSite" name="checkbox" disabled
+                                [(ngModel)]="model.IsMultipleSite" placeholder=""
+                                (change)="ClickMultipleSite($event)" />
+                              Tick for multisite dispatch
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4"> Loan To:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewLoanEmpName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Company Name:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.CompanyName}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Site Address:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.SiteAddress}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
                       </div>
 
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">WH Address:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.ShippedWHAddress}} </label>
-                            </div>
+                      <div class="row mb-1" *ngIf="IsTransferTypeWH">
 
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH Name:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.PreviewSameWHName}} </label>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">WH Address:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.WHAddress}} </label>
+                              </div>
+
+                            </div>
                           </div>
                         </div>
                       </div>
 
-                    </div>
-                  </fieldset>
+                      <div class="row mb-1" *ngIf="IsTransferTypeOtherWH">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH State:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewToStateName}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State Code:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.WHStateCode}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH Name:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.PreviewToWHName}} </label>
+                              </div>
+
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.WHGSTIN}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">WH Address:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.WHAddress}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                      <div class="row mb-1" *ngIf="IsTransferTypeVender">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor State :</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewVendorState}} </label>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State Code:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.VenStateCode}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Name:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.PreviewVendorNmae}} </label>
+                            </div>
+
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Code:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.VendorCode}} </label>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.VenGSTIN}} </label>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Vendor Add:</label>
+                            <div class="col-sm-10">
+                              <label class="col-form-label-xs">{{model.VendorAddress}} </label>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </fieldset>
+                  </div>
                 </div>
-                <div class="col-12 col-sm-6 col-md-6 ">
-                  <fieldset class="scheduler-border">
-                    <legend class="scheduler-border"> SHIPPED TO</legend>
-                    <!-- <div class="" style="text-align: center;"><b> SHIPPED TO</b> </div> -->
-                    <div class="row mb-1" *ngIf="IsTransferTypeSite">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Unique Site Id:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.CuUniqueSiteId}} </label>
+                <!--end-vishal-->
+                <div class="row">
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                    <fieldset class="scheduler-border">
+                      <legend class="scheduler-border"> SHIPPED FROM</legend>
+                      <span></span>
+                      <div class="row mb-1">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH State:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.WHState}}</label>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Site Id:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.HideCustomerId}} </label>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">WH Name:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.PreviewWHName}}</label>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Site Name: </label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.SiteName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Client Name: </label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.ClientName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Company Name:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.CompanyName}} </label>
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">WH Address:</label>
+                            <div class="col-sm-10">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.ShippedWHAddress}} </label>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> FE/Tech:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewTECHFEName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">COH/CI:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewCOHName}} </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Multi Site:</label>
-                          <div class="col-sm-8">
-                            <input type="checkbox" id="txtIsMultipleSite" name="checkbox" disabled
-                              [(ngModel)]="model.IsMultipleSite" placeholder="" (change)="ClickMultipleSite($event)" />
-                            Tick for multisite dispatch
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Loan To:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewLoanEmpName}} </label>
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Site Address:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.SiteAddress}} </label>
+                    </fieldset>
+                  </div>
+                  <div class="col-12 col-sm-6 col-md-6 ">
+                    <fieldset class="scheduler-border" *ngIf="IsTransferTypeVender">
+                      <legend class="scheduler-border">SHIPPED TO</legend>
+                      <div class="row mb-1">
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor State :</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.BillToPreviewVendorState}} </label>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div class="row mb-1" *ngIf="IsTransferTypeOtherSite">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Site State:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewToStateName}} </label>
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">State Code:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.ToSiteStateCode}} </label>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">State Code:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.BillToVenStateCode}} </label>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Unique Site Id:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.CuUniqueSiteId}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Site Id:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.HideCustomerId}} </label>
-                          </div>
-                        </div>
-                      </div>
-
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Site Name: </label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.SiteName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Client Name: </label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.ClientName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> GST Type:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.previewGStType}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.ToSiteWHGSTIN}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> FE/Tech:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewTECHFEName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">COH/CI:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewCOHName}} </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Multi Site:</label>
-                          <div class="col-sm-8">
-                            <input type="checkbox" id="txtIsMultipleSite" name="checkbox" disabled
-                              [(ngModel)]="model.IsMultipleSite" placeholder="" (change)="ClickMultipleSite($event)" />
-                            Tick for multisite dispatch
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4"> Loan To:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewLoanEmpName}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Company Name:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.CompanyName}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Site Address:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.SiteAddress}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                    </div>
-
-                    <div class="row mb-1" *ngIf="IsTransferTypeWH">
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">WH Name:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.PreviewSameWHName}} </label>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Name:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.BillToPreviewVendorNmae}} </label>
                             </div>
 
                           </div>
                         </div>
-                      </div>
-
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">WH Address:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.WHAddress}} </label>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">Vendor Code:</label>
+                            <div class="col-sm-8">
+                              <label class="col-form-label-xs">{{model.BillToVendorCode}} </label>
                             </div>
-
                           </div>
                         </div>
-                      </div>
-                    </div>
 
-                    <div class="row mb-1" *ngIf="IsTransferTypeOtherWH">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">WH State:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewToStateName}} </label>
+                        <div class="col-sm-6">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
+                            <div class="col-sm-8">
+                              <div class="input-group">
+                                <label class="col-form-label-xs">{{model.BillToVenGSTIN}} </label>
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">State Code:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.WHStateCode}} </label>
+
+                        <div class="col-sm-12">
+                          <div class="row">
+                            <label class="col-form-label-xs col-sm-2">Vendor Add:</label>
+                            <div class="col-sm-10">
+                              <label class="col-form-label-xs">{{model.BillToVendorAddress}} </label>
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">WH Name:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.PreviewToWHName}} </label>
-                            </div>
-
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.WHGSTIN}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">WH Address:</label>
-                          <div class="col-sm-10">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.WHAddress}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-
-                    <div class="row mb-1" *ngIf="IsTransferTypeVender">
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Vendor State :</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewVendorState}} </label>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">State Code:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.VenStateCode}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Vendor Name:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.PreviewVendorNmae}} </label>
-                          </div>
-
-                        </div>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">Vendor Code:</label>
-                          <div class="col-sm-8">
-                            <label class="col-form-label-xs">{{model.VendorCode}} </label>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-sm-6">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-4">GSTIN Id:</label>
-                          <div class="col-sm-8">
-                            <div class="input-group">
-                              <label class="col-form-label-xs">{{model.VenGSTIN}} </label>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div class="col-sm-12">
-                        <div class="row">
-                          <label class="col-form-label-xs col-sm-2">Vendor Add:</label>
-                          <div class="col-sm-10">
-                            <label class="col-form-label-xs">{{model.VendorAddress}} </label>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-
+                    </fieldset>
+                  </div>
                 </div>
-              </div>
-              <!-- <span></span>-->
-              <span></span>
 
-              <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Item Details</legend>
-                <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
-                  <table id="tblOne" class="table table-striped table-bordered" *ngIf="IsTransferTypeSameState">
-                    <thead>
-                      <tr>
-                        <th>Item Name</th>
-                        <th>Item Make</th>
-                        <th>Part No</th>
-                        <th>&nbsp;&nbsp;&nbsp;Equipment Type&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Customer&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type&nbsp;&nbsp;&nbsp;</th>
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Descriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>&nbsp;&nbsp;&nbsp;UOM&nbsp;&nbsp;&nbsp;</th>
-                        <th>HSN/SAC</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <!-- <th style="text-align: center;">Serial&nbsp;No.<span style="color:red"
+                <!-- <span></span>-->
+                <span></span>
+
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Item Details</legend>
+                  <div class="col-sm-12" style="overflow-x:scroll; min-height:330px;">
+                    <table id="tblOne" class="table table-striped table-bordered" *ngIf="IsTransferTypeSameState">
+                      <thead>
+                        <tr>
+                          <th>Item Name</th>
+                          <th>Item Make</th>
+                          <th>Part No</th>
+                          <th>&nbsp;&nbsp;&nbsp;Equipment Type&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Customer&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type&nbsp;&nbsp;&nbsp;</th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Descriptions&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;UOM&nbsp;&nbsp;&nbsp;</th>
+                          <th>HSN/SAC</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <!-- <th style="text-align: center;">Serial&nbsp;No.<span style="color:red"
                             class="Mandatoryfield"><b></b></span></th>
                         <th *ngIf="IsReceivedHideShow">Received&nbsp;Qty<span style="color:red"
                             class="Mandatoryfield"><b></b></span></th>
@@ -3562,72 +4189,72 @@ MailFor='DT'></app-send-mail>
                             class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> -->
 
 
-                        <th>&nbsp;&nbsp;&nbsp;Unit&nbsp;Rate&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;</th>
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;Amount&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>Discount&nbsp;(in&nbsp;Rs.)
-                        </th>
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grand&nbsp;&nbsp;Total&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let dynamic of dynamicArray; let i = index">
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label>{{dynamicArray[i].ItemCode}}</label>
-                        </td>
-                        <td style="width:100px;">
-                          <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
-                        </td>
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
-                        </td>
+                          <th>&nbsp;&nbsp;&nbsp;Unit&nbsp;Rate&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;</th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;Amount&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>Discount&nbsp;(in&nbsp;Rs.)
+                          </th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grand&nbsp;&nbsp;Total&nbsp;(in&nbsp;Rs.)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label>{{dynamicArray[i].ItemCode}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
+                          </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
+                          </td>
 
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
-                          <label
-                            *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
-                          <label style="text-align:center"
-                            *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
-                        </td>
-                        <!-- <td style="width:100px;text-align: center;">
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
+                            <label
+                              *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
+                            <label style="text-align:center"
+                              *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
+                          </td>
+                          <!-- <td style="width:100px;text-align: center;">
                           <a (click)="showModal(dynamicArray[i].Qty, i)">
                             <i _ngcontent-dpu-c137="" class="fa fa-plus"></i>
                           </a>
                         </td> -->
-                        <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
+                          <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
                             <label style="text-align:center">{{dynamicArray[i].ReceivedQty}}</label>
                         </td>
                         <td style="width:280px;" *ngIf="IsReceivedHideShow">
@@ -3644,80 +4271,80 @@ MailFor='DT'></app-send-mail>
                         </td> -->
 
 
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
-                        </td>
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].Discount}}</label>
-                        </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
+                          </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].Discount}}</label>
+                          </td>
 
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].GetTotalAmount}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].GetTotalAmount}}</label>
+                          </td>
 
-                        <td style="width:60px;">
+                          <td style="width:60px;">
 
-                          <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
-                        </td>
+                            <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
+                          </td>
 
-                        <!-- <td style="width:140px;">    
+                          <!-- <td style="width:140px;">    
                             <input class="form-control form-control-sm SerialNo"  id="txtSerialNo_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" (blur)="SerialNoKeyPress()"   type="text" style="text-align:center;"/>   
                           </td>  -->
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
+                          </td>
 
-                        <td style="width:140px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
-                        </td>
+                          <td style="width:140px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
+                          </td>
 
-                      </tr>
-                      <tr>
-                        <td colspan="10">Gross Total</td>
-                        <td style="text-align:center;">{{totalSumPOQuantity}}</td>
-                        <td></td>
-                        <td></td>
-                        <td *ngIf="IsUnitConversion"></td>
-                        <td *ngIf="IsUnitConversion"></td>
-                        <td></td>
-                        <!-- <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="10">Gross Total</td>
+                          <td style="text-align:center;">{{totalSumPOQuantity}}</td>
+                          <td></td>
+                          <td></td>
+                          <td *ngIf="IsUnitConversion"></td>
+                          <td *ngIf="IsUnitConversion"></td>
+                          <td></td>
+                          <!-- <td></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td> -->
-                        <td style="text-align:center;">{{totalSumAmount}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <table id="tblOne" class="table table-striped table-bordered" *ngIf="IsTransferTypeOtherState">
-                    <thead>
-                      <tr>
-                        <!-- <th></th> -->
-                        <th>Item Name<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <!-- <th>History<span style="color:red;" class="Mandatoryfield"><b></b></span></th> -->
-                        <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th>Part No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <!-- <th>Serial&nbsp;No.<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
+                          <td style="text-align:center;">{{totalSumAmount}}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <table id="tblOne" class="table table-striped table-bordered" *ngIf="IsTransferTypeOtherState">
+                      <thead>
+                        <tr>
+                          <!-- <th></th> -->
+                          <th>Item Name<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th>History<span style="color:red;" class="Mandatoryfield"><b></b></span></th> -->
+                          <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Part No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>Serial&nbsp;No.<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
                         <th *ngIf="IsReceivedHideShow">Received&nbsp;Qty<span style="color:red"
                             class="Mandatoryfield"><b></b></span></th>
                         <th *ngIf="IsReceivedHideShow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reason<span
@@ -3726,83 +4353,83 @@ MailFor='DT'></app-send-mail>
                         <th *ngIf="IsReceivedHideShow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remarks<span
                             style="color:red"
                             class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th> -->
-                        <th>&nbsp;&nbsp;&nbsp;Unit&nbsp;Rate&nbsp;(in&nbsp;Rs.)<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;Amount&nbsp;(in&nbsp;Rs.)<span
-                            style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>IGST(%)<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IGST&nbsp;Value&nbsp;(in&nbsp;Rs.)<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grand&nbsp;&nbsp;Total&nbsp;(in&nbsp;Rs.)<span
-                            style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date<span
-                            style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No<span
-                            style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let dynamic of dynamicArray; let i = index">
-                        <!-- <td (click)="deleteRow(i)" style="width:20px;">
+                          <th>&nbsp;&nbsp;&nbsp;Unit&nbsp;Rate&nbsp;(in&nbsp;Rs.)<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;Amount&nbsp;(in&nbsp;Rs.)<span
+                              style="color:red;" class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>IGST(%)<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;IGST&nbsp;Value&nbsp;(in&nbsp;Rs.)<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Grand&nbsp;&nbsp;Total&nbsp;(in&nbsp;Rs.)<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                          <!-- <td (click)="deleteRow(i)" style="width:20px;">
                           <i class="fa fa-trash" title="Delete"></i>
                         </td> -->
-                        <td style="width:80px;">
-                          <label>{{dynamicArray[i].ItemName}}</label>
-                        </td>
-                        <!-- <td style="width:100px;text-align: center;">
+                          <td style="width:80px;">
+                            <label>{{dynamicArray[i].ItemName}}</label>
+                          </td>
+                          <!-- <td style="width:100px;text-align: center;">
                           <a (click)="ClickHistory(dynamicArray[i].ItemNameId, i)">
                             <i _ngcontent-dpu-c137="" class="fa fa-eye" title="View History" style="color:green"></i>
                           </a>
                         </td> -->
-                        <td style="width:80px;">
-                          <label>{{dynamicArray[i].MakeName}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label>{{dynamicArray[i].ItemCode}}</label>
-                        </td>
-                        <td style="width:100px;">
-                          <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
-                        </td>
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
-                          <label
-                            *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
-                          <label style="text-align:center"
-                            *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
-                        </td>
-                        <!-- <td style="width:80px; text-align: center;">
+                          <td style="width:80px;">
+                            <label>{{dynamicArray[i].MakeName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label>{{dynamicArray[i].ItemCode}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
+                          </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
+                            <label
+                              *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
+                            <label style="text-align:center"
+                              *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
+                          </td>
+                          <!-- <td style="width:80px; text-align: center;">
                           <a (click)="showModal(dynamicArray[i].Qty, i)">
                             <i _ngcontent-dpu-c137="" class="fa fa-plus"></i>
                           </a>
                         </td> -->
-                        <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
+                          <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
                           <input class="form-control form-control-sm ReceivedQty" (blur)="ReceivedKeyPress()"
                             id="txtReceivedQty_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].ReceivedQty"
                             appCopyPastNumFloatValue type="text" style="text-align:center;" />
@@ -3821,89 +4448,89 @@ MailFor='DT'></app-send-mail>
                         </td> -->
 
 
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
-                        </td>
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].IGSTValue}}</label>
-                        </td>
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].IGST}}</label>
-                        </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
+                          </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].IGSTValue}}</label>
+                          </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].IGST}}</label>
+                          </td>
 
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].GetTotalAmount}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].GetTotalAmount}}</label>
+                          </td>
 
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
+                          </td>
 
-                        <!-- <td style="width:140px;">    
+                          <!-- <td style="width:140px;">    
                             <input class="form-control form-control-sm SerialNo"  id="txtSerialNo_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" (blur)="SerialNoKeyPress()"   type="text" style="text-align:center;"/>   
                           </td>  -->
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
+                          </td>
 
-                        <td style="width:140px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
-                        </td>
+                          <td style="width:140px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
+                          </td>
 
-                      </tr>
-                      <tr>
-                        <td colspan="10">Gross Total</td>
-                        <td style="text-align:center;">{{totalSumPOQuantity}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <!-- <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="10">Gross Total</td>
+                          <td style="text-align:center;">{{totalSumPOQuantity}}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <!-- <td></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td> -->
-                        <td></td>
-                        <td style="text-align:center;">{{totalSumAmount}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                          <td></td>
+                          <td style="text-align:center;">{{totalSumAmount}}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
 
-                      </tr>
-                      <!-- <tr *ngIf="ItemAddrowhideshow">
+                        </tr>
+                        <!-- <tr *ngIf="ItemAddrowhideshow">
                         <td (click)="addRow()">
                           <i class="fa fa-plus"></i>
                         </td>
                       </tr> -->
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
 
-                  <table id="tblVendorTax" class="table table-striped table-bordered" *ngIf="IsVendorTax">
-                    <thead>
-                      <tr>
-                        <!-- <th></th> -->
-                        <th>Item Name<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <!-- <th>History<span style="color:red;" class="Mandatoryfield"><b></b></span></th> -->
-                        <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th>Part No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b></b></span></th>
+                    <table id="tblVendorTax" class="table table-striped table-bordered" *ngIf="IsVendorTax">
+                      <thead>
+                        <tr>
+                          <!-- <th></th> -->
+                          <th>Item Name<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <!-- <th>History<span style="color:red;" class="Mandatoryfield"><b></b></span></th> -->
+                          <th>Item Make<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>Part No<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;Equipment Type<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Customer<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;Dispatch&nbsp;Type<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Item&nbsp;Description<span
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sub&nbsp;Description<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>HSN/SAC<span style="color:red" class="Mandatoryfield"><b></b></span></th>
 
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span style="color:red"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <!-- <th>Serial&nbsp;No.<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;UOM<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Qty<span style="color:red"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>Serial&nbsp;No.<span style="color:red" class="Mandatoryfield"><b>*</b></span></th>
                         <th *ngIf="IsReceivedHideShow">Received&nbsp;Qty<span style="color:red"
                             class="Mandatoryfield"><b></b></span></th>
                         <th *ngIf="IsReceivedHideShow">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reason<span
@@ -3913,93 +4540,93 @@ MailFor='DT'></app-send-mail>
                             style="color:red"
                             class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                             &nbsp;</th> -->
-                        <th vlign="center">Unit Rate (in Rs.)<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span></th>
-                        <th vlign="center"> Basic Value<span style="color:red;" class="Mandatoryfield"><b></b></span>
-                        </th>
-                        <th vlign="center">Freight Charge</th>
-                        <th vlign="center">Total Amount</th>
-                        <th vlign="center">Taxable Amount</th>
-                        <th vlign="center">SGST Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
-                        </th>
-                        <th vlign="center">SGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th vlign="center">CGST Rate(%)</th>
-                        <th vlign="center">CGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th vlign="center">IGST Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
-                        </th>
-                        <th vlign="center">IGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th vlign="center">TCS Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
-                        </th>
-                        <th vlign="center">TCS<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
-                        <th vlign="center">Total Invoice Value <span style="color:red;"
-                            class="Mandatoryfield"><b>*</b></span></th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date<span style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
-                        <th>
-                          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date<span
-                            style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No<span
-                            style="color:red;"
-                            class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr *ngFor="let dynamic of dynamicArray; let i = index">
-                        <!-- <td (click)="deleteRow(i)" style="width:20px;">
+                          <th vlign="center">Unit Rate (in Rs.)<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span></th>
+                          <th vlign="center"> Basic Value<span style="color:red;" class="Mandatoryfield"><b></b></span>
+                          </th>
+                          <th vlign="center">Freight Charge</th>
+                          <th vlign="center">Total Amount</th>
+                          <th vlign="center">Taxable Amount</th>
+                          <th vlign="center">SGST Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
+                          </th>
+                          <th vlign="center">SGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th vlign="center">CGST Rate(%)</th>
+                          <th vlign="center">CGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th vlign="center">IGST Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
+                          </th>
+                          <th vlign="center">IGST<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th vlign="center">TCS Rate(%)<span style="color:red;" class="Mandatoryfield"><b></b></span>
+                          </th>
+                          <th vlign="center">TCS<span style="color:red;" class="Mandatoryfield"><b></b></span></th>
+                          <th vlign="center">Total Invoice Value <span style="color:red;"
+                              class="Mandatoryfield"><b>*</b></span></th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Manufacturing&nbsp;&nbsp;Date<span style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                          <!-- <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Serial&nbsp;&nbsp;No<span style="color:red;" class="Mandatoryfield"><b>*</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>      -->
+                          <th>
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;Date<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                          <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Invoice&nbsp;&nbsp;No<span
+                              style="color:red;"
+                              class="Mandatoryfield"><b></b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let dynamic of dynamicArray; let i = index">
+                          <!-- <td (click)="deleteRow(i)" style="width:20px;">
                           <i class="fa fa-trash" title="Delete"></i>
                         </td> -->
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
-                        </td>
-                        <!-- <td style="width:100px;text-align: center;">
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemName}}</label>
+                          </td>
+                          <!-- <td style="width:100px;text-align: center;">
                           <a (click)="ClickHistory(dynamicArray[i].ItemNameId, i)">
                             <i _ngcontent-dpu-c137="" class="fa fa-eye" title="View History" style="color:green"></i>
                           </a>
                         </td> -->
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemCode}}</label>
-                        </td>
-                        <td style="width:100px;">
-                          <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
-                        </td>
-                        <td style="width:280px;">
-                          <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
-                        </td>
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
-                        </td>
-                        <td style="width:80px;">
-                          <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
-                          <label
-                            *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
-                          <label style="text-align:center"
-                            *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
-                        </td>
-                        <!-- <td style="width:80px; text-align: center;">
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].MakeName}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemCode}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].EqpType}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].ClientName}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].PreviewDispatchType}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].ItemDescription}}</label>
+                          </td>
+                          <td style="width:280px;">
+                            <label style="text-align:center">{{dynamicArray[i].SubDescription}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].HSN}}</label>
+                          </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Unit}}</label>
+                          </td>
+                          <td style="width:80px;">
+                            <label style="text-align:center">{{dynamicArray[i].Qty}}</label>
+                            <label
+                              *ngIf="dynamicArray[i].HideShowConValue">S-Qty={{dynamicArray[i].ConversionUnit}}</label>
+                            <label style="text-align:center"
+                              *ngIf="dynamicArray[i].HideShowConValue">{{dynamicArray[i].ConversionValue}}</label>
+                          </td>
+                          <!-- <td style="width:80px; text-align: center;">
                           <a (click)="showModal(dynamicArray[i].Qty, i)">
                             <i _ngcontent-dpu-c137="" class="fa fa-plus"></i>
                           </a>
                         </td> -->
-                        <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
+                          <!-- <td style="width:50px;" *ngIf="IsReceivedHideShow">
                           <input class="form-control form-control-sm ReceivedQty" (blur)="ReceivedKeyPress()"
                             id="txtReceivedQty_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].ReceivedQty"
                             appCopyPastNumFloatValue type="text" style="text-align:center;" />
@@ -4018,161 +4645,164 @@ MailFor='DT'></app-send-mail>
                         </td> -->
 
 
-                        <td style="width:50px;">
-                          <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
-                        </td>
+                          <td style="width:50px;">
+                            <label style="text-align:center">{{dynamicArray[i].Rate}}</label>
+                          </td>
 
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
-                        </td>
-                        <td style="width:100px;">
-                          <label style="text-align:center">{{dynamicArray[i].FreightCharge}}</label>
-                        </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TotalAmount}}</label>
+                          </td>
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].FreightCharge}}</label>
+                          </td>
 
-                        <td style="width:100px;">
-                          <label style="text-align:center">{{dynamicArray[i].TotalAmountWithFreightCharge}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <select style="width:120px;" (change)="ItemRateOnblur()"
-                            class="form-control form-control-sm TaxWith" id="TaxWith_{{i}}"
-                            [(ngModel)]="dynamicArray[i].TaxWith">
-                            <option class="dropdown-item" [value]="1">Total Amount</option>
-                            <option class="dropdown-item" [value]="2">Basic Value</option>
-                          </select>
-                          <label style="text-align:center">{{dynamicArray[i].TotalAmountWithFreightCharge}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].SGSTRate}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].SGST}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].CGSTRate}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].CGST}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].IGSTValue}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].IGST}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TCSRate}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TCS}}</label>
-                        </td>
-                        <td style="width:120px;">
-                          <label style="text-align:center">{{dynamicArray[i].TotalInvoiceValue}}</label>
-                        </td>
-
-
+                          <td style="width:100px;">
+                            <label style="text-align:center">{{dynamicArray[i].TotalAmountWithFreightCharge}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <select style="width:120px;" (change)="ItemRateOnblur()"
+                              class="form-control form-control-sm TaxWith" id="TaxWith_{{i}}"
+                              [(ngModel)]="dynamicArray[i].TaxWith">
+                              <option class="dropdown-item" [value]="1">Total Amount</option>
+                              <option class="dropdown-item" [value]="2">Basic Value</option>
+                            </select>
+                            <label style="text-align:center">{{dynamicArray[i].TotalAmountWithFreightCharge}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].SGSTRate}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].SGST}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].CGSTRate}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].CGST}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].IGSTValue}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].IGST}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TCSRate}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TCS}}</label>
+                          </td>
+                          <td style="width:120px;">
+                            <label style="text-align:center">{{dynamicArray[i].TotalInvoiceValue}}</label>
+                          </td>
 
 
-                        <!-- <td style="width:60px;">    
+
+
+                          <!-- <td style="width:60px;">    
                           <input class="form-control form-control-sm" readonly id="txtGetTotalAmount" [(ngModel)]="dynamicArray[i].GetTotalAmount"   type="text" style="text-align:center;"/>   
                         </td> -->
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].ManufDate}}</label>
+                          </td>
 
-                        <!-- <td style="width:140px;">    
+                          <!-- <td style="width:140px;">    
                             <input class="form-control form-control-sm SerialNo"  id="txtSerialNo_{{i}}" autocomplete="off" [(ngModel)]="dynamicArray[i].SerialNo" (blur)="SerialNoKeyPress()"   type="text" style="text-align:center;"/>   
                           </td>  -->
-                        <td style="width:60px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
-                        </td>
+                          <td style="width:60px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxDate}}</label>
+                          </td>
 
-                        <td style="width:140px;">
-                          <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
-                        </td>
+                          <td style="width:140px;">
+                            <label style="text-align:center">{{dynamicArray[i].InvoiceTaxNo}}</label>
+                          </td>
 
-                      </tr>
-                      <tr>
-                        <td colspan="10">Gross Total</td>
-                        <td style="text-align:center;">{{totalSumPOQuantity}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <!-- <td></td>
+                        </tr>
+                        <tr>
+                          <td colspan="10">Gross Total</td>
+                          <td style="text-align:center;">{{totalSumPOQuantity}}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <!-- <td></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td>
                         <td *ngIf="IsReceivedHideShow"></td> -->
-                        <td></td>
-                        <td style="text-align:center;"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td style="text-align:center;">{{totalSumAmount}}</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                      </tr>
+                          <td></td>
+                          <td style="text-align:center;"></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                          <td style="text-align:center;">{{totalSumAmount}}</td>
+                          <td></td>
+                          <td></td>
+                          <td></td>
+                        </tr>
 
-                    </tbody>
-                  </table>
+                      </tbody>
+                    </table>
+
+                  </div>
+                </fieldset>
+
+                <br>
+
+                <div class="row mb-1">
+
+                  <label class="col-form-label-xs col-sm-1">Note:</label>
+                  <div class="col-sm-3">
+                    <label class="col-form-label-xs">{{model.Note}} </label>
+                  </div>
 
                 </div>
-              </fieldset>
 
-              <br>
 
-              <div class="row mb-1">
+                <fieldset class="scheduler-border">
+                  <legend class="scheduler-border">Cost Details</legend>
+                  <div class="row mb-1">
 
-                <label class="col-form-label-xs col-sm-1">Note:</label>
-                <div class="col-sm-3">
-                  <label class="col-form-label-xs">{{model.Note}} </label>
-                </div>
+                    <label class="col-form-label-xs col-sm-1">Secondary Transportation Cost:</label>
+                    <div class="col-sm-2">
+                      <label class="col-form-label-xs">{{model.SecTransCost}} </label>
+                    </div>
 
+                    <label class="col-form-label-xs col-sm-1"> Loading Cost:</label>
+                    <div class="col-sm-2">
+                      <div class="input-group">
+                        <label class="col-form-label-xs">{{model.LoadingCost}} </label>
+                      </div>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1"> Unloading Cost:</label>
+                    <div class="col-sm-2">
+                      <label class="col-form-label-xs">{{model.UnloadingCost}} </label>
+                    </div>
+                    <label class="col-form-label-xs col-sm-1">Other Charges:</label>
+                    <div class="col-sm-2">
+                      <label class="col-form-label-xs">{{model.OtherCharges}} </label>
+                    </div>
+                  </div>
+                  <div class="row mb-1">
+                    <label class="col-form-label-xs col-sm-1">Primary Unloading Cost:</label>
+                    <div class="col-sm-2">
+                      <label class="col-form-label-xs">{{model.PrimaryUnloadingCost}} </label>
+                    </div>
+                  </div>
+                </fieldset>
               </div>
 
 
-              <fieldset class="scheduler-border">
-                <legend class="scheduler-border">Cost Details</legend>
-                <div class="row mb-1">
-
-                  <label class="col-form-label-xs col-sm-1">Secondary Transportation Cost:</label>
-                  <div class="col-sm-2">
-                    <label class="col-form-label-xs">{{model.SecTransCost}} </label>
-                  </div>
-
-                  <label class="col-form-label-xs col-sm-1"> Loading Cost:</label>
-                  <div class="col-sm-2">
-                    <div class="input-group">
-                      <label class="col-form-label-xs">{{model.LoadingCost}} </label>
-                    </div>
-                  </div>
-                  <label class="col-form-label-xs col-sm-1"> Unloading Cost:</label>
-                  <div class="col-sm-2">
-                    <label class="col-form-label-xs">{{model.UnloadingCost}} </label>
-                  </div>
-                  <label class="col-form-label-xs col-sm-1">Other Charges:</label>
-                  <div class="col-sm-2">
-                    <label class="col-form-label-xs">{{model.OtherCharges}} </label>
-                  </div>
-                </div>
-                <div class="row mb-1">
-                  <label class="col-form-label-xs col-sm-1">Primary Unloading Cost:</label>
-                  <div class="col-sm-2">
-                    <label class="col-form-label-xs">{{model.PrimaryUnloadingCost}} </label>
-                  </div>
-                </div>
-              </fieldset>
             </div>
-
-
           </div>
+
         </div>
+        <!--End-->
       </div>
-      <!--End-->
+
     </section>
 
   </div>
@@ -4480,6 +5110,69 @@ MailFor='DT'></app-send-mail>
       <div class="modal-footer">
         <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
         <button type="button" class="btn btn-success" (click)="UpadateCorrectionEntry()">Yes</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+<!--vishal, popup for save customer dispatch-->
+<div class="modal fade" id="confirmCusDispatch" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm !</h4>
+      </div>
+      <div class="modal-body">
+        Do you want to save
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" [disabled]="loading" (click)="saveUpDateCusDispatchRequest()">Save
+          <!-- <i class="fa fa-spinner fa-spin" *ngIf="loading"></i> -->
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!--vishal, popup for save customer dispatch-->
+<div class="modal fade" id="receiveCusDispatch" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm !</h4>
+      </div>
+      <div class="modal-body">
+        Do you want to update receiving details
+      </div>
+      <div class="modal-footer">
+
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" [disabled]="loading"
+          (click)="updateCustomerDispatchReceivingDetails()">Yes
+          <!-- <i class="fa fa-spinner fa-spin" *ngIf="loading"></i> -->
+        </button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" id="CancleCusDispatchConfirm" data-backdrop="static" tabindex="-1" role="dialog"
+  aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Confirm !</h4>
+      </div>
+      <div class="modal-body">
+        Please confirm that you want to Cancel.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-success" [disabled]="loading" (click)="cancelCustomerDispatch()">Save
+          <i class="fa fa-spinner fa-spin" *ngIf="loading"></i>
+        </button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

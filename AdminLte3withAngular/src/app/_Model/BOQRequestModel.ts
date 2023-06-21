@@ -24,6 +24,8 @@ export class BOQNOListModel
     Flag:number=0;
     WHId:number=0;
     DTId:number=0;
+    customerId:number=0 ;//vishal
+    SiteId:number=0 //vishal
 }
 
 export class BOQModel
@@ -50,6 +52,7 @@ export class SearchDIRequestModel{
     IsSRN:number;
     DIType:string;
     DispatchStatus: string;
+    Responsibility: string
 }
 
 
