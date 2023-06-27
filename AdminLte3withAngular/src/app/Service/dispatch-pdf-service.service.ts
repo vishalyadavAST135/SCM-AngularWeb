@@ -4566,7 +4566,6 @@ generatePDFWithVendorSale(action = 'open') {
       }, 1200);
     }
   }
-
 }
 
 //end-vishal

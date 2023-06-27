@@ -360,6 +360,7 @@ export class DispatchTrackerComponent implements OnInit {
   IsRecvFile: boolean;
   HideShowCusDisbtn: boolean = false;
   HideShowASTDisbtn: boolean = false;
+  HideShowCreateNewCusDis: boolean = false;
 
   constructor(private router: Router, private _Commonservices: CommonService,
     private _GrncrnService: GrncrnService,
@@ -435,13 +436,20 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.PreviewCompanyName = objCompanyModel.FullName;
     this.BindCompanyStateVendorItem();
 
+     //by:vishal, for: Hide Show Create New Customer Dispatch & Search Button. 
+     if (this.CompanyId == 4) {
+      this.HideShowCusDisbtn = true;
+      this.HideShowCreateNewCusDis = true;
+      this.HideShowCreateNewCusDis = true
+    } else {
+      this.HideShowCusDisbtn = false;
+      this.HideShowCreateNewCusDis = false;
+      this.HideShowCreateNewCusDis = false
+      
+    }
+
     this.model.IsAST = "2642"; //vishal
-    //by:vishal, for: Hide Show Create New Customer Dispatch & Search Button. 
-    // if (this.CompanyId == 4) {
-    //   this.HideShowCusDisbtn = true
-    // } else {
-    //   this.HideShowCusDisbtn = false
-    // }
+  
     this.changeDispatchSearch();
 
 
@@ -4817,8 +4825,8 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   ItemRateOnblur() {
-    if (this.model.TransferTypeId == PageActivity.Dis_Vendor 
-      || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale 
+    if (this.model.TransferTypeId == PageActivity.Dis_Vendor
+      || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
       || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
       this.fnBindItemGrossToatlTax();
     } else {
@@ -7239,7 +7247,7 @@ export class DispatchTrackerComponent implements OnInit {
       } else {
         $("#ddlClient_" + icount).css('border-color', '');
       }
-     
+
 
 
       //vishal
@@ -7296,7 +7304,7 @@ export class DispatchTrackerComponent implements OnInit {
         $("#txtRate_" + icount).css('border-color', '');
       }
 
-      
+
       if (this.dynamicArray[icount].DispatchTypeId == ""
         || this.dynamicArray[icount].DispatchTypeId == "0") {
 
@@ -8036,12 +8044,12 @@ export class DispatchTrackerComponent implements OnInit {
         if (data.Data != "") {
           this.CusDispatchInstructionList = data.Data;
 
-            if (strDI != '0') {
-              this.model.cusDI = strDI;
-            }else{
-              this.model.cusDI == "0"
-            }
-         
+          if (strDI != '0') {
+            this.model.cusDI = strDI;
+          } else {
+            this.model.cusDI == "0"
+          }
+
           //console.log(data)
 
           // let selDIArr = [];
@@ -8680,18 +8688,16 @@ export class DispatchTrackerComponent implements OnInit {
 
   //desc: for change AST/Customer grid data search buttons
   changeDispatchSearch() {
-    if (this.CompanyId == 4) {
       if (this.model.IsAST == 2642) {
         this.HideShowCusDisbtn = false;
-        this.HideShowASTDisbtn = true
+        this.HideShowASTDisbtn = true;
+       // this.HideShowCreateNewCusDis = false
       } else if (this.model.IsAST == 2643) {
         this.HideShowCusDisbtn = true;
         this.HideShowASTDisbtn = false;
+        //this.HideShowCreateNewCusDis = true
       }
-    } else if (this.CompanyId !== 4) {
-      this.HideShowCusDisbtn = false;
-      this.HideShowASTDisbtn = true
-    }
+   
   }
 
   UpdateDispatchItemEntry(index: number) {
@@ -8751,9 +8757,9 @@ export class DispatchTrackerComponent implements OnInit {
       if (result.value) {
         this._Commonservices.UpdateSingleItemEntrybyId(objmodel).subscribe(data => {
           if (data.Status == 1) {
-            Swal.fire('', data.Remarks, 'success')           
+            Swal.fire('', data.Remarks, 'success')
           } else {
-            Swal.fire('', data.Remarks, 'success')            
+            Swal.fire('', data.Remarks, 'success')
           }
         })
       }

@@ -184,7 +184,7 @@
                   (change)="changeDispatchSearch()">
                   <option value=2642>Select </option>
                   <option value=2642>AST</option>
-                  <option value=2643>Customer Dispatch</option>
+                  <option *ngIf="HideShowCreateNewCusDis" value=2643>Customer Dispatch</option>
                 </select>
               </div>
             </div>
@@ -216,7 +216,7 @@
                   <button type="button" class="btn btn-success" *ngIf="HideShowCusDisbtn"
                     (click)="searchCustomerDispatchList('Export')"><i class="fa fa-download"></i> Export Customer
                     Dispatch</button>
-                  <button type="button" class="btn btn-sm btn-success" (click)="createNewCusDispatch()"><i
+                  <button type="button" class="btn btn-sm btn-success" *ngIf="HideShowCreateNewCusDis" (click)="createNewCusDispatch()"><i
                       class="fa fa-plus"></i> New Customer
                     Dispatch</button>
                 </div>
