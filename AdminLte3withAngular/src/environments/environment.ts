@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+   
    host: "https://devapi.astnoc.com/SCMWebAPI/api/",
    ImagePath: "https://devapi.astnoc.com/"
 
