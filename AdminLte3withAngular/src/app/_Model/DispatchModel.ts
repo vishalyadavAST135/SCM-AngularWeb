@@ -83,7 +83,7 @@ export class DispatchTrackingModel
     BillToGSTNO:string;
     BillToVenAddressId: number;
     BillToStateName: string;//vishal
-   
+    IsShipVendorSite: number;  
 
 }
 export class DispatchTrackingItemDetialModel

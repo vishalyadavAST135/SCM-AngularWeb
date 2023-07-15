@@ -362,6 +362,13 @@ export class DispatchTrackerComponent implements OnInit {
   HideShowASTDisbtn: boolean = false;
   HideShowCreateNewCusDis: boolean = false;
 
+  IsVendorAddHideShow: boolean = false;
+  IsTransferTypeVenderToSiteId: boolean = false;
+  venCOHDataList: any; //vishal
+  venTechDataList: any; //vishal
+  //checkBoxSlect: any; //vishal
+  IsShipped_Site_Ven: number = 1; //vishal
+
   constructor(private router: Router, private _Commonservices: CommonService,
     private _GrncrnService: GrncrnService,
     private _MaterialMovementService: MaterialMovementService,
@@ -394,7 +401,6 @@ export class DispatchTrackerComponent implements OnInit {
 
   ngOnInit(): void {
     this.model.cusStateId = "0";
-    this.isChecked = false; //vishal
     this.IsEditCustomerDispatch = true //vishal
     this.GettAllVechTransModeTransfertypeDispatch();
     this.model.TransporterId = "0";
@@ -436,8 +442,8 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.PreviewCompanyName = objCompanyModel.FullName;
     this.BindCompanyStateVendorItem();
 
-     //by:vishal, for: Hide Show Create New Customer Dispatch & Search Button. 
-     if (this.CompanyId == 4) {
+    //by:vishal, for: Hide Show Create New Customer Dispatch & Search Button. 
+    if (this.CompanyId == 4) {
       this.HideShowCusDisbtn = true;
       this.HideShowCreateNewCusDis = true;
       this.HideShowCreateNewCusDis = true
@@ -445,11 +451,13 @@ export class DispatchTrackerComponent implements OnInit {
       this.HideShowCusDisbtn = false;
       this.HideShowCreateNewCusDis = false;
       this.HideShowCreateNewCusDis = false
-      
+
     }
 
     this.model.IsAST = "2642"; //vishal
-  
+    this.model.VenToSiteStateId = 0; //vishal, 04/07/23
+    this.model.venGSTType = 0;
+
     this.changeDispatchSearch();
 
 
@@ -747,7 +755,6 @@ export class DispatchTrackerComponent implements OnInit {
   // change by Hemant Tyagi 01/08/2022 
   // add multi selete drop down
   GetAllDispatchInstructionNo(whId: any) {
-
     try {
       var objModel = new BOQNOListModel();
       objModel.circleId = null;
@@ -781,11 +788,9 @@ export class DispatchTrackerComponent implements OnInit {
       objModel.WHId = whId;
       objModel.DTId = dtId;
       objModel.Flag = 7;
-      debugger
       this.DispatchInstructionList = [];
       this._BOQService.GetBOQNoORBOQRequestNo(objModel).subscribe((data) => {
         if (data.Data != "") {
-          debugger
           this.DispatchInstructionList = data.Data;
           let selDIArr = [];
           if (strDI != '0') {
@@ -1584,13 +1589,12 @@ export class DispatchTrackerComponent implements OnInit {
   BackPage() {
     this.isShownList = false;
     this.isShownEdit = true;
-    this.isChecked = false; //vishal
-    this.IsEditCustomerDispatch = true //vishal
+    this.IsEditCustomerDispatch = true; //vishal
   }
-
 
   //#region  Preview Pdf Dispatch
   PreviewDispatch() {
+
     this.IsDispatchPreview = false;
     this.isShownList = true;
     this.isShownEdit = true;
@@ -2427,6 +2431,7 @@ export class DispatchTrackerComponent implements OnInit {
   //By: vishal, 18/04/2023, desc : for check bill to address same as vendor address
   checkBillToAdd() {
     if (this.isChecked) {
+      //this.checkBoxSlect = 1;
       this.ChangeBillToVendorState(1);
       this.model.BillToVenOtherStateId = this.model.VenOtherStateId;
       this.model.BillToVenStateCode = this.model.VenStateCode;
@@ -2450,7 +2455,6 @@ export class DispatchTrackerComponent implements OnInit {
       this.model.BillToVendorAddress = '';
       this.model.BillToRadioId = '';
       this.model.BillToVendorName = '';
-
 
     }
 
@@ -2706,7 +2710,6 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   CreateNew() {
-    //this.name = this.ViewApprovalpageComponent.name;
     this.IsEditCustomerDispatch = true //vishal
     this.IsCustomerDispatchhideandShow = true;
     this.IsPreviewhideandShow = true;
@@ -2718,6 +2721,7 @@ export class DispatchTrackerComponent implements OnInit {
     this.IsTransferTypeSite = false;
     this.IsTransferTypeWH = false;
     this.IsTransferTypeVender = false;
+    this.IsTransferTypeVenderToSiteId = false;
     this.IsTaxInvoiceNo = false;
     this.IsTaxInvoiceDate = false; //vishal, 02/12/2022
     this.IsMailButtonHide = true; //vishal, 13/12/2022
@@ -2989,15 +2993,42 @@ export class DispatchTrackerComponent implements OnInit {
         objDispatchTrackingModel.ShippedToStateCode = this.model.VenStateCode;
         objDispatchTrackingModel.ShippedToGSTNO = this.model.VenGSTIN;
         objDispatchTrackingModel.VenAddressId = this.model.RadioId;
+        objDispatchTrackingModel.IsShipVendorSite = this.IsShipped_Site_Ven;
 
         //vishal, 26/04/2023
-        objDispatchTrackingModel.BillToState_Id = this.model.BillToVenOtherStateId;
-        objDispatchTrackingModel.BillToVendor_Id = this.SelectedBillToVendorList[0].id;
-        objDispatchTrackingModel.BillToStateName = this.model.BillToVenStateName;
-        objDispatchTrackingModel.BillToStateCode = this.model.BillToVenStateCode;
-        objDispatchTrackingModel.BillToGSTNO = this.model.BillToVenGSTIN;
-        objDispatchTrackingModel.BillToVenAddressId = this.model.BillToRadioId;
+        if (objDispatchTrackingModel.IsShipVendorSite == 1) {
+          objDispatchTrackingModel.BillToState_Id = this.model.BillToVenOtherStateId ? this.model.BillToVenOtherStateId : 0
+          objDispatchTrackingModel.BillToVendor_Id = this.SelectedBillToVendorList[0]?.id ? this.SelectedBillToVendorList[0].id : 0;
+          objDispatchTrackingModel.BillToStateName = this.model.BillToVenStateName ? this.model.BillToVenStateName : '';
+          objDispatchTrackingModel.BillToStateCode = this.model.BillToVenStateCode ? this.model.BillToVenStateCode : '';
+          objDispatchTrackingModel.BillToGSTNO = this.model.BillToVenGSTIN ? this.model.BillToVenGSTIN : '';
+          objDispatchTrackingModel.BillToVenAddressId = this.model.BillToRadioId ? this.model.BillToRadioId : 0;
+        } else {
+          //vishal, 05/07/2023, for ship to vendor site
+          objDispatchTrackingModel.BillToState_Id = this.model.venSiteStateId;
+          objDispatchTrackingModel.BillToStateName = this.model.VenStateName;
+          objDispatchTrackingModel.BillToStateCode = this.model.venSiteStateCode;
+          objDispatchTrackingModel.SiteId = this.model.venSiteId;
+          objDispatchTrackingModel.CustomerSiteId = this.model.venHideCustomerId;
+          objDispatchTrackingModel.SiteName = this.model.venSiteName;
+          objDispatchTrackingModel.ClientName = this.model.venClientName;
+          objDispatchTrackingModel.SiteAddress = this.model.venSiteAddress;
+          objDispatchTrackingModel.BillToGSTNO = this.model.venSiteGSTIN;
+          objDispatchTrackingModel.CompanyName = this.model.venCompanyName;
 
+          if (this.model.venGSTType == 0) {
+            objDispatchTrackingModel.GSTTypeId = 1;
+          } else {
+            objDispatchTrackingModel.GSTTypeId = this.model.venGSTType;
+          }
+          objDispatchTrackingModel.TECHFE = this.model.venTECHFE;
+          objDispatchTrackingModel.COHCI = this.model.venCOHCI;
+        }
+        if (this.selectedDIArr.length > 0) {
+          objDispatchTrackingModel.DispatchInstructionId = this.selectedDIArr.map(xx => xx.id).join(',');
+        } else {
+          objDispatchTrackingModel.DispatchInstructionId = null;
+        }
 
         if (this.VendorScaleVissible == true && this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
           // this.IsModelShow = false;//vishal, 05/12/2022
@@ -3566,6 +3597,7 @@ export class DispatchTrackerComponent implements OnInit {
       this._MaterialMovementService.GetDispatchTrackerEditListByDispatchId(objModel).pipe(first()).subscribe(data => {
         // this._objSendMailService._SetSendMailData(data.Data[0].DocumentFile); //vishal
         this.pdfPath = data.Data[0].DocumentFile;
+
         if (data.Status == 1) {
           this.IsDisabledPreviewGenratebutton = false;
           // bind 
@@ -4141,28 +4173,10 @@ export class DispatchTrackerComponent implements OnInit {
                   this.model.VenOtherStateId = data.Data[0].ToState_Id;
                 })
 
-
-                // this._MaterialMovementService.GetAllStateV2(objVendorOrWh).then(async (Vendata:any) => {
-                //   if (Vendata.Status == 1) {
-                //     if (Vendata.Data != null && Vendata.Data != "") {
-                //       debugger
-                //      this.OtherSiteStateList = Vendata.Data.filter(m => m.id != 0).reduce(
-                //         (accumulator:any, current:any) => {
-                //           if (!accumulator.some(x => x.id === current.id)) {
-                //             accumulator.push(current)
-                //           }
-                //           return accumulator;
-                //         }, []);
-                //this.model.VenOtherStateId = data.Data[0].ToState_Id;
-                //       debugger
-                //     }
-                //   }
-                // });
-                // this.model.VenOtherStateId = data.Data[0].ToState_Id;
-                this.SearchVendorListById = JSON.parse(data.Data[0].ToOtherVendorList);
+                this.SearchVendorListById = JSON.parse(data.Data[0].ToOtherVendorList ? data.Data[0].ToOtherVendorList : '[]');
                 this.SelectedEditVendorList = [];
                 this.MultiVenAddressList = [];
-                this.MultiVenAddressList = JSON.parse(data.Data[0].VenAddressList);
+                this.MultiVenAddressList = JSON.parse(data.Data[0].VenAddressList ? data.Data[0].VenAddressList : '[]');
                 if (this.MultiVenAddressList.length == 1) {
                   this.VenderFilterAddress = [];
                   this.VenderFilterAddress = this.MultiVenAddressList
@@ -4176,54 +4190,100 @@ export class DispatchTrackerComponent implements OnInit {
                 this.model.VenGSTIN = data.Data[0].VenderGSTINNo;
                 this.model.VendorAddress = data.Data[0].VenderAddress;
                 this.model.VenStateCode = data.Data[0].ShippedToStateCode;
-
-                //vishal, 26/04/2023
-                this.model.BillToVenOtherStateId = data.Data[0].BillToState_Id;
-                this.BillToSearchVendorListById = JSON.parse(data.Data[0].BillToOtherVendorList);
-                this.SelectedBillToVendorList = [];
-                this.BillToMultiVenAddressList = [];
-
-                this.BillToMultiVenAddressList = JSON.parse(data.Data[0].BillToVenAddressList);
-                if (this.BillToMultiVenAddressList.length == 1) {
-                  this.BillToVenderFilterAddress = [];
-                  this.BillToVenderFilterAddress = this.BillToMultiVenAddressList
-                  this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
-                }
-                else {
-                  this.BillToVenderFilterAddress = this.BillToMultiVenAddressList;
-                  this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
-                }
-                this.model.BillToVendorAddress = data.Data[0].BillToVenAddress;
-                this.model.BillToVenGSTIN = data.Data[0].BillToGSTNO;
-                this.model.BillToVenStateCode = data.Data[0].BillToStateCode;
-                this.model.BillToVendorCode = data.Data[0].BillToVendorCode;
-
-
+              
+                this.IsShipped_Site_Ven = data.Data[0].IsShipVendorSite;
                 if (data.Data[0].Vendor_Id != null && data.Data[0].Vendor_Id > 0) {
                   this.SelectedEditVendorList = [{ "id": '' + data.Data[0].Vendor_Id + '', "itemName": '' + data.Data[0].VendorName + '' }]
                 } else {
                   this.SelectedEditVendorList = [];
                 }
-                //vishal, 28/04/2023
-                if (data.Data[0].BillToVendor_Id != null && data.Data[0].BillToVendor_Id > 0) {
-                  this.SelectedBillToVendorList = [{ "id": '' + data.Data[0].BillToVendor_Id + '', "itemName": '' + data.Data[0].BillToVendorName + '' }]
-                } else {
+
+                if (this.IsShipped_Site_Ven == 1) {
+                  this.IsVendorAddHideShow = true;
+                  this.IsTransferTypeVenderToSiteId = false;
+                  //vishal, 26/04/2023
+                  this.model.BillToVenOtherStateId = data.Data[0].BillToState_Id;
+                  this.BillToSearchVendorListById = JSON.parse(data.Data[0].BillToOtherVendorList);
                   this.SelectedBillToVendorList = [];
+                  this.BillToMultiVenAddressList = [];
+
+                  this.BillToMultiVenAddressList = JSON.parse(data.Data[0].BillToVenAddressList ? data.Data[0].BillToVenAddressList : '[]');
+                  if (this.BillToMultiVenAddressList.length == 1) {
+                    this.BillToVenderFilterAddress = [];
+                    this.BillToVenderFilterAddress = this.BillToMultiVenAddressList
+                    this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
+                  }
+                  else {
+                    this.BillToVenderFilterAddress = this.BillToMultiVenAddressList;
+                    this.model.BillToRadioId = data.Data[0].BillToVenAddressId;
+                  }
+                  this.model.BillToVendorAddress = data.Data[0].BillToVenAddress;
+                  this.model.BillToVenGSTIN = data.Data[0].BillToGSTNO;
+                  this.model.BillToVenStateCode = data.Data[0].BillToStateCode;
+                  this.model.BillToVendorCode = data.Data[0].BillToVendorCode;
+
+
+                  //vishal, 28/04/2023
+                  if (data.Data[0].BillToVendor_Id != null && data.Data[0].BillToVendor_Id > 0) {
+                    this.SelectedBillToVendorList = [{ "id": '' + data.Data[0].BillToVendor_Id + '', "itemName": '' + data.Data[0].BillToVendorName + '' }]
+                  } else {
+                    this.SelectedBillToVendorList = [];
+                  }
+
+                } else if (this.IsShipped_Site_Ven == 2) {
+                  //this.siteCheck = true;
+                  this.IsTransferTypeVenderToSiteId = true;
+                  this.IsVendorAddHideShow = false;
+                  //start site detail edit bind
+
+                  setTimeout(() => {
+
+                    this.GetAllTechCOHbySiteIdForVenDispatch(data.Data[0].Site_Id);
+                  }, 3000);
+
+                  this.model.venSiteStateId = data.Data[0].BillToState_Id;
+                  this.model.venSiteStateCode = data.Data[0].BillToStateCode;
+                  this.model.venSiteId = data.Data[0].Site_Id;
+                  this.model.venSiteName = data.Data[0].SiteName;
+                  this.model.venValueSiteId = data.Data[0].CustomerSiteId;
+                  this.model.venHideCustomerId = data.Data[0].CustomerSiteId;
+                  this.model.venSiteAddress = data.Data[0].SiteAddress;
+                  this.model.venUniqueSiteId = data.Data[0].Site_Id;
+                  this.model.venClientName = data.Data[0].ClientName;
+                  this.changeVenGSTType(1)
+                  if (data.Data[0].GSTTypeId == 2) {
+                    this.ClientGSTNo = data.Data[0].BillToGSTIN;
+                  }
+                  this.model.venCompanyName = data.Data[0].CompanyName;
+
+                  if (data.Data[0].GSTTypeId != null || data.Data[0].GSTTypeId != "") {
+                    this.model.venGSTType = data.Data[0].GSTTypeId;
+                  } else {
+                    this.model.venGSTType = 0;
+                  }
+                  if (data.Data[0].FE_Tech != null && data.Data[0].FE_Tech != "") {
+                    this.model.venTECHFE = '' + data.Data[0].FE_Tech + '';
+                  } else {
+                    this.model.venTECHFE = "0";
+                  }
+
+                  if (data.Data[0].COH_CI != null && data.Data[0].COH_CI != "") {
+                    this.model.venCOHCI = '' + data.Data[0].COH_CI + '';
+                  } else {
+                    this.model.venCOHCI = "0";
+                  }
                 }
-
-
-
-                //change by bramjot 18/6/20222
-                if (data.Data[0].VendorTypeFlag == 2 && this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
-                  this.VendorScaleVissible = true;
-                  this.BindVendorWh(data.Data[0].VendorCompany_Id, this.model.VenOtherStateId);
-                  this.model.ShippedToVendorWHId = data.Data[0].ShippedToWHId;
-                } else {
-                  this.VendorScaleVissible = false;
-                  this.ShippedTOVendorWHList = [];
-                }
-                //change by Hemant Tyagi 18/06/2022
+                // end site detail edit bind
+                this.model.IsMultipleSite = data.Data[0].IsMultipleSite;
+                this.model.EmployeeId = data.Data[0].EmployeeId;
+              } else {
+                this.model.IsMultipleSite = data.Data[0].IsMultipleSite;
+                this.model.EmployeeId = "0";
               }
+              //vishal, 13/07/2023
+              this.GetAllDispatchInstructionNoEdit(this.model.ShippedfromWHId, Id, data.Data[0].DispatchInstructionId);
+              //end
+
             }
           }
           this.CorrectionItemCodeList = JSON.parse(data.Data[0].CorrectionItemCodeList);
@@ -4715,7 +4775,7 @@ export class DispatchTrackerComponent implements OnInit {
           }
 
         }
-        debugger
+
         objdynamic.HSN = parseInt(ItemEditDataArr[i].HSN_SAC);
         objdynamic.TotalAmount = ItemEditDataArr[i].TotalAmount;
         objdynamic.Discount = ItemEditDataArr[i].Discount;
@@ -4770,10 +4830,10 @@ export class DispatchTrackerComponent implements OnInit {
       totalpoqty += poqty;
       this.totalamount += ((poqty * Rate) - DiscountAmt);
       this.dynamicArray[i].TotalAmount = this._Commonservices.thousands_separators(poqty * Rate);
-      debugger
+
       this.dynamicArray[i].GetTotalAmount = this._Commonservices.thousands_separators((poqty * Rate) - DiscountAmt);
     }
-    debugger
+
     this.totalSumPOQuantity = totalpoqty.toFixed(2);
     this.totalSumQuantity = totalqty.toFixed(2);
     this.model.AmountChargeable = this._Commonservices.valueInWords(this.totalamount.toFixed(2));
@@ -4971,6 +5031,7 @@ export class DispatchTrackerComponent implements OnInit {
   }
 
   clearEditForm() {
+    this.IsShipped_Site_Ven = 1; //vishal
     this.model.IsMultipleSite = false;
     this.model.EmployeeId = "0";
     this.model.CRNId = "0";
@@ -5041,8 +5102,31 @@ export class DispatchTrackerComponent implements OnInit {
     this.model.Name = "";
     this.model.PhoneNo = "";
     this.IsVendorTax = false;
+    this.selectSiteNameClear();
     this.HideDispatchTo();
     this.ClearAllUploadFile();
+
+  }
+
+  selectSiteNameClear() {
+    //this.isSelected = false;
+    this.IsTransferTypeVender = true;
+    this.IsVendorAddHideShow = true;
+    this.model.venSiteStateId = "";
+    this.model.venSiteId = "";
+    this.model.venHideCustomerId = 0;
+    this.model.venSiteName = '';
+    this.model.venClientName = '';
+    this.model.venSiteAddress = '';
+    this.model.ToSiteState = '';
+    this.model.venSiteStateCode = '';
+    this.model.venSiteGSTIN = '';
+    this.model.venCompanyName = '';
+    this.model.venSiteStateCode = "";
+    this.model.venUniqueSiteId = 0;
+    this.model.GSTTypeId = 0;
+    this.model.venTECHFE = 0;
+    this.model.venCOHCI = 0;
   }
 
   HideDispatchTo() {
@@ -5189,6 +5273,7 @@ export class DispatchTrackerComponent implements OnInit {
       //change by Hemant Tyagi 18/06/2022
       this.IsTransferTypeOtherSite = false;
       this.IsTransferTypeOtherWH = false;
+      this.IsDispatchInstraction = false; //vishal
       this.IsTransferTypeSite = false;
       this.IsTransferTypeWH = false;
       this.IsTransferTypeVender = true;
@@ -5203,6 +5288,7 @@ export class DispatchTrackerComponent implements OnInit {
         this.DispatchTypeHideShow = true;
         this.IsVendprScrapSale = true;
         this.IsSerialValidationShowHide = false;
+        this.IsDispatchInstraction = false; //vishal
       } else {
         this.DispatchTypeHideShow = false;
         this.IsVendprScrapSale = false;
@@ -5464,6 +5550,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsDispatchFor = false;
       this.EquipmentTypeList = null;
       this.IsTransferTypeOtherSite = false;
+      this.IsDispatchInstraction = false; //vishal
       this.IsTransferTypeOtherWH = false;
       this.IsTransferTypeSite = false;
       this.IsTransferTypeWH = false;
@@ -5488,6 +5575,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.dynamicArray = [];
       this.VenderFilterAddress = [];
       this.model.VendorCode = "";
+      this.model.venSiteStateId = 0;
 
       this.ClearDispatchToVendor();
       this.clearBillToDispatchToVendor() //vishal/25/04/2023
@@ -5516,6 +5604,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsDispatchFor = false;
       this.ChangeEditEquipment(TransfId);
       this.IsTransferTypeOtherSite = false;
+      this.IsDispatchInstraction = false; //vishal, 05/07/2023
       this.IsTransferTypeOtherWH = false;
       this.IsTransferTypeSite = false;
       this.IsTransferTypeWH = false;
@@ -5530,6 +5619,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsTaxInvoiceDateSameState = true; //vishal, 03/12/2022
       // this.IsRecivedbyandNo = false;
       // this.IsRecivedbyandNoOther = true;
+      this.model.venSiteStateId = 0;
 
       this.model.VenOtherStateId = 0;
       this.model.BillToVenOtherStateId = 0; //vishal, 19/04/2023
@@ -5566,6 +5656,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.IsDispatchFor = false;
       this.ChangeEditEquipment(TransfId);
       this.IsTransferTypeOtherSite = false;
+      this.IsDispatchInstraction = false; //vishal, 05/07/2023
       this.IsTransferTypeOtherWH = false;
       this.IsTransferTypeSite = false;
       this.IsTransferTypeWH = false;
@@ -5577,6 +5668,7 @@ export class DispatchTrackerComponent implements OnInit {
       this.DispatchDateformat(2);
       this.IsTaxInvoiceNoSameState = true;
       this.IsTaxInvoiceDateSameState = true; //vishal, 03/12,2022
+      this.model.venSiteStateId = 0;
       // this.IsRecivedbyandNo = false;
       // this.IsRecivedbyandNoOther = true;
       this.model.VenOtherStateId = 0;
@@ -6591,7 +6683,6 @@ export class DispatchTrackerComponent implements OnInit {
     //#region Company WH Details    
     // validation On State Id.
 
-
     if (this.model.ddlStateId == "null" || this.model.ddlStateId == "0") {
       $('#txtddlStateId').css('border-color', 'red');
       $('#txtddlStateId').focus();
@@ -6903,6 +6994,7 @@ export class DispatchTrackerComponent implements OnInit {
       || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
       || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
 
+
       if (this.model.VenOtherStateId == "0" || this.model.VenOtherStateId == "") {
         $('#txtTOVenderStateId').css('border-color', 'red');
         $('#txtTOVenderStateId').focus();
@@ -6943,48 +7035,132 @@ export class DispatchTrackerComponent implements OnInit {
         $("#txtVendorAddress").css('border-color', '');
       }
 
+
+
       //validation for BillTo by: vishal, 19/04/2023
-      if (this.model.BillToVenOtherStateId == "0" || this.model.BillToVenOtherStateId == "") {
-        $('#txtBillToVenderStateId').css('border-color', 'red');
-        $('#txtBillToVenderStateId').focus();
-        flag = 1;
+
+
+      if (this.IsShipped_Site_Ven == 1) {
+        if (this.model.BillToVenOtherStateId == "0" || this.model.BillToVenOtherStateId == "") {
+          $('#txtBillToVenderStateId').css('border-color', 'red');
+          $('#txtBillToVenderStateId').focus();
+          flag = 1;
+        } else {
+          $("#txtBillToVenderStateId").css('border-color', '');
+        }
+
+        if (this.model.BillToVenStateCode == "0" || this.model.BillToVenStateCode == "") {
+          $('#txtBillToVenStateCode').css('border-color', 'red');
+          $('#txtBillToVenStateCode').focus();
+          flag = 1;
+        } else {
+          $("#txtBillToVenStateCode").css('border-color', '');
+        }
+
+        if (this.SelectedBillToVendorList.length == 0 || this.SelectedBillToVendorList.length == 0) {
+          $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: red');
+          $('#txtBillToVendorCode').focus();
+          flag = 1;
+        } else {
+          $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: ');
+        }
+
+        if (this.model.BillToVenGSTIN == "") {
+          $('#txtBillToVenGSTIN').css('border-color', 'red');
+          $('#txtBillToVenGSTIN').focus();
+          flag = 1;
+        } else {
+          $("#txtBillToVenGSTIN").css('border-color', '');
+        }
+
+        if (this.model.BillToVendorAddress == "") {
+          $('#txtBillToVendorAddress').css('border-color', 'red');
+          $('#txtBillToVendorAddress').focus();
+          flag = 1;
+        } else {
+          $("#txtBillToVendorAddress").css('border-color', '');
+        }
+        //end-vishal, BillTo 
       } else {
-        $("#txtBillToVenderStateId").css('border-color', '');
+        // start vendor site validation
+        if (this.model.venSiteStateId == "0" || this.model.venSiteStateId == null) {
+          $('#txtVenSiteStateId').css('border-color', 'red');
+          $('#txtVenSiteStateId').focus();
+          flag = 1;
+        } else {
+          $("#txtVenSiteStateId").css('border-color', '');
+        }
+
+        if (this.model.venSiteStateCode == "" || this.model.venSiteStateCode == null) {
+          $('#txtVenSiteStateCode').css('border-color', 'red');
+          $('#txtVenSiteStateCode').focus();
+          flag = 1;
+        } else {
+          $("#txtVenSiteStateCode").css('border-color', '');
+        }
+
+        // if (this.model.venSiteId == "0" || this.model.venSiteId == null) {
+        //   alert("Please select Site Id");
+        //   flag = 1;
+        // }
+
+        if (this.model.venSiteGSTIN == "" || this.model.venSiteGSTIN == null) {
+          $('#txtVenSiteGSTIN').css('border-color', 'red');
+          $('#txtVenSiteGSTIN').focus();
+          flag = 1;
+        } else {
+          $("#txtVenSiteGSTIN").css('border-color', '');
+        }
+
+        if (this.model.venTECHFE == "0" || this.model.venTECHFE == null || this.model.venTECHFE == "") {
+          $('#txtVenTECHFE').css('border-color', 'red');
+          $('#txtVenTECHFE').focus();
+          flag = 1;
+        } else {
+          $("#txtVenTECHFE").css('border-color', '');
+        }
+
+        if (this.model.venCOHCI == "0" || this.model.venCOHCI == null || this.model.venCOHCI == "") {
+          $('#txtVenCOHCI').css('border-color', 'red');
+          $('#txtVenCOHCI').focus();
+          flag = 1;
+        } else {
+          $("#txtVenCOHCI").css('border-color', '');
+        }
+
+        if (this.model.venSiteAddress == "" || this.model.venSiteAddress == null) {
+          $('#txtVenSiteAddress').css('border-color', 'red');
+          $('#txtVenSiteAddress').focus();
+          flag = 1;
+        } else {
+          $("#txtVenSiteAddress").css('border-color', '');
+        }
+
+        if (this.model.venGSTType == "0" || this.model.venGSTType == null) {
+          $('#txtVenGSTType').css('border-color', 'red');
+          $('#txtVenGSTType').focus();
+          flag = 1;
+        } else {
+          $("#txtVenGSTType").css('border-color', '');
+        }
+
+        //vishal, 08/02/2023, company name with customer gst selection
+        if (this.model.venGSTType == "2") {
+          if (this.model.venCompanyName == "" || this.model.venCompanyName == null) {
+            $('#txtVenCompanyName').css('border-color', 'red');
+            $('#txtVenCompanyName').focus();
+            flag = 1;
+          } else {
+            $("#txtVenCompanyName").css('border-color', '');
+          }
+        } else {
+          $("#txtVenCompanyName").css('border-color', '');
+        }
       }
 
-      if (this.model.BillToVenStateCode == "0" || this.model.BillToVenStateCode == "") {
-        $('#txtBillToVenStateCode').css('border-color', 'red');
-        $('#txtBillToVenStateCode').focus();
-        flag = 1;
-      } else {
-        $("#txtBillToVenStateCode").css('border-color', '');
-      }
 
-      if (this.SelectedBillToVendorList.length == 0 || this.SelectedBillToVendorList.length == 0) {
-        $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: red');
-        $('#txtBillToVendorCode').focus();
-        flag = 1;
-      } else {
-        $('#txtBillToVendorCode .selected-list .c-btn').attr('style', 'border-color: ');
-      }
 
-      if (this.model.BillToVenGSTIN == "") {
-        $('#txtBillToVenGSTIN').css('border-color', 'red');
-        $('#txtBillToVenGSTIN').focus();
-        flag = 1;
-      } else {
-        $("#txtBillToVenGSTIN").css('border-color', '');
-      }
-
-      if (this.model.BillToVendorAddress == "") {
-        $('#txtBillToVendorAddress').css('border-color', 'red');
-        $('#txtBillToVendorAddress').focus();
-        flag = 1;
-      } else {
-        $("#txtBillToVendorAddress").css('border-color', '');
-      }
-      //end-vishal, BillTo 
-
+      //end vendor site validation
     }
     // Hemant Tyagi
 
@@ -8011,7 +8187,7 @@ export class DispatchTrackerComponent implements OnInit {
       this._MaterialMovementService.AutoFillDispatchDetailByDIId(objModel).subscribe((data) => {
         if (data.Data != "") {
           this.model.cusStateId = data.Data[0].ToStateId;
-          this.model.CusDispatchFor = data.Data2[0].DispatchForId
+          this.model.CusDispatchFor = data.SiteData[0].DispatchForId;
           this.selectCustomerDispatchSiteId(data.SiteData[0]);
 
           setTimeout(() => {
@@ -8358,7 +8534,6 @@ export class DispatchTrackerComponent implements OnInit {
   }
   //#region This Fuction Used to Add Update Customer Dispatch Request
   saveUpDateCusDispatchRequest() {
-
     jQuery('#confirmCusDispatch').modal('hide');
     try {
       var objCustomerDispatchModel = new CusDispatchTrackingModel();
@@ -8688,16 +8863,16 @@ export class DispatchTrackerComponent implements OnInit {
 
   //desc: for change AST/Customer grid data search buttons
   changeDispatchSearch() {
-      if (this.model.IsAST == 2642) {
-        this.HideShowCusDisbtn = false;
-        this.HideShowASTDisbtn = true;
-       // this.HideShowCreateNewCusDis = false
-      } else if (this.model.IsAST == 2643) {
-        this.HideShowCusDisbtn = true;
-        this.HideShowASTDisbtn = false;
-        //this.HideShowCreateNewCusDis = true
-      }
-   
+    if (this.model.IsAST == 2642) {
+      this.HideShowCusDisbtn = false;
+      this.HideShowASTDisbtn = true;
+      // this.HideShowCreateNewCusDis = false
+    } else if (this.model.IsAST == 2643) {
+      this.HideShowCusDisbtn = true;
+      this.HideShowASTDisbtn = false;
+      //this.HideShowCreateNewCusDis = true
+    }
+
   }
 
   UpdateDispatchItemEntry(index: number) {
@@ -8764,6 +8939,211 @@ export class DispatchTrackerComponent implements OnInit {
         })
       }
     })
+  }
+
+
+  //for switch vendor 
+  checkSiteAdd(val: number) {
+    this.IsVendorAddHideShow = false;
+    this.IsTransferTypeVenderToSiteId = false;
+    if (val == 1) {
+      this.IsVendorAddHideShow = true;
+      this.IsTransferTypeVenderToSiteId = false;
+      this.IsDispatchInstraction = false;
+      this.ChangeDispatchInstruction("DelAll");
+
+    } else {
+      this.IsVendorAddHideShow = false;
+      this.IsTransferTypeVenderToSiteId = true;
+      this.IsDispatchInstraction = true;
+    }
+
+  }
+
+  //for vendor site dispatch, 04/07/2023
+
+  onChangeSearchUniqueSiteIdForVenDispatch(val: string) {
+    try {
+      //this.clearedVenDispatchSiteId(1);
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      objSiteCustomerAutoModel.SCNo = val;
+      objSiteCustomerAutoModel.CompanyId = this.CompanyId;
+      objSiteCustomerAutoModel.flag = "UniqueSiteId";
+      objSiteCustomerAutoModel.StateId = this.model.venSiteStateId;
+      this._GrncrnService.GetAutoCompleteSiteAndCustomer(objSiteCustomerAutoModel).subscribe((data) => {
+        if (data.Data != "") {
+          this.AutoCompleteUniqueSiteIdList = data.Data;
+        }
+      })
+    } catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "onChangeSearchUniqueSiteIdForVenDispatch";
+      objWebErrorLogModel.ErrorPage = "SitePanel";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
+  }
+
+  onChangeSearchSiteIdForVenDispatch(val: string) {
+    try {
+      //this.clearedVenDispatchSiteId(2);
+      let objSiteCustomerAutoModel = new SiteCustomerAutoModel();
+      objSiteCustomerAutoModel.SCNo = val;
+      objSiteCustomerAutoModel.CompanyId = this.CompanyId;
+      objSiteCustomerAutoModel.flag = "CustomerSiteId";
+      objSiteCustomerAutoModel.StateId = this.model.venSiteStateId;
+      this._GrncrnService.GetAutoCompleteSiteAndCustomer(objSiteCustomerAutoModel).subscribe((data) => {
+        this.AutoCompleteCustomerSiteIdList = data.Data;
+      })
+    }
+    catch (Error) {
+      let objWebErrorLogModel = new WebErrorLogModel();
+      objWebErrorLogModel.ErrorBy = this.UserId;
+      objWebErrorLogModel.ErrorMsg = Error.message;
+      objWebErrorLogModel.ErrorFunction = "onChangeSearchSiteIdForVenDispatch";
+      objWebErrorLogModel.ErrorPage = "SitePanel";
+      this._GlobalErrorHandlerService.handleError(objWebErrorLogModel);
+    }
+  }
+
+  selectVenDispatchSiteId(items: any) {
+    this.model.venUniqueSiteId = items.Id;
+    this.model.venSiteId = items.Id;
+    this.model.venValueSiteId = items.CustomerSiteId;
+    this.model.venHideCustomerId = items.CustomerSiteId;
+    this.model.venSiteName = items.SiteName;
+    this.model.venClientName = items.ClientName;
+    this.model.Destination = items.DistrictName
+    this.model.venSiteAddress = items.Address;
+    this.ClientGSTNo = items.GSTNo
+    this.GetAllTechCOHbySiteIdForVenDispatch(this.model.venSiteId);
+  }
+
+  //#region  Gett all tech and Coh Detail by Site Id for Vendor sale 
+  GetAllTechCOHbySiteIdForVenDispatch(SiteId: any) {
+    try {
+      var objdropdownmodel = new DropdownModel();
+      objdropdownmodel.Other_Id = SiteId;
+      objdropdownmodel.Company_Id = this.CompanyId;
+      this._MaterialMovementService.GetAllEmployeeNameListBySiteId(objdropdownmodel).pipe(first()).subscribe(Emp => {
+        if (Emp.TECHFEData != '') {
+          this.venTechDataList = Emp.TECHFEData;
+        }
+        if (Emp.COHCIData != '') {
+          this.venCOHDataList = Emp.COHCIData;
+        }
+
+        if (this.model.DisatchTrackeringId == 0) {
+          if (Emp.DefaultTechIdData != '') {
+            if (Emp.DefaultTechIdData[0].TechId != '' && Emp.DefaultTechIdData[0].TechId != null) {
+              this.model.venTECHFE = Emp.DefaultTechIdData[0].TechId;
+            } else {
+              this.model.venTECHFE = "0";
+            }
+            if (Emp.DefaultTechIdData[0].CIId != '' && Emp.DefaultTechIdData[0].CIId != null) {
+              this.model.venCOHCI = Emp.DefaultTechIdData[0].CIId;
+            } else {
+              this.model.venCOHCI = "0";
+            }
+          }
+        }
+
+      }, error => {
+        this._Commonservices.ErrorFunction(this.UserName, error.message, "GetAllTechCOHbySiteId", "WHTOSite");
+      });
+    } catch (Error) {
+      this._Commonservices.ErrorFunction(this.UserName, Error.message, "GetAllTechCOHbySiteId", "WHTOSite");
+    }
+  }
+
+  venChangeTech(Id: any) {
+    var TECHFEData = this.venTechDataList.filter(m => m.Id === parseInt(Id));
+    this.model.venPreviewTECHFEName = TECHFEData[0].UserName;
+    $("#txtVenTECHFE").css('border-color', '');
+  }
+  venChangeCOH(Id: any) {
+    var TECHFEData = this.venCOHDataList.filter(m => m.Id === parseInt(Id));
+    this.model.venPreviewCOHName = TECHFEData[0].UserName;
+    $("#txtVenCOHCI").css('border-color', '');
+  }
+  //#endregion
+
+
+
+  clearedVenDispatchSiteId(val: any) {
+    this.AutoCompleteCustomerSiteIdList = [];
+    this.AutoCompleteUniqueSiteIdList = [];
+    this.model.venSiteName = "";
+    this.model.venClientName = "";
+    this.model.venSiteAddress = "";
+    this.model.venTECHFE = "0";
+    this.model.venCOHCI = "0";
+    this.venCOHDataList = null;
+    this.venTechDataList = null;
+    if (val == 1) {
+      this.model.venValueSiteId = 0;
+    } else if (val == 2) {
+      this.model.venUniqueSiteId = 0;
+    }
+    else {
+      this.model.venValueSiteId = 0;
+      this.model.venUniqueSiteId = 0;
+    }
+    this.model.venSiteId = 0;
+    this.model.venSiteName = "";
+    this.model.venClientName = "";
+    this.model.venSiteAddress = "";
+    this.SearchSiteId = 0;
+    this.model.venTECHFE = "0";
+    this.model.venCOHCI = "0";
+    this.model.venGSTType = 0;
+    this.model.venSiteGSTIN = "";
+    this.DispatchInstructionList = [];
+
+  }
+  changeVenGSTType(Id: any) {
+    this.model.venSiteGSTIN = "";
+    if (Id == 1) {
+      this.IsTaxInvoiceNoSameState = false;
+      this.model.venGSTType = 1;
+      this.IsTaxInvoiceNo = true;
+      this.model.venSiteGSTIN = this.StateGSTNo;
+      this.model.venPreviewGStType = "AST GST";
+      $("#txtToCompanyName").css('border-color', '');
+    } else if (Id == 2) {
+      this.IsTaxInvoiceNoSameState = true;
+      this.IsTaxInvoiceNo = false;
+      this.model.venSiteGSTIN = this.ClientGSTNo;
+      this.model.venPreviewGStType = "Customer GST";
+    } else if (Id == 0) {
+      this.model.venSiteGSTIN = "";
+      this.model.venpreviewGStType = "";
+    }
+  }
+
+  ChangeSiteVenState(StId: any) {
+    this.StateGSTNo = null;
+    // $("#txtToSiteStateId").css('border-color', '');
+    var FilterStateCode = this.OtherSiteStateList.filter(
+      m => m.id === parseInt(StId));
+    this.model.venSiteStateCode = FilterStateCode[0].Code;
+    this.model.venSiteGSTIN = FilterStateCode[0].GSTNo;
+    this.StateGSTNo = FilterStateCode[0].GSTNo;
+    this.model.PreviewToStateName = FilterStateCode[0].itemName;
+    this.model.VenStateName = FilterStateCode[0].itemName;
+    this.changeVenGSTType(1);
+    this.model.venpreviewGStType = "AST GST";
+    this.AutoCompleteCustomerSiteIdList = [];
+    this.model.venValueSiteId = "";
+    this.model.venSiteId = 0;
+    this.model.venHideCustomerId = 0;
+    this.model.venSiteName = "";
+    this.model.venSiteAddress = "";
+    this.model.venCompanyName = "";
+    this.model.venClientName = "";
+    this.model.venUniqueSiteId = "";
+
   }
 
 }

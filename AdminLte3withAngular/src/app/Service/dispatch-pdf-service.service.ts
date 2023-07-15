@@ -219,7 +219,7 @@ export class DispatchPdfServiceService {
                 this.model.ToSiteCIPhone = data.Data[0].SiteCIPhone;
                 this.model.ToSiteZOMPhone = data.Data[0].SiteZOMPhone;
                 this.model.PdfToContectDetails = 'Contact Details';
-                this.model.PdfToSiteDetail = 'Site Detail ';
+                this.model.PdfToSiteDetail = 'Site Detail';
                 this.model.PdfSiteDetailBorder = [0, 0, 0, 1];
                 this.model.PdfSiteDetailValueBorder = [1, 0, 0, 1];
                 this.model.PdfSiteVerticalBorder = '|';
@@ -536,7 +536,10 @@ export class DispatchPdfServiceService {
                   this.model.MultiSiteName = "";
                 }
               }
-              else if (this.model.TransferTypeId == PageActivity.Dis_Vendor || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+              else if (this.model.TransferTypeId == PageActivity.Dis_Vendor
+                || this.model.TransferTypeId == PageActivity.Dis_VendorScrapSale
+                || this.model.TransferTypeId == PageActivity.Dis_VendorSale) {
+
                 this.model.PdfToCompanyName = data.Data[0].VendorName;
                 this.model.PdfToSiteAndWhStateCode = data.Data[0].ShippedToStateCode;
                 this.model.PdfToSiteAndWhGSTINNo = data.Data[0].ShippedToGSTNO;
@@ -544,22 +547,81 @@ export class DispatchPdfServiceService {
                 this.model.PdfToSiteWHState = data.Data[0].ToStateName;
                 this.model.PdfDocumentNo = data.Data[0].DocumentNo;
                 this.model.ChallanName = "Challan No ";
-                //vishal, 02/04/2023
-                this.model.PdfBillToCompanyName = data.Data[0].BillToVendorName;
-                this.model.PdfBillToStateCode = data.Data[0].BillToStateCode;
-                this.model.PdfBillToGSTINNo = data.Data[0].BillToGSTNO;
-                this.model.PdfBillToState = data.Data[0].BillToStateName;
-                this.model.PdfBillToVenAddress = data.Data[0].BillToVenAddress;
-                //end-vishal
 
-                //this.model.PdfHeaderName = "DELIVERY CHALLAN";
-                if (this.model.IsApproved == 1) {
-                  this.model.PdfHeaderName = "DELIVERY CHALLAN";
-                } else {
-                  this.model.PdfHeaderName = "ONLY PREVIEW CHALLAN";
-                }
-                this.model.WithInState = "VendorSale";
-                this.model.ToSiteTech = "";
+                if (data.Data[0].IsShipVendorSite == 1) {
+
+                  //vishal, 02/04/2023
+                  this.model.VenSiteToSiteTech = "";
+                  this.model.VenSiteToSiteCI = "";
+                  this.model.VenSiteToSiteZOM = "";
+                  this.model.VenSiteToSiteTechName = "";
+                  this.model.VenSiteToSiteTechPhone = "";
+                  this.model.VenSiteToSiteCIName = "";
+                  this.model.VenSiteToSiteZOMName = "";
+                  this.model.VenSiteToSiteCIPhone = "";
+                  this.model.VenSiteToSiteZOMPhone = "";
+                  this.model.VenSitePdfToContectDetails = "";
+                  this.model.VenSitePdfToSiteDetail = '';
+                  this.model.VenSitePdfToSiteId = "";
+                  this.model.VenSitePdfToSiteName = "";
+                  this.model.VenSitePdfToSiteDistrict = "";
+                  this.model.VenSitePdfBorder = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteDetailBorder = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteDetailValueBorder = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteVerticalBorder = '';
+                  this.model.VenSitePdfSiteTechBorder1 = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteTechBorder2 = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteCIAndZomBorder1 = [0, 0, 0, 0];
+                  this.model.VenSitePdfSiteCIAndZomBorder2 = [0, 0, 0, 0];
+
+                  this.model.PdfBillToCompanyName = data.Data[0].BillToVendorName;
+                  this.model.PdfBillToStateCode = data.Data[0].BillToStateCode;
+                  this.model.PdfBillToGSTINNo = data.Data[0].BillToGSTNO;
+                  this.model.PdfBillToState = data.Data[0].BillToStateName;
+                  this.model.PdfBillToVenAddress = data.Data[0].BillToVenAddress;
+                  //end-vishal
+                } else if(data.Data[0].IsShipVendorSite == 2) {
+                  //vendor site 07/07/2023
+                  this.model.PdfBillToCompanyName = '';
+                  this.model.PdfBillToStateCode = '';
+                  this.model.PdfBillToGSTINNo = '';
+                  this.model.PdfBillToState = '';
+                  this.model.PdfBillToVenAddress = '';
+
+                  this.model.WithInState = "VendorSale";
+                  if (data.Data[0].CompanyName == "") {
+                    this.model.venPdfToCompanyName = data.RegData[0].CompanyName;
+                  } else {
+                    this.model.venPdfToCompanyName = data.Data[0].CompanyName;
+                  }
+                  this.model.VenSitePdfToSiteWHState = data.Data[0].BillToStateName;
+                  this.model.VenSitePdfToSiteAndWhStateCode = data.Data[0].BillToStateCode;
+                  this.model.VenSitePdfToSiteAndWhGSTINNo = data.Data[0].BillToGSTIN;
+                  this.model.VenSitePdfToSiteAndWhAddress = data.Data[0].SiteAddress;
+                  this.model.VenSitePdfToSiteId = data.Data[0].CustomerSiteId;
+                  this.model.VenSitePdfToSiteName = data.Data[0].SiteName;
+                  this.model.VenSitePdfToSiteDistrict = data.Data[0].SiteDistrict;
+                  this.model.VenSiteToSiteTech = "COH";
+                  this.model.VenSiteToSiteCI = "FE";
+                  this.model.VenSiteToSiteZOM = "";
+                  this.model.VenSiteToSiteTechName = data.Data[0].SiteCOHName;
+                  this.model.VenSiteToSiteTechPhone = data.Data[0].SiteCOHPhone;
+                  this.model.VenSiteToSiteCIName = data.Data[0].SiteTechName;
+                  this.model.VenSiteToSiteCIPhone = data.Data[0].SiteTechPhone;
+                  this.model.VenSiteToSiteZOMName = "";
+                  this.model.VenSiteToSiteZOMPhone = "";
+                  this.model.VenSitePdfToContectDetails = 'Contact Details';
+                  this.model.VenSitePdfToSiteDetail = 'Site Detail ';
+                  this.model.VenSitePdfSiteDetailBorder = [0, 0, 0, 1];
+                  this.model.VenSitePdfSiteDetailValueBorder = [1, 0, 0, 1];
+                  this.model.VenSitePdfSiteVerticalBorder = '|';
+                  this.model.VenSitePdfSiteTechBorder1 = [0, 0, 1, 1];
+                  this.model.VenSitePdfSiteTechBorder2 = [0, 0, 0, 1];
+                  this.model.VenSitePdfSiteCIAndZomBorder1 = [0, 0, 1, 0];
+                  this.model.VenSitePdfSiteCIAndZomBorder2 = [0, 0, 0, 0];
+                   //end-site
+                }else{
+                  this.model.ToSiteTech = "";
                 this.model.ToSiteCI = "";
                 this.model.ToSiteZOM = "";
                 this.model.ToSiteTechName = "";
@@ -588,6 +650,45 @@ export class DispatchPdfServiceService {
                   this.model.MultiSiteLabelName = "";
                   this.model.MultiSiteName = "";
                 }
+                }
+               
+
+                //this.model.PdfHeaderName = "DELIVERY CHALLAN";
+                if (this.model.IsApproved == 1) {
+                  this.model.PdfHeaderName = "DELIVERY CHALLAN";
+                } else {
+                  this.model.PdfHeaderName = "ONLY PREVIEW CHALLAN";
+                }
+                this.model.WithInState = "VendorSale";
+                // this.model.ToSiteTech = "";
+                // this.model.ToSiteCI = "";
+                // this.model.ToSiteZOM = "";
+                // this.model.ToSiteTechName = "";
+                // this.model.ToSiteTechPhone = "";
+                // this.model.ToSiteCIName = "";
+                // this.model.ToSiteZOMName = "";
+                // this.model.ToSiteCIPhone = "";
+                // this.model.ToSiteZOMPhone = "";
+                // this.model.PdfToContectDetails = "";
+                // this.model.PdfToSiteDetail = '';
+                // this.model.PdfToSiteId = "";
+                // this.model.PdfToSiteName = "";
+                // this.model.PdfToSiteDistrict = "";
+                // this.model.PdfBorder = [0, 0, 0, 0];
+                // this.model.PdfSiteDetailBorder = [0, 0, 0, 0];
+                // this.model.PdfSiteDetailValueBorder = [0, 0, 0, 0];
+                // this.model.PdfSiteVerticalBorder = '';
+                // this.model.PdfSiteTechBorder1 = [0, 0, 0, 0];
+                // this.model.PdfSiteTechBorder2 = [0, 0, 0, 0];
+                // this.model.PdfSiteCIAndZomBorder1 = [0, 0, 0, 0];
+                // this.model.PdfSiteCIAndZomBorder2 = [0, 0, 0, 0];
+                if (data.Data[0].MultiSiteName != '') {
+                  this.model.MultiSiteLabelName = "Other Site List :-";
+                  this.model.MultiSiteName = data.Data[0].MultiSiteName;
+                } else {
+                  this.model.MultiSiteLabelName = "";
+                  this.model.MultiSiteName = "";
+                }
               }
             }
           }
@@ -596,7 +697,15 @@ export class DispatchPdfServiceService {
             if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
               this.BindItemPdfArrayOtherState(data.ItemData);
             }
-            this.generatePDFWithVendorSale('open');
+            if (data.Data[0].IsShipVendorSite == 1) {
+              this.generateVendorPDF_ShipToVendor('open');
+            }
+            else if (data.Data[0].IsShipVendorSite == 2) {
+              this.generateVendorPDF_ShipToSite('open');
+            }else{
+              this.generatePDFWithOtherState('open');
+            }
+
           } else if (this.model.WithInState == "WithInState") {
             if (data.ItemData != null && data.ItemData != "" && data.ItemData.length > 0) {
               this.BindItemPdfArray(data.ItemData);
@@ -712,7 +821,7 @@ export class DispatchPdfServiceService {
         objdynamic.RateSGST = ItemEditDataArr[i].RateSGST;
         objdynamic.CGST = ItemEditDataArr[i].CGST;
         objdynamic.CGSTRate = ItemEditDataArr[i].CGSTRate;
-//vishal
+        //vishal
         objdynamic.TCSRate = ItemEditDataArr[i].TCSRate;
         objdynamic.TCS = ItemEditDataArr[i].TCS;
 
@@ -2083,425 +2192,7 @@ export class DispatchPdfServiceService {
 
               ],
 
-              //vishal, 01/05/2023 BILL TO
 
-              // [
-              //   {
-
-              //     border: [1, 1, 1, 0],
-              //     table: {
-              //       body: [
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   fontSize: 10,
-              //               //   alignment: 'center',
-              //               //   text: [
-              //               //     { text: 'SHIPPED FROM', bold: true, },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-              //       ]
-              //     }
-              //   },
-
-
-
-              //   {
-              //     border: [1, 1, 1, 0],
-              //     table: {
-              //       body: [
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               {
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'BILL TO', bold: true, width: 240, alignment: 'center', },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-
-              //         ],
-              //       ]
-              //     }
-              //   },
-              // ],
-
-              // [
-              //   ///shipped from
-              //   {
-              //     border: [1, 1, 1, 0],
-              //     table: {
-              //       body: [
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 100,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: 'Name ', bold: true },
-
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 250,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: `${this.model.PdfCompanyName}` },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 100,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: 'Address ', bold: true },
-
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 250,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: `${this.model.PdfShippedWHAddress}`, },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 100,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: 'State ', bold: true },
-
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 250,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: `${this.model.PdfWHState}` },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 100,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: 'State Code ', bold: true },
-
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 250,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: `${this.model.PdfStateCode}` },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 100,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: 'GSTIN/Unique ID ', bold: true },
-
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               // {
-              //               //   width: 250,
-              //               //   fontSize: 10,
-              //               //   text: [
-              //               //     { text: `${this.model.PdfGSTINNo}` },
-              //               //   ]
-              //               // },
-              //             ]
-              //           },
-              //         ],
-
-
-              //       ]
-              //     }
-              //   },
-              //   ///Bill TO
-              //   {
-              //     border: [1, 1, 1, 0],
-              //     table: {
-              //       body: [
-              //         [
-              //           {
-              //             border: [0, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'Name ', bold: true },
-
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfBillToCompanyName}` },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-
-              //         [
-              //           {
-              //             border: this.model.PdfSiteDetailBorder,
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfToSiteDetail}`, bold: true },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: this.model.PdfSiteDetailValueBorder,
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfToSiteId}` }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteName}`, bold: true }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteDistrict}`, bold: true },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'Address ', bold: true },
-
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfBillToVenAddress}` },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-
-              //         [
-              //           {
-              //             border: [0, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfToContectDetails}`, bold: true, alignment: 'center' },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 table: {
-              //                   headerRows: 1,
-              //                   widths: [25, 130, 80],
-              //                   body: [
-              //                     [{ text: `${this.model.ToSiteTech}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechName}`, width: 20, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder2 }],
-              //                     [{ text: `${this.model.ToSiteCI}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIName}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder2 }],
-              //                     // [{text: `${this.model.ToSiteZOM}`, bold:true,alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMName}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMPhone}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder2},]
-              //                   ]
-              //                 }
-              //               }
-              //             ]
-              //           },
-              //         ],
-
-              //         [
-              //           {
-              //             border: [0, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'State ', bold: true },
-
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfBillToState}` },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'State Code ', bold: true },
-
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 1],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfBillToStateCode}` },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-              //         [
-              //           {
-              //             border: [0, 0, 0, 0],
-              //             columns: [
-              //               {
-              //                 width: 90,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: 'GSTIN/Unique ID ', bold: true },
-
-              //                 ]
-              //               },
-              //             ]
-              //           },
-
-              //           {
-              //             border: [1, 0, 0, 0],
-              //             columns: [
-              //               {
-              //                 width: 260,
-              //                 fontSize: 10,
-              //                 text: [
-              //                   { text: `${this.model.PdfBillToGSTINNo}` },
-              //                 ]
-              //               },
-              //             ]
-              //           },
-              //         ],
-
-              //       ]
-              //     }
-              //   },
-
-              // ],
-
-              //end-vishal
 
               [
                 {
@@ -3113,7 +2804,7 @@ export class DispatchPdfServiceService {
     }
   }
 
-  
+
 
   SaveUpdateDispatchPDF() {
     try {
@@ -3161,1412 +2852,2640 @@ export class DispatchPdfServiceService {
     }, 3000);
   }
 
-//By:vishal, 03/05/2023, desc: function for pdf genearate in case of vendor sale
+  //By:vishal, 03/05/2023, desc: function for pdf genearate in case of vendor sale
 
-generatePDFWithVendorSale(action = 'open') {
-  let docDefinition = {
-    pageOrientation: 'landscape',
-    content: [
-      {
-        text: `${this.model.PdfHeaderName}`,
-        style: 'header'
-      },
-      {
-        margin: [0, 0, 0, 0],
-        table: {
-          body: [
-            [
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            bold: true,
-                            fontSize: 14,
-                            alignment: 'center',
-                            text: [
-                              { text: `${this.model.PdfCompanyName}`, width: 180 },
-                            ]
-                          },
-                        ]
-                      },
-
-                    ],
-                    [
-                      {
-                        border: [0, 1, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Regd.Office :', bold: true, }, { text: `${this.model.PdfRegdOffice}`, alignment: 'justify', width: 180 },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: [0, 1, 0, 0],
-                        width: 180,
-                        columns: [
-                          {
-                            table: {
-                              widths: ['auto', 'auto'],
-                              body: [
-                                ...this.objDynamicWHAddress.map(p => ([{ text: p.Address, fontSize: 9, border: [0, 0, 0, 1] }, { text: p.WHAddress, fontSize: 9, border: [0, 0, 0, 1] }])),
+  generateVendorPDF_ShipToVendor(action = 'open') {
+    let docDefinition = {
+      pageOrientation: 'landscape',
+      content: [
+        {
+          text: `${this.model.PdfHeaderName}`,
+          style: 'header'
+        },
+        {
+          margin: [0, 0, 0, 0],
+          table: {
+            body: [
+              [
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              bold: true,
+                              fontSize: 14,
+                              alignment: 'center',
+                              text: [
+                                { text: `${this.model.PdfCompanyName}`, width: 180 },
                               ]
                             },
-                          },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'GSTIN No :', bold: true }, { text: `${this.model.PdfGSTINNo}`, width: 180 },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 1, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'CIN No      : ', bold: true }, { text: `${this.model.PdfCIN}`, width: 180 },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                  ]
-                }
-              },
-              ///start Ducoment
-              {
-                border: [1, 1, 1, 0],
-                width: 350,
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.ChallanName}`, bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 240,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfDocumentNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Date : ', bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 110,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfDocumentDate}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Trasporation Mode: ', bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 110,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfTrasporationMode}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.LableTransPotionName}`, bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 240,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfTransporterName}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.LableTransPhone}`, bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 180,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfTransporterGSTNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Place of Dispatch:', bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 200,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfPlaceOfDispatch}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Destination :', bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 200,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfDestination}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: this.model.LableBorderbiltyNo,
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.LablebiltyNo}`, bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: this.model.LableBorderbiltyDate,
-                        columns: [
-                          {
-                            width: 200,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfGRNo}` }, { text: `${this.model.VerticalData}` }, { text: `${this.model.PdfGRDate}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'Vehicle Number:', bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfVehicleNumber}` }, '   |  ', { text: 'V. Type', bold: true }, '   |  ', { text: `${this.model.PdfVehicleType}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: this.model.EwayBilltextBorder,
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.EwayBillNoName}`, bold: true },
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: this.model.EwayBillValueBorder,
-                        columns: [
-                          {
-                            width: 200,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfEwayBillNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                  ]
-                }
-              },
-
-            ],
-
-            //vishal, 01/05/2023 BILL TO
-
-            [
-              {
-
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   fontSize: 10,
-                          //   alignment: 'center',
-                          //   text: [
-                          //     { text: 'SHIPPED FROM', bold: true, },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-                  ]
-                }
-              },
-
-
-
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'BILL TO', bold: true, width: 240, alignment: 'center', },
-                            ]
-                          },
-                        ]
-                      },
-
-
-                    ],
-                  ]
-                }
-              },
-            ],
-
-            [
-              ///shipped from
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 100,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: 'Name ', bold: true },
-
-                          //   ]
-                          // },
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 250,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: `${this.model.PdfCompanyName}` },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 100,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: 'Address ', bold: true },
-
-                          //   ]
-                          // },
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 250,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: `${this.model.PdfShippedWHAddress}`, },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 100,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: 'State ', bold: true },
-
-                          //   ]
-                          // },
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 250,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: `${this.model.PdfWHState}` },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 100,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: 'State Code ', bold: true },
-
-                          //   ]
-                          // },
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 250,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: `${this.model.PdfStateCode}` },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 100,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: 'GSTIN/Unique ID ', bold: true },
-
-                          //   ]
-                          // },
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          // {
-                          //   width: 250,
-                          //   fontSize: 10,
-                          //   text: [
-                          //     { text: `${this.model.PdfGSTINNo}` },
-                          //   ]
-                          // },
-                        ]
-                      },
-                    ],
-
-
-                  ]
-                }
-              },
-              ///Bill TO
-             {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Name ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfToCompanyName}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    // [
-                    //   {
-                    //     border: this.model.PdfSiteDetailBorder,
-                    //     columns: [
-                    //       {
-                    //         width: 90,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToSiteDetail}`, bold: true },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-
-                    //   {
-                    //     border: this.model.PdfSiteDetailValueBorder,
-                    //     columns: [
-                    //       {
-                    //         width: 260,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToSiteId}` }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteName}`, bold: true }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteDistrict}`, bold: true },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-                    // ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Address ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfToSiteAndWhAddress}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    // [
-                    //   {
-                    //     border: [0, 0, 0, 1],
-                    //     columns: [
-                    //       {
-                    //         width: 90,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToContectDetails}`, bold: true, alignment: 'center' },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-
-                    //   {
-                    //     border: [1, 0, 0, 1],
-                    //     columns: [
-                    //       {
-                    //         width: 260,
-                    //         table: {
-                    //           headerRows: 1,
-                    //           widths: [25, 130, 80],
-                    //           body: [
-                    //             [{ text: `${this.model.ToSiteTech}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechName}`, width: 20, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder2 }],
-                    //             [{ text: `${this.model.ToSiteCI}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIName}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder2 }],
-                    //             // [{text: `${this.model.ToSiteZOM}`, bold:true,alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMName}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMPhone}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder2},]
-                    //           ]
-                    //         }
-                    //       }
-                    //     ]
-                    //   },
-                    // ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfToSiteWHState}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State Code ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfToSiteAndWhStateCode}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'GSTIN/Unique ID ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfToSiteAndWhGSTINNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                  ]
-                }
-              },
-
-            ],
-
-            //end-vishal
-
-            [
-              {
-
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            alignment: 'center',
-                            text: [
-                              { text: 'SHIPPED FROM', bold: true, },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                  ]
-                }
-              },
-
-
-
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            text: [
-                              { text: 'SHIPPED TO', bold: true, width: 240, alignment: 'center', },
-                            ]
-                          },
-                        ]
-                      },
-
-
-                    ],
-                  ]
-                }
-              },
-            ],
-
-            [
-              ///shipped from
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Name ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfCompanyName}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Address ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfShippedWHAddress}`, },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfWHState}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State Code ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfStateCode}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 100,
-                            fontSize: 10,
-                            text: [
-                              { text: 'GSTIN/Unique ID ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 250,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfGSTINNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-
-                  ]
-                }
-              },
-              ///shipped TO
-              {
-                border: [1, 1, 1, 0],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Name ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfBillToCompanyName}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    // [
-                    //   {
-                    //     border: this.model.PdfSiteDetailBorder,
-                    //     columns: [
-                    //       {
-                    //         width: 90,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToSiteDetail}`, bold: true },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-
-                    //   {
-                    //     border: this.model.PdfSiteDetailValueBorder,
-                    //     columns: [
-                    //       {
-                    //         width: 260,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToSiteId}` }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteName}`, bold: true }, { text: `${this.model.PdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.PdfToSiteDistrict}`, bold: true },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-                    // ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'Address ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfBillToVenAddress}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    // [
-                    //   {
-                    //     border: [0, 0, 0, 1],
-                    //     columns: [
-                    //       {
-                    //         width: 90,
-                    //         fontSize: 10,
-                    //         text: [
-                    //           { text: `${this.model.PdfToContectDetails}`, bold: true, alignment: 'center' },
-                    //         ]
-                    //       },
-                    //     ]
-                    //   },
-
-                    //   {
-                    //     border: [1, 0, 0, 1],
-                    //     columns: [
-                    //       {
-                    //         width: 260,
-                    //         table: {
-                    //           headerRows: 1,
-                    //           widths: [25, 130, 80],
-                    //           body: [
-                    //             [{ text: `${this.model.ToSiteTech}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechName}`, width: 20, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder1 }, { text: `${this.model.ToSiteTechPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteTechBorder2 }],
-                    //             [{ text: `${this.model.ToSiteCI}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIName}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder1 }, { text: `${this.model.ToSiteCIPhone}`, alignment: 'center', fontSize: 10, border: this.model.PdfSiteCIAndZomBorder2 }],
-                    //             // [{text: `${this.model.ToSiteZOM}`, bold:true,alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMName}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMPhone}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder2},]
-                    //           ]
-                    //         }
-                    //       }
-                    //     ]
-                    //   },
-                    // ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfBillToState}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'State Code ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 1],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfBillToStateCode}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 90,
-                            fontSize: 10,
-                            text: [
-                              { text: 'GSTIN/Unique ID ', bold: true },
-
-                            ]
-                          },
-                        ]
-                      },
-
-                      {
-                        border: [1, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 260,
-                            fontSize: 10,
-                            text: [
-                              { text: `${this.model.PdfBillToGSTINNo}` },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                  ]
-                }
-              },
-             
-
-            ],
-
-
-          ]
-        }
-      },
-      {
-        style: 'TableHeader',
-        table: {
-          headerRows: 1,
-          widths: ['4%', '20.5%', '4%', '6%', '5.9%', '6%', '8%', '4%', '5%', '4%', '5%', '4%', '5%', '4%', '5%',  '9%',],
-          body: [
-            [
-              { text: 'S.No', bold: true, },
-              { text: 'Description of Goods', bold: true, alignment: 'center' },
-              { text: 'HSN', bold: true, alignment: 'center' },
-              { text: 'Qty', bold: true, alignment: 'center' },
-              { text: 'Unit', bold: true, alignment: 'center' },
-              { text: 'Rate', bold: true, alignment: 'center' },
-              { text: 'Amount', bold: true, alignment: 'center' },
-              { text: 'Rate (%)', bold: true, alignment: 'center' },
-              { text: 'CGST', bold: true, alignment: 'center' },
-              { text: 'Rate (%)', bold: true, alignment: 'center' },
-              { text: 'SGST', bold: true, alignment: 'center' },
-              { text: 'IGST(%)', bold: true, alignment: 'center' },
-              { text: 'IGST', bold: true, alignment: 'center' },
-              { text: 'TCS  (%)', bold: true, alignment: 'center' },
-              { text: 'TCS', bold: true, alignment: 'center' },
-              { text: 'Grand Total', bold: true, alignment: 'center' }],
-            ...this.dynamicArrayDispatchPdf.map(p => ([
-              { text: p.RowId },
-              { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] },
-              { text: p.HSN, alignment: 'center' },
-              { text: p.Qty, alignment: 'center' },
-              { text: p.UnitName, alignment: 'center' },
-              { text: p.Rate, alignment: 'center' },
-              { text: p.TotalAmount, alignment: 'center' },
-              { text: p.CGSTRate, alignment: 'center' },
-              { text: p.CGST, alignment: 'center' },
-              { text: p.RateSGST, alignment: 'center' },
-              { text: p.SGST, alignment: 'center' },
-              { text: p.IGSTValue, alignment: 'center' },
-              { text: p.IGST, alignment: 'center' },
-              { text: p.TCSRate, alignment: 'center' },
-              { text: p.TCS, alignment: 'center' },
-              { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
-            // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
-            [{},
-            { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true },
-            { text: '' },
-            { text: `${this.model.totalSumPOQuantity}`, alignment: 'center', bold: true },
-            { text: '' },
-            { text: '' },
-            { text: '' }, { text: '' }, { text: '' }, { text: '' },
-            { text: '' }, { text: '' }, { text: '' },{ text: '' }, { text: '' },
-            { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
-          ]
-        }
-      },
-      {
-        table: {
-          body: [
-            [
-              {
-                border: [1, 0, 1, 1],
-                table: {
-                  body: [
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 9,
-                            width: 533,
-                            text: [
-                              'Amount Chargeable (in words)',
-                              '\n',
-                              { text: `${this.model.PdfAmountChargeable}`, fontSize: 10, bold: true, },
-                            ]
-                          },
-
-                        ]
-                      },
-
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 9,
-                            width: 0,
-                            alignment: 'right', italics: true,
-                            text: [
-                              { text: '', fontSize: 10, bold: true, },
-                            ]
-                          },
-                        ]
-                      },
-                    ],
-
-                    [
-                      {
-                        border: [0, 0, 0, 0],
-                        columns: [
-                          {
-                            width: 350,
-                            text: [
-                              { text: 'Note', bold: true, fontSize: 11, decoration: 'underline', italics: true, },
-                              '\n',
-                              { text: `${this.model.PdfNote}`, fontSize: 10, },
-                            ]
-                          },
-
-                        ]
-                      },
-
-                      {
-                        border: [1, 1, 0, 0],
-                        columns: [
-                          {
-                            fontSize: 10,
-                            width: 200,
-                            alignment: 'right',
-                            text: [
-                              { text: `for ${this.model.PdfCompanyName}` },
-                              '\n\n',
-                              { text: `Authorised Signatory`, fontSize: 8, },
-                            ]
-                          },
-
-                        ]
-                      },
-                    ],
-                  ]
-                }
-              },
-            ],
-          ]
-        }
-      },
-      [
-        {
-          border: [0, 0, 0, 0],
-          columns: [
-            {
-              width: '100%',
-              fontSize: 10,
-              text: [
-                { text: `${this.model.MultiSiteLabelName}     ${this.model.MultiSiteName}` },
-
-              ]
-            },
-          ]
+                          ]
+                        },
+
+                      ],
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Regd.Office :', bold: true, }, { text: `${this.model.PdfRegdOffice}`, alignment: 'justify', width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          width: 180,
+                          columns: [
+                            {
+                              table: {
+                                widths: ['auto', 'auto'],
+                                body: [
+                                  ...this.objDynamicWHAddress.map(p => ([{ text: p.Address, fontSize: 9, border: [0, 0, 0, 1] }, { text: p.WHAddress, fontSize: 9, border: [0, 0, 0, 1] }])),
+                                ]
+                              },
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN No :', bold: true }, { text: `${this.model.PdfGSTINNo}`, width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'CIN No      : ', bold: true }, { text: `${this.model.PdfCIN}`, width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+                ///start Ducoment
+                {
+                  border: [1, 1, 1, 0],
+                  width: 350,
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.ChallanName}`, bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 240,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDocumentNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Date : ', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 110,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDocumentDate}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Trasporation Mode: ', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 110,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTrasporationMode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LableTransPotionName}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 240,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTransporterName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LableTransPhone}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 180,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTransporterGSTNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Place of Dispatch:', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfPlaceOfDispatch}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Destination :', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDestination}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: this.model.LableBorderbiltyNo,
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LablebiltyNo}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: this.model.LableBorderbiltyDate,
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfGRNo}` }, { text: `${this.model.VerticalData}` }, { text: `${this.model.PdfGRDate}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Vehicle Number:', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfVehicleNumber}` }, '   |  ', { text: 'V. Type', bold: true }, '   |  ', { text: `${this.model.PdfVehicleType}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: this.model.EwayBilltextBorder,
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.EwayBillNoName}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: this.model.EwayBillValueBorder,
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfEwayBillNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+              ],
+
+              //vishal, 01/05/2023 BILL TO
+
+              [
+                {
+
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   fontSize: 10,
+                            //   alignment: 'center',
+                            //   text: [
+                            //     { text: 'SHIPPED FROM', bold: true, },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+
+
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'BILL TO', bold: true, width: 240, alignment: 'center', },
+                              ]
+                            },
+                          ]
+                        },
+
+
+                      ],
+                    ]
+                  }
+                },
+              ],
+
+              [
+                ///shipped from
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'Name ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfCompanyName}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'Address ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfShippedWHAddress}`, },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'State ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfWHState}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'State Code ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfStateCode}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'GSTIN/Unique ID ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfGSTINNo}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+
+
+                    ]
+                  }
+                },
+                ///Bill TO
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhAddress}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteWHState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                    ]
+                  }
+                },
+
+              ],
+
+              //end-vishal
+
+              [
+                {
+
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              alignment: 'center',
+                              text: [
+                                { text: 'SHIPPED FROM', bold: true, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+
+
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'SHIPPED TO', bold: true, width: 240, alignment: 'center', },
+                              ]
+                            },
+                          ]
+                        },
+
+
+                      ],
+                    ]
+                  }
+                },
+              ],
+
+              [
+                ///shipped from
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfShippedWHAddress}`, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfWHState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                    ]
+                  }
+                },
+                ///shipped TO
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfBillToCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfBillToVenAddress}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfBillToState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfBillToStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfBillToGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                    ]
+                  }
+                },
+
+
+              ],
+
+
+            ]
+          }
         },
-      ],
-      {
-        columns: [
-          { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
-        ]
-      }
-    ],
-    styles: {
-      header: {
-        fontSize: 10,
-        bold: true,
-        margin: [310, -40, 0, 0]
-      },
-      TableHeader: {
-        fontSize: 10,
-        hidden: false,
-      },
+        {
+          style: 'TableHeader',
+          table: {
+            headerRows: 1,
+            widths: ['4%', '20.5%', '4%', '6%', '5.9%', '6%', '8%', '4%', '5%', '4%', '5%', '4%', '5%', '4%', '5%', '9%',],
+            body: [
+              [
+                { text: 'S.No', bold: true, },
+                { text: 'Description of Goods', bold: true, alignment: 'center' },
+                { text: 'HSN', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Amount', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
+                { text: 'CGST', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
+                { text: 'SGST', bold: true, alignment: 'center' },
+                { text: 'IGST(%)', bold: true, alignment: 'center' },
+                { text: 'IGST', bold: true, alignment: 'center' },
+                { text: 'TCS  (%)', bold: true, alignment: 'center' },
+                { text: 'TCS', bold: true, alignment: 'center' },
+                { text: 'Grand Total', bold: true, alignment: 'center' }],
+              ...this.dynamicArrayDispatchPdf.map(p => ([
+                { text: p.RowId },
+                { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] },
+                { text: p.HSN, alignment: 'center' },
+                { text: p.Qty, alignment: 'center' },
+                { text: p.UnitName, alignment: 'center' },
+                { text: p.Rate, alignment: 'center' },
+                { text: p.TotalAmount, alignment: 'center' },
+                { text: p.CGSTRate, alignment: 'center' },
+                { text: p.CGST, alignment: 'center' },
+                { text: p.RateSGST, alignment: 'center' },
+                { text: p.SGST, alignment: 'center' },
+                { text: p.IGSTValue, alignment: 'center' },
+                { text: p.IGST, alignment: 'center' },
+                { text: p.TCSRate, alignment: 'center' },
+                { text: p.TCS, alignment: 'center' },
+                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
+              // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
+              [{},
+              { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true },
+              { text: '' },
+              { text: `${this.model.totalSumPOQuantity}`, alignment: 'center', bold: true },
+              { text: '' },
+              { text: '' },
+              { text: '' }, { text: '' }, { text: '' }, { text: '' },
+              { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' },
+              { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
+            ]
+          }
+        },
+        {
+          table: {
+            body: [
+              [
+                {
+                  border: [1, 0, 1, 1],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 9,
+                              width: 533,
+                              text: [
+                                'Amount Chargeable (in words)',
+                                '\n',
+                                { text: `${this.model.PdfAmountChargeable}`, fontSize: 10, bold: true, },
+                              ]
+                            },
 
-      AddInfo: {
-        decoration: 'underline',
-        fontSize: 9,
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 9,
+                              width: 0,
+                              alignment: 'right', italics: true,
+                              text: [
+                                { text: '', fontSize: 10, bold: true, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 350,
+                              text: [
+                                { text: 'Note', bold: true, fontSize: 11, decoration: 'underline', italics: true, },
+                                '\n',
+                                { text: `${this.model.PdfNote}`, fontSize: 10, },
+                              ]
+                            },
+
+                          ]
+                        },
+
+                        {
+                          border: [1, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              width: 200,
+                              alignment: 'right',
+                              text: [
+                                { text: `for ${this.model.PdfCompanyName}` },
+                                '\n\n',
+                                { text: `Authorised Signatory`, fontSize: 8, },
+                              ]
+                            },
+
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+              ],
+            ]
+          }
+        },
+        [
+          {
+            border: [0, 0, 0, 0],
+            columns: [
+              {
+                width: '100%',
+                fontSize: 10,
+                text: [
+                  { text: `${this.model.MultiSiteLabelName}     ${this.model.MultiSiteName}` },
+
+                ]
+              },
+            ]
+          },
+        ],
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 10,
+          bold: true,
+          margin: [310, -40, 0, 0]
+        },
+        TableHeader: {
+          fontSize: 10,
+          hidden: false,
+        },
+
+        AddInfo: {
+          decoration: 'underline',
+          fontSize: 9,
+        },
+        HideColumn: {
+          visible: false,
+        }
       },
-      HideColumn: {
-        visible: false,
-      }
-    },
-  }
-  if (action === 'download') {
-    pdfMake.createPdf(docDefinition).download();
-  } else if (action === 'print') {
-    pdfMake.createPdf(docDefinition).print();
-  } else {
-    if (this.model.FunctionFlagValue == 2) {
-      pdfMake.createPdf(docDefinition).open();
+    }
+    if (action === 'download') {
+      pdfMake.createPdf(docDefinition).download();
+    } else if (action === 'print') {
+      pdfMake.createPdf(docDefinition).print();
     } else {
-      //pdfMake.createPdf(docDefinition).open();
-      // pdfMake.createPdf(docDefinition).download();
-      pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
-        PDFdata = dataURL;
-      });
-      setTimeout(() => {
-        this.SaveUpdateDispatchPDF();
-      }, 1200);
+      if (this.model.FunctionFlagValue == 2) {
+        pdfMake.createPdf(docDefinition).open();
+      } else {
+        //pdfMake.createPdf(docDefinition).open();
+        // pdfMake.createPdf(docDefinition).download();
+        pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
+          PDFdata = dataURL;
+        });
+        setTimeout(() => {
+          this.SaveUpdateDispatchPDF();
+        }, 1200);
+      }
     }
   }
-}
+  //end-vishal
+  //By: vishal, 07/05/2023 desc: function for pdf generate in case of vendor site
+  generateVendorPDF_ShipToSite(action = 'open') {
+    let docDefinition = {
+      pageOrientation: 'landscape',
+      content: [
+        {
+          text: `${this.model.PdfHeaderName}`,
+          style: 'header'
+        },
+        {
+          margin: [0, 0, 0, 0],
+          table: {
+            body: [
+              [
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              bold: true,
+                              fontSize: 14,
+                              alignment: 'center',
+                              text: [
+                                { text: `${this.model.PdfCompanyName}`, width: 180 },
+                              ]
+                            },
+                          ]
+                        },
 
-//end-vishal
+                      ],
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Regd.Office :', bold: true, }, { text: `${this.model.PdfRegdOffice}`, alignment: 'justify', width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          width: 180,
+                          columns: [
+                            {
+                              table: {
+                                widths: ['auto', 'auto'],
+                                body: [
+                                  ...this.objDynamicWHAddress.map(p => ([{ text: p.Address, fontSize: 9, border: [0, 0, 0, 1] }, { text: p.WHAddress, fontSize: 9, border: [0, 0, 0, 1] }])),
+                                ]
+                              },
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN No :', bold: true }, { text: `${this.model.PdfGSTINNo}`, width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'CIN No      : ', bold: true }, { text: `${this.model.PdfCIN}`, width: 180 },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+                ///start Ducoment
+                {
+                  border: [1, 1, 1, 0],
+                  width: 350,
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.ChallanName}`, bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 240,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDocumentNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Date : ', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 110,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDocumentDate}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Trasporation Mode: ', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 110,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTrasporationMode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LableTransPotionName}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 240,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTransporterName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LableTransPhone}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 180,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfTransporterGSTNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Place of Dispatch:', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfPlaceOfDispatch}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Destination :', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfDestination}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: this.model.LableBorderbiltyNo,
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.LablebiltyNo}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: this.model.LableBorderbiltyDate,
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfGRNo}` }, { text: `${this.model.VerticalData}` }, { text: `${this.model.PdfGRDate}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'Vehicle Number:', bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfVehicleNumber}` }, '   |  ', { text: 'V. Type', bold: true }, '   |  ', { text: `${this.model.PdfVehicleType}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: this.model.EwayBilltextBorder,
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.EwayBillNoName}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: this.model.EwayBillValueBorder,
+                          columns: [
+                            {
+                              width: 200,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfEwayBillNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+              ],
+
+              //vishal, 01/05/2023 BILL TO
+
+              [
+                {
+
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   fontSize: 10,
+                            //   alignment: 'center',
+                            //   text: [
+                            //     { text: 'SHIPPED FROM', bold: true, },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+
+
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'BILL TO', bold: true, width: 240, alignment: 'center', },
+                              ]
+                            },
+                          ]
+                        },
+
+
+                      ],
+                    ]
+                  }
+                },
+              ],
+
+              [
+                //   ///shipped from
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'Name ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfCompanyName}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'Address ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfShippedWHAddress}`, },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'State ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfWHState}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'State Code ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfStateCode}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 100,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: 'GSTIN/Unique ID ', bold: true },
+
+                            //   ]
+                            // },
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            // {
+                            //   width: 250,
+                            //   fontSize: 10,
+                            //   text: [
+                            //     { text: `${this.model.PdfGSTINNo}` },
+                            //   ]
+                            // },
+                          ]
+                        },
+                      ],
+
+
+                    ]
+                  }
+                },
+                //   ///Bill TO
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhAddress}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteWHState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfToSiteAndWhGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                    ]
+                  }
+                },
+
+              ],
+
+              //end-vishal
+
+              [
+                {
+
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              alignment: 'center',
+                              text: [
+                                { text: 'SHIPPED FROM', bold: true, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+
+
+
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              text: [
+                                { text: 'SHIPPED TO', bold: true, width: 240, alignment: 'center', },
+                              ]
+                            },
+                          ]
+                        },
+
+
+                      ],
+                    ]
+                  }
+                },
+              ],
+
+              [
+                ///shipped from
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfShippedWHAddress}`, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfWHState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 100,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 250,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.PdfGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                    ]
+                  }
+                },
+                ///shipped TO
+                {
+                  border: [1, 1, 1, 0],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Name ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.venPdfToCompanyName}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: this.model.VenSitePdfSiteDetailBorder,
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteDetail}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: this.model.VenSitePdfSiteDetailValueBorder,
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteId}` }, { text: `${this.model.VenSitePdfSiteVerticalBorder}`, bold: true }, { text: `${this.model.VenSitePdfToSiteName}`, bold: true }, { text: `${this.model.VenSitePdfToSiteDistrict}`, bold: true },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToContectDetails}`, bold: true, alignment: 'center' },
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              table: {
+                                headerRows: 1,
+                                widths: [25, 130, 80],
+                                body: [
+                                  [{ text: `${this.model.VenSiteToSiteTech}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteTechBorder1 }, { text: `${this.model.VenSiteToSiteTechName}`, width: 20, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteTechBorder1 }, { text: `${this.model.VenSiteToSiteTechPhone}`, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteTechBorder2 }],
+                                  [{ text: `${this.model.VenSiteToSiteCI}`, bold: true, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteCIAndZomBorder1 }, { text: `${this.model.VenSiteToSiteCIName}`, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteCIAndZomBorder1 }, { text: `${this.model.VenSiteToSiteCIPhone}`, alignment: 'center', fontSize: 10, border: this.model.VenSitePdfSiteCIAndZomBorder2 }],
+                                  // [{text: `${this.model.ToSiteZOM}`, bold:true,alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMName}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder1},{text: `${this.model.ToSiteZOMPhone}`, alignment: 'center',fontSize:10, border:this.model.PdfSiteCIAndZomBorder2},]
+                                ]
+                              }
+                            }
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'Address', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteAndWhAddress}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteWHState}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'State Code', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 1],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteAndWhStateCode}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 90,
+                              fontSize: 10,
+                              text: [
+                                { text: 'GSTIN/Unique ID ', bold: true },
+
+                              ]
+                            },
+                          ]
+                        },
+
+                        {
+                          border: [1, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 260,
+                              fontSize: 10,
+                              text: [
+                                { text: `${this.model.VenSitePdfToSiteAndWhGSTINNo}` },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+
+                    ]
+                  }
+                },
+
+              ],
+
+
+            ]
+          }
+        },
+        {
+          style: 'TableHeader',
+          table: {
+            headerRows: 1,
+            widths: ['4%', '30.1%', '4%', '6%', '5.9%', '6%', '8%', '4%', '5%', '4%', '5%', '4%', '5%', '9%'],
+            body: [
+              [
+                { text: 'S.No', bold: true, },
+                { text: 'Description of Goods', bold: true, alignment: 'center' },
+                { text: 'HSN', bold: true, alignment: 'center' },
+                { text: 'Qty', bold: true, alignment: 'center' },
+                { text: 'Unit', bold: true, alignment: 'center' },
+                { text: 'Rate', bold: true, alignment: 'center' },
+                { text: 'Amount', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
+                { text: 'CGST', bold: true, alignment: 'center' },
+                { text: 'Rate (%)', bold: true, alignment: 'center' },
+                { text: 'SGST', bold: true, alignment: 'center' },
+                { text: 'IGST(%)', bold: true, alignment: 'center' },
+                { text: 'IGST', bold: true, alignment: 'center' },
+                { text: 'Grand Total', bold: true, alignment: 'center' }],
+              ...this.dynamicArrayDispatchPdf.map(p => ([
+                { text: p.RowId },
+                { text: [{ text: p.ItemDescription }, '\n', { text: p.SubDescription, italics: true }] },
+                { text: p.HSN, alignment: 'center' },
+                { text: p.Qty, alignment: 'center' },
+                { text: p.UnitName, alignment: 'center' },
+                { text: p.Rate, alignment: 'center' },
+                { text: p.TotalAmount, alignment: 'center' },
+                { text: p.CGSTRate, alignment: 'center' },
+                { text: p.CGST, alignment: 'center' },
+                { text: p.RateSGST, alignment: 'center' },
+                { text: p.SGST, alignment: 'center' },
+                { text: p.IGSTValue, alignment: 'center' },
+                { text: p.IGST, alignment: 'center' },
+                { text: this._Commonservices.thousands_separators(p.GetTotalAmount), alignment: 'center' }])),
+              // [{}, { text: '', colSpan: 1, alignment: 'right', margin: this.TableHeight }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }, { text: '' }],
+              [{},
+              { text: 'Total Amount', colSpan: 1, alignment: 'right', bold: true },
+              { text: '' },
+              { text: `${this.model.totalSumPOQuantity}`, alignment: 'center', bold: true },
+              { text: '' },
+              { text: '' },
+              { text: '' }, { text: '' }, { text: '' }, { text: '' },
+              { text: '' }, { text: '' }, { text: '' },
+              { text: this._Commonservices.thousands_separators(`${this.model.GrossTotalAmount}`) + '₹', bold: true, alignment: 'center' }]
+            ]
+          }
+        },
+        {
+          table: {
+            body: [
+              [
+                {
+                  border: [1, 0, 1, 1],
+                  table: {
+                    body: [
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 9,
+                              width: 533,
+                              text: [
+                                'Amount Chargeable (in words)',
+                                '\n',
+                                { text: `${this.model.PdfAmountChargeable}`, fontSize: 10, bold: true, },
+                              ]
+                            },
+
+                          ]
+                        },
+
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 9,
+                              width: 0,
+                              alignment: 'right', italics: true,
+                              text: [
+                                { text: '', fontSize: 10, bold: true, },
+                              ]
+                            },
+                          ]
+                        },
+                      ],
+
+                      [
+                        {
+                          border: [0, 0, 0, 0],
+                          columns: [
+                            {
+                              width: 350,
+                              text: [
+                                { text: 'Note', bold: true, fontSize: 11, decoration: 'underline', italics: true, },
+                                '\n',
+                                { text: `${this.model.PdfNote}`, fontSize: 10, },
+                              ]
+                            },
+
+                          ]
+                        },
+
+                        {
+                          border: [1, 1, 0, 0],
+                          columns: [
+                            {
+                              fontSize: 10,
+                              width: 200,
+                              alignment: 'right',
+                              text: [
+                                { text: `for ${this.model.PdfCompanyName}` },
+                                '\n\n',
+                                { text: `Authorised Signatory`, fontSize: 8, },
+                              ]
+                            },
+
+                          ]
+                        },
+                      ],
+                    ]
+                  }
+                },
+              ],
+            ]
+          }
+        },
+        [
+          {
+            border: [0, 0, 0, 0],
+            columns: [
+              {
+                width: '100%',
+                fontSize: 10,
+                text: [
+                  { text: `${this.model.MultiSiteLabelName}     ${this.model.MultiSiteName}` },
+
+                ]
+              },
+            ]
+          },
+        ],
+        {
+          columns: [
+            { text: 'This is a Computer Generated Document', alignment: 'center', fontSize: 9, }
+          ]
+        }
+      ],
+      styles: {
+        header: {
+          fontSize: 10,
+          bold: true,
+          margin: [310, -40, 0, 0]
+        },
+        TableHeader: {
+          fontSize: 10,
+          hidden: false,
+        },
+
+        AddInfo: {
+          decoration: 'underline',
+          fontSize: 9,
+        },
+        HideColumn: {
+          visible: false,
+        }
+      },
+    }
+    if (action === 'download') {
+      pdfMake.createPdf(docDefinition).download();
+    } else if (action === 'print') {
+      pdfMake.createPdf(docDefinition).print();
+    } else {
+      if (this.model.FunctionFlagValue == 2) {
+        pdfMake.createPdf(docDefinition).open();
+      } else {
+        //pdfMake.createPdf(docDefinition).open();
+        // pdfMake.createPdf(docDefinition).download();
+        pdfMake.createPdf(docDefinition).getDataUrl(function (dataURL) {
+          PDFdata = dataURL;
+        });
+        setTimeout(() => {
+          this.SaveUpdateDispatchPDF();
+        }, 1200);
+      }
+    }
+  }
+  //end-region
 }
